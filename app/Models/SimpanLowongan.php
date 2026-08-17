@@ -10,7 +10,11 @@ class SimpanLowongan extends Model
     use HasFactory;
 
     protected $table = 'simpan_lowongans';
-    protected $guarded = [];
+    protected $fillable = [
+        'pelamar_id',
+        'lowongan_id',
+    ];
+
 
     public function pelamar()
     {

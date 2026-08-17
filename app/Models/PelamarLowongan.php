@@ -10,7 +10,11 @@ class PelamarLowongan extends Model
     use HasFactory;
 
     protected $table = 'pelamar_lowongans';
-    protected $guarded = [];
+    protected $fillable = [
+        'pelamar_id',
+        'lowongan_id',
+        // 'status' → TIDAK dimasukkan, hanya boleh diubah oleh Perusahaan/Admin
+    ];
     
 
     public function lowongan_perusahaan()

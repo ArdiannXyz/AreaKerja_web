@@ -40,7 +40,8 @@ class PembeliKandidatController extends Controller
             ], 403);
         }
 
-        $harga = 100;
+        $hargaObj = \App\Models\Hargakoin::where('nama', 'Beli Kandidat')->firstOrFail();
+        $harga = $hargaObj->harga;
 
         // Hapus riwayat lama dengan status ditolak
         PembeliKandidat::where('pelamar_id', $pelamar->id)
