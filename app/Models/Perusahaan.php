@@ -10,7 +10,28 @@ class Perusahaan extends Model
 {
     use HasFactory;
     protected $table = 'perusahaans';
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'nama_perusahaan',
+        'jenis_perusahaan',
+        'website_perusahaan',
+        'telepon_perusahaan',
+        'whatsapp',
+        'legalitas',
+        'deskripsi',
+        'visi',
+        'misi',
+        'img_profile',
+        // Field berikut SENGAJA TIDAK dimasukkan karena dikelola sistem:
+        // 'slug'                → di-generate otomatis oleh boot() method
+        // 'koin_perusahaan'     → dikelola oleh Finance melalui transaksi koin
+        // 'is_berlangganan'     → dikelola oleh SuperAdmin/Finance
+        // 'tanggal_berlangganan'→ dikelola oleh SuperAdmin/Finance
+        // 'tanggal_expired'     → dikelola oleh sistem langganan
+        // 'verification_status' → dikelola oleh Admin verifikasi
+        // 'verified_at'         → diisi otomatis saat verifikasi
+        // 'verification_note'   → diisi oleh Admin
+    ];
 
     protected $casts = [
         // 'tanggal_berlangganan' => 'datetime',

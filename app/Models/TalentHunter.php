@@ -9,7 +9,16 @@ class TalentHunter extends Model
 {
     use HasFactory;
     protected $table = 'talent_hunters';
-    protected $guarded = [];
+    protected $fillable = [
+        'perusahaan_id',
+        'alamat',
+        'posisi',
+        'pengalaman_kerja',
+        'gender',
+        'gaji_awal',
+        'gaji_akhir',
+        'deskripsi',
+    ];
 
     public function perusahaan()
     {

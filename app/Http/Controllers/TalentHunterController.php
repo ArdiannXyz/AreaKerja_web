@@ -9,6 +9,7 @@ use App\Models\Perusahaan;
 use App\Models\TalentHunter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TalentHunterController extends Controller
 {
@@ -38,72 +39,67 @@ class TalentHunterController extends Controller
             return response()->json(['success' => false, 'message' => 'Koin tidak cukup.']);
         }
 
-        //cek apakah perusahaan memiliki cukup koin
-        if ($perusahaan->koin_perusahaan < $harga->harga) {
-            return response()->json(['success' => false, 'message' => 'Koin tidak cukup.']);
-        }
-
         return response()->json(['success' => true, 'message' => 'Silakan isi form Talent Hunter.']);
     }
 
-    //simpan data talent hunter
-    public function store(Request $request)
+        public function store(Request $request)
     {
         $request->validate([
-            'alamat' => 'required',
-            'posisi' => 'required',
+            'alamat'           => 'required',
+            'posisi'           => 'required',
             'pengalaman_kerja' => 'required',
-            'gender' => 'required',
-            'gaji_awal' => 'required',
-            'gaji_akhir' => 'required',
-            'deskripsi' => 'nullable',
+            'gender'           => 'required',
+            'gaji_awal'        => 'required',
+            'gaji_akhir'       => 'required',
+            'deskripsi'        => 'nullable',
         ]);
 
-        $user = Auth::user();
+        $user       = Auth::user();
         $perusahaan = $user->perusahaan;
-        $harga = Hargakoin::where('nama', 'Open Talent Hunter')->firstOrFail();
+        $harga      = Hargakoin::where('nama', 'Open Talent Hunter')->firstOrFail();
 
-        // Pastikan koin cukup
+        // Pastikan koin cukup sebelum masuk transaction
         if ($perusahaan->koin_perusahaan < $harga->harga) {
             return response()->json(['success' => false, 'message' => 'Koin tidak cukup.']);
         }
 
-        // Simpan data Talent Hunter
-        $talentHunter = $perusahaan->talentHunters()->create($request->all());
+        $noReferensi = 'TH-' . strtoupper(uniqid());
 
-        // Kurangi koin setelah data tersimpan  
-        $perusahaan->update([
-            'koin_perusahaan' => $perusahaan->koin_perusahaan - $harga->harga,
-        ]);
+        // ✅ SEMUA OPERASI DALAM SATU TRANSACTION
+        $talentHunter = DB::transaction(function () use ($user, $perusahaan, $harga, $request, $noReferensi) {
 
-        // Tambahkan catatan transaksi koin
-        $noReferensi = 'TH-' . strtoupper(uniqid()); // contoh: TH-654C2FAE8C1D9
+            // 1. Potong koin dulu (decrement lebih aman dari race condition)
+            $perusahaan->decrement('koin_perusahaan', $harga->harga);
 
-        $user->catatanKoins()->create([
-            'no_referensi' => $noReferensi,
-            'pesanan' => 'Pembelian Talent Hunter',
-            'dari' => $perusahaan->nama_perusahaan,
-            'sumber_dana' => 'Koin Perusahaan',
-            'total' => '-' . $harga->harga, // tanda minus karena pengurangan
-        ]);
+            // 2. Simpan data talent hunter
+            $talentHunter = $perusahaan->talentHunters()->create(
+                $request->only(['alamat', 'posisi', 'pengalaman_kerja', 'gender', 'gaji_awal', 'gaji_akhir', 'deskripsi'])
+            );
 
-        //Redirect ke WhatsApp
-        $nomorAdmin = '6287874732189'; // ubah sesuai nomor tujuan admin
+            // 3. Catat transaksi koin
+            $user->catatanKoins()->create([
+                'no_referensi' => $noReferensi,
+                'pesanan'      => 'Pembelian Talent Hunter',
+                'dari'         => $perusahaan->nama_perusahaan,
+                'sumber_dana'  => 'Koin Perusahaan',
+                'total'        => '-' . $harga->harga,
+            ]);
+
+            return $talentHunter;
+        });
+
+        // Redirect ke WhatsApp setelah transaction selesai
+        $nomorAdmin = env('ADMIN_WHATSAPP', '6287874732189'); // ← sudah pakai .env (Bug #5)
         $pesan = "Halo Admin, saya sudah melakukan pembelian Talent Hunter.\n\n"
-            . "Berikut detailnya:\n"
             . "Posisi: {$talentHunter->posisi}\n"
-            . "Pengalaman: {$talentHunter->pengalaman_kerja}\n"
-            . "Gender: {$talentHunter->gender}\n"
-            . "Gaji: {$talentHunter->gaji_awal} - {$talentHunter->gaji_akhir}\n"
-            . "Deskripsi: {$talentHunter->deskripsi}\n\n"
             . "No Referensi: {$noReferensi}\n"
             . "Mohon tindak lanjutnya.";
 
         $waUrl = 'https://wa.me/' . $nomorAdmin . '?text=' . urlencode($pesan);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Talent Hunter berhasil disimpan, koin dipotong & catatan transaksi dibuat.',
+            'success'      => true,
+            'message'      => 'Talent Hunter berhasil disimpan.',
             'redirect_url' => $waUrl,
         ]);
     }

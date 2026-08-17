@@ -10,7 +10,29 @@ class LowonganPerusahaan extends Model
 {
     use HasFactory;
     protected $table = 'lowongan_perusahaans';
-    protected $guarded = [];
+    protected $fillable = [
+        'perusahaan_id',
+        'nama',
+        'slug',
+        'jenis',
+        'gaji_awal',
+        'gaji_akhir',
+        'label_gaji',
+        'deskripsi',
+        'alamat',
+        'kategori',
+        'batas_lamaran',
+        'syarat_pekerjaan',
+        'tanggung_jawab',
+        'benefit',
+        'paket_id',
+        // Field berikut SENGAJA TIDAK dimasukkan karena dikelola sistem:
+        // 'published_at'   → diatur oleh controller saat publish lowongan
+        // 'expired_at'     → dihitung otomatis dari paket
+        // 'boosted_until'  → diatur oleh fitur boost berbayar
+        // 'rekomendasi'    → diatur oleh SuperAdmin saja
+        // 'last_activity'  → diperbarui otomatis oleh model event
+    ];
 
 
     public function resolveRouteBinding($value, $field = null)

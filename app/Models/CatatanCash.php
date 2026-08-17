@@ -9,7 +9,17 @@ class CatatanCash extends Model
 {
     use HasFactory;
     protected $table = 'catatan_cashs';
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'no_referensi',
+        'harga_pembayaran_id',
+        'daftar_bank_id',
+        'bukti_transfer',
+        'nominal',
+        'keterangan',
+        // 'status' → TIDAK dimasukkan, hanya Finance yang boleh ubah
+    ];
+
 
      protected $casts = [
         'expired_at' => 'datetime',

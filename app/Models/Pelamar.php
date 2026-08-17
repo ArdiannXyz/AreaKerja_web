@@ -11,7 +11,22 @@ class Pelamar extends Model
     use HasFactory;
 
     protected $table = 'pelamars';
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'nama_pelamar',
+        'telepon_pelamar',
+        'gender',
+        'tanggal_lahir',
+        'deskripsi_diri',
+        'img_profile',
+        'gaji_minimal',
+        'gaji_maksimal',
+        'divisi',
+        // Field berikut SENGAJA TIDAK dimasukkan karena dikelola sistem:
+        // 'kategori'         → diubah oleh Finance saat verifikasi pembayaran
+        // 'mulai_pelatihan'  → diubah oleh Admin/SuperAdmin
+        // 'selesai_pelatihan' → diubah oleh Admin/SuperAdmin
+    ];
 
     protected $casts = [
         'divisi' => 'array',

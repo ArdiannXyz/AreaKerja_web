@@ -9,7 +9,14 @@ class PembeliKandidat extends Model
 {
     use HasFactory;
     protected $table = 'pembeli_kandidats';
-    protected $guarded = [];
+    protected $fillable = [
+        'pelamar_id',
+        'lowongan_perusahaan_id',
+        'no_referensi',
+        // 'status'           → TIDAK dimasukkan, diubah oleh kandidat via updateStatus()
+        // 'alasan_penolakan' → TIDAK dimasukkan, diubah oleh kandidat via updateStatus()
+    ];
+
 
     public function pelamar()
     {

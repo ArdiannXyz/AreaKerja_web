@@ -132,12 +132,17 @@ class LowonganPerusahaanController extends Controller
 
 
 
+        // Jika Data dipakai untuk sidebar "lowongan lain dari perusahaan ini":
         return view('perusahaan.lowongan-saya.detail-lowongan', [
-            "data" => $lowongan,
-            "Data" => LowonganPerusahaan::all(),
+            "data"           => $lowongan,
+            "Data"           => LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
+                                    ->where('id', '!=', $lowongan->id)
+                                    ->latest()
+                                    ->take(5)   // ← batasi hanya 5
+                                    ->get(),
             "lowonganLainnya" => $lowonganLainnya,
-            "isBoostActive" => $isBoostActive,
-            "boostedAt" => $boostedAt,
+            "isBoostActive"   => $isBoostActive,
+            "boostedAt"       => $boostedAt,
         ]);
     }
 
@@ -421,14 +426,6 @@ class LowonganPerusahaanController extends Controller
             ->route('superadmin.perusahaan.detail', $perusahaan->id)
             ->with('success', 'Lowongan berhasil ditambahkan! Notifikasi dikirim ke perusahaan.');
     }
-
-    // public function showSuper(LowonganPerusahaan $lowongan)
-    // {
-    //     return view('super_admin.perusahaan.detail-lowongan', [
-    //         "data" => $lowongan,
-    //         "Data" => LowonganPerusahaan::all(),
-    //     ]);
-    // }
 
     public function editSuper(LowonganPerusahaan $lowongan)
     {

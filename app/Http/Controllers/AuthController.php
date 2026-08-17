@@ -213,7 +213,7 @@ class AuthController extends Controller
             $valid = $request->validate([
                 'username' => 'required|unique:users,username',
                 'email' => 'required|email|unique:users,email',
-                'password' => 'required|min:3',
+                'password' => 'required|min:8',
                 'role' => 'required',
                 'telepon_pelamar' => ['required', 'regex:/^(?:628|08)[0-9]+$/'],
                 'agree_pelamar' => 'accepted'
@@ -224,7 +224,7 @@ class AuthController extends Controller
                 'email.email' => 'Format email tidak valid.',
                 'email.unique' => 'Email sudah terdaftar.',
                 'password.required' => 'Password wajib diisi.',
-                'password.min' => 'Password minimal 3 karakter.',
+                'password.min' => 'Password minimal 8 karakter.',
                 'role.required' => 'Role wajib diisi.',
                 'telepon_pelamar.required' => 'Nomor telepon wajib diisi.',
                 'telepon_pelamar.numeric' => 'Nomor telepon harus berupa angka.',
@@ -247,7 +247,6 @@ class AuthController extends Controller
 
             return response()->json(['success' => true]);
 
-            return response()->json(['success' => true]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json([
                 'errors' => $e->errors()
@@ -336,8 +335,8 @@ class AuthController extends Controller
         try {
             $valid = $request->validate([
                 'username' => 'required|unique:users,username',
-                'email' => 'required|email',
-                'password' => 'required|min:3',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|min:8',
                 'role' => 'required',
                 'telepon_perusahaan' =>  ['required', 'regex:/^(?:628|08)[0-9]+$/'],
                 'agree_perusahaan' => 'accepted'
