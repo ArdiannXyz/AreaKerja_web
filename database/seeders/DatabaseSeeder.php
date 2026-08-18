@@ -217,5 +217,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AlasanPenolakanSeeder::class);
         $this->call(HeaderImageSeeder::class);
         $this->call(CategorySeeder::class);
+        $this->call(UserTestSeeder::class);
     }
 }

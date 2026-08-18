@@ -2,11 +2,7 @@
 @section('content')
     <!-- Hero Section -->
     <section class="relative">
-        @php
-            $header = \App\Models\SocialLink::where('nama', 'header_kandidat_ak')->first();
-        @endphp
-
-        <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/ntap.png') }}"
+        <img src="{{ asset('images/ntap.png') }}"
             alt="Header Image" class="w-full h-[600px] object-cover">
 
 

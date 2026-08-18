@@ -31,7 +31,7 @@
             </div>
 
             <div class="flex justify-center mt-6">
-                <button onclick="goToStep(2)" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md">
+                <button id="btnConfirmStep1" onclick="goToStep(2)" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition">
                     Konfirmasi
                 </button>
             </div>

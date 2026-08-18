@@ -105,21 +105,21 @@
                         {{ $errors->first() }}
                     </div>
                 @endif
-                <form action="{{ route('loginproses_perusahaan') }}" method="POST" class="space-y-4">
+                <form action="{{ route('loginproses') }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <label for="username" class="block text-sm font-semibold text-gray-700">Nama Perusahaan</label>
-                        <input type="text" id="username" name="username" placeholder="Nama Pengguna"
+                        <label for="email" class="block text-sm font-semibold text-gray-700">Email Perusahaan</label>
+                        <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="perusahaan@contoh.com"
                             class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700">Kata Sandi</label>
-                        <input type="password" id="password" name="password" placeholder="Kata Sandi"
+                        <input type="password" id="password" name="password" required placeholder="Kata Sandi"
                             class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-2 border rounded-sm"> Ingat saya
+                            <input type="checkbox" name="remember" class="mr-2 border rounded-sm"> Ingat saya
                         </label>
                         <a href="{{ route('verifikasi_perusahaan') }}" class="text-orange-500 hover:underline">Lupa kata sandi?</a>
                     </div>

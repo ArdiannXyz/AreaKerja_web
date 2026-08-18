@@ -1,27 +1,29 @@
 @extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
-    <div class="mt-10">
-        <section class="relative">
+    <div class="pt-24 px-4 md:px-0">
+        <section class="relative overflow-hidden rounded-2xl max-w-6xl mx-auto min-h-[260px] md:min-h-[300px] flex items-center bg-gradient-to-r from-gray-900 via-gray-800 to-orange-900 shadow-xl">
+            <!-- Background Image with Overlay -->
+            <img src="{{ asset('images/tangan.png') }}"
+                alt="Header Image" class="absolute inset-0 w-full h-full object-cover object-center opacity-30 mix-blend-overlay">
+            <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
 
-            @php
-                $header = \App\Models\SocialLink::where('nama', 'header_pasang_lowongan')->first();
-            @endphp
-
-            <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/tangan.png') }}"
-                alt="Header Image" class="w-full h-[350px] object-cover">
-
-            {{-- <img src="{{ asset('images/tangan.png') }}" alt="hero" class="w-full h-[350px] object-cover"> --}}
-            <div class="absolute inset-0 bg-black bg-opacity-20"></div>
-            <div class="absolute bottom-20 left-20 text-white">
-                <h1 class="text-3xl md:text-4xl font-semibold mt-3 max-w-2xl">
+            <!-- Content -->
+            <div class="relative z-10 px-8 md:px-14 py-8 text-white max-w-2xl">
+                <div class="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/40 text-orange-300 text-xs font-semibold px-3 py-1 rounded-full mb-3">
+                    <i class="ph ph-briefcase"></i> Paket Publikasi Lowongan
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
                     Pasang Lowongan
                 </h1>
-                <p class="text-sm mt-4">Dapatkan karyawan berkualitas</p>
-                <p class="text-sm "> untuk perusahaan anda</p><br>
-                <button>
-                    <span class="bg-orange-500 hover:bg-orange-600 text-sm px-8 py-2 rounded-lg">Daftar</span>
-                </button>
+                <p class="text-sm md:text-base text-gray-200 mb-6 font-normal leading-relaxed">
+                    Dapatkan kandidat dan karyawan berkualitas terbaik untuk kemajuan perusahaan Anda.
+                </p>
+                <a href="{{ route('lowongan.create.form') }}"
+                    class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-orange-500/30 hover:scale-105 active:scale-95 transition-all duration-200">
+                    <i class="ph ph-plus-circle text-lg"></i>
+                    Tambah Lowongan
+                </a>
             </div>
         </section>
     </div>
@@ -284,14 +286,31 @@
                 </div>
 
                 <!-- Dropdown Lowongan -->
-                <label class="block mb-2 text-sm font-medium text-gray-700">Pilih Lowongan</label>
-                <select name="lowongan_id" required
-                    class="w-full border-2 border-gray-300 rounded-xl px-3 py-2 mb-4 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition">
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-sm font-medium text-gray-700">Pilih Lowongan</label>
+                    <a href="{{ route('lowongan.create.form') }}"
+                        class="text-xs text-orange-500 hover:text-orange-600 font-semibold flex items-center gap-1 hover:underline">
+                        <i class="ph ph-plus-circle"></i> + Tambah Lowongan Baru
+                    </a>
+                </div>
+                <select name="lowongan_id" id="modal_lowongan_select" required
+                    class="w-full border-2 border-gray-300 rounded-xl px-3 py-2 mb-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition">
                     <option value=""> Pilih Lowongan </option>
                     @foreach ($perusahaan->pasanglowongan as $lowongan)
                         <option value="{{ $lowongan->id }}">{{ $lowongan->nama }}</option>
                     @endforeach
+                    <option value="__create_new__" class="text-orange-600 font-semibold bg-orange-50">
+                        ➕ [Buat Lowongan Baru]
+                    </option>
                 </select>
+                <div class="mb-4">
+                    <p class="text-xs text-gray-500">
+                        Belum punya draft lowongan? 
+                        <a href="{{ route('lowongan.create.form') }}" class="text-orange-600 font-semibold hover:underline">
+                            Klik di sini untuk membuat lowongan baru
+                        </a>
+                    </p>
+                </div>
 
                 <!-- Button -->
                 <div class="flex justify-end gap-3 mt-4">
@@ -361,6 +380,17 @@
         function closeModal() {
             document.getElementById('paketModal').classList.add('hidden');
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const select = document.getElementById('modal_lowongan_select');
+            if (select) {
+                select.addEventListener('change', function() {
+                    if (this.value === '__create_new__') {
+                        window.location.href = "{{ route('lowongan.create.form') }}";
+                    }
+                });
+            }
+        });
     </script>
     @include('layouts.footer')
 @endsection

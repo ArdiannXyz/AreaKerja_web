@@ -13,13 +13,17 @@ class PelamarLowongan extends Model
     protected $fillable = [
         'pelamar_id',
         'lowongan_id',
-        // 'status' → TIDAK dimasukkan, hanya boleh diubah oleh Perusahaan/Admin
+        'status',
     ];
-    
 
     public function lowongan_perusahaan()
     {
-        return $this->belongsTo(LowonganPerusahaan::class, 'lowongan_id',);
+        return $this->belongsTo(LowonganPerusahaan::class, 'lowongan_id');
+    }
+
+    public function lowongan()
+    {
+        return $this->belongsTo(LowonganPerusahaan::class, 'lowongan_id');
     }
 
     public function pelamar()

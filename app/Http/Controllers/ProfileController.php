@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AlamatPelamar;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use Illuminate\Http\Request;
@@ -15,9 +14,7 @@ class ProfileController extends Controller
     {
         $user = auth()->user();
 
-        $pelamar = Pelamar::where('user_id', $user->id)
-            ->with('pengalaman_organisasi')
-            ->first();
+        $pelamar = Pelamar::where('user_id', $user->id)->first();
 
         return view('non-user.profile.profile', compact('pelamar'));
     }
@@ -81,13 +78,10 @@ class ProfileController extends Controller
                 ]);
             }
 
-            $pelamar->update($validated);
-
-            /* ==========================
-            UPDATE SOSMED
-        =========================== */
             $sosmed = $request->only(['instagram', 'linkedin', 'website', 'twitter']);
-            $pelamar->sosmed()->updateOrCreate([], $sosmed);
+            $validated['social_links'] = $sosmed;
+
+            $pelamar->update($validated);
 
             /* ==========================
          NOTIFIKASI BERHASIL

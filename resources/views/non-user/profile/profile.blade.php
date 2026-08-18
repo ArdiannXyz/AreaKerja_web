@@ -423,19 +423,19 @@
                         <label class="text-sm font-medium">Instagram <span class="text-red-500"></span></label>
                         <input type="text" name="instagram" placeholder="Instagram"
                             class="w-full border rounded-md px-3 py-2 text-sm"
-                            value="{{ Auth::user()->pelamar->sosmed()->latest()->first()->instagram ?? '' }}">
+                            value="{{ $pelamar->social_links['instagram'] ?? '' }}">
                         <label class="text-sm font-medium">Linkedin<span class="text-red-500"></span></label>
                         <input type="text" name="linkedin" placeholder="LinkedIn"
                             class="w-full border rounded-md px-3 py-2 text-sm"
-                            value="{{ Auth::user()->pelamar->sosmed()->latest()->first()->linkedin ?? '' }}">
+                            value="{{ $pelamar->social_links['linkedin'] ?? '' }}">
                         <label class="text-sm font-medium">Website<span class="text-red-500"></span></label>
                         <input type="text" name="website" placeholder="Website"
                             class="w-full border rounded-md px-3 py-2 text-sm"
-                            value="{{ Auth::user()->pelamar->sosmed()->latest()->first()->website ?? '' }}">
+                            value="{{ $pelamar->social_links['website'] ?? '' }}">
                         <label class="text-sm font-medium">Twitter<span class="text-red-500"></span></label>
                         <input type="text" name="twitter" placeholder="Twitter"
                             class="w-full border rounded-md px-3 py-2 text-sm"
-                            value="{{ Auth::user()->pelamar->sosmed()->latest()->first()->twitter ?? '' }}">
+                            value="{{ $pelamar->social_links['twitter'] ?? '' }}">
                     </div><br>
                 </div>
 

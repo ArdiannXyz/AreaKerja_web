@@ -4,11 +4,7 @@
     <div>
         <!-- Hero Section -->
         <section class="relative">
-            @php
-                $header = \App\Models\SocialLink::where('nama', 'header_daftar_kandidat')->first();
-            @endphp
-
-            <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/ntap.png') }}"
+            <img src="{{ asset('images/ntap.png') }}"
                 alt="Header Image" class="w-full h-[400px] sm:h-[500px] md:h-[600px] object-cover">
 
             <div class="absolute inset-0 bg-black bg-opacity-30"></div>

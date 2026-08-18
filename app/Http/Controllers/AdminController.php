@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admin;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
-use App\Models\Kecamatan;
-use App\Models\Kota;
 use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
-use App\Models\PembeliKandidat;
 use App\Models\Perusahaan;
-use App\Models\Provinsi;
 use App\Models\TalentHunter;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -24,7 +20,12 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
+        return $this->beranda_admin();
+    }
+
+    public function beranda_admin()
+    {
+        return app(AuthController::class)->beranda_admin();
     }
 
     public function profile_admin()

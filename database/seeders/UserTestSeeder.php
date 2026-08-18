@@ -2,14 +2,13 @@
 
 namespace Database\Seeders;
 
-use App\Models\Admin;
-use App\Models\Finance;
-use App\Models\Hargakoin;
+use App\Models\DaftarBank;
 use App\Models\LowonganPerusahaan;
+use App\Models\PaketLowongan;
 use App\Models\Pelamar;
-use App\Models\PelamarLowongan;
+use App\Models\PengalamanKerja;
 use App\Models\Perusahaan;
-use App\Models\SuperAdmin;
+use App\Models\RiwayatPendidikan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
@@ -18,27 +17,68 @@ use Illuminate\Support\Facades\Hash;
 class UserTestSeeder extends Seeder
 {
     /**
-     * Seeder untuk testing semua role pengguna AreaKerja.
-     *
-     * Akun yang dibuat:
-     *  - super_admin : superadmin / password123
-     *  - admin       : admin      / password123
-     *  - finance     : finance    / password123
-     *  - perusahaan  : perusahaan / password123  (sudah verified, punya 500 koin)
-     *  - pelamar     : pelamar    / password123  (profil lengkap, kategori pelamar)
-     *  - kandidat    : kandidat   / password123  (profil lengkap, kategori kandidat aktif)
+     * Seeder untuk 12 Tabel Inti Bersih & Testing Akun Semua Role.
      */
     public function run(): void
     {
         DB::transaction(function () {
 
             // =====================================================
+            // 0. MASTER PAKET LOWONGAN & BANK
+            // =====================================================
+            $gold = PaketLowongan::updateOrCreate(
+                ['nama' => 'Gold'],
+                [
+                    'harga_koin'    => 200,
+                    'batas_listing' => 180,
+                    'publikasi'     => 1,
+                    'benefit'       => "Prioritas utama di pencarian\nPosting di media sosial\nBadge Gold Verified\nBroadcast info kerja",
+                ]
+            );
+
+            $silver = PaketLowongan::updateOrCreate(
+                ['nama' => 'Silver'],
+                [
+                    'harga_koin'    => 150,
+                    'batas_listing' => 30,
+                    'publikasi'     => 1,
+                    'benefit'       => "Tampil di halaman utama\nPosting di media sosial\nBadge Silver",
+                ]
+            );
+
+            $bronze = PaketLowongan::updateOrCreate(
+                ['nama' => 'Bronze'],
+                [
+                    'harga_koin'    => 100,
+                    'batas_listing' => 7,
+                    'publikasi'     => 1,
+                    'benefit'       => "Tampil di pencarian lowongan\nBadge Bronze",
+                ]
+            );
+
+            // Master Bank
+            DaftarBank::updateOrCreate(
+                ['nama_bank' => 'BCA'],
+                ['no_rek' => '1234567890', 'owner' => 'PT Area Kerja Global', 'logo_image' => 'images/bca.png']
+            );
+            DaftarBank::updateOrCreate(
+                ['nama_bank' => 'Mandiri'],
+                ['no_rek' => '0987654321', 'owner' => 'PT Area Kerja Global', 'logo_image' => 'images/bca.png']
+            );
+            DaftarBank::updateOrCreate(
+                ['nama_bank' => 'QRIS'],
+                ['no_rek' => 'NMID-0012398471', 'owner' => 'AreaKerja Pay', 'logo_image' => 'images/qrrrr-removebg-preview.png']
+            );
+
+            // =====================================================
             // 1. SUPER ADMIN
             // =====================================================
-            $userSuperAdmin = User::updateOrCreate(
-                ['username' => 'superadmin_test'],
+            User::updateOrCreate(
+                ['email' => 'superadmin@areakerja.test'],
                 [
-                    'email'              => 'superadmin@areakerja.test',
+                    'username'           => 'superadmin_test',
+                    'nama_lengkap'       => 'Super Admin AreaKerja',
+                    'telepon'            => '081122334455',
                     'password'           => Hash::make('password123'),
                     'role'               => 'super_admin',
                     'verified'           => 1,
@@ -47,22 +87,15 @@ class UserTestSeeder extends Seeder
                 ]
             );
 
-            SuperAdmin::updateOrCreate(
-                ['user_id' => $userSuperAdmin->id],
-                [
-                    'nama_lengkap' => 'Super Admin Test',
-                    'provinsi'     => 'Jawa Timur',
-                ]
-            );
-
-
             // =====================================================
             // 2. ADMIN
             // =====================================================
-            $userAdmin = User::updateOrCreate(
-                ['username' => 'admin_test'],
+            User::updateOrCreate(
+                ['email' => 'admin@areakerja.test'],
                 [
-                    'email'              => 'admin@areakerja.test',
+                    'username'           => 'admin_test',
+                    'nama_lengkap'       => 'Admin Operasional',
+                    'telepon'            => '081122334466',
                     'password'           => Hash::make('password123'),
                     'role'               => 'admin',
                     'verified'           => 1,
@@ -71,24 +104,15 @@ class UserTestSeeder extends Seeder
                 ]
             );
 
-            Admin::updateOrCreate(
-                ['user_id' => $userAdmin->id],
-                [
-                    'nama_lengkap' => 'Admin Test',
-                    'provinsi_id'  => \App\Models\Provinsi::inRandomOrder()->first()?->id,
-                    'kota_id'      => \App\Models\Kota::inRandomOrder()->first()?->id,
-                    'kecamatan_id' => \App\Models\Kecamatan::inRandomOrder()->first()?->id,
-                ]
-            );
-
-
             // =====================================================
             // 3. FINANCE
             // =====================================================
-            $userFinance = User::updateOrCreate(
-                ['username' => 'finance_test'],
+            User::updateOrCreate(
+                ['email' => 'finance@areakerja.test'],
                 [
-                    'email'              => 'finance@areakerja.test',
+                    'username'           => 'finance_test',
+                    'nama_lengkap'       => 'Finance Manager',
+                    'telepon'            => '081122334477',
                     'password'           => Hash::make('password123'),
                     'role'               => 'finance',
                     'verified'           => 1,
@@ -97,24 +121,15 @@ class UserTestSeeder extends Seeder
                 ]
             );
 
-            Finance::updateOrCreate(
-                ['user_id' => $userFinance->id],
-                [
-                    'nama_lengkap' => 'Finance Test',
-                    'provinsi_id'  => \App\Models\Provinsi::inRandomOrder()->first()?->id,
-                    'kota_id'      => \App\Models\Kota::inRandomOrder()->first()?->id,
-                    'kecamatan_id' => \App\Models\Kecamatan::inRandomOrder()->first()?->id,
-                ]
-            );
-
-
             // =====================================================
-            // 4. PERUSAHAAN (sudah terverifikasi, punya 500 koin)
+            // 4. PERUSAHAAN (Verified, 500 koin, 3 lowongan)
             // =====================================================
             $userPerusahaan = User::updateOrCreate(
-                ['username' => 'perusahaan_test'],
+                ['email' => 'perusahaan@areakerja.test'],
                 [
-                    'email'              => 'perusahaan@areakerja.test',
+                    'username'           => 'perusahaan_test',
+                    'nama_lengkap'       => 'HRD PT AreaKerja',
+                    'telepon'            => '0812345678',
                     'password'           => Hash::make('password123'),
                     'role'               => 'perusahaan',
                     'verified'           => 1,
@@ -127,16 +142,19 @@ class UserTestSeeder extends Seeder
                 ['user_id' => $userPerusahaan->id],
                 [
                     'nama_perusahaan'    => 'PT. AreaKerja Teknologi',
+                    'slug'               => 'pt-areakerja-teknologi',
                     'jenis_perusahaan'   => 'Teknologi Informasi',
                     'website_perusahaan' => 'https://areakerja.test',
                     'telepon_perusahaan' => '0812345678',
                     'whatsapp'           => '0812345678',
                     'legalitas'          => 'PT',
-                    'deskripsi'          => 'Perusahaan teknologi yang bergerak di bidang pengembangan platform rekrutmen digital.',
+                    'deskripsi'          => 'Perusahaan teknologi yang bergerak di bidang pengembangan platform rekrutmen digital & mobile.',
                     'visi'               => 'Menjadi platform rekrutmen terpercaya di Indonesia.',
                     'misi'               => 'Menghubungkan perusahaan dengan kandidat terbaik secara efisien.',
+                    'alamat'             => 'Jl. Teknologi No. 123, Sukamaju',
+                    'kota'               => 'Surabaya',
+                    'provinsi'           => 'Jawa Timur',
                     'img_profile'        => null,
-                    // Field sistem — diset langsung bukan lewat fillable
                     'verification_status' => 'approved',
                     'verified_at'         => now(),
                     'koin_perusahaan'     => 500,
@@ -144,7 +162,7 @@ class UserTestSeeder extends Seeder
                 ]
             );
 
-            // Buat 2 lowongan untuk perusahaan test
+            // 3 Lowongan Perusahaan
             LowonganPerusahaan::updateOrCreate(
                 ['slug' => 'backend-developer-test'],
                 [
@@ -155,14 +173,14 @@ class UserTestSeeder extends Seeder
                     'gaji_awal'        => '5000000',
                     'gaji_akhir'       => '10000000',
                     'label_gaji'       => 'Rp 5jt - 10jt',
-                    'deskripsi'        => '<p>Kami mencari Backend Developer berpengalaman untuk bergabung bersama tim kami.</p>',
+                    'deskripsi'        => '<p>Kami mencari Backend Developer berpengalaman untuk merancang REST API scalable.</p>',
                     'alamat'           => 'Surabaya, Jawa Timur',
                     'kategori'         => 'IT & Software',
                     'batas_lamaran'    => now()->addDays(30),
-                    'syarat_pekerjaan' => 'Minimal S1 Teknik Informatika, pengalaman 2 tahun Laravel, menguasai MySQL.',
+                    'syarat_pekerjaan' => 'Minimal S1 Teknik Informatika, pengalaman 2 tahun Laravel & MySQL.',
                     'tanggung_jawab'   => 'Mengembangkan REST API, optimasi database, code review.',
                     'benefit'          => 'BPJS, THR, Remote Work, Laptop',
-                    'paket_id'         => \App\Models\PaketLowongan::where('nama', 'Gold')->first()?->id,
+                    'paket_id'         => $gold->id,
                     'published_at'     => now(),
                     'expired_at'       => now()->addDays(180),
                 ]
@@ -182,23 +200,47 @@ class UserTestSeeder extends Seeder
                     'alamat'           => 'Surabaya, Jawa Timur',
                     'kategori'         => 'IT & Software',
                     'batas_lamaran'    => now()->addDays(30),
-                    'syarat_pekerjaan' => 'Minimal D3/S1, menguasai Vue.js atau React, pengalaman 1 tahun.',
+                    'syarat_pekerjaan' => 'Minimal D3/S1, menguasai Vue.js atau Flutter, pengalaman 1 tahun.',
                     'tanggung_jawab'   => 'Membangun UI responsif, integrasi API, testing.',
                     'benefit'          => 'BPJS, THR, Flexible Hour',
-                    'paket_id'         => \App\Models\PaketLowongan::where('nama', 'Silver')->first()?->id,
+                    'paket_id'         => $silver->id,
                     'published_at'     => now(),
                     'expired_at'       => now()->addDays(30),
                 ]
             );
 
+            LowonganPerusahaan::updateOrCreate(
+                ['slug' => 'qa-tester-test'],
+                [
+                    'perusahaan_id'    => $perusahaan->id,
+                    'nama'             => 'QA Tester',
+                    'slug'             => 'qa-tester-test',
+                    'jenis'            => 'Full Time',
+                    'gaji_awal'        => '3500000',
+                    'gaji_akhir'       => '6000000',
+                    'label_gaji'       => 'Rp 3.5jt - 6jt',
+                    'deskripsi'        => '<p>Melakukan manual & automated testing untuk aplikasi web dan mobile.</p>',
+                    'alamat'           => 'Surabaya, Jawa Timur',
+                    'kategori'         => 'IT & Software',
+                    'batas_lamaran'    => now()->addDays(30),
+                    'syarat_pekerjaan' => 'Memahami SDLC, API testing dengan Postman, bug report terstruktur.',
+                    'tanggung_jawab'   => 'Membuat test plan, test cases, dan validasi fungsional.',
+                    'benefit'          => 'BPJS, THR, Bonus Kinerja',
+                    'paket_id'         => $bronze->id,
+                    'published_at'     => now(),
+                    'expired_at'       => now()->addDays(7),
+                ]
+            );
 
             // =====================================================
-            // 5. PELAMAR BIASA (profil lengkap, belum jadi kandidat)
+            // 5. PELAMAR REGULER
             // =====================================================
             $userPelamar = User::updateOrCreate(
-                ['username' => 'pelamar_test'],
+                ['email' => 'pelamar@areakerja.test'],
                 [
-                    'email'              => 'pelamar@areakerja.test',
+                    'username'           => 'pelamar_test',
+                    'nama_lengkap'       => 'Budi Santoso',
+                    'telepon'            => '081298765432',
                     'password'           => Hash::make('password123'),
                     'role'               => 'pelamar',
                     'verified'           => 1,
@@ -214,18 +256,21 @@ class UserTestSeeder extends Seeder
                     'telepon_pelamar' => '081298765432',
                     'gender'          => 'laki-laki',
                     'tanggal_lahir'   => '1998-05-15',
-                    'deskripsi_diri'  => 'Saya adalah seorang developer dengan pengalaman 3 tahun di bidang web development. Saya senang belajar teknologi baru dan bekerja dalam tim.',
+                    'deskripsi_diri'  => 'Saya adalah seorang developer dengan pengalaman 3 tahun di bidang web & backend development.',
+                    'alamat'          => 'Jl. Sukolilo No. 45',
+                    'kota'            => 'Surabaya',
+                    'provinsi'        => 'Jawa Timur',
+                    'skills'          => ['Laravel', 'MySQL', 'PHP', 'REST API', 'Git'],
+                    'social_links'    => ['linkedin' => 'https://linkedin.com/in/budi-santoso', 'github' => 'https://github.com/budisantoso'],
                     'img_profile'     => null,
                     'gaji_minimal'    => '5000000',
                     'gaji_maksimal'   => '10000000',
-                    'divisi'          => json_encode(['Backend', 'Full Stack']),
-                    // 'kategori' diset langsung
+                    'divisi'          => ['Backend', 'Full Stack'],
                     'kategori'        => 'pelamar',
                 ]
             );
 
-            // Buat riwayat pendidikan pelamar
-            \App\Models\RiwayatPendidikan::updateOrCreate(
+            RiwayatPendidikan::updateOrCreate(
                 ['pelamar_id' => $pelamar->id, 'asal_pendidikan' => 'Universitas Brawijaya'],
                 [
                     'pendidikan'     => 'S1',
@@ -236,38 +281,28 @@ class UserTestSeeder extends Seeder
                 ]
             );
 
-            // Buat skill pelamar
-            \App\Models\Skill::updateOrCreate(
-                ['pelamar_id' => $pelamar->id, 'skill' => 'Laravel'],
-                ['experience_level' => 'Advanced']
-            );
-            \App\Models\Skill::updateOrCreate(
-                ['pelamar_id' => $pelamar->id, 'skill' => 'MySQL'],
-                ['experience_level' => 'Intermediate']
-            );
-
-            // Buat pengalaman kerja
-            \App\Models\PengalamanKerja::updateOrCreate(
+            PengalamanKerja::updateOrCreate(
                 ['pelamar_id' => $pelamar->id, 'nama_perusahaan' => 'PT Maju Bersama'],
                 [
-                    'posisi_pekerjaan' => 'Junior Backend Developer',
+                    'posisi_pekerjaan'  => 'Junior Backend Developer',
                     'jabatan_pekerjaan' => 'Staff',
-                    'tahun_awal'       => '2020',
-                    'tahun_akhir'      => '2023',
-                    'deskripsi'        => 'Mengembangkan REST API menggunakan Laravel dan PostgreSQL.',
+                    'tahun_awal'        => '2020',
+                    'tahun_akhir'       => '2023',
+                    'deskripsi'         => 'Mengembangkan REST API menggunakan Laravel dan MySQL.',
                 ]
             );
 
-
             // =====================================================
-            // 6. KANDIDAT AKTIF (profil lengkap, sudah bayar, diverifikasi)
+            // 6. KANDIDAT AKTIF
             // =====================================================
             $userKandidat = User::updateOrCreate(
-                ['username' => 'kandidat_test'],
+                ['email' => 'kandidat@areakerja.test'],
                 [
-                    'email'              => 'kandidat@areakerja.test',
+                    'username'           => 'kandidat_test',
+                    'nama_lengkap'       => 'Siti Rahayu',
+                    'telepon'            => '081312345678',
                     'password'           => Hash::make('password123'),
-                    'role'               => 'pelamar',  // role tetap pelamar, beda di kolom kategori
+                    'role'               => 'pelamar',
                     'verified'           => 1,
                     'status'             => 0,
                     'alasan_freeze_akun' => null,
@@ -277,24 +312,27 @@ class UserTestSeeder extends Seeder
             $kandidat = Pelamar::updateOrCreate(
                 ['user_id' => $userKandidat->id],
                 [
-                    'nama_pelamar'    => 'Siti Rahayu',
-                    'telepon_pelamar' => '081312345678',
-                    'gender'          => 'perempuan',
-                    'tanggal_lahir'   => '2000-08-20',
-                    'deskripsi_diri'  => 'Frontend developer dengan keahlian Vue.js dan React. Memiliki passion dalam UI/UX dan desain produk digital.',
-                    'img_profile'     => null,
-                    'gaji_minimal'    => '4000000',
-                    'gaji_maksimal'   => '8000000',
-                    'divisi'          => json_encode(['Frontend', 'UI/UX']),
-                    // Sudah jadi kandidat aktif
-                    'kategori'        => 'kandidat aktif',
-                    'mulai_pelatihan' => now()->subDays(10),
+                    'nama_pelamar'      => 'Siti Rahayu',
+                    'telepon_pelamar'   => '081312345678',
+                    'gender'            => 'perempuan',
+                    'tanggal_lahir'     => '2000-08-20',
+                    'deskripsi_diri'    => 'Frontend developer dengan keahlian Vue.js dan Flutter. Memiliki sertifikasi UI/UX.',
+                    'alamat'            => 'Jl. Dharmawangsa No. 12',
+                    'kota'              => 'Surabaya',
+                    'provinsi'          => 'Jawa Timur',
+                    'skills'            => ['Vue.js', 'Flutter', 'Figma', 'JavaScript', 'CSS3'],
+                    'social_links'      => ['linkedin' => 'https://linkedin.com/in/siti-rahayu', 'github' => 'https://github.com/sitirahayu'],
+                    'img_profile'       => null,
+                    'gaji_minimal'      => '4000000',
+                    'gaji_maksimal'     => '8000000',
+                    'divisi'            => ['Frontend', 'UI/UX'],
+                    'kategori'          => 'kandidat aktif',
+                    'mulai_pelatihan'   => now()->subDays(10),
                     'selesai_pelatihan' => now()->addDays(80),
                 ]
             );
 
-            // Riwayat pendidikan kandidat
-            \App\Models\RiwayatPendidikan::updateOrCreate(
+            RiwayatPendidikan::updateOrCreate(
                 ['pelamar_id' => $kandidat->id, 'asal_pendidikan' => 'Institut Teknologi Sepuluh Nopember'],
                 [
                     'pendidikan'      => 'S1',
@@ -304,27 +342,6 @@ class UserTestSeeder extends Seeder
                     'tahun_akhir'     => '2022',
                 ]
             );
-
-            // Skill kandidat
-            \App\Models\Skill::updateOrCreate(
-                ['pelamar_id' => $kandidat->id, 'skill' => 'Vue.js'],
-                ['experience_level' => 'Advanced']
-            );
-            \App\Models\Skill::updateOrCreate(
-                ['pelamar_id' => $kandidat->id, 'skill' => 'Flutter'],
-                ['experience_level' => 'Intermediate']
-            );
-            \App\Models\Skill::updateOrCreate(
-                ['pelamar_id' => $kandidat->id, 'skill' => 'Figma'],
-                ['experience_level' => 'Advanced']
-            );
-
-            // Tambah harga Beli Kandidat jika belum ada (perbaikan Bug #4)
-            Hargakoin::updateOrCreate(
-                ['nama' => 'Beli Kandidat'],
-                ['harga' => 100]
-            );
-
         });
     }
 }

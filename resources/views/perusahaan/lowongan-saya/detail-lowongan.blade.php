@@ -24,7 +24,7 @@
                 </p>
 
                 <p class="text-xs sm:text-sm text-gray-400 mt-1 m-0 sm:m-2 break-words">
-                    {{ $data->perusahaan->alamatUtama->kota->nama }}
+                    {{ $data->perusahaan->alamatUtama->kota->nama ?? '-' }}
                 </p>
             </div>
 

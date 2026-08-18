@@ -72,17 +72,17 @@
             <p class="text-center text-gray-400 text-sm mb-6">gunakan email Anda untuk pendaftaran</p>
 
             <!-- Form -->
-            <form action="{{ route('loginproses_finance') }}" method="POST" class="space-y-4">
+            <form action="{{ route('loginproses') }}" method="POST" class="space-y-4">
                 @csrf
                 <div>
-                    <label class="space-y-4 block text-sm font-medium m-2">Nama Pengguna</label>
-                    <input type="text" placeholder="Nama Pengguna" name="username" id="username"
+                    <label class="block text-sm font-medium m-2">Email Finance</label>
+                    <input type="email" placeholder="finance@areakerja.test" name="email" id="email" value="{{ old('email') }}" required
                         class="w-full border-gray-700 border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
                 </div>
                 <div>
                     <label class="block text-sm font-medium m-2">Kata Sandi</label>
                     <div class="relative">
-                        <input type="password" placeholder="Kata Sandi" name="password" id="password"
+                        <input type="password" placeholder="Kata Sandi" name="password" id="password" required
                             class="w-full border-gray-700 border rounded-md p-2 pr-10 focus:outline-none focus:ring-2 focus:ring-orange-400">
                         <span class="absolute right-3 top-2 text-gray-500 cursor-pointer">👁️</span>
                     </div>
@@ -91,7 +91,7 @@
                 <!-- Ingat saya + lupa kata sandi -->
                 <div class="flex items-center justify-between text-sm">
                     <label class="flex items-center">
-                        <input type="checkbox" class="mr-2">
+                        <input type="checkbox" name="remember" class="mr-2">
                         Ingat saya
                     </label>
                     <a href="#" class="text-orange-500 hover:underline">Lupa kata sandi</a>

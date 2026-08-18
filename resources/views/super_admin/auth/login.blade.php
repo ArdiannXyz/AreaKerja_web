@@ -86,21 +86,21 @@
 
                 <p class="text-center text-gray-500 mb-6 mt-6 text-sm">gunakan email Anda untuk pendaftaran</p>
                 <!-- Form Login -->
-                <form action="{{ route('loginproses_superadmin') }}" method="POST" class="space-y-4">
+                <form action="{{ route('loginproses') }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
-                        <label for="username" class="block text-sm font-medium text-gray-700">Nama Pengguna</label>
-                        <input type="text" value="{{ old('username') }}" id="username" name="username" placeholder="Nama Pengguna"
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email Super Admin</label>
+                        <input type="email" value="{{ old('email') }}" id="email" name="email" required placeholder="superadmin@areakerja.test"
                             class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Kata Sandi</label>
-                        <input type="password" id="password" name="password" placeholder="Kata Sandi"
+                        <input type="password" id="password" name="password" required placeholder="Kata Sandi"
                             class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <label class="flex items-center">
-                            <input type="checkbox" class="mr-2 border rounded-sm"> Ingat saya
+                            <input type="checkbox" name="remember" class="mr-2 border rounded-sm"> Ingat saya
                         </label>
                         <a href="#" class="text-orange-500 hover:underline">Lupa kata sandi?</a>
                     </div>

@@ -24,9 +24,9 @@
                         <div>
                             <span class="font-bold text-xl">{{ Auth::user()->username }}</span>
                             <p class="text-lg">{{ Auth::user()->perusahaan->jenis_perusahaan }}</p>
-                            <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->alamatUtama->kota->nama }},
-                                {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama }},
-                                {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama }}</p>
+                            <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }},
+                                {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }},
+                                {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}</p>
                         </div>
                     </div>
 
@@ -309,9 +309,9 @@
                     <div>
                         <span class="font-semibold">{{ Auth::user()->username }}</span>
                         <p class="text-lg m-1">{{ Auth::user()->perusahaan->jenis_perusahaan }}</p>
-                        <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->alamatUtama->kota->nama }},
-                            {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama }},
-                            {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama }}</p>
+                        <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }},
+                            {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }},
+                            {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}</p>
                     </div>
                 </div>
 
