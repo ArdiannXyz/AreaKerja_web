@@ -64,8 +64,8 @@
 
         <!-- Tombol navigasi -->
         <div class="flex justify-between mt-6">
-            <button onclick="goToStep(1)" class="text-orange-500">Kembali</button>
-            <button onclick="goToStep(3)" class="text-orange-500 font-semibold">Selanjutnya</button>
+            <button type="button" onclick="goToStep(1)" class="text-gray-500 hover:text-orange-500 font-medium">Kembali</button>
+            <button type="button" id="btnNextStep2" onclick="goToStep(3)" class="text-orange-500 font-semibold hover:text-orange-600">Selanjutnya</button>
         </div>
     </div>
 </div>

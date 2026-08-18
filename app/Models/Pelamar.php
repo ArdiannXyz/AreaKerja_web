@@ -11,6 +11,7 @@ class Pelamar extends Model
     use HasFactory;
 
     protected $table = 'pelamars';
+
     protected $fillable = [
         'user_id',
         'nama_pelamar',
@@ -18,56 +19,33 @@ class Pelamar extends Model
         'gender',
         'tanggal_lahir',
         'deskripsi_diri',
+        'alamat',
+        'kota',
+        'provinsi',
+        'skills',
+        'social_links',
+        'resume_file',
         'img_profile',
         'gaji_minimal',
         'gaji_maksimal',
         'divisi',
-        // Field berikut SENGAJA TIDAK dimasukkan karena dikelola sistem:
-        // 'kategori'         → diubah oleh Finance saat verifikasi pembayaran
-        // 'mulai_pelatihan'  → diubah oleh Admin/SuperAdmin
-        // 'selesai_pelatihan' → diubah oleh Admin/SuperAdmin
+        'kategori',
+        'mulai_pelatihan',
+        'selesai_pelatihan',
     ];
 
     protected $casts = [
-        'divisi' => 'array',
+        'skills'            => 'array',
+        'social_links'      => 'array',
+        'divisi'            => 'array',
+        'tanggal_lahir'     => 'date',
+        'mulai_pelatihan'   => 'datetime',
+        'selesai_pelatihan' => 'datetime',
     ];
-
-    public function getDivisiAttribute($value)
-    {
-        // kalau kosong → array kosong
-        if (!$value) return [];
-
-        // 1. Bersihkan karakter escape yang rusak (misal: \" )
-        $clean = str_replace(['\\"', '\\\''], ['"', "'"], $value);
-
-        // 2. Coba decode JSON
-        $decoded = json_decode($clean, true);
-
-        // 3. Kalau decode berhasil dan hasilnya array → return
-        if (is_array($decoded)) {
-            return $decoded;
-        }
-
-        // 4. Jika decode tetap gagal → fallback:
-        //    hilangkan bracket [ ] lalu pecah manual berdasarkan koma
-        $fallback = trim($clean, "[]");
-
-        // jika hasil kosong → return array kosong
-        if (!$fallback) return [];
-
-        // pisahkan berdasarkan koma
-        $items = array_map(function ($item) {
-            return trim($item, "\"' ");
-        }, explode(',', $fallback));
-
-        return array_filter($items); // hilangkan kosong
-    }
-
-
 
     public function getUmurAttribute()
     {
-        return Carbon::parse($this->tanggal_lahir)->age;
+        return $this->tanggal_lahir ? Carbon::parse($this->tanggal_lahir)->age : null;
     }
 
     public function getGenderSingkatAttribute()
@@ -95,75 +73,80 @@ class Pelamar extends Model
         );
     }
 
-
-
     public function user()
     {
-        return $this->belongsTo(User::class);
-    }
-
-    public function alamat_pelamar()
-    {
-        return $this->hasMany(AlamatPelamar::class, 'pelamar_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function riwayat_pendidikan()
     {
-        return $this->hasMany(RiwayatPendidikan::class, 'pelamar_id');
-    }
-
-    public function pengalaman_organisasi()
-    {
-        return $this->hasMany(Organisasi::class, 'pelamar_id');
+        return $this->hasMany(RiwayatPendidikan::class, 'pelamar_id', 'id');
     }
 
     public function pengalaman_kerja()
     {
-        return $this->hasMany(PengalamanKerja::class, 'pelamar_id');
+        return $this->hasMany(PengalamanKerja::class, 'pelamar_id', 'id');
     }
 
-    public function skill()
+    public function lowongans()
     {
-        return $this->hasMany(Skill::class, 'pelamar_id');
-    }
-
-    public function sosmed()
-    {
-        return $this->hasOne(SocialMediaPelamar::class, 'pelamar_id');
+        return $this->belongsToMany(LowonganPerusahaan::class, 'pelamar_lowongans', 'pelamar_id', 'lowongan_id')
+                    ->withPivot('status')
+                    ->withTimestamps();
     }
 
     public function simpanLowongans()
     {
-        return $this->hasMany(SimpanLowongan::class, 'pelamar_id');
+        return $this->hasMany(PelamarLowongan::class, 'pelamar_id', 'id')->where('status', 'saved');
     }
 
-    public function pembelianKandidat()
-    {
-        return $this->hasMany(PembeliKandidat::class, 'pelamar_id');
-    }
-
-    public function divisi_pelamars()
-    {
-        return $this->hasMany(DivisiPelamar::class, 'pelamar_id');
-    }
-
-
-    // public function pelamar_lowongan()
-    // {
-    //     return 
-    // }
-
-
-    public function lowongans()
-    {
-        return $this->belongsToMany(LowonganPerusahaan::class, 'pelamar_lowongans', 'pelamar_id', 'lowongan_id')->withPivot('status')->withTimestamps();
-    }
     public function isCvComplete()
     {
         return $this->riwayat_pendidikan()->exists()
             && $this->pengalaman_kerja()->exists()
-            && $this->skill()->exists()
-            && $this->pengalaman_organisasi()->exists()
-            && $this->sosmed()->exists();
+            && !empty($this->skills);
+    }
+
+    public function getPengalamanOrganisasiAttribute()
+    {
+        return collect();
+    }
+
+    public function getSkillAttribute()
+    {
+        return collect($this->skills ?? [])->values()->map(function ($item, $index) {
+            $id = $index + 1;
+            if (is_array($item)) {
+                return (object)array_merge(['id' => $id], $item);
+            }
+            return (object)['id' => $id, 'skill' => (string)$item, 'experience_level' => 'Menengah'];
+        });
+    }
+
+    public function getAlamatPelamarAttribute()
+    {
+        return collect([
+            (object)[
+                'id'        => 1,
+                'label'     => 'Alamat Utama',
+                'desa'      => $this->alamat,
+                'detail'    => $this->alamat,
+                'kecamatan' => $this->kota,
+                'kota'      => $this->kota,
+                'provinsi'  => $this->provinsi,
+                'kode_pos'  => '60111',
+            ]
+        ]);
+    }
+
+    public function getSosmedAttribute()
+    {
+        $links = $this->social_links ?? [];
+        return (object)[
+            'instagram' => $links['instagram'] ?? null,
+            'linkedin'  => $links['linkedin'] ?? null,
+            'website'   => $links['website'] ?? null,
+            'twitter'   => $links['twitter'] ?? null,
+        ];
     }
 }

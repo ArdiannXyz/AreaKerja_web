@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -12,14 +11,14 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
+    protected $table = 'users';
+
     protected $fillable = [
         'username',
+        'nama_lengkap',
         'email',
+        'telepon',
+        'avatar',
         'password',
         'role',
         'verified',
@@ -27,67 +26,39 @@ class User extends Authenticatable
         'alasan_freeze_akun',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'verified'          => 'boolean',
+        'status'            => 'integer',
     ];
-
-    public function superadmin()
-    {
-        return $this->hasOne(SuperAdmin::class, 'user_id');
-    }
 
     public function pelamar()
     {
         return $this->hasOne(Pelamar::class, 'user_id', 'id');
     }
 
-    public function finance()
-    {
-        return $this->hasOne(Finance::class, 'user_id');
-    }
-
     public function perusahaan()
     {
-        return $this->hasOne(Perusahaan::class, 'user_id');
-    } 
-
-    public function admin()
-    {
-        return $this->hasOne(Admin::class, 'user_id');
-    }
-
-    public function passwordVerification()
-    {
-        return $this->hasMany(PasswordVerification::class, 'user_id');
-    }
-
-    public function emailVerifications()
-    {
-        return $this->hasMany(EmailVerification::class, 'user_id');
-    }
-
-    public function pembayaran()
-    {
-        return $this->hasMany(HargaPembayaran::class, 'user_id');
+        return $this->hasOne(Perusahaan::class, 'user_id', 'id');
     }
 
     public function catatanKoins()
     {
-        return $this->hasMany(CatatanKoin::class, 'user_id');
+        return $this->hasMany(CatatanKoin::class, 'user_id', 'id');
+    }
+
+    public function catatanCashs()
+    {
+        return $this->hasMany(CatatanCash::class, 'user_id', 'id');
+    }
+
+    public function notifikasis()
+    {
+        return $this->hasMany(Notifikasi::class, 'user_id', 'id');
     }
 }

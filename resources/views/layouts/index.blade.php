@@ -40,9 +40,6 @@
         $user = Auth::user();
         $pelamar = $user->pelamar ?? null;
 
-        // Ambil alamat pertama (karena hasMany menghasilkan collection)
-        $alamat = $pelamar?->alamat_pelamar->first();
-
         // Cek profil belum lengkap
         $isProfileIncomplete =
             !$pelamar ||
@@ -50,18 +47,13 @@
             $pelamar->tanggal_lahir == null ||
             $pelamar->gender == null ||
             $pelamar->telepon_pelamar == null ||
-            $pelamar->img_profile == null ||
             $pelamar->gaji_minimal == null ||
             $pelamar->gaji_maksimal == null;
 
         // Cek alamat belum lengkap atau belum ada sama sekali
         $isAddressIncomplete =
-            !$alamat ||
-            $alamat->desa == null ||
-            $alamat->kecamatan == null ||
-            $alamat->kota == null ||
-            $alamat->provinsi == null ||
-            $alamat->kode_pos == null;
+            !$pelamar ||
+            $pelamar->alamat == null;
     @endphp
 
     @if (Auth::check() && $user->role === 'pelamar' && ($isProfileIncomplete || $isAddressIncomplete))

@@ -9,10 +9,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Perusahaan extends Model
 {
     use HasFactory;
+
     protected $table = 'perusahaans';
+
     protected $fillable = [
         'user_id',
         'nama_perusahaan',
+        'slug',
         'jenis_perusahaan',
         'website_perusahaan',
         'telepon_perusahaan',
@@ -21,21 +24,22 @@ class Perusahaan extends Model
         'deskripsi',
         'visi',
         'misi',
+        'alamat',
+        'kota',
+        'provinsi',
         'img_profile',
-        // Field berikut SENGAJA TIDAK dimasukkan karena dikelola sistem:
-        // 'slug'                → di-generate otomatis oleh boot() method
-        // 'koin_perusahaan'     → dikelola oleh Finance melalui transaksi koin
-        // 'is_berlangganan'     → dikelola oleh SuperAdmin/Finance
-        // 'tanggal_berlangganan'→ dikelola oleh SuperAdmin/Finance
-        // 'tanggal_expired'     → dikelola oleh sistem langganan
-        // 'verification_status' → dikelola oleh Admin verifikasi
-        // 'verified_at'         → diisi otomatis saat verifikasi
-        // 'verification_note'   → diisi oleh Admin
+        'koin_perusahaan',
+        'verification_status',
+        'verified_at',
+        'is_berlangganan',
+        'tanggal_expired',
     ];
 
     protected $casts = [
-        // 'tanggal_berlangganan' => 'datetime',
         'tanggal_expired' => 'datetime',
+        'verified_at'     => 'datetime',
+        'koin_perusahaan' => 'integer',
+        'is_berlangganan' => 'integer',
     ];
 
     protected static function boot()
@@ -43,11 +47,13 @@ class Perusahaan extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->slug = static::generateUniqueSlug($model->nama_perusahaan);
+            if (empty($model->slug)) {
+                $model->slug = static::generateUniqueSlug($model->nama_perusahaan);
+            }
         });
 
         static::updating(function ($model) {
-            if ($model->isDirty('nama_perusahaan')) {
+            if ($model->isDirty('nama_perusahaan') && empty($model->slug)) {
                 $model->slug = static::generateUniqueSlug($model->nama_perusahaan);
             }
         });
@@ -59,7 +65,6 @@ class Perusahaan extends Model
         $originalSlug = $slug;
         $counter = 1;
 
-        // Cek apakah slug sudah ada
         while (self::where('slug', $slug)->exists()) {
             $slug = $originalSlug . '-' . $counter++;
         }
@@ -67,30 +72,15 @@ class Perusahaan extends Model
         return $slug;
     }
 
-    public function resolveRouteBinding($value, $field = null)
+    public function getAlamatUtamaAttribute()
     {
-        if (request()->routeIs('superadmin.panggilan.list')) {
-            return $this->findOrFail($value);
-        }
-
-
-        // Hanya redirect pada GET
-        if (request()->method() === 'GET' && is_numeric($value)) {
-
-            $item = $this->findOrFail($value);
-
-            return abort(301, '', [
-                'Location' => route(
-                    request()->route()->getName(),
-                    [
-                        'perusahaan' => $item->slug,
-                    ]
-                )
-            ]);
-        }
-
-        // PUT / POST / DELETE → jangan redirect
-        return $this->where('slug', $value)->orWhere('id', $value)->firstOrFail();
+        return (object)[
+            'desa'      => $this->alamat,
+            'detail'    => $this->alamat,
+            'kode_pos'  => '60111',
+            'kota'      => (object)['nama' => $this->kota ?? 'Surabaya'],
+            'provinsi'  => (object)['nama' => $this->provinsi ?? 'Jawa Timur'],
+        ];
     }
 
     public function isApproved()
@@ -98,41 +88,24 @@ class Perusahaan extends Model
         return $this->verification_status === 'approved';
     }
 
-
-
-
+    public function getRouteKeyName()
+    {
+        return 'slug';
+    }
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    public function alamat_perusahaan()
-    {
-        return $this->hasMany(AlamatPerusahaan::class, 'perusahaan_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function pasanglowongan()
     {
-        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id');
+        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
     }
 
     public function lowonganPerusahaans()
     {
-        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id');
-    }
-
-
-    public function pembelianKandidats()
-    {
-        return $this->hasManyThrough(
-            PembeliKandidat::class,
-            LowonganPerusahaan::class,
-            'perusahaan_id',            // FK di lowongan_perusahaans
-            'lowongan_perusahaan_id',   // FK di pembeli_kandidats
-            'id',                       // PK di perusahaans
-            'id'                        // PK di lowongan_perusahaans
-        );
+        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
     }
 
     public function catatanKoins()
@@ -142,11 +115,6 @@ class Perusahaan extends Model
 
     public function talentHunters()
     {
-        return $this->hasMany(TalentHunter::class, 'perusahaan_id');
-    }
-
-    public function alamatUtama()
-    {
-        return $this->hasOne(AlamatPerusahaan::class)->where('utama', 1);
+        return $this->hasMany(TalentHunter::class, 'perusahaan_id', 'id');
     }
 }

@@ -3,11 +3,7 @@
 namespace App\Providers;
 
 use App\Models\DaftarBank;
-use App\Models\HargaPembayaran;
 use App\Models\Notifikasi;
-use App\Models\PelamarLowongan;
-use App\Models\Provinsi;
-use App\Models\SocialLink;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -27,17 +23,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // // Bagikan $notifs ke semua view yang extend layouts.index
-        // Share notifikasi ke semua view pelamar
+        // Share notifikasi ke semua view
         View::composer('*', function ($view) {
             if (!Auth::check()) {
-                // kalau belum login, kosongkan
                 $notifikasis = collect();
                 $jumlahBelumDibaca = 0;
             } else {
                 $user = Auth::user();
-
-                // ambil notifikasi berdasarkan user_id (sama untuk pelamar & perusahaan)
                 $notifikasis = Notifikasi::where('user_id', $user->id)
                     ->orderBy('created_at', 'desc')
                     ->take(5)
@@ -48,61 +40,49 @@ class AppServiceProvider extends ServiceProvider
                     ->count();
             }
 
-            // kirim ke semua view
             $view->with([
-                'global_notifikasis' => $notifikasis,
+                'global_notifikasis'       => $notifikasis,
                 'global_notifikasi_unread' => $jumlahBelumDibaca,
             ]);
         });
 
+        // Default social links collection
         View::composer('layouts.footer', function ($view) {
-            $view->with('socialLinks', SocialLink::all());
+            $socialLinks = collect([
+                (object)['nama' => 'instagram', 'link' => 'https://instagram.com/areakerjacom'],
+                (object)['nama' => 'linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
+                (object)['nama' => 'facebook', 'link' => 'https://facebook.com/areakerja'],
+                (object)['nama' => 'youtube', 'link' => 'https://youtube.com/@areakerja'],
+            ]);
+            $view->with('socialLinks', $socialLinks);
         });
 
-
-        //top up
+        // Top up data khusus perusahaan
         View::composer('*', function ($view) {
-            // Cek apakah user login dan role perusahaan
             if (Auth::check() && Auth::user()->role === 'perusahaan') {
-
-                // Data khusus perusahaan
-                $hargaPembayarans = HargaPembayaran::where('jumlah_koin', '>', 0)->get();
+                $hargaPembayarans = collect([
+                    (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000, 'icon' => 'bitcoin.png'],
+                    (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000, 'icon' => 'bit2.png'],
+                    (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000, 'icon' => 'bit3.png'],
+                ]);
                 $daftarBank = DaftarBank::all();
 
-                // Share ke semua view
                 $view->with([
                     'hargaPembayarans' => $hargaPembayarans,
-                    'daftarBank' => $daftarBank,
+                    'daftarBank'       => $daftarBank,
                 ]);
             }
         });
 
-        // Share provinsis ke semua view admin/sidebar
+        // Sidebar Admin
         View::composer('admin.sidebar.index', function ($view) {
-            $view->with('provinsis', Provinsi::orderBy('nama')->get());
+            $view->with('provinsis', collect());
         });
 
-
-        //Perusahaan
+        // Perusahaan Layout
         View::composer('layouts.index-perusahaan', function ($view) {
             $user = auth()->user();
-
             $view->with('perusahaan', $user ? $user->perusahaan : null);
         });
-
-        // View::composer('layouts.index', function ($view) {
-        //     $unreadCount = 0;
-
-        //     if (Auth::check() && Auth::user()->pelamar) {
-        //         $pelamarId = Auth::user()->pelamar->id;
-
-        //         $unreadCount = PelamarLowongan::where('pelamar_id', $pelamarId)
-        //             ->whereNotNull('status')
-        //             ->where('is_read', 0)
-        //             ->count();
-        //     }
-
-        //     $view->with('unreadCount', $unreadCount);
-        // });
     }
 }

@@ -84,20 +84,32 @@ class LowonganPerusahaanController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         $valid = $request->validate([
-            "nama"    =>    "required",
-            "alamat"  =>    "required",
-            "jenis"   =>    "required",
-            "gaji_awal"  =>   "required",
-            "gaji_akhir"  =>   "required",
-            "deskripsi"   =>    "required",
-            "syarat_pekerjaan"  =>   "required",
-            "batas_lamaran"        =>   "required",
-            'kategori' => 'nullable',
-            'benefit' => 'nullable',
-            'label_gaji' => 'nullable',
-            'tanggung_jawab' => 'nullable',
+            'nama'             => 'required|string|max:255',
+            'alamat'           => 'required|string|max:255',
+            'jenis'            => 'required|string',
+            'kategori'         => 'required|string',
+            'label_gaji'       => 'required|string|max:100',
+            'benefit'          => 'required|string',
+            'gaji_awal'        => 'required|numeric|min:0',
+            'gaji_akhir'       => 'required|numeric|min:0',
+            'deskripsi'        => 'required|string',
+            'tanggung_jawab'   => 'required|string',
+            'syarat_pekerjaan' => 'required|string',
+            'batas_lamaran'    => 'required|date',
+        ], [
+            'nama.required'             => 'Judul lowongan wajib diisi.',
+            'alamat.required'           => 'Alamat lowongan wajib diisi.',
+            'jenis.required'            => 'Jenis lowongan wajib dipilih.',
+            'kategori.required'         => 'Kategori lowongan wajib dipilih.',
+            'label_gaji.required'       => 'Label gaji wajib diisi.',
+            'benefit.required'          => 'Benefit lowongan wajib diisi.',
+            'gaji_awal.required'        => 'Gaji minimal wajib diisi.',
+            'gaji_akhir.required'       => 'Gaji maksimal wajib diisi.',
+            'deskripsi.required'        => 'Deskripsi lowongan wajib diisi.',
+            'tanggung_jawab.required'   => 'Tanggung jawab wajib diisi.',
+            'syarat_pekerjaan.required' => 'Pendidikan/Syarat pekerjaan wajib dipilih.',
+            'batas_lamaran.required'    => 'Batas waktu lamaran wajib diisi.',
         ]);
 
 
@@ -281,22 +293,22 @@ class LowonganPerusahaanController extends Controller
         // Potong koin
         $perusahaan->decrement('koin_perusahaan', $hargaKoin->harga);
 
-        // 🔥 LOGIKA INTI
+        // 🔥 LOGIKA INTI: Beli paket langsung mempublish lowongan secara otomatis
         if ($lowongan->published_at && $lowongan->expired_at && $lowongan->expired_at > now()) {
-
             // ➕ TAMBAH WAKTU (EXTEND)
             $lowongan->update([
                 'paket_id'   => $paket->id,
                 'expired_at' => $lowongan->expired_at->addDays($paket->batas_listing),
             ]);
+            $pesanSukses = 'Paket berhasil dibeli. Masa aktif lowongan berhasil diperpanjang ' . $paket->batas_listing . ' hari.';
         } else {
-
-            // 📌 BELUM / SUDAH EXPIRED → publish ulang nanti
+            // 🚀 PUBLISH LANGSUNG
             $lowongan->update([
                 'paket_id'     => $paket->id,
-                'published_at' => null,
-                'expired_at'   => null,
+                'published_at' => now(),
+                'expired_at'   => now()->addDays($paket->batas_listing),
             ]);
+            $pesanSukses = 'Paket ' . $paket->nama . ' berhasil dibeli! Lowongan Anda kini telah AKTIF dan terbit selama ' . $paket->batas_listing . ' hari.';
         }
 
         CatatanKoin::create([
@@ -309,7 +321,7 @@ class LowonganPerusahaanController extends Controller
         ]);
 
         return redirect()->route('lowongan.saya.perusahaan')
-            ->with('success', 'Paket berhasil dibeli. Waktu lowongan otomatis diperpanjang.');
+            ->with('success', $pesanSukses);
     }
 
 

@@ -2,11 +2,7 @@
 @section('content')
     <!-- Hero Section -->
     <div class="relative">
-        @php
-            $header = \App\Models\SocialLink::where('nama', 'header_lowongan_tersimpan')->first();
-        @endphp
-
-        <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/tersimpan.jpg') }}"
+        <img src="{{ asset('images/tersimpan.jpg') }}"
             alt="Header Image" class="w-full h-[400px] sm:h-[500px] md:h-[600px] object-cover">
 
         <div class="absolute inset-0 bg-black bg-opacity-40"></div>

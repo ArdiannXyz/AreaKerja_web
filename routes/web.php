@@ -144,7 +144,7 @@ Route::controller(EmailSubController::class)->group(function () {
 
 Route::controller(PelamarController::class)->middleware('CheckUserStatus')->group(function () {
     Route::get('/pelamar/home', 'index')->name('beranda');
-    Route::get('/pelamar/detail-lowongan/{perusahaan}/{lowongan}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
+    Route::get('/pelamar/detail-lowongan/{perusahaan:slug}/{lowongan:slug}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
     Route::get('/pelamar/daftar-kandidat', 'daftar_kandidat')->name('pelamar.daftar-kandidat');
 });
 

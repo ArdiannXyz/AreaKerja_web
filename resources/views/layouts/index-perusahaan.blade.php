@@ -204,31 +204,18 @@
         $user = Auth::user();
         $perusahaan = $user->perusahaan ?? null;
 
-        // Ambil alamat pertama (karena hasMany menghasilkan collection)
-        $alamat = $perusahaan?->alamatUtama?->first();
-
         // Cek profil belum lengkap
         $isProfileIncomplete =
             !$perusahaan ||
             $perusahaan->nama_perusahaan == null ||
             $perusahaan->jenis_perusahaan == null ||
             $perusahaan->deskripsi == null ||
-            $perusahaan->visi == null ||
-            $perusahaan->misi == null ||
-            $perusahaan->telepon_perusahaan == null ||
-            $perusahaan->whatsapp == null ||
-            $perusahaan->img_profile == null;
+            $perusahaan->telepon_perusahaan == null;
 
         // Cek alamat belum lengkap atau belum ada sama sekali
         $isAddressIncomplete =
-            !$alamat ||
-            $alamat->desa == null ||
-            $alamat->label == null ||
-            $alamat->detail == null ||
-            $alamat->kecamatan->nama == null ||
-            $alamat->kota->nama == null ||
-            $alamat->provinsi->nama == null ||
-            $alamat->kode_pos == null;
+            !$perusahaan ||
+            $perusahaan->alamat == null;
     @endphp
 
     @if (Auth::check() && $user->role === 'perusahaan' && ($isProfileIncomplete || $isAddressIncomplete))
@@ -859,7 +846,7 @@
         // 🔑 Update status tombol (disable/enable)
         function updateButtons() {
             // Step 1: tombol konfirmasi paket
-            const btnStep1 = document.querySelector('#modalStep1 button');
+            const btnStep1 = document.getElementById('btnConfirmStep1');
             if (btnStep1) {
                 btnStep1.disabled = !selectedKoin;
                 btnStep1.classList.toggle('opacity-50', !selectedKoin);
@@ -867,13 +854,30 @@
             }
 
             // Step 2: tombol selanjutnya metode pembayaran
-            const btnStep2 = document.querySelector('#modalStep2 button:last-child');
+            const btnStep2 = document.getElementById('btnNextStep2');
             if (btnStep2) {
                 btnStep2.disabled = !selectedBank;
                 btnStep2.classList.toggle('opacity-50', !selectedBank);
                 btnStep2.classList.toggle('cursor-not-allowed', !selectedBank);
             }
         }
+
+        // Tutup modal jika klik di luar area konten (backdrop) atau tekan tombol Escape
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('[id^="modalStep"]').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        closeAllModal();
+                    }
+                });
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    closeAllModal();
+                }
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             // Step 1: Pilih Paket Koin

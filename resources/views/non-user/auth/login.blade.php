@@ -129,20 +129,20 @@
                         @csrf
 
                         <div>
-                            <label for="username" class="block text-sm font-medium text-gray-700">Nama Pengguna</label>
-                            <input type="text" id="username" name="username" placeholder="Nama Pengguna"
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="email@contoh.com"
                                 class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
                         </div>
 
                         <div>
                             <label for="password" class="block text-sm font-medium text-gray-700">Kata Sandi</label>
-                            <input type="password" id="password" name="password" placeholder="Kata Sandi"
+                            <input type="password" id="password" name="password" required placeholder="Kata Sandi"
                                 class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
                         </div>
 
                         <div class="flex justify-between items-center text-sm">
                             <label class="flex items-center">
-                                <input type="checkbox" class="mr-2 border rounded-sm"> Ingat saya
+                                <input type="checkbox" name="remember" class="mr-2 border rounded-sm"> Ingat saya
                             </label>
                             <a href="{{ route('verifikasi_pelamar') }}" class="text-orange-500 hover:underline">
                                 Lupa kata sandi?
