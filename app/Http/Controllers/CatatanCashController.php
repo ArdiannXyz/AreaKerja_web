@@ -4,54 +4,52 @@ namespace App\Http\Controllers;
 
 use App\Models\CatatanCash;
 use App\Models\DaftarBank;
-use App\Models\HargaPembayaran;
 use App\Models\Perusahaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 
-
 class CatatanCashController extends Controller
 {
-    //simpan transaksi baru
+    // simpan transaksi baru
     public function store(Request $request)
     {
         $request->validate([
-            'harga_pembayaran_id' => 'required|exists:harga_pembayarans,id',
             'daftar_bank_id' => 'required|exists:daftar_bank,id',
         ]);
 
         $user = auth()->user();
-        $harga = HargaPembayaran::findOrFail($request->harga_pembayaran_id);
         $bank = DaftarBank::findOrFail($request->daftar_bank_id);
+
+        $nominal = $request->total ?? $request->harga ?? 100000;
+        $pesanan = $request->pesanan ?? "Top Up Koin Area Kerja";
 
         $sumberDana = (strtolower($bank->nama_bank) === 'qris')
             ? 'Qris'
             : 'Transfer Bank';
 
         $transaksi = CatatanCash::create([
-            'user_id' => $user->id,
-            'harga_pembayaran_id' => $harga->id,
+            'user_id'        => $user->id,
             'daftar_bank_id' => $bank->id,
-            'no_referensi' => strtoupper(Str::random(10)),
-            'pesanan' => "Top Up Koin - {$harga->nama}",
-            'dari' => $user->username,
-            'sumberDana' => $sumberDana,
-            'total' => $harga->harga,
-            'status' => 'pending',
-            'expired_at' => now()->addHours(24),
+            'no_referensi'   => strtoupper(Str::random(10)),
+            'pesanan'        => $pesanan,
+            'dari'           => $user->username,
+            'sumberDana'     => $sumberDana,
+            'total'          => $nominal,
+            'status'         => 'pending',
+            'expired_at'     => now()->addHours(24),
         ]);
 
         return response()->json([
-            'success' => true,
+            'success'      => true,
             'redirect_url' => route('catatan_cash.show', $transaksi->id)
         ]);
     }
 
-    //halaman detail transaksi
+    // halaman detail transaksi
     public function show($id)
     {
-        $transaksi = CatatanCash::with('hargaPembayaran', 'bank')->findOrFail($id);
+        $transaksi = CatatanCash::with('bank')->findOrFail($id);
         if (
             $transaksi->status === 'pending' &&
             $transaksi->expired_at &&
@@ -60,14 +58,13 @@ class CatatanCashController extends Controller
             $transaksi->update([
                 'status' => 'expired'
             ]);
-
             $transaksi->refresh();
         }
 
         return view('perusahaan.transaksi-koin', compact('transaksi'));
     }
 
-    //upload bukti transaksi
+    // upload bukti transaksi
     public function uploadBukti(Request $request, $id)
     {
         $transaksi = CatatanCash::findOrFail($id);
@@ -79,9 +76,10 @@ class CatatanCashController extends Controller
         $path = $request->file('bukti')->store('bukti-transfer', 'public');
 
         $transaksi->update([
-            'bukti' => $path,
+            'bukti'  => $path,
             'status' => 'menunggu_verifikasi',
         ]);
+
         return redirect()->route('catatan_cash.show', $transaksi->id)
             ->with('success', 'Bukti transfer berhasil diupload.');
     }

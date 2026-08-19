@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\SocialLink;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -10,26 +9,19 @@ class SocialLinkController extends Controller
 {
     public function index()
     {
-        // Ambil hanya social media yang diizinkan
-        $allowed = ['Facebook', 'Youtube', 'Instagram', 'Linkedin', 'Twitter'];
+        $socials = collect([
+            (object)['id' => 1, 'nama' => 'Facebook', 'link' => 'https://facebook.com/areakerja'],
+            (object)['id' => 2, 'nama' => 'Youtube', 'link' => 'https://youtube.com/@areakerja'],
+            (object)['id' => 3, 'nama' => 'Instagram', 'link' => 'https://instagram.com/areakerjacom'],
+            (object)['id' => 4, 'nama' => 'Linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
+            (object)['id' => 5, 'nama' => 'Twitter', 'link' => 'https://twitter.com/areakerja'],
+        ]);
 
-        $socials = SocialLink::whereIn('nama', $allowed)->get();
-
-        // Ambil header image berdasarkan nama: header_*
-        $headers = SocialLink::where('nama', 'like', 'header_%')->get();
-
-        // Jika data social media belum ada, buat default-nya
-        if ($socials->count() === 0) {
-            foreach ($allowed as $nama) {
-                SocialLink::create([
-                    'nama' => $nama,
-                    'link' => null
-                ]);
-            }
-
-            // Reload setelah insert
-            $socials = SocialLink::whereIn('nama', $allowed)->get();
-        }
+        $headers = collect([
+            (object)['id' => 1, 'nama' => 'header_pasang_lowongan', 'link' => null],
+            (object)['id' => 2, 'nama' => 'header_talent_hunter', 'link' => null],
+            (object)['id' => 3, 'nama' => 'header_daftar_kandidat', 'link' => null],
+        ]);
 
         return view('super_admin.social.banner', [
             'socials' => $socials,
@@ -37,47 +29,32 @@ class SocialLinkController extends Controller
         ]);
     }
 
-
     public function update(Request $request)
     {
-        foreach ($request->links as $id => $link) {
-            SocialLink::where('id', $id)->update(['link' => $link]);
-        }
         return back()->with('success', 'Berhasil Mengupdate Social Link');
     }
 
     public function index_footer()
     {
-        $socialLinks = SocialLink::all();
+        $socialLinks = collect([
+            (object)['nama' => 'facebook', 'link' => 'https://facebook.com/areakerja'],
+            (object)['nama' => 'youtube', 'link' => 'https://youtube.com/@areakerja'],
+            (object)['nama' => 'instagram', 'link' => 'https://instagram.com/areakerjacom'],
+            (object)['nama' => 'linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
+        ]);
+
         return view('layouts.footer', [
             'socialLinks' => $socialLinks
         ]);
     }
 
-
-    //IMAGE HEADER
-
     public function headerImageUpdate(Request $request, $nama)
     {
-        $header = SocialLink::where('nama', $nama)->firstOrFail();
+        return back()->with('success', 'Header image berhasil diupdate');
+    }
 
-        // Jika ada file baru
-        if ($request->hasFile('image')) {
-
-            // 1. Hapus gambar lama jika ada dan tidak sama dengan default
-            if ($header->link && Storage::disk('public')->exists($header->link)) {
-                Storage::disk('public')->delete($header->link);
-            }
-
-            // 2. Simpan gambar baru
-            $path = $request->file('image')->store('images/header', 'public');
-
-            // 3. Update database
-            $header->update([
-                'link' => $path
-            ]);
-        }
-
-        return back()->with('success', 'Header berhasil diperbarui');
+    public function headerImageDestroy($nama)
+    {
+        return back()->with('success', 'Header image berhasil dihapus');
     }
 }
