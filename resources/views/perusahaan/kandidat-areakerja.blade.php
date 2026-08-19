@@ -184,8 +184,8 @@
                         </td>
                         <td class="py-3 px-4">
                             @php
-                                $sudahPernahDibeli = \App\Models\PembeliKandidat::where('pelamar_id', $p->id)
-                                    ->whereHas('lowonganPerusahaan', function ($q) use ($perusahaan) {
+                                $sudahPernahDibeli = \App\Models\PelamarLowongan::where('pelamar_id', $p->id)
+                                    ->whereHas('lowongan_perusahaan', function ($q) use ($perusahaan) {
                                         $q->where('perusahaan_id', $perusahaan->id);
                                     })
                                     ->exists();

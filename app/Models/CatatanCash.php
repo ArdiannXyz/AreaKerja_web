@@ -8,20 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class CatatanCash extends Model
 {
     use HasFactory;
+
     protected $table = 'catatan_cashs';
+
     protected $fillable = [
         'user_id',
         'no_referensi',
-        'harga_pembayaran_id',
         'daftar_bank_id',
-        'bukti_transfer',
-        'nominal',
-        'keterangan',
-        // 'status' → TIDAK dimasukkan, hanya Finance yang boleh ubah
+        'pesanan',
+        'dari',
+        'sumberDana',
+        'total',
+        'status',
+        'bukti',
+        'expired_at',
     ];
 
-
-     protected $casts = [
+    protected $casts = [
         'expired_at' => 'datetime',
     ];
 
@@ -30,9 +33,14 @@ class CatatanCash extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function hargaPembayaran()
+    public function getHargaPembayaranAttribute()
     {
-        return $this->belongsTo(HargaPembayaran::class, 'harga_pembayaran_id');
+        return (object)[
+            'id'          => 1,
+            'nama'        => $this->pesanan ?? 'Top Up Koin Area Kerja',
+            'harga'       => $this->total ?? 100000,
+            'jumlah_koin' => 100,
+        ];
     }
 
     public function bank()
@@ -41,9 +49,7 @@ class CatatanCash extends Model
     }
 
     public function perusahaan()
-{
-    return $this->user->perusahaan; 
-}
-
-
+    {
+        return $this->user?->perusahaan;
+    }
 }

@@ -3,14 +3,8 @@
     <!-- Hero Section -->
     <div class="mt-16">
         <section class="relative">
-            @php
-                $header = \App\Models\SocialLink::where('nama', 'header_talent_hunter')->first();
-            @endphp
-
-            <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/woi.jpg') }}"
+            <img src="{{ asset('images/woi.jpg') }}"
                 alt="Header Image" class="w-full h-[600px] object-cover">
-            {{-- 
-            <img src="{{ asset('images/woi.jpg') }}" alt="hero" class="w-full h-[350px] object-cover"> --}}
             <div class="absolute inset-0 bg-black bg-opacity-40"></div>
             <div class="absolute bottom-52 left-0 pl-6 text-left
             md:pl-0 md:left-20 text-white">

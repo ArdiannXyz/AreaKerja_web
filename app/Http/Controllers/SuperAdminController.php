@@ -3,25 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\BrowserPath;
-use App\Models\Admin;
-use App\Models\AlamatPelamar;
-use App\Models\AlamatPerusahaan;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
-use App\Models\Divisi;
-use App\Models\Finance;
-use App\Models\Hargakoin;
-use App\Models\HargaPembayaran;
-use App\Models\Kecamatan;
-use App\Models\Kota;
 use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
-use App\Models\PembeliKandidat;
 use App\Models\Perusahaan;
-use App\Models\Provinsi;
-use App\Models\SuperAdmin;
 use App\Models\TalentHunter;
 use App\Models\User;
 use Carbon\Carbon;
