@@ -200,27 +200,7 @@
     </style>
 
     <script src="//unpkg.com/alpinejs" defer></script>
-    @php
-        $user = Auth::user();
-        $perusahaan = $user->perusahaan ?? null;
 
-        // Cek profil belum lengkap
-        $isProfileIncomplete =
-            !$perusahaan ||
-            $perusahaan->nama_perusahaan == null ||
-            $perusahaan->jenis_perusahaan == null ||
-            $perusahaan->deskripsi == null ||
-            $perusahaan->telepon_perusahaan == null;
-
-        // Cek alamat belum lengkap atau belum ada sama sekali
-        $isAddressIncomplete =
-            !$perusahaan ||
-            $perusahaan->alamat == null;
-    @endphp
-
-    @if (Auth::check() && $user->role === 'perusahaan' && ($isProfileIncomplete || $isAddressIncomplete))
-        <meta name="show-intro" content="1">
-    @endif
 </head>
 
 <body x-data="{ openNotif: false, openAllNotif: false, openMenu: false }">

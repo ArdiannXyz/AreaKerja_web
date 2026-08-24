@@ -375,7 +375,7 @@ class PerusahaanController extends Controller
         $perusahaan = Perusahaan::where('user_id', $user->id)->firstOrFail();
         $perusahaanId = $perusahaan->id;
 
-        $recruitments = PelamarLowongan::where('status', 'diterima')
+        $recruitments = PelamarLowongan::whereIn('status', ['pending', 'diterima', 'ditolak'])
             ->whereHas('lowongan_perusahaan', function ($q) use ($perusahaanId) {
                 $q->where('perusahaan_id', $perusahaanId);
             })

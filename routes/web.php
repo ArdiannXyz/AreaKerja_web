@@ -475,6 +475,7 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/tips/kerja/{id}/edit', 'edit')->name('admin.tips-kerja.edit');
         Route::put('/tips/kerja/{id}', 'update')->name('admin.tips-kerja.update');
         Route::delete('/tips/kerja/{id}', 'destroy_single')->name('admin.tips-kerja.destroy.single');
+        Route::put('/tips/kerja/{id}/toggle-status', 'toggleStatus')->name('admin.tips-kerja.toggleStatus');
         Route::put('/update/status/', 'update_status')->name('admin.tips-kerja.update.status');
         Route::delete('/delete', 'destroy')->name('admin.tips-kerja.destroy');
     });

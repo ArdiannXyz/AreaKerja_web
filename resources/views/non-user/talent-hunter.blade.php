@@ -23,7 +23,7 @@
     </section>
 
 
-    <section class="text-white py-12 md:py-20 rounded-b-[50px]"
+    <section class="w-full text-white py-12 md:py-20"
         style="background: linear-gradient(to right, orange, #ff7b00)">
         <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center px-4 sm:px-6">
 

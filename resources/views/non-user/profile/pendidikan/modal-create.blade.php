@@ -1,71 +1,67 @@
 <!-- Main modal -->
 <div id="create_pendidikanmodal" tabindex="-1" aria-hidden="true"
-    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm overflow-y-auto">
+    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs overflow-y-auto p-4">
 
-    <div class="relative w-full max-w-md p-4">
+    <div class="relative w-full max-w-lg">
 
         <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+        <div class="relative bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
 
             <!-- Modal header -->
-            <div
-                class="flex items-center justify-between p-4 md:p-5 border-b rounded-t border-gray-200 dark:border-gray-600">
-                <h3 class="text-base md:text-lg font-semibold">Tambah Pengalaman Organisasi</h3>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
+                <h3 class="text-lg font-bold text-slate-900">Tambah Riwayat Pendidikan</h3>
                 <button type="button"
-                    class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    class="text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full w-8 h-8 flex justify-center items-center transition"
                     data-modal-hide="create_pendidikanmodal">
-                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
-                    <span class="sr-only">Close modal</span>
                 </button>
             </div>
 
             <!-- Modal body -->
-            <div class="w-full p-4 md:p-6">
+            <div class="p-6 bg-white">
                 <form action="{{ route('pendidikan.store') }}" method="POST" class="space-y-4">
                     @csrf
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-1">Pendidikan</label>
-                        <input type="text" name="pendidikan"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Pendidikan / Jenjang <span class="text-red-500">*</span></label>
+                        <input type="text" name="pendidikan" placeholder="Contoh: S1 / D3 / SMA"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
                             required>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-1">Jurusan</label>
-                        <input type="text" name="jurusan"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Jurusan <span class="text-red-500">*</span></label>
+                        <input type="text" name="jurusan" placeholder="Contoh: Teknik Informatika"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
                             required>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-1">Asal Pendidikan</label>
-                        <input name="asal_pendidikan" type="text"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Asal Sekolah / Universitas</label>
+                        <input name="asal_pendidikan" type="text" placeholder="Contoh: Universitas Brawijaya"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition">
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Awal</label>
-                            <input type="number" name="tahun_awal"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Tahun Awal <span class="text-red-500">*</span></label>
+                            <input type="number" name="tahun_awal" placeholder="2018"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
                                 required>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Akhir</label>
-                            <input type="number" name="tahun_akhir"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Tahun Akhir</label>
+                            <input type="number" name="tahun_akhir" placeholder="2022"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition">
                         </div>
                     </div>
 
-                    <div class="flex justify-end">
+                    <div class="flex justify-end pt-2">
                         <button type="submit"
-                            class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-lg shadow-md transition">
+                            class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-6 py-2.5 rounded-xl shadow-sm transition text-sm">
                             Simpan
                         </button>
                     </div>

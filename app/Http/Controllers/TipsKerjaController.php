@@ -68,7 +68,7 @@ class TipsKerjaController extends Controller
             $d['slug'] = $slug;
 
             $d['penulis'] = Auth::user()->username;
-            $d['status'] = 'belum terbit';
+            $d['status'] = $request->input('status', 'belum terbit');
 
             if (empty($request->intro) && !empty($request->content)) {
                 $d['intro'] = Str::limit(strip_tags($request->content), 150);
@@ -127,6 +127,16 @@ class TipsKerjaController extends Controller
 
             return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
+    }
+
+    public function toggleStatus($id)
+    {
+        $tips = TipsKerja::findOrFail($id);
+        $newStatus = ($tips->status === 'terbit') ? 'belum terbit' : 'terbit';
+        $tips->update(['status' => $newStatus]);
+
+        $statusText = ($newStatus === 'terbit') ? 'diterbitkan' : 'diubah menjadi draf';
+        return redirect()->back()->with('success', "Artikel '{$tips->title}' berhasil {$statusText}.");
     }
 
 
@@ -204,10 +214,11 @@ class TipsKerjaController extends Controller
     {
         $tips = TipsKerja::findOrFail($id);
         $d = $request->validate([
-            'title'   => 'required|string|max:255',
-            'content' => 'required|string',
-            'image'   => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:10240',
-            'status'  => 'nullable|in:terbit,belum terbit',
+            'title'    => 'required|string|max:255',
+            'content'  => 'required|string',
+            'image'    => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:10240',
+            'status'   => 'nullable|in:terbit,belum terbit',
+            'kategori' => 'nullable|string',
         ]);
 
         if ($request->hasFile('image')) {

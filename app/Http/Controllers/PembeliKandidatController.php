@@ -57,7 +57,7 @@ class PembeliKandidatController extends Controller
                 'lowongan_id' => $lowongan->id,
             ],
             [
-                'status' => 'diterima',
+                'status' => 'pending',
             ]
         );
 

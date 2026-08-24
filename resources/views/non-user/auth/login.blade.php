@@ -36,11 +36,11 @@
             <!-- Konten -->
             <div class="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6">
 
-                <!-- Logo -->
-                <div class="absolute top-6 left-6 flex items-center">
-                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Logo" class="h-12 w-12">
-                    <span class="font-semibold mb-1">areakerja.com</span>
-                </div>
+                <!-- Logo (Desktop Link to Landing Page) -->
+                <a href="{{ route('beranda') }}" class="absolute top-6 left-6 flex items-center gap-2 group transition z-20" title="Kembali ke Beranda">
+                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Logo" class="h-12 w-12 object-contain group-hover:scale-105 transition">
+                    <span class="font-semibold mb-1 text-white group-hover:text-orange-200 transition">areakerja.com</span>
+                </a>
 
                 <!-- Text -->
                 <h1 class="text-3xl font-bold mt-10 md:mt-[-45%] mb-10">Hallo, Jobseeker</h1>
@@ -63,6 +63,14 @@
             <div class="w-full max-w-md p-8 min-h-screen flex flex-col justify-start">
 
                 <div class="w-full flex flex-col">
+
+                    <!-- Logo (Mobile Link to Landing Page) -->
+                    <div class="flex lg:hidden justify-center mb-6">
+                        <a href="{{ route('beranda') }}" class="flex items-center gap-2 group" title="Kembali ke Beranda">
+                            <img src="{{ asset('images/logoarea.png') }}" alt="Logo" class="h-10 w-10 object-contain group-hover:scale-105 transition">
+                            <span class="font-bold text-orange-600 text-lg">areakerja.com</span>
+                        </a>
+                    </div>
 
                     <!-- Judul -->
                     <h2 class="text-2xl font-semibold text-center text-orange-600 mb-6">Masuk</h2>
