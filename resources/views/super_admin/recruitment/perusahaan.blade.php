@@ -140,7 +140,7 @@
                             <td class="px-4 py-3 break-all">{{ $p->nama_perusahaan ?? $p->user->username }}</td>
                             <td class="px-4 py-3">{{ $p->user->email }}</td>
                             <td class="px-4 py-3">{{ $p->telepon_perusahaan }}</td>
-                            <td class="px-4 py-3">{{ $p->alamat_perusahaan->first()?->kota?->nama ?? '-' }}</td>
+                            <td class="px-4 py-3">{{ $p->kota ?? $p->alamat ?? '-' }}</td>
                             <td class="px-4 py-3">
                                 <a href="{{ route('superadmin.recruitment', $p->id) }}"
                                     class="bg-orange-500 hover:bg-orange-600 text-xs text-white px-4 py-1 rounded-lg">View</a>

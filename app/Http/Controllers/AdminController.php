@@ -33,105 +33,53 @@ class AdminController extends Controller
         return view('admin.profile.profile');
     }
 
-    public function edit_profile(Admin $admin)
+    public function edit_profile($id = null)
     {
-        $provinsis = Provinsi::all();
-        $admin->load(['kota', 'kecamatan', 'provinsi']);
-        return view(
-            'admin.profile.edit-profile',
-            [
-                "data" => $admin,
-                'provinsis' => $provinsis
-            ]
-        );
+        $user = Auth::user();
+        return view('admin.profile.edit-profile', [
+            "data"      => $user->admin,
+            'provinsis' => collect(),
+        ]);
     }
 
     public function getKota($provinsi_id)
     {
-        return response()->json(Kota::where('provinsi_id', $provinsi_id)->get());
+        return response()->json([]);
     }
 
     public function getKecamatan($kota_id)
     {
-        return response()->json(Kecamatan::where('kota_id', $kota_id)->get());
+        return response()->json([]);
     }
 
-    public function update_profile_admin(Request $request, Admin $admin)
+    public function update_profile_admin(Request $request, $id = null)
     {
         try {
-
-            /* ============================================================
-           VALIDASI USER
-        ============================================================ */
+            $user = Auth::user();
             $validated = $request->validate([
-                'name'  => "nullable|string",
-                'email' => "nullable|email",
+                'nama_lengkap' => 'nullable|string',
+                'email'        => 'nullable|email',
+                'telepon'      => 'nullable|string',
             ]);
 
-            $user = User::where('id', $admin->user_id);
-            $user->update($validated);
-
-            /* ============================================================
-           VALIDASI ADMIN
-        ============================================================ */
-            $valid = $request->validate([
-                "nama_lengkap"  => 'nullable|string',
-                "img_profile"   => 'nullable|file|image|mimes:png,jpg,jpeg',
-                'provinsi_id'   => 'nullable|exists:provinsis,id',
-                'kota_id'       => 'nullable|exists:kotas,id',
-                'kecamatan_id'  => 'nullable|exists:kecamatans,id',
-                "desa"          => 'nullable|string',
-                "kode_pos"      => 'nullable',
-                "detail_alamat" => 'nullable|string'
-            ]);
-
-            /* ============================================================
-           UPDATE FOTO PROFIL
-        ============================================================ */
             if ($request->hasFile('img_profile')) {
-
-                if ($admin->img_profile && Storage::exists('public/' . $admin->img_profile)) {
-                    Storage::delete('public/' . $admin->img_profile);
-                }
-
-                $valid['img_profile'] = $request->file('img_profile')->store('images', 'public');
+                $validated['avatar'] = $request->file('img_profile')->store('images', 'public');
             }
 
-            $valid['user_id'] = Auth::user()->id;
-            $admin->update($valid);
+            $user->update($validated);
 
-            /* ============================================================
-           NOTIFIKASI BERHASIL UNTUK ADMIN (DIRI SENDIRI)
-        ============================================================ */
             Notifikasi::create([
-                'user_id' => Auth::id(),
+                'user_id'       => Auth::id(),
                 'perusahaan_id' => null,
-                'judul' => 'Profil Berhasil Diperbarui',
-                'pesan' => 'Profil Anda berhasil diperbarui.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
+                'judul'         => 'Profil Berhasil Diperbarui',
+                'pesan'         => 'Profil Anda berhasil diperbarui.',
+                'is_read'       => 0,
+                'expired_at'    => now()->addDays(7),
             ]);
 
-            return redirect()->route('admin.profile')
-                ->with('success', 'Profil berhasil diperbarui.');
+            return redirect()->route('admin.profile')->with('success', 'Profil Admin berhasil diperbarui');
         } catch (\Exception $e) {
-
-            /* ============================================================
-           NOTIFIKASI GAGAL UNTUK ADMIN
-        ============================================================ */
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Mengupdate Profil',
-                'pesan' => 'Terjadi kesalahan saat memperbarui profil Anda.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()->route('admin.profile')
-                ->with('error', 'Terjadi kesalahan! Profil gagal diperbarui.');
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
@@ -430,7 +378,7 @@ class AdminController extends Controller
 
     public function detail($id)
     {
-        $transaksi = CatatanCash::with(['user', 'hargaPembayaran', 'bank'])->findOrFail($id);
+        $transaksi = CatatanCash::with(['user', 'bank'])->findOrFail($id);
 
         return response()->json([
             'id' => $transaksi->id,
@@ -454,7 +402,7 @@ class AdminController extends Controller
 
     public function hal_detail()
     {
-        $transaksi = CatatanCash::with(['user', 'bank', 'hargaPembayaran'])->latest()->get();
+        $transaksi = CatatanCash::with(['user', 'bank'])->latest()->get();
         return view('admin.finance.detail', compact('transaksi'));
     }
 

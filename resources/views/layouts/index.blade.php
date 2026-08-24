@@ -28,12 +28,9 @@
     @vite('resources/js/app.js')
     <link rel="icon" type="image/png" href="{{ asset('images/logoarea.png') }}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" />
-    {{-- <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css"> --}}
-
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- 🔹 Opsi 1: Pakai JS Loader (paling mudah) -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
     @php
@@ -266,13 +263,15 @@
                 </div>
 
                 <a href="{{ route('beranda') }}"
-                    class="px-6 py-3 text-gray-700 hover:bg-gray-100 hover:text-orange-500  transition duration-300">
+                    class="px-6 py-3 text-gray-700 hover:bg-gray-100 hover:text-orange-500 transition duration-300">
                     Beranda
                 </a>
+
                 <a href="{{ url('/talent-hunter') }}"
                     class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700">
                     Talent Hunter
                 </a>
+
                 <a href="{{ url('/pelamar/tips-kerja') }}"
                     class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700">
                     Tips Kerja
@@ -281,30 +280,25 @@
                 @if (Auth::check() && Auth::user()->pelamar)
                     @if (Auth::user()->pelamar->kategori === 'calon kandidat')
                         <a href="{{ route('pelamar.calon-kandidat.pelatihan') }}"
-                            class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700
-                            {{ Route::is('pelamar.calon-kandidat.pelatihan') ? '' : '' }}">
+                            class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700">
                             Rekrut Saya
                         </a>
                     @elseif (Auth::user()->pelamar->kategori === 'kandidat aktif')
                         <a href="{{ route('pelamar.tawaran') }}"
-                            class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700
-                            {{ Route::is('pelamar.tawaran') ? '' : '' }}">
+                            class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700">
                             Rekrut Saya
                         </a>
                     @else
                         <a href="{{ route('pelamar.daftar-kandidat') }}"
-                            class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700
-                            {{ Route::is('pelamar.daftar-kandidat') ? '' : '' }}">
+                            class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700">
                             Daftar Kandidat
                         </a>
                     @endif
                 @else
                     <a href="{{ route('pelamar.daftar-kandidat') }}"
-                        class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700
-                        {{ Route::is('pelamar.daftar-kandidat') ? '' : '' }}">
+                        class="px-6 py-3 hover:bg-gray-100 hover:text-orange-500 transition duration-300 text-gray-700">
                         Daftar Kandidat
                     </a>
-
                 @endif
 
                 <a href="{{ url('/lowongan') }}"
@@ -318,14 +312,13 @@
             {{-- Logo --}}
             <div class="hidden xl:flex items-center gap-1">
                 <img src="{{ asset('images/logoarea.png') }}" alt="Areakerja Logo" class="h-8 sm:h-12">
-                {{-- lebih kecil di HP --}}
                 <span class="font-bold text-base sm:text-xl text-orange-600">
                     areakerja.com
                 </span>
             </div>
 
-            {{-- Menu --}}
-            <nav class="hidden xl:flex font-medium text-sm text-orange-500 gap-8">
+            {{-- Menu Desktop --}}
+            <nav class="hidden xl:flex items-center font-medium text-sm text-orange-500 gap-8">
 
                 <a href="{{ route('beranda') }}"
                     class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400
@@ -333,16 +326,14 @@
                     Beranda
                 </a>
 
-
                 <a href="{{ url('/talent-hunter') }}"
                     class="hover:text-orange-500 hover:scale-105 hover:font-bold transition-all duration-400
                        {{ request()->is('talent-hunter') ? 'font-bold text-orange-500 text-md scale-105' : '' }}">
                     Talent Hunter
                 </a>
 
-
                 <a href="{{ url('/pelamar/tips-kerja') }}"
-                    class=" hover:text-orange-500 hover:scale-105 hover:font-bold transition-all duration-400
+                    class="hover:text-orange-500 hover:scale-105 hover:font-bold transition-all duration-400
                         {{ Route::is('pelamar.tips-kerja') ? 'font-bold text-orange-500 text-md scale-105' : '' }}">
                     Tips Kerja
                 </a>
@@ -350,36 +341,32 @@
                 @if (Auth::check() && Auth::user()->pelamar)
                     @if (Auth::user()->pelamar->kategori === 'calon kandidat')
                         <a href="{{ route('pelamar.calon-kandidat.pelatihan') }}"
-                            class=" hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400
-                            {{ Route::is('pelamar.calon-kandidat.pelatihan') ? 'font-bold text-orange-500 text-md scale-105' : '' }}">
+                            class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400">
                             Rekrut Saya
                         </a>
                     @elseif (Auth::user()->pelamar->kategori === 'kandidat aktif')
                         <a href="{{ route('pelamar.tawaran') }}"
-                            class=" hover:text-orange-500 hover:scale-105 hover:font-bold transition-all duration-400
-                            {{ Route::is('pelamar.tawaran') ? 'font-bold text-orange-500 text-md scale-105' : '' }}">
+                            class="hover:text-orange-500 hover:scale-105 hover:font-bold transition-all duration-400">
                             Rekrut Saya
                         </a>
                     @else
                         <a href="{{ route('pelamar.daftar-kandidat') }}"
-                            class=" hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400
-                            {{ Route::is('pelamar.daftar-kandidat') ? 'font-bold text-orange-500 text-md scale-105' : '' }}">
+                            class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400">
                             Daftar Kandidat
                         </a>
                     @endif
                 @else
                     <a href="{{ route('pelamar.daftar-kandidat') }}"
-                        class=" hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400
-                        {{ Route::is('pelamar.daftar-kandidat') ? 'font-bold text-orange-500 text-md scale-105' : '' }}">
+                        class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400">
                         Daftar Kandidat
                     </a>
-
                 @endif
 
                 <a href="{{ url('/lowongan') }}"
-                    class=" hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-400
+                    class="hover:text-orange-500 hover:scale-105 hover:font-bold transition-all duration-400
                     {{ request()->is('lowongan') ? 'font-bold text-orange-500 text-md' : '' }}">
-                    Pasang Lowongan</a>
+                    Pasang Lowongan
+                </a>
 
             </nav>
 
@@ -718,64 +705,170 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('notifHandler', () => ({
 
-                // Hapus satu notifikasi
-                async hapus(id) {
-                    if (!confirm("Hapus notifikasi ini?")) return;
+                // Lihat Detail Notifikasi
+                viewDetail(id, judul, pesan, createdAt, readUrl, el) {
+                    if (readUrl && el) {
+                        markAsRead(readUrl, el);
+                    }
 
-                    let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
-
-                    let res = await fetch(url, {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Accept": "application/json"
+                    Swal.fire({
+                        title: `<div class="text-base font-bold text-gray-800">${judul || 'Detail Notifikasi'}</div>`,
+                        html: `
+                            <div class="text-left text-sm text-gray-700 leading-relaxed bg-orange-50/50 p-4 rounded-xl border border-orange-100 mt-2 mb-3">
+                                ${pesan}
+                            </div>
+                            <div class="text-xs text-gray-400 text-left flex items-center gap-1">
+                                ⏱️ ${createdAt}
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonColor: '#f97316',
+                        cancelButtonColor: '#ef4444',
+                        confirmButtonText: 'Tutup',
+                        cancelButtonText: 'Hapus Notifikasi Ini',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.cancel) {
+                            this.hapus(id);
                         }
                     });
-
-                    let data = await res.json();
-
-                    if (data.success) {
-                        document.querySelector(`.notif-item[data-id="${id}"]`)?.remove();
-                    }
                 },
 
-                // Hapus semua
-                async hapusSemua() {
-                    if (!confirm("Hapus semua notifikasi?")) return;
+                // Hapus satu notifikasi dengan SweetAlert
+                hapus(id) {
+                    Swal.fire({
+                        title: 'Hapus Notifikasi?',
+                        text: 'Notifikasi ini akan dihapus secara permanen.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
 
-                    let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Accept": "application/json"
+                            try {
+                                let res = await fetch(url, {
+                                    method: "DELETE",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json"
+                                    }
+                                });
+
+                                let data = await res.json();
+
+                                if (data.success) {
+                                    document.querySelectorAll(`.notif-item[data-id="${id}"]`).forEach(e => e.remove());
+                                    Swal.fire({
+                                        title: 'Terhapus!',
+                                        text: 'Notifikasi berhasil dihapus.',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
                         }
                     });
-
-                    let data = await res.json();
-
-                    if (data.success) {
-                        document.querySelectorAll('.notif-item').forEach(e => e.remove());
-                    }
                 },
 
-                // Hapus semua yang sudah dibaca
-                async hapusSemuaBaca() {
-                    if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+                // Hapus semua dengan SweetAlert
+                hapusSemua() {
+                    Swal.fire({
+                        title: 'Hapus Semua Notifikasi?',
+                        text: 'Semua notifikasi Anda akan dihapus secara permanen.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus Semua!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
+                                    method: "DELETE",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json"
+                                    }
+                                });
 
-                    let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Accept": "application/json"
+                                let data = await res.json();
+
+                                if (data.success) {
+                                    document.querySelectorAll('.notif-item').forEach(e => e.remove());
+                                    Swal.fire({
+                                        title: 'Terhapus!',
+                                        text: 'Semua notifikasi berhasil dihapus.',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
                         }
                     });
+                },
 
-                    let data = await res.json();
+                // Hapus semua yang sudah dibaca dengan SweetAlert
+                hapusSemuaBaca() {
+                    Swal.fire({
+                        title: 'Hapus Notifikasi Dibaca?',
+                        text: 'Semua notifikasi yang sudah dibaca akan dihapus.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
+                                    method: "DELETE",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json"
+                                    }
+                                });
 
-                    if (data.success) {
-                        document.querySelectorAll('.notif-item.bg-gray-200')
-                            .forEach(e => e.remove());
-                    }
+                                let data = await res.json();
+
+                                if (data.success) {
+                                    document.querySelectorAll('.notif-item.bg-gray-100, .notif-item.bg-gray-200, .notif-item.bg-gray-50\\/70')
+                                        .forEach(e => e.remove());
+                                    Swal.fire({
+                                        title: 'Terhapus!',
+                                        text: 'Notifikasi yang sudah dibaca berhasil dihapus.',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    });
                 }
 
             }));
@@ -803,8 +896,6 @@
     {{-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script> --}}
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </body>
 
 </html>

@@ -108,6 +108,16 @@ class Perusahaan extends Model
         return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
     }
 
+    public function lowongans()
+    {
+        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
+    }
+
+    public function lowongan()
+    {
+        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
+    }
+
     public function catatanKoins()
     {
         return $this->hasMany(CatatanKoin::class, 'user_id', 'user_id');

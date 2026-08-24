@@ -37,17 +37,12 @@
                 <div class="flex items-center gap-2 bg-white px-3 py-2 border border-gray-500 shadow-md rounded-2xl">
 
                     <a href="#">
-                        @if (Auth::user()->role == 'admin')
-                            @if (Auth::user()->admin->img_profile)
-                                <img id="pu" class="w-10 h-10 object-cover rounded-full profile-img"
-                                    src="{{ asset('storage/' . Auth::user()->admin->img_profile) }}" alt="Profile">
-                            @else
-                                <img id="pu" class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128">
-                            @endif
+                        @if (Auth::user()?->avatar)
+                            <img id="pu" class="w-10 h-10 object-cover rounded-full profile-img"
+                                src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
                         @else
-                            <img class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128">
+                            <img id="pu" class="w-10 h-10 rounded-full"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=random&color=fff&size=128">
                         @endif
                     </a>
 

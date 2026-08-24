@@ -21,8 +21,22 @@ class CatatanCashController extends Controller
         $user = auth()->user();
         $bank = DaftarBank::findOrFail($request->daftar_bank_id);
 
-        $nominal = $request->total ?? $request->harga ?? 100000;
-        $pesanan = $request->pesanan ?? "Top Up Koin Area Kerja";
+        $hargaPembayarans = collect([
+            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
+            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
+            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
+        ]);
+
+        $paketId = $request->harga_pembayaran_id ?? $request->paket_id ?? $request->paket;
+        $paket = $hargaPembayarans->firstWhere('id', (int) $paketId);
+
+        if ($paket) {
+            $nominal = $paket->harga;
+            $pesanan = $paket->nama;
+        } else {
+            $nominal = $request->total ?? $request->harga ?? 100000;
+            $pesanan = $request->pesanan ?? "Top Up Koin Area Kerja";
+        }
 
         $sumberDana = (strtolower($bank->nama_bank) === 'qris')
             ? 'Qris'

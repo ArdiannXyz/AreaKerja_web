@@ -1,102 +1,80 @@
 @extends('layouts.index-perusahaan')
 @section('content')
-    <!DOCTYPE html>
-    <html lang="en">
-
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="https://cdn.tailwindcss.com"></script>
-        <title>List Pekerja Bermasalah</title>
-    </head>
-
-    <body class="bg-white text-gray-800 mt-16"><br>
-
-        <!-- Header Buttons -->
-        <div class="flex justify-center items-center px-8 py-4 mt-16">
-            <button
-                class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-2xl text-medium">
-                Cari Nama Pekerja
-            </button>
-        </div>
-
-        <!-- Content -->
-        <div class="px-6 py-8 max-w-4xl mx-auto">
-            <!-- Title -->
-            <h2 class="font-semibold text-xl mb-1">Lorem Ipsum</h2>
-            <p class="text-sm font-medium mb-6 leading-relaxed">
-                Halaman ini dibuat untuk membantu perusahaan dalam proses perekrutan dengan menyediakan akses ke daftar
-                track record pekerja yang pernah bermasalah.
-                Dengan mengklik tombol 'request', Anda dapat mengajukan permintaan untuk menerima daftar tersebut melalui
-                WhatsApp atau aplikasi pilihan lainnya.
-                Fitur ini memberikan informasi penting yang bisa menjadi bahan pertimbangan tambahan sebelum mengambil
-                keputusan untuk merekrut kandidat.
-            </p>
-
-            <!-- Box Section -->
-            <div class="flex items-start gap-4 p-4">
-                <!-- Icon -->
-                <div class="shrink-0">
-                    <svg width="110" height="110" viewBox="0 0 117 117" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <rect x="3" y="3" width="111" height="111" rx="25" stroke="#F79C4B" stroke-width="6" />
-                        <path
-                            d="M59 23.3333C51.9276 23.3333 45.1448 26.1428 40.1438 31.1438C35.1428 36.1448 32.3333 42.9276 32.3333 50V55.3333H37.6667C39.0812 55.3333 40.4377 55.8952 41.4379 56.8954C42.4381 57.8956 43 59.2522 43 60.6667V76.6667C43 78.0811 42.4381 79.4377 41.4379 80.4379C40.4377 81.4381 39.0812 82 37.6667 82H32.3333C30.9188 82 29.5623 81.4381 28.5621 80.4379C27.5619 79.4377 27 78.0811 27 76.6667V50C27 45.7977 27.8277 41.6365 29.4359 37.7541C31.044 33.8717 33.4011 30.3441 36.3726 27.3726C39.3441 24.4011 42.8717 22.044 46.7541 20.4359C50.6365 18.8277 54.7977 18 59 18C63.2023 18 67.3634 18.8277 71.2459 20.4359C75.1283 22.044 78.6559 24.4011 81.6274 27.3726C84.5989 30.3441 86.956 33.8717 88.5641 37.7541C90.1723 41.6365 91 45.7977 91 50V82C91 85.5362 89.5952 88.9276 87.0948 91.4281C84.5943 93.9286 81.2029 95.3333 77.6667 95.3333H66.2853C65.8172 96.1441 65.144 96.8173 64.3333 97.2854C63.5225 97.7535 62.6028 98 61.6667 98H56.3333C54.9188 98 53.5623 97.4381 52.5621 96.4379C51.5619 95.4377 51 94.0811 51 92.6667C51 91.2522 51.5619 89.8956 52.5621 88.8954C53.5623 87.8952 54.9188 87.3333 56.3333 87.3333H61.6667C62.6028 87.3333 63.5225 87.5798 64.3333 88.0479C65.144 88.516 65.8172 89.1892 66.2853 90H77.6667C79.7884 90 81.8232 89.1571 83.3235 87.6568C84.8238 86.1565 85.6667 84.1217 85.6667 82H80.3333C78.9188 82 77.5623 81.4381 76.5621 80.4379C75.5619 79.4377 75 78.0811 75 76.6667V60.6667C75 59.2522 75.5619 57.8956 76.5621 56.8954C77.5623 55.8952 78.9188 55.3333 80.3333 55.3333H85.6667V50C85.6667 46.4981 84.9769 43.0305 83.6368 39.7951C82.2967 36.5598 80.3324 33.62 77.8562 31.1438C75.38 28.6676 72.4402 26.7033 69.2049 25.3632C65.9695 24.0231 62.5019 23.3333 59 23.3333Z"
-                            fill="#032068" />
-                    </svg>
+    <div class="max-w-4xl mx-auto my-12 mt-16 px-4">
+        <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-6">
+            <div class="flex items-center justify-between border-b pb-4">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-800">Cari Nama Pekerja</h2>
+                    <p class="text-sm text-gray-500 mt-1">Cari dan periksa riwayat rekam jejak pekerja atau calon kandidat</p>
                 </div>
-
-                <!-- Text -->
-                <div class="flex-1">
-                    <h2 class="font-semibold text-xl mb-1">Permintaan Panggilan</h2>
-                    <p class="text-medium font-medium">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis et est elit. Etiam sagittis ut mauris
-                        molestie lacinia.
-                        Maecenas porttitor eros id dui iaculis malesuada
-                    </p>
+                <div class="p-3 bg-orange-50 text-orange-500 rounded-xl">
+                    <i class="ph ph-magnifying-glass text-2xl"></i>
                 </div>
             </div>
+
+            <!-- Search Form -->
+            <form action="{{ route('perusahaan.cari.nama.pekerja') }}" method="GET" class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-lg"></i>
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Masukkan Nama Pekerja atau NIK..."
+                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500">
+                </div>
+                <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-2.5 rounded-xl text-sm transition">
+                    Cari Pekerja
+                </button>
+            </form>
+
+            <!-- Status Banner / Hubungi Admin WA -->
+            <div class="bg-orange-50 border border-orange-200 rounded-xl p-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 bg-orange-500 text-white rounded-lg">
+                        <i class="ph ph-user-focus text-xl"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-semibold text-gray-800 text-sm">Butuh Rekam Jejak Detail Pekerja?</h4>
+                        <p class="text-xs text-gray-600">Tim AreaKerja siap membantu verifikasi dan pemeriksaan latar belakang pekerja.</p>
+                    </div>
+                </div>
+                <button onclick="hubungiAdminWA()" class="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-medium px-5 py-2 rounded-lg text-sm flex items-center justify-center gap-2 transition">
+                    <i class="ph ph-whatsapp-logo text-lg"></i>
+                    Tanya Admin WA
+                </button>
+            </div>
+
+            <!-- Hasil Pencarian -->
+            <div class="mt-6">
+                <h3 class="font-semibold text-gray-700 text-sm mb-3">Hasil Pencarian</h3>
+                @if(request('q'))
+                    <div class="border rounded-xl p-4 text-center text-gray-500 text-sm">
+                        Menampilkan hasil pencarian untuk "<span class="font-semibold text-gray-800">{{ request('q') }}</span>". Jika data belum tersedia, Anda dapat menghubungi admin.
+                    </div>
+                @else
+                    <div class="border border-dashed border-gray-300 rounded-xl p-8 text-center">
+                        <i class="ph ph-user-search text-4xl text-gray-400 mb-2"></i>
+                        <p class="text-sm font-medium text-gray-600">Ketik nama pekerja di kolom pencarian di atas untuk memulai.</p>
+                    </div>
+                @endif
+            </div>
         </div>
-
-        <!-- Footer Button -->
-        <div class="flex justify-end items-center px-6 py-5 ">
-            <button id="btnCariPekerja"
-                class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-lg text-sm font-medium mr-4">
-                Kirim Permintaan
-            </button>
-        </div><br>
-
-
-    </body>
-
-    </html>
+    </div>
 
     <script>
-        document.getElementById('btnCariPekerja').addEventListener('click', function() {
-
+        function hubungiAdminWA() {
             fetch("{{ route('perusahaan.cari.nama.pekerja.wa') }}", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "Accept": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({}) // WAJIB ADA
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = data.redirect_url;
-                    } else {
-                        alert(data.message || "Gagal memproses permintaan.");
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert("Terjadi kesalahan. Coba lagi.");
-                });
-
-        });
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                    "Content-Type": "application/json"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.redirect_url) {
+                    window.open(data.redirect_url, '_blank');
+                }
+            });
+        }
     </script>
+
     @include('layouts.footer')
 @endsection

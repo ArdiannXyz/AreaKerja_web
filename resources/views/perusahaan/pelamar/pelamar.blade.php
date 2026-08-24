@@ -2,7 +2,7 @@
 @section('content')
     <section class="relative">
         @php
-            $header = \App\Models\SocialLink::where('nama', 'header_pelamar_perusahaan')->first();
+            $header = null;
         @endphp
 
         <section class="relative w-full">

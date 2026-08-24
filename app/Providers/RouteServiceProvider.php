@@ -40,8 +40,13 @@ class RouteServiceProvider extends ServiceProvider
         Route::middleware('web')
             ->group(base_path('routes/cron.php'));
 
-        Route::model('perusahaan', \App\Models\Perusahaan::class);
-        Route::model('lowongan', \App\Models\LowonganPerusahaan::class);
+        Route::bind('perusahaan', function ($value) {
+            return \App\Models\Perusahaan::where('slug', $value)->orWhere('id', $value)->firstOrFail();
+        });
+
+        Route::bind('lowongan', function ($value) {
+            return \App\Models\LowonganPerusahaan::where('slug', $value)->orWhere('id', $value)->firstOrFail();
+        });
     }
 
     /**

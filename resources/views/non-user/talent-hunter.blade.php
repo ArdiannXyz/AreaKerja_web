@@ -13,9 +13,12 @@
             </h1>
             <p class="text-xs sm:text-sm mt-2">Daftarkan perusahaan anda dan biar kami</p>
             <p class="text-xs sm:text-sm">yang mencarikan kandidat yang cocok untuk anda</p><br>
-            <button>
-                <span class="bg-gray-700 hover:bg-gray-800 text-xs sm:text-sm px-6 sm:px-8 py-2 rounded-lg">Daftar</span>
-            </button>
+            <div>
+                <a href="{{ route('register') }}" class="inline-block bg-slate-800 hover:bg-slate-900 text-xs sm:text-sm px-6 sm:px-8 py-2.5 rounded-lg text-white font-medium shadow-md">
+                    Daftar
+                </a>
+                <p class="text-[11px] sm:text-xs text-gray-300 font-normal mt-2">*Hanya bisa dilakukan oleh Perusahaan</p>
+            </div>
         </div>
     </section>
 

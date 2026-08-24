@@ -635,64 +635,170 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('notifHandler', () => ({
 
-                // Hapus satu notifikasi
-                async hapus(id) {
-                    if (!confirm("Hapus notifikasi ini?")) return;
+                // Lihat Detail Notifikasi
+                viewDetail(id, judul, pesan, createdAt, readUrl, el) {
+                    if (readUrl && el) {
+                        markAsRead(readUrl, el);
+                    }
 
-                    let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
-
-                    let res = await fetch(url, {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Accept": "application/json"
+                    Swal.fire({
+                        title: `<div class="text-base font-bold text-gray-800">${judul || 'Detail Notifikasi'}</div>`,
+                        html: `
+                            <div class="text-left text-sm text-gray-700 leading-relaxed bg-orange-50/50 p-4 rounded-xl border border-orange-100 mt-2 mb-3">
+                                ${pesan}
+                            </div>
+                            <div class="text-xs text-gray-400 text-left flex items-center gap-1">
+                                ⏱️ ${createdAt}
+                            </div>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonColor: '#f97316',
+                        cancelButtonColor: '#ef4444',
+                        confirmButtonText: 'Tutup',
+                        cancelButtonText: 'Hapus Notifikasi Ini',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then((result) => {
+                        if (result.dismiss === Swal.DismissReason.cancel) {
+                            this.hapus(id);
                         }
                     });
-
-                    let data = await res.json();
-
-                    if (data.success) {
-                        document.querySelector(`.notif-item[data-id="${id}"]`)?.remove();
-                    }
                 },
 
-                // Hapus semua
-                async hapusSemua() {
-                    if (!confirm("Hapus semua notifikasi?")) return;
+                // Hapus satu notifikasi dengan SweetAlert
+                hapus(id) {
+                    Swal.fire({
+                        title: 'Hapus Notifikasi?',
+                        text: 'Notifikasi ini akan dihapus secara permanen.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
 
-                    let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Accept": "application/json"
+                            try {
+                                let res = await fetch(url, {
+                                    method: "DELETE",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json"
+                                    }
+                                });
+
+                                let data = await res.json();
+
+                                if (data.success) {
+                                    document.querySelectorAll(`.notif-item[data-id="${id}"]`).forEach(e => e.remove());
+                                    Swal.fire({
+                                        title: 'Terhapus!',
+                                        text: 'Notifikasi berhasil dihapus.',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
                         }
                     });
-
-                    let data = await res.json();
-
-                    if (data.success) {
-                        document.querySelectorAll('.notif-item').forEach(e => e.remove());
-                    }
                 },
 
-                // Hapus semua yang sudah dibaca
-                async hapusSemuaBaca() {
-                    if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+                // Hapus semua dengan SweetAlert
+                hapusSemua() {
+                    Swal.fire({
+                        title: 'Hapus Semua Notifikasi?',
+                        text: 'Semua notifikasi Anda akan dihapus secara permanen.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus Semua!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
+                                    method: "DELETE",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json"
+                                    }
+                                });
 
-                    let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
-                        method: "DELETE",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Accept": "application/json"
+                                let data = await res.json();
+
+                                if (data.success) {
+                                    document.querySelectorAll('.notif-item').forEach(e => e.remove());
+                                    Swal.fire({
+                                        title: 'Terhapus!',
+                                        text: 'Semua notifikasi berhasil dihapus.',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
                         }
                     });
+                },
 
-                    let data = await res.json();
+                // Hapus semua yang sudah dibaca dengan SweetAlert
+                hapusSemuaBaca() {
+                    Swal.fire({
+                        title: 'Hapus Notifikasi Dibaca?',
+                        text: 'Semua notifikasi yang sudah dibaca akan dihapus.',
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#ef4444',
+                        cancelButtonColor: '#6b7280',
+                        confirmButtonText: 'Ya, Hapus!',
+                        cancelButtonText: 'Batal',
+                        customClass: {
+                            popup: 'rounded-2xl shadow-xl'
+                        }
+                    }).then(async (result) => {
+                        if (result.isConfirmed) {
+                            try {
+                                let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
+                                    method: "DELETE",
+                                    headers: {
+                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                        "Accept": "application/json"
+                                    }
+                                });
 
-                    if (data.success) {
-                        document.querySelectorAll('.notif-item.bg-gray-200')
-                            .forEach(e => e.remove());
-                    }
+                                let data = await res.json();
+
+                                if (data.success) {
+                                    document.querySelectorAll('.notif-item.bg-gray-100, .notif-item.bg-gray-200, .notif-item.bg-gray-50\\/70')
+                                        .forEach(e => e.remove());
+                                    Swal.fire({
+                                        title: 'Terhapus!',
+                                        text: 'Notifikasi yang sudah dibaca berhasil dihapus.',
+                                        icon: 'success',
+                                        timer: 1500,
+                                        showConfirmButton: false
+                                    });
+                                }
+                            } catch (err) {
+                                console.error(err);
+                            }
+                        }
+                    });
                 }
 
             }));

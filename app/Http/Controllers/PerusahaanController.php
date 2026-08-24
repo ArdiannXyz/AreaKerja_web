@@ -506,4 +506,24 @@ class PerusahaanController extends Controller
             'redirect_url' => 'https://wa.me/' . $nomorAdmin . '?text=' . urlencode($pesan),
         ]);
     }
+
+    public function halDaftarPekerja()
+    {
+        return view('perusahaan.laporan-pekerja');
+    }
+
+    public function listPekerjaBermasalah()
+    {
+        return view('perusahaan.pekerja-bermasalah');
+    }
+
+    public function halCariNamaPekerja()
+    {
+        return view('perusahaan.cari-nama-pekerja');
+    }
+
+    public function halLaporanHarianPekerja()
+    {
+        return view('perusahaan.laporan-harian-pekerja');
+    }
 }

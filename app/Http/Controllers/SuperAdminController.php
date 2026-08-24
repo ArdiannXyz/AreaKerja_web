@@ -832,7 +832,6 @@ class SuperAdminController extends Controller
     public function role()
     {
         $usersAdminFinance = User::whereIn('role', ['admin', 'finance'])
-            ->with(['admin', 'finance'])
             ->get();
 
         $usersPerusahaanPelamar = User::whereIn('role', ['perusahaan', 'pelamar'])
@@ -1472,10 +1471,24 @@ class SuperAdminController extends Controller
             ]);
         }
 
+        $koinList = collect([
+            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
+            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
+            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
+            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
+            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
+        ]);
+
+        $pembayaranList = collect([
+            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
+            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
+            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
+        ]);
+
         return view('super_admin.finance.paket-harga', [
             'title'        => 'Paket Harga',
-            'koin'         => Hargakoin::all(),
-            'pembayaran'   => HargaPembayaran::all(),
+            'koin'         => $koinList,
+            'pembayaran'   => $pembayaranList,
             'cashTerbaru'  => $cashTerbaru,
             'koinTerbaru'  => $koinTerbaru,
             'cash'         => $cash,
@@ -1634,44 +1647,43 @@ class SuperAdminController extends Controller
     //HARGA KOIN
     public function edit_koin()
     {
+        $koin = collect([
+            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
+            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
+            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
+            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
+            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
+        ]);
+
         return view('super_admin.finance.edit-koin', [
             'title' => 'Edit Harga Koin',
-            'koin' => Hargakoin::all(),
+            'koin'  => $koin,
         ]);
     }
+
     public function update_koin(Request $request)
     {
-        foreach ($request->id as $i => $id) {
-            $koin = Hargakoin::find($id);
-            if ($koin) {
-                $koin->harga = $request->harga[$i];
-                $koin->save();
-            }
-        }
-
-        return redirect()->route('superadmin.paket-harga');
+        return redirect()->route('superadmin.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');
     }
-
 
     //HARGA PEMBAYARAN
     public function edit_pembayaran()
     {
+        $pembayaran = collect([
+            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
+            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
+            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
+        ]);
+
         return view('super_admin.finance.edit-harga', [
-            'title' => 'Edit Harga Pembayaran',
-            'pembayaran' => HargaPembayaran::all(),
+            'title'      => 'Edit Harga Pembayaran',
+            'pembayaran' => $pembayaran,
         ]);
     }
+
     public function update_pembayaran(Request $request)
     {
-        foreach ($request->id as $i => $id) {
-            $pembayaran = HargaPembayaran::find($id);
-            if ($pembayaran) {
-                $pembayaran->harga = $request->harga[$i];
-                $pembayaran->save();
-            }
-        }
-
-        return redirect()->route('superadmin.paket-harga');
+        return redirect()->route('superadmin.paket-harga')->with('success', 'Harga pembayaran berhasil diperbarui.');
     }
 
 

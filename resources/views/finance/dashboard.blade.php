@@ -78,17 +78,12 @@
                     class="flex items-center md:w-60 sm:w-auto justify-between bg-white border border-orange-500 shadow-md rounded-xl px-3 py-2">
                     <div class="flex items-center gap-2">
                         <a href="#">
-                            @if (Auth::user()->role == 'finance')
-                                @if (Auth::user()->finance->img_profile)
-                                    <img class="w-9 h-9 md:w-10 md:h-10 object-cover rounded-full"
-                                        src="{{ asset('storage/' . Auth::user()->finance->img_profile) }}">
-                                @else
-                                    <img class="w-9 h-9 md:w-10 md:h-10 rounded-full"
-                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128">
-                                @endif
+                            @if (Auth::user()?->avatar)
+                                <img class="w-9 h-9 md:w-10 md:h-10 object-cover rounded-full"
+                                    src="{{ asset('storage/' . Auth::user()->avatar) }}">
                             @else
                                 <img class="w-9 h-9 md:w-10 md:h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128">
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Finance') }}&background=random&color=fff&size=128">
                             @endif
                         </a>
 

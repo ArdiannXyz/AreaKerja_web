@@ -36,34 +36,32 @@
                         <h2 class="text-2xl font-semibold text-center text-orange-600 mb-6">Buat Akun</h2>
                     </div>
 
-                    {{-- <!-- Tombol Sosial -->
-                    <div class="flex space-x-4 mb-6 justify-center">
-                        @foreach ($socialLinks as $social)
-                        
-                            @php
-                                $name = strtolower($social->nama);
-                            @endphp
+                    @if (session('error'))
+                        <div class="mb-6 p-3 rounded-lg bg-red-100 border border-red-400 text-red-700 text-sm text-center shadow-sm">
+                            {{ session('error') }}
+                        </div>
+                    @endif
 
-                            @if (in_array($name, ['instagram', 'facebook', 'linkedin']))
-                                <a href="{{ $social->link }}" title="Login dengan {{ ucfirst($social->nama) }}"
-                                    class="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-gray-100 text-gray-700 font-bold">
-                                    @switch($name)
-                                        @case('instagram')
-                                            <i class="text-2xl ph ph-instagram-logo"></i>
-                                        @break
+                    <!-- Tombol Otentikasi Sosial (Google, Facebook, LinkedIn) -->
+                    <div class="flex space-x-5 mb-6 justify-center">
+                        <!-- Google -->
+                        <a href="{{ route('social.redirect', ['provider' => 'google']) }}?role=pelamar" title="Daftar dengan Google"
+                            class="social-auth-btn w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:bg-orange-50 transition shadow-sm text-gray-800 font-bold" data-provider="google">
+                            <span class="text-xl font-bold font-sans">G</span>
+                        </a>
 
-                                        @case('facebook')
-                                            <span class="text-2xl">f</span>
-                                        @break
+                        <!-- Facebook -->
+                        <a href="{{ route('social.redirect', ['provider' => 'facebook']) }}?role=pelamar" title="Daftar dengan Facebook"
+                            class="social-auth-btn w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-blue-600 hover:bg-blue-50 transition shadow-sm text-gray-800 font-bold" data-provider="facebook">
+                            <span class="text-xl font-bold font-sans">f</span>
+                        </a>
 
-                                        @case('linkedin')
-                                            <span class="text-xl">in</span>
-                                        @break
-                                    @endswitch
-                                </a>
-                            @endif
-                        @endforeach
-                    </div> --}}
+                        <!-- LinkedIn -->
+                        <a href="{{ route('social.redirect', ['provider' => 'linkedin']) }}?role=pelamar" title="Daftar dengan LinkedIn"
+                            class="social-auth-btn w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-blue-700 hover:bg-blue-50 transition shadow-sm text-gray-800 font-bold" data-provider="linkedin">
+                            <span class="text-lg font-bold font-sans">in</span>
+                        </a>
+                    </div>
 
                     <!-- Pilih Role -->
                     <div class="flex justify-center mb-6">
@@ -245,11 +243,19 @@
                 const regisPerusahaan = document.getElementById("regis_perusahaan");
 
                 btnPelamar.addEventListener("click", () => {
+                    function updateSocialLinksRole(role) {
+                        document.querySelectorAll('.social-auth-btn').forEach(btn => {
+                            let provider = btn.getAttribute('data-provider');
+                            btn.href = `/auth/${provider}/redirect?role=${role}`;
+                        });
+                    }
+
                     regisPelamar.classList.remove("hidden");
                     regisPerusahaan.classList.add("hidden");
                     btnPelamar.classList.add("bg-orange-500", "text-white");
                     btnPerusahaan.classList.remove("bg-orange-500", "text-white");
                     btnPerusahaan.classList.add("bg-gray-200", "text-gray-600");
+                    updateSocialLinksRole('pelamar');
                 });
 
                 btnPerusahaan.addEventListener("click", () => {
@@ -258,6 +264,7 @@
                     btnPerusahaan.classList.add("bg-orange-500", "text-white");
                     btnPelamar.classList.remove("bg-orange-500", "text-white");
                     btnPelamar.classList.add("bg-gray-200", "text-gray-600");
+                    updateSocialLinksRole('perusahaan');
                 });
             });
         </script>

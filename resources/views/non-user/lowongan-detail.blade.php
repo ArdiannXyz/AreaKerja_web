@@ -89,14 +89,14 @@
                                     <button @click="toggleSave" class="px-4 py-2 rounded-lg border"
                                         :class="saved
                                             ?
-                                            ' text-red-600' :
+                                            ' text-orange-600 bg-orange-50 border-orange-200' :
                                             'bg-gray-100 border-gray-400 text-gray-700'">
 
-                                        <!-- Love Putih (Belum disimpan) -->
-                                        <i x-show="!saved" class="ph ph-heart text-gray-600"></i>
+                                        <!-- Bookmark (Belum disimpan) -->
+                                        <i x-show="!saved" class="ph ph-bookmark text-2xl text-gray-600"></i>
 
-                                        <!-- Love Merah (Sudah disimpan) -->
-                                        <i x-show="saved" class="ph ph-heart-straight text-4xl"></i>
+                                        <!-- Bookmark (Sudah disimpan) -->
+                                        <i x-show="saved" class="ph-fill ph-bookmark text-2xl text-orange-500"></i>
 
                                     </button>
                                 </div>
@@ -118,7 +118,7 @@
                                     Tolak
                                 </button>
 
-                                {{-- Tombol Love --}}
+                                {{-- Tombol Bookmark --}}
                                 @auth
                                     @php
                                         $lowongan = $tawaran ? $tawaran->lowonganPerusahaan : $data; // fallback ke $data kalau gak ada tawaran
@@ -139,7 +139,7 @@
                                                 <button type="submit"
                                                     class="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition"
                                                     title="Simpan Lowongan">
-                                                    <i class="ph ph-heart text-2xl text-gray-600"></i>
+                                                    <i class="ph ph-bookmark text-2xl text-gray-600"></i>
                                                 </button>
                                             </form>
                                         @else
@@ -147,9 +147,9 @@
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
-                                                    class="p-2 rounded-md bg-pink-100 hover:bg-gray-200 transition"
+                                                    class="p-2 rounded-md bg-orange-100 hover:bg-orange-200 transition"
                                                     title="Hapus dari Simpan">
-                                                    <i class="ph-fill ph-heart text-2xl text-pink-500"></i>
+                                                    <i class="ph-fill ph-bookmark text-2xl text-orange-500"></i>
                                                 </button>
                                             </form>
                                         @endif
@@ -356,22 +356,26 @@
 
         {{-- Modal Alasan --}}
         <div x-show="showAlasan" x-cloak
-            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-            <div class="bg-white rounded-lg p-6 w-[380px]">
-                <h2 class="text-lg font-semibold mb-4">Pilih Alasan Penolakan</h2>
-                <form id="form-penolakan" class="space-y-3">
+            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 px-4">
+            <div class="bg-white rounded-xl p-6 w-11/12 max-w-md shadow-xl">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800">Pilih Alasan Penolakan</h2>
+                <form id="form-penolakan" class="space-y-2.5">
                     @foreach (config('alasan_penolakan') as $alasan)
-                        <label class="flex items-center gap-2">
-                            <input type="radio" name="alasan_penolakan" value="{{ $alasan }}">
-                            <span>{{ $alasan }}</span>
+                        <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition cursor-pointer">
+                            <input type="radio" name="alasan_penolakan" value="{{ $alasan }}"
+                                class="w-5 h-5 text-orange-500 border-2 border-gray-400 focus:ring-orange-500 accent-orange-500 cursor-pointer flex-shrink-0">
+                            <span class="text-sm font-medium text-gray-800">{{ $alasan }}</span>
                         </label>
                     @endforeach
-                    <textarea name="alasan_penolakan_custom" rows="3" placeholder="Lainnya..."
-                        class="w-full border rounded px-3 py-2"></textarea>
+                    <div class="pt-2">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Lainnya</label>
+                        <textarea name="alasan_penolakan_custom" rows="3" placeholder="Tuliskan alasan penolakan lainnya..."
+                            class="w-full border-2 border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"></textarea>
+                    </div>
                 </form>
-                <div class="flex justify-end gap-3 mt-4">
+                <div class="flex justify-end gap-3 mt-5">
                     <button @click="showAlasan = false"
-                        class="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">Batal</button>
+                        class="px-4 py-2 bg-gray-200 text-gray-700 font-medium rounded-lg hover:bg-gray-300 transition">Batal</button>
                     <button
                         @click="
                         const form = document.getElementById('form-penolakan');
@@ -379,12 +383,24 @@
                         const alasan = data.get('alasan_penolakan_custom') || data.get('alasan_penolakan');
                         fetch('{{ route('kandidat.updateStatus', $tawaran->id ?? 0) }}', {
                             method: 'POST',
-                            headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
-                            body: new URLSearchParams({ status: 'ditolak', alasan_penolakan: alasan })
-                        }).then(res => res.json())
-                        .then(data => { if (data.status === 'success') location.reload(); });
-                    "
-                        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Kirim</button>
+                            headers: { 
+                                'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                                'Accept': 'application/json'
+                            },
+                            body: new URLSearchParams({
+                                status: 'ditolak',
+                                alasan_penolakan: alasan
+                            })
+                        })
+                        .then(res => res.json())
+                        .then(resData => {
+                            if (resData.status === 'success') {
+                                showAlasan = false;
+                                showTolakSuccess = true;
+                            }
+                        })
+                        "
+                        class="px-5 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition">Kirim</button>
                 </div>
             </div>
         </div>

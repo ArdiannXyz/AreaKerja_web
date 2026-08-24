@@ -18,9 +18,9 @@ class SocialLinkController extends Controller
         ]);
 
         $headers = collect([
-            (object)['id' => 1, 'nama' => 'header_pasang_lowongan', 'link' => null],
-            (object)['id' => 2, 'nama' => 'header_talent_hunter', 'link' => null],
-            (object)['id' => 3, 'nama' => 'header_daftar_kandidat', 'link' => null],
+            (object)['id' => 1, 'nama' => 'header_pasang_lowongan', 'link' => null, 'default' => 'images/woi.jpg'],
+            (object)['id' => 2, 'nama' => 'header_talent_hunter', 'link' => null, 'default' => 'images/woi.jpg'],
+            (object)['id' => 3, 'nama' => 'header_daftar_kandidat', 'link' => null, 'default' => 'images/ntap.png'],
         ]);
 
         return view('super_admin.social.banner', [
