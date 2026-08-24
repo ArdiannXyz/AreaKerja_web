@@ -61,4 +61,50 @@ class User extends Authenticatable
     {
         return $this->hasMany(Notifikasi::class, 'user_id', 'id');
     }
+
+    public function getFinanceAttribute()
+    {
+        return (object)[
+            'id'           => $this->id,
+            'img_profile'  => $this->avatar ?? null,
+            'nama'         => $this->nama_lengkap ?? $this->username,
+            'nama_lengkap' => $this->nama_lengkap ?? $this->username,
+            'email'        => $this->email,
+            'telepon'      => $this->telepon ?? '',
+        ];
+    }
+
+    public function getAdminAttribute()
+    {
+        return (object)[
+            'id'           => $this->id,
+            'img_profile'  => $this->avatar ?? null,
+            'nama'         => $this->nama_lengkap ?? $this->username,
+            'nama_lengkap' => $this->nama_lengkap ?? $this->username,
+            'email'        => $this->email,
+            'telepon'      => $this->telepon ?? '',
+            'provinsi_id'  => 1,
+            'kota_id'      => 1,
+            'kecamatan_id' => 1,
+            'provinsi'     => (object)['id' => 1, 'nama' => 'Jawa Timur'],
+            'kota'         => (object)['id' => 1, 'nama' => 'Surabaya'],
+            'kecamatan'    => (object)['id' => 1, 'nama' => 'Gubeng'],
+            'desa'         => 'Gubeng',
+            'kode_pos'     => '60111',
+            'detail'       => 'Jl. Area Kerja No. 1',
+            'detail_alamat'=> 'Jl. Area Kerja No. 1',
+        ];
+    }
+
+    public function getSuperadminAttribute()
+    {
+        return (object)[
+            'id'           => $this->id,
+            'img_profile'  => $this->avatar ?? null,
+            'nama'         => $this->nama_lengkap ?? $this->username,
+            'nama_lengkap' => $this->nama_lengkap ?? $this->username,
+            'email'        => $this->email,
+            'telepon'      => $this->telepon ?? '',
+        ];
+    }
 }

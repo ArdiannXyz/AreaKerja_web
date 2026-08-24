@@ -132,9 +132,9 @@
                                 onchange="previewImage(this, 'preview_{{ $header->id }}')">
 
                             @php
-                                $current = $header->link
+                                $current = !empty($header->link)
                                     ? asset('storage/' . $header->link)
-                                    : asset('storage/' . $header->default);
+                                    : asset($header->default ?? 'images/logoarea.png');
                             @endphp
 
                             {{-- Preview gambar --}}

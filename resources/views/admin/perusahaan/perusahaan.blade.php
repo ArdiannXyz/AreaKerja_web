@@ -129,7 +129,7 @@
 
                             <td class="px-4 py-3">{{ $p->user->email }}</td>
                             <td class="px-4 py-3">{{ $p->telepon_perusahaan ?? '-' }}</td>
-                            <td class="px-4 py-3">{{ $p->alamat_perusahaan->first()?->kota?->nama ?? '-' }}</td>
+                            <td class="px-4 py-3">{{ $p->kota ?? $p->alamat ?? '-' }}</td>
 
                             <td class="px-4 py-3 flex items-center justify-center gap-2">
                                 <!-- Tombol Lihat Lowongan -->

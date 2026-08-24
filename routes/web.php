@@ -27,7 +27,15 @@ use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TalentHunterController;
 use App\Http\Controllers\TipsKerjaController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\UploadController;
+
+// OAUTH SOCIAL AUTHENTICATION (Google, Facebook, LinkedIn)
+Route::controller(SocialAuthController::class)->group(function () {
+    Route::get('/auth/{provider}/redirect', 'redirect')->name('social.redirect');
+    Route::get('/auth/{provider}/callback', 'callback')->name('social.callback');
+});
+
 use App\Http\Controllers\VerifikasiPerusahaanController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -91,8 +99,8 @@ Route::controller(AuthController::class)->middleware('guest')->group(function ()
 });
 
 
-Route::controller(AuthController::class)->middleware('auth')->group(function () {
-    Route::post('/logout', 'logout_pelamar')->name('logout_pelamar');
+Route::controller(AuthController::class)->group(function () {
+    Route::match(['get', 'post'], '/logout', 'logout_pelamar')->name('logout_pelamar');
 });
 
 
@@ -144,7 +152,8 @@ Route::controller(EmailSubController::class)->group(function () {
 
 Route::controller(PelamarController::class)->middleware('CheckUserStatus')->group(function () {
     Route::get('/pelamar/home', 'index')->name('beranda');
-    Route::get('/pelamar/detail-lowongan/{perusahaan:slug}/{lowongan:slug}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
+    Route::get('/pelamar/beranda', 'index')->name('pelamar.beranda');
+    Route::get('/pelamar/detail-lowongan/{perusahaan}/{lowongan}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
     Route::get('/pelamar/daftar-kandidat', 'daftar_kandidat')->name('pelamar.daftar-kandidat');
 });
 
@@ -301,8 +310,8 @@ Route::controller(TipsKerjaController::class)->group(function () {
 
 /**---------------------------------------- FINANCE PREFIX -------------------------------------*/
 //Finance PREFIX
-Route::controller(AuthController::class)->middleware('auth')->group(function () {
-    Route::post('/logout/finance', 'logout_finance')->name('logout_finance');
+Route::controller(AuthController::class)->group(function () {
+    Route::match(['get', 'post'], '/logout/finance', 'logout_finance')->name('logout_finance');
 });
 
 Route::prefix('finance')->middleware('auth', 'role:finance', 'CheckUserStatus')->group(function () {
@@ -463,6 +472,9 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/tips/kerja', 'index')->name('admin.tips-kerja');
         Route::post('/tips/kerja/', 'store_tips_kerja')->name('admin.tips-kerja.store');
         Route::get('/tips/kerja/create', 'tips_kerja_buat_post')->name('admin.tips-kerja.createForm');
+        Route::get('/tips/kerja/{id}/edit', 'edit')->name('admin.tips-kerja.edit');
+        Route::put('/tips/kerja/{id}', 'update')->name('admin.tips-kerja.update');
+        Route::delete('/tips/kerja/{id}', 'destroy_single')->name('admin.tips-kerja.destroy.single');
         Route::put('/update/status/', 'update_status')->name('admin.tips-kerja.update.status');
         Route::delete('/delete', 'destroy')->name('admin.tips-kerja.destroy');
     });
@@ -513,8 +525,8 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
 
 /**---------------------------------------- SUPER ADMIN PREFIX -------------------------------------*/
 //Super Admin PREFIX
-Route::controller(AuthController::class)->middleware('auth')->group(function () {
-    Route::post('/logout/superadmin', 'logout_superadmin')->name('logout_superadmin');
+Route::controller(AuthController::class)->group(function () {
+    Route::match(['get', 'post'], '/logout/superadmin', 'logout_superadmin')->name('logout_superadmin');
 });
 
 

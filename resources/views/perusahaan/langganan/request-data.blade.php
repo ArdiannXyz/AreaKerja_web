@@ -6,7 +6,7 @@
         <!-- Hero Section -->
         <section class="relative">
             @php
-                $header = \App\Models\SocialLink::where('nama', 'header_request_data')->first();
+                $header = null;
             @endphp
 
             <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/ntap.png') }}"

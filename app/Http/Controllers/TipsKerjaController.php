@@ -39,13 +39,18 @@ class TipsKerjaController extends Controller
     {
         try {
             $d = $request->validate([
-                'title'   => 'nullable|string',
-                'content' => 'nullable|string',
+                'title'   => 'required|string|max:255',
+                'content' => 'required|string',
                 'penulis' => 'nullable|string',
-                'image'   => 'nullable|image|mimes:png,jpg,jpeg',
+                'image'   => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:10240',
                 'status'  => 'nullable|in:terbit,belum terbit',
                 'intro'   => 'nullable|string',
                 'section' => 'nullable|json',
+            ], [
+                'title.required'   => 'Judul artikel wajib diisi.',
+                'content.required' => 'Isi artikel wajib diisi.',
+                'image.mimes'      => 'Format file cover harus berupa PNG, JPG, JPEG, WEBP, atau PDF.',
+                'image.max'        => 'Ukuran file cover maksimal 10MB.',
             ]);
 
             // Slug
@@ -106,6 +111,8 @@ class TipsKerjaController extends Controller
             ]);
 
             return redirect()->route('admin.tips-kerja')->with('success', 'Data berhasil disimpan.');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            throw $e;
         } catch (\Exception $e) {
 
             /* NOTIFIKASI GAGAL */
@@ -118,7 +125,7 @@ class TipsKerjaController extends Controller
                 'expired_at' => now()->addDays(7)
             ]);
 
-            return redirect()->back()->with('error', 'Gagal menyimpan data.');
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data: ' . $e->getMessage());
         }
     }
 
@@ -187,6 +194,39 @@ class TipsKerjaController extends Controller
         return redirect()->route('admin.tips-kerja')->with('success', 'Data berhasil dihapus.');
     }
 
+    public function edit($id)
+    {
+        $tips = TipsKerja::findOrFail($id);
+        return view('admin.tips-kerja.edit', compact('tips'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $tips = TipsKerja::findOrFail($id);
+        $d = $request->validate([
+            'title'   => 'required|string|max:255',
+            'content' => 'required|string',
+            'image'   => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:10240',
+            'status'  => 'nullable|in:terbit,belum terbit',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $d['image'] = $request->file('image')->store('images', 'public');
+        }
+
+        $tips->update($d);
+
+        return redirect()->route('admin.tips-kerja')->with('success', 'Tips kerja berhasil diperbarui.');
+    }
+
+    public function destroy_single($id)
+    {
+        $tips = TipsKerja::findOrFail($id);
+        $tips->delete();
+
+        return redirect()->route('admin.tips-kerja')->with('success', 'Tips kerja berhasil dihapus.');
+    }
+
 
 
 
@@ -215,13 +255,18 @@ class TipsKerjaController extends Controller
     {
         try {
             $d = $request->validate([
-                'title'   => 'nullable|string',
-                'content' => 'nullable|string',
+                'title'   => 'required|string|max:255',
+                'content' => 'required|string',
                 'penulis' => 'nullable|string',
-                'image'   => 'nullable|file|image|mimes:png,jpg,jpeg',
+                'image'   => 'nullable|file|mimes:png,jpg,jpeg,webp,pdf|max:10240',
                 'status'  => 'nullable',
                 'intro'   => 'nullable|string',
                 'section' => 'nullable|json',
+            ], [
+                'title.required'   => 'Judul artikel wajib diisi.',
+                'content.required' => 'Isi artikel wajib diisi.',
+                'image.mimes'      => 'Format file cover harus berupa PNG, JPG, JPEG, WEBP, atau PDF.',
+                'image.max'        => 'Ukuran file cover maksimal 10MB.',
             ]);
 
             // SLUG

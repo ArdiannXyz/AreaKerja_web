@@ -145,7 +145,7 @@
                             <td class="px-2 sm:px-4 py-2 break-words">{{ $p->user->email }}</td>
                             <td class="px-2 sm:px-4 py-2 break-words">{{ $p->telepon_perusahaan }}</td>
                             <td class="px-2 sm:px-4 py-2 break-words">
-                                {{ $p->alamat_perusahaan->first()?->kota?->nama ?? '-' }}</td>
+                                {{ $p->kota ?? $p->alamat ?? '-' }}</td>
                             <td class="px-2 sm:px-4 py-2">
                                 <a href="{{ route('superadmin.perusahaan.detail', $p->id) }}"
                                     class="bg-orange-500 hover:bg-orange-600 text-xs sm:text-sm text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg inline-block whitespace-nowrap">

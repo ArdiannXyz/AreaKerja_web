@@ -67,38 +67,26 @@
                     <!-- Judul -->
                     <h2 class="text-2xl font-semibold text-center text-orange-600 mb-6">Masuk</h2>
 
-                    {{-- <!-- Login Sosial -->
-                    <div class="flex justify-center mb-5">
-                        <div class="flex gap-3">
-                            @foreach ($socialLinks as $social)
-                                @php
-                                    $name = strtolower($social->nama);
-                                @endphp
+                    <!-- Tombol Otentikasi Sosial (Google, Facebook, LinkedIn) -->
+                    <div class="flex space-x-5 mb-6 justify-center">
+                        <!-- Google -->
+                        <a href="{{ route('social.redirect', ['provider' => 'google']) }}" title="Masuk dengan Google"
+                            class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:bg-orange-50 transition shadow-sm text-gray-800 font-bold">
+                            <span class="text-xl font-bold font-sans">G</span>
+                        </a>
 
-                                @if (in_array($name, ['instagram', 'facebook', 'linkedin']))
-                                    <a href="{{ $social->link }}" title="Login dengan {{ ucfirst($social->nama) }}"
-                                        class="w-10 h-10 flex items-center justify-center border rounded-full
-                          hover:bg-gray-100 text-gray-700 font-bold transition hover:scale-110">
+                        <!-- Facebook -->
+                        <a href="{{ route('social.redirect', ['provider' => 'facebook']) }}" title="Masuk dengan Facebook"
+                            class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-blue-600 hover:bg-blue-50 transition shadow-sm text-gray-800 font-bold">
+                            <span class="text-xl font-bold font-sans">f</span>
+                        </a>
 
-                                        @switch($name)
-                                            @case('instagram')
-                                                <i class="text-2xl ph ph-instagram-logo"></i>
-                                            @break
-
-                                            @case('facebook')
-                                                <span class="text-2xl">f</span>
-                                            @break
-
-                                            @case('linkedin')
-                                                <span class="text-xl">in</span>
-                                            @break
-                                        @endswitch
-
-                                    </a>
-                                @endif
-                            @endforeach
-                        </div>
-                    </div> --}}
+                        <!-- LinkedIn -->
+                        <a href="{{ route('social.redirect', ['provider' => 'linkedin']) }}" title="Masuk dengan LinkedIn"
+                            class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-blue-700 hover:bg-blue-50 transition shadow-sm text-gray-800 font-bold">
+                            <span class="text-lg font-bold font-sans">in</span>
+                        </a>
+                    </div>
 
 
                     <p class="text-center text-gray-500 mb-6 text-sm">

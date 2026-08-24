@@ -37,13 +37,25 @@
                 </div>
 
                 <!-- Tombol Sosial -->
-                <div class="flex space-x-4 mb-6 justify-center">
-                    <button
-                        class="w-10 h-10 flex text-2xl items-center justify-center border rounded-full hover:bg-gray-100 text-gray-700 font-bold">G</button>
-                    <button
-                        class="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-gray-100 text-gray-700 font-bold">f</button>
-                    <button
-                        class="w-10 h-10 flex items-center justify-center border rounded-full hover:bg-gray-100 text-gray-700 font-bold">in</button>
+                <!-- Tombol Otentikasi Sosial (Google, Facebook, LinkedIn) -->
+                <div class="flex space-x-5 mb-6 justify-center">
+                    <!-- Google -->
+                    <a href="{{ route('social.redirect', ['provider' => 'google']) }}?role=perusahaan" title="Daftar Perusahaan dengan Google"
+                        class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:bg-orange-50 transition shadow-sm text-gray-800 font-bold">
+                        <span class="text-xl font-bold font-sans">G</span>
+                    </a>
+
+                    <!-- Facebook -->
+                    <a href="{{ route('social.redirect', ['provider' => 'facebook']) }}?role=perusahaan" title="Daftar Perusahaan dengan Facebook"
+                        class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-blue-600 hover:bg-blue-50 transition shadow-sm text-gray-800 font-bold">
+                        <span class="text-xl font-bold font-sans">f</span>
+                    </a>
+
+                    <!-- LinkedIn -->
+                    <a href="{{ route('social.redirect', ['provider' => 'linkedin']) }}?role=perusahaan" title="Daftar Perusahaan dengan LinkedIn"
+                        class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-blue-700 hover:bg-blue-50 transition shadow-sm text-gray-800 font-bold">
+                        <span class="text-lg font-bold font-sans">in</span>
+                    </a>
                 </div>
 
                 <!-- Pilih Role -->
@@ -61,44 +73,51 @@
                 </div>
 
                 <!-- Form -->
-                <form action="#" method="POST" class="space-y-4">
+                <form id="registerPerusahaanStandalone" action="{{ route('registerproses_perusahaan') }}" method="POST" class="space-y-4">
+                    @csrf
                     <div>
                         <label for="username" class="block text-sm font-semibold text-gray-700 m-2">Nama Perusahaan</label>
-                        <input type="text" id="username" placeholder="Nama Pengguna"
+                        <input type="text" name="username" id="username" placeholder="Nama Perusahaan"
                             class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                        <p class="text-red-500 text-sm mt-1 error-message" data-field="username"></p>
                     </div>
 
                     <div>
                         <label for="email" class="block text-sm font-semibold text-gray-700 m-2">Email</label>
-                        <input type="email" id="email" placeholder="E-mail"
-                            class="w-full px-4 py-3    border-gray-700 border rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                        <input type="email" name="email" id="email" placeholder="E-mail"
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                        <p class="text-red-500 text-sm mt-1 error-message" data-field="email"></p>
                     </div>
 
                     <div>
                         <label for="phone" class="block text-sm font-semibold text-gray-700 m-2">No.Tlp Perusahaan</label>
-                        <input type="text" id="phone" placeholder="No. Tlp"
+                        <input type="text" name="telepon_perusahaan" id="phone" placeholder="08xxxxxxxx"
                             class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                        <p class="text-red-500 text-sm mt-1 error-message" data-field="telepon_perusahaan"></p>
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700 m-2">Kata Sandi</label>
-                        <input type="password" id="password" placeholder="Kata Sandi"
+                        <input type="password" name="password" id="password" placeholder="Kata Sandi"
                             class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                        <p class="text-red-500 text-sm mt-1 error-message" data-field="password"></p>
                     </div>
+
+                    <input type="hidden" name="role" value="perusahaan">
 
                     <!-- Checkbox -->
                     <label class="flex items-center text-sm font-medium gap-1">
-                        <input type="checkbox" class="mr-2">
-                        Saya menyetujui <a href="{{ url('syarat/ketentuan') }}" class="text-orange-500"> Syarat dan Ketentuan </a> yang
-                        berlaku
+                        <input type="checkbox" id="agree_perusahaan_standalone" name="agree_perusahaan" class="mr-2">
+                        Saya menyetujui <a href="{{ url('syarat/ketentuan') }}" class="text-orange-500"> Syarat dan Ketentuan </a> yang berlaku
                     </label>
+                    <p class="text-red-500 text-sm mt-1 error-message" data-field="agree_perusahaan"></p>
 
+                    <!-- Tombol Daftar -->
+                    <button type="submit"
+                        class="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 mt-6">
+                        Daftar
+                    </button>
                 </form>
-                <!-- Tombol Daftar -->
-                <button onclick="openModal()"
-                    class="w-full py-3 bg-orange-500 text-white rounded-lg  font-semibold hover:bg-orange-600 mt-6">
-                    Daftar
-                </button>
             </div>
         </div>
 

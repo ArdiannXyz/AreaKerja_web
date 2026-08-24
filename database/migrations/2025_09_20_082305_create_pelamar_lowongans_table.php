@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pelamar_id')->constrained('pelamars')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('lowongan_id')->constrained('lowongan_perusahaans')->onDelete('cascade')->onUpdate('cascade');
-            $table->enum('status', ['pending', 'diterima', 'ditolak'])->default('pending');
+            $table->string('status', 50)->default('pending');
             $table->timestamps();
         });
     }

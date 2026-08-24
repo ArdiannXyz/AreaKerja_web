@@ -14,9 +14,15 @@ class PelamarLowongan extends Model
         'pelamar_id',
         'lowongan_id',
         'status',
+        'alasan_penolakan',
     ];
 
     public function lowongan_perusahaan()
+    {
+        return $this->belongsTo(LowonganPerusahaan::class, 'lowongan_id');
+    }
+
+    public function lowonganPerusahaan()
     {
         return $this->belongsTo(LowonganPerusahaan::class, 'lowongan_id');
     }

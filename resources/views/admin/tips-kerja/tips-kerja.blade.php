@@ -7,51 +7,22 @@
         <main class="flex-1 p-6 bg-white overflow-y-auto">
             <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
 
-                <!-- Judul -->
-                <h1 class="text-2xl font-medium whitespace-normal break-words">
+                <!-- Judul Halaman -->
+                <h1 class="text-2xl font-bold text-gray-800">
                     Tips Kerja
                 </h1>
 
-                <!-- Bagian Kanan -->
+                <!-- Profile & Header Right -->
                 <div class="flex items-center gap-3 flex-shrink-0">
-
-                    {{-- Tombol Notifikasi --}}
-                    <button @click="openNotif = true" class="relative">
-                        <svg width="31" height="32" viewBox="0 0 31 32" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <g clip-path="url(#clip0_722_7956)">
-                                <path
-                                    d="M23.076 14.9431L22.6747 12.7383L21.1101 13.0055L21.5756 15.5633C21.6168 15.7894 21.7387 15.9922 21.9146 16.127L24.4524 18.0732L24.6985 19.4255L7.4876 22.3654L7.24147 21.0131L8.93911 18.3434C9.05673 18.1585 9.09972 17.9276 9.05861 17.7015L8.43786 14.2911C8.21777 13.0934 8.29153 11.8668 8.65169 10.7352C9.01186 9.60353 9.64569 8.60691 10.4892 7.84595C11.3326 7.08499 12.3559 6.58665 13.4555 6.40126C14.5552 6.21586 15.6924 6.34997 16.7522 6.79004L16.4051 4.88278C15.595 4.65063 14.7612 4.55689 13.9346 4.605L13.6165 2.85717L12.0518 3.12444L12.37 4.87227C10.4802 5.41568 8.87215 6.70676 7.85685 8.49588C6.84155 10.285 6.49109 12.445 6.87324 14.5583L7.42973 17.6158L5.7321 20.2855C5.61447 20.4704 5.57149 20.7013 5.6126 20.9274L6.07815 23.4852C6.11931 23.7114 6.24121 23.9141 6.41702 24.049C6.59284 24.1838 6.80817 24.2396 7.01565 24.2042L12.4919 23.2688L12.647 24.1214C12.8528 25.252 13.4623 26.2659 14.3414 26.9401C15.2205 27.6142 16.2971 27.8934 17.3345 27.7162C18.3719 27.539 19.2851 26.9199 19.8732 25.9951C20.4612 25.0704 20.676 23.9157 20.4702 22.785L20.315 21.9324L25.7912 20.997C25.9987 20.9616 26.1813 20.8378 26.2989 20.6528C26.4165 20.4679 26.4595 20.2369 26.4183 20.0108L25.9528 17.453C25.9116 17.2269 25.7896 17.0241 25.6138 16.8894L23.076 14.9431ZM18.9055 23.0523C19.029 23.7307 18.9002 24.4235 18.5473 24.9784C18.1945 25.5332 17.6466 25.9047 17.0242 26.011C16.4017 26.1173 15.7557 25.9498 15.2283 25.5453C14.7008 25.1408 14.3351 24.5325 14.2117 23.8541L14.0565 23.0015L18.7504 22.1997L18.9055 23.0523Z"
-                                    fill="black" />
-                            </g>
-                        </svg>
-
-                        @if ($global_notifikasi_unread > 0)
-                            <span id="notif-badge"
-                                class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                                {{ $global_notifikasi_unread }}
-                            </span>
-                        @endif
-                    </button>
-
-                    <!-- Profil -->
-                    <div
-                        class="flex items-center gap-2 bg-white px-3 py-2 border border-gray-500 shadow-md rounded-2xl w-max max-w-full overflow-hidden">
-
+                    <!-- Profile -->
+                    <div class="flex items-center gap-2 bg-white px-3 py-2 border border-gray-500 shadow-md rounded-2xl w-max max-w-full overflow-hidden">
                         <a href="#" class="shrink-0">
-                            @if (Auth::user()->role == 'admin')
-                                @if (Auth::user()->admin->img_profile)
-                                    <img id="pu" class="w-10 h-10 object-cover rounded-full"
-                                        src="{{ asset('storage/' . Auth::user()->admin->img_profile) }}" alt="Profile">
-                                @else
-                                    <img id="pu" class="w-10 h-10 rounded-full"
-                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                                        alt="">
-                                @endif
+                            @if (Auth::user()?->avatar)
+                                <img id="pu" class="w-10 h-10 object-cover rounded-full"
+                                    src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
                             @else
-                                <img class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                                    alt="">
+                                <img id="pu" class="w-10 h-10 rounded-full"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=random&color=fff&size=128">
                             @endif
                         </a>
 
@@ -63,367 +34,371 @@
                                 {{ Auth::user()->email }}
                             </p>
                         </div>
-
                     </div>
                 </div>
             </div>
 
+            <!-- Notification Messages -->
+            @if (session('success'))
+                <div class="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-r-lg shadow-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
 
-            {{-- content --}}
+            @if (session('error'))
+                <div class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            {{-- Main Content --}}
             <div class="flex justify-center py-3">
                 <div class="w-full">
 
-                    {{-- filter atas --}}
-                    <div class="flex flex-wrap justify-between items-center gap-3">
-                        <div class="text-sm space-x-1 whitespace-normal break-words">
-                            <span id="btn_all" class="font-medium">Semua ({{ $all }})</span> |
-                            <span id="btn_terbit" class="text-blue-600">Telah Terbit
-                                <span class="text-gray-800">({{ $terbit }})</span>
-                            </span> |
-                            <span id="btn_blmterbit" class="text-blue-600">Draf
-                                <span class="text-gray-800">({{ $noterbit }})</span>
-                            </span>
+                    {{-- Tab Headers & Create Button --}}
+                    <div class="flex flex-wrap justify-between items-center gap-3 mb-6 border-b border-gray-200 pb-3">
+                        <div class="flex gap-4 text-sm font-medium">
+                            <button type="button" id="btn_all" class="pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer">
+                                Semua ({{ $all }})
+                            </button>
+                            <button type="button" id="btn_terbit" class="pb-2 text-gray-600 hover:text-orange-500 cursor-pointer">
+                                Telah Terbit ({{ $terbit }})
+                            </button>
+                            <button type="button" id="btn_blmterbit" class="pb-2 text-gray-600 hover:text-orange-500 cursor-pointer">
+                                Draf / Belum Terbit ({{ $noterbit }})
+                            </button>
                         </div>
 
                         <a href="{{ route('admin.tips-kerja.createForm') }}"
-                            class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg mb-3 w-full md:w-auto text-center">
-                            Buat Post
+                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition flex items-center gap-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            Buat Post Baru
                         </a>
                     </div>
 
-                    {{-- filter bawah --}}
-                    <div class="flex flex-wrap justify-between items-center mb-4 gap-3">
-
-                        <div class="flex flex-wrap gap-3">
-                            <select id="filter_select" onchange="searchTable()"
-                                class="border-2 border-gray-400 rounded-lg px-8 py-2 text-sm w-full sm:w-auto">
-                                <option value="title">Judul</option>
-                                <option value="penulis">Penulis</option>
-                                <option value="created_at">Tanggal</option>
+                    {{-- Bulk Actions & Search Bar --}}
+                    <div class="flex flex-wrap justify-between items-center mb-4 gap-3 bg-gray-50 p-4 rounded-xl border border-gray-200">
+                        <!-- Bulk Actions -->
+                        <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                            <select id="bulk_status_select" class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                                <option value="">-- Aksi Massal --</option>
+                                <option value="terbit">Ubah Status -> Terbit</option>
+                                <option value="belum terbit">Ubah Status -> Draf</option>
                             </select>
 
-                            <button type="button" onclick="setAction('update')"
-                                class="bg-gray-700 hover:bg-gray-600 px-8 py-1 rounded-lg text-white w-full sm:w-auto">
-                                Terapkan
+                            <button type="button" onclick="submitBulkStatus()"
+                                class="bg-gray-700 hover:bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+                                Terapkan Status
                             </button>
 
-                            <button type="button" onclick="setAction('delete')"
-                                class="bg-red-600 hover:bg-red-700 text-white px-6 py-1 rounded-lg w-full sm:w-auto">
-                                Hapus
+                            <button type="button" onclick="submitBulkDelete()"
+                                class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+                                Hapus Terpilih
                             </button>
                         </div>
 
-                        <div class="flex flex-wrap gap-3">
-                            <input id="search_input" type="text" onkeyup="searchTable()" placeholder="judul..."
-                                class="border-2 border-gray-400 rounded-lg px-2 py-1 text-sm w-full sm:w-auto">
-
+                        <!-- Search -->
+                        <div class="flex items-center gap-2 w-full sm:w-auto">
+                            <input id="search_input" type="text" onkeyup="searchTable()" placeholder="Cari judul atau penulis..."
+                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white w-full sm:w-64 focus:ring-2 focus:ring-orange-500 focus:outline-none">
                             <button type="button" onclick="searchTable()"
-                                class="bg-gray-700 hover:bg-gray-500 text-white px-9 py-2 rounded-lg w-full sm:w-auto">
+                                class="bg-gray-700 hover:bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm">
                                 Cari
                             </button>
                         </div>
-
                     </div>
 
-                    {{-- table --}}
-                    <form id="bulkAction" method="POST">
+                    {{-- Bulk Action Form Wrapper --}}
+                    <form id="bulkActionForm" method="POST">
                         @csrf
-                        <input type="hidden" name="_method" id="formMethod">
-                        <input type="hidden" name="status" id="statusField">
+                        <input type="hidden" name="_method" id="bulkFormMethod">
+                        <input type="hidden" name="status" id="bulkStatusField">
 
-                        {{-- Wrapper table responsif --}}
-                        <div class="overflow-x-auto rounded-lg">
+                        <div class="overflow-x-auto rounded-xl shadow-md border border-gray-200">
 
-                            {{-- sudah terbit --}}
-                            <div id="sudah_terbit" class="rounded-lg overflow-hidden hidden">
-                                <div class="w-full overflow-x-auto">
-                                    <table class="w-full text-sm text-left min-w-[600px] border-collapse">
-                                        <thead class="bg-gray-600 text-white">
-                                            <tr>
-                                                <th class="px-4 py-3 w-10"><input id="checkAllTerbit" type="checkbox"></th>
-                                                <th class="px-4 py-3 font-semibold">Judul</th>
-                                                <th class="px-4 py-3 font-semibold">Penulis</th>
-                                                <th class="px-4 py-3 font-semibold">Tanggal</th>
+                            {{-- TAB 1: SEMUA (DEFAULT VISIBLE) --}}
+                            <div id="semua" class="w-full">
+                                <table class="w-full text-sm text-left text-gray-700 min-w-[700px]">
+                                    <thead class="bg-gray-800 text-white">
+                                        <tr>
+                                            <th class="px-4 py-3.5 w-10 text-center"><input id="checkAllSemua" type="checkbox" class="rounded"></th>
+                                            <th class="px-4 py-3.5 font-semibold">Judul Artikel</th>
+                                            <th class="px-4 py-3.5 font-semibold">Penulis</th>
+                                            <th class="px-4 py-3.5 font-semibold text-center">Status</th>
+                                            <th class="px-4 py-3.5 font-semibold">Tanggal</th>
+                                            <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @forelse ($semua as $s)
+                                            <tr class="hover:bg-gray-50 transition">
+                                                <td class="px-4 py-3.5 text-center">
+                                                    <input name="ids[]" value="{{ $s->id }}" type="checkbox" class="rounded">
+                                                </td>
+                                                <td class="px-4 py-3.5 font-medium text-gray-900 break-words">
+                                                    {{ $s->title }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-gray-600">
+                                                    {{ $s->penulis ?? 'Admin' }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-center">
+                                                    @if ($s->status == 'terbit')
+                                                        <span class="inline-block bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-bold">Terbit</span>
+                                                    @else
+                                                        <span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2.5 py-1 rounded-full font-bold">Draf</span>
+                                                    @endif
+                                                </td>
+                                                <td class="px-4 py-3.5 text-gray-500 text-xs">
+                                                    {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-center">
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
+                                                            class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                                            Edit
+                                                        </a>
+                                                        <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
+                                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
+                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                                            Hapus
+                                                        </button>
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        </thead>
-                                        <tbody>
-                                            @forelse ($sudah_terbit as $s)
-                                                <tr class="bg-gray-200">
-                                                    <td class="px-4 py-4">
-                                                        <input name="ids[]" value="{{ $s->id }}" type="checkbox">
-                                                    </td>
-
-                                                    <!-- Judul membungkus tanpa merusak layout -->
-                                                    <td
-                                                        class="px-4 py-4 text-blue-600 font-medium break-words whitespace-normal">
-                                                        {{ $s->title }}
-                                                    </td>
-
-                                                    <!-- Penulis juga aman ketika panjang -->
-                                                    <td class="px-4 py-4 font-semibold break-words whitespace-normal">
-                                                        {{ $s->penulis }}
-                                                    </td>
-
-                                                    <td class="px-4 py-4 font-semibold">
-                                                        {{ $s->created_at->format('d M Y') }}
-                                                    </td>
-                                                </tr>
-                                            @empty
-                                                <tr>
-                                                    <td colspan="4" class="px-4 py-4 text-center">
-                                                        Tidak ada data yang ditemukan.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-                                    </table>
-                                </div>
-
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                                                    Tidak ada data tips kerja ditemukan.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
 
-
-                            {{-- semua --}}
-                            <div id="semua" class="rounded-lg overflow-hidden hidden">
-                                <div class="w-full overflow-x-auto">
-                                    <table class="w-full text-sm text-left min-w-[700px]">
-                                        <thead class="bg-gray-600 text-white">
-                                            <tr>
-                                                <th class="px-4 py-3 w-10"><input id="checkAllSemua" type="checkbox">
-                                                </th>
-                                                <th class="px-4 py-3 font-semibold">Judul</th>
-                                                <th class="px-4 py-3 font-semibold">Penulis</th>
-                                                <th class="px-4 py-3 font-semibold">Status</th>
-                                                <th class="px-4 py-3 font-semibold">Tanggal</th>
+                            {{-- TAB 2: SUDAH TERBIT --}}
+                            <div id="sudah_terbit" class="w-full hidden">
+                                <table class="w-full text-sm text-left text-gray-700 min-w-[700px]">
+                                    <thead class="bg-gray-800 text-white">
+                                        <tr>
+                                            <th class="px-4 py-3.5 w-10 text-center"><input id="checkAllTerbit" type="checkbox" class="rounded"></th>
+                                            <th class="px-4 py-3.5 font-semibold">Judul Artikel</th>
+                                            <th class="px-4 py-3.5 font-semibold">Penulis</th>
+                                            <th class="px-4 py-3.5 font-semibold">Tanggal</th>
+                                            <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @forelse ($sudah_terbit as $s)
+                                            <tr class="hover:bg-gray-50 transition">
+                                                <td class="px-4 py-3.5 text-center">
+                                                    <input name="ids[]" value="{{ $s->id }}" type="checkbox" class="rounded">
+                                                </td>
+                                                <td class="px-4 py-3.5 font-medium text-gray-900 break-words">
+                                                    {{ $s->title }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-gray-600">
+                                                    {{ $s->penulis ?? 'Admin' }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-gray-500 text-xs">
+                                                    {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-center">
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
+                                                            class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
+                                                            Edit
+                                                        </a>
+                                                        <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
+                                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
+                                                            Hapus
+                                                        </button>
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            @forelse ($semua as $s)
-                                                <tr class="bg-gray-200">
-                                                    <td class="px-4 py-4">
-                                                        <input name="ids[]" value="{{ $s->id }}"
-                                                            type="checkbox">
-                                                    </td>
-
-                                                    <!-- Judul wrap aman -->
-                                                    <td
-                                                        class="px-4 py-4 text-blue-600 font-medium break-words whitespace-normal">
-                                                        {{ $s->title }}
-                                                    </td>
-
-                                                    <!-- Penulis wrap aman -->
-                                                    <td class="px-4 py-4 font-semibold break-words whitespace-normal">
-                                                        {{ $s->penulis }}
-                                                    </td>
-
-                                                    <td class="px-4 py-4 font-semibold">
-                                                        @if ($s->status == 'terbit')
-                                                            <span class="text-green-600 font-bold">Terbit</span>
-                                                        @else
-                                                            <span class="text-red-600 font-bold">Draft</span>
-                                                        @endif
-                                                    </td>
-
-                                                    <td class="px-4 py-4 font-semibold">
-                                                        {{ $s->created_at->format('d M Y') }}
-                                                    </td>
-                                                </tr>
-
-                                            @empty
-                                                <tr>
-                                                    <td colspan="5" class="px-4 py-4 text-center">
-                                                        Tidak ada data yang ditemukan.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-
-                                    </table>
-                                </div>
-
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                                    Belum ada artikel yang diterbitkan.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
 
-
-                            {{-- belum terbit --}}
-                            <div id="belum_terbit" class="rounded-lg overflow-hidden">
-                                <div class="w-full overflow-x-auto">
-                                    <table class="w-full text-sm text-left min-w-[600px]">
-                                        <thead class="bg-gray-600 text-white">
-                                            <tr>
-                                                <th class="px-4 py-3 w-10"><input id="checkAllBelum" type="checkbox">
-                                                </th>
-                                                <th class="px-4 py-3 font-semibold">Judul</th>
-                                                <th class="px-4 py-3 font-semibold">Penulis</th>
-                                                <th class="px-4 py-3 font-semibold">Tanggal</th>
+                            {{-- TAB 3: BELUM TERBIT --}}
+                            <div id="belum_terbit" class="w-full hidden">
+                                <table class="w-full text-sm text-left text-gray-700 min-w-[700px]">
+                                    <thead class="bg-gray-800 text-white">
+                                        <tr>
+                                            <th class="px-4 py-3.5 w-10 text-center"><input id="checkAllBelum" type="checkbox" class="rounded"></th>
+                                            <th class="px-4 py-3.5 font-semibold">Judul Artikel</th>
+                                            <th class="px-4 py-3.5 font-semibold">Penulis</th>
+                                            <th class="px-4 py-3.5 font-semibold">Tanggal</th>
+                                            <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200 bg-white">
+                                        @forelse ($belum_terbit as $s)
+                                            <tr class="hover:bg-gray-50 transition">
+                                                <td class="px-4 py-3.5 text-center">
+                                                    <input name="ids[]" value="{{ $s->id }}" type="checkbox" class="rounded">
+                                                </td>
+                                                <td class="px-4 py-3.5 font-medium text-gray-900 break-words">
+                                                    {{ $s->title }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-gray-600">
+                                                    {{ $s->penulis ?? 'Admin' }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-gray-500 text-xs">
+                                                    {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
+                                                </td>
+                                                <td class="px-4 py-3.5 text-center">
+                                                    <div class="flex items-center justify-center gap-2">
+                                                        <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
+                                                            class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
+                                                            Edit
+                                                        </a>
+                                                        <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
+                                                            class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
+                                                            Hapus
+                                                        </button>
+                                                    </div>
+                                                </td>
                                             </tr>
-                                        </thead>
-
-                                        <tbody>
-                                            @forelse ($belum_terbit as $s)
-                                                <tr class="bg-gray-200">
-                                                    <td class="px-4 py-4">
-                                                        <input name="ids[]" value="{{ $s->id }}"
-                                                            type="checkbox">
-                                                    </td>
-
-                                                    <!-- Judul: aman jika sangat panjang -->
-                                                    <td
-                                                        class="px-4 py-4 text-blue-600 font-medium break-words whitespace-normal">
-                                                        {{ $s->title }}
-                                                    </td>
-
-                                                    <!-- Penulis: wrap aman -->
-                                                    <td class="px-4 py-4 font-semibold break-words whitespace-normal">
-                                                        {{ $s->penulis }}
-                                                    </td>
-
-                                                    <td class="px-4 py-4 font-semibold">
-                                                        {{ $s->created_at->format('d M Y') }}
-                                                    </td>
-                                                </tr>
-
-                                            @empty
-                                                <tr>
-                                                    <td colspan="4" class="px-4 py-4 text-center">
-                                                        Tidak ada data yang ditemukan.
-                                                    </td>
-                                                </tr>
-                                            @endforelse
-                                        </tbody>
-
-                                    </table>
-                                </div>
-
+                                        @empty
+                                            <tr>
+                                                <td colspan="5" class="px-4 py-8 text-center text-gray-500">
+                                                    Tidak ada draf artikel.
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
                             </div>
 
                         </div>
-
                     </form>
+
+                    <!-- Form Delete Single Hidden -->
+                    <form id="singleDeleteForm" method="POST" class="hidden">
+                        @csrf
+                        @method('DELETE')
+                    </form>
+
                 </div>
-                <script>
-                    let btn_all = document.getElementById("btn_all");
-                    let btn_terbit = document.getElementById("btn_terbit");
-                    let btn_blmterbit = document.getElementById("btn_blmterbit");
-
-                    let belum_terbit = document.getElementById('belum_terbit');
-                    let sudah_terbit = document.getElementById('sudah_terbit');
-                    let semua = document.getElementById('semua');
-
-                    // default tabel aktif
-                    let activeTableId = 'belum_terbit';
-
-                    // tombol Draf
-                    btn_blmterbit.addEventListener("click", () => {
-                        sudah_terbit.classList.add('hidden');
-                        semua.classList.add('hidden');
-                        belum_terbit.classList.remove('hidden');
-                        activeTableId = 'belum_terbit';
-                    });
-
-                    // tombol Terbit
-                    btn_terbit.addEventListener("click", () => {
-                        belum_terbit.classList.add('hidden');
-                        semua.classList.add('hidden');
-                        sudah_terbit.classList.remove('hidden');
-                        activeTableId = 'sudah_terbit';
-                    });
-
-                    // tombol Semua
-                    btn_all.addEventListener("click", () => {
-                        sudah_terbit.classList.add('hidden');
-                        belum_terbit.classList.add('hidden');
-
-                        semua.classList.remove('hidden');
-
-                        activeTableId = 'semua';
-                    });
-
-                    // ------------------ Bulk Action ------------------
-                    function setAction(action) {
-                        let form = document.getElementById('bulkAction');
-
-                        if (action === 'update') {
-                            form.action = "{{ route('admin.tips-kerja.update.status') }}";
-                            document.getElementById('formMethod').value = "PUT";
-                            document.getElementById('statusField').value = "terbit";
-                        } else if (action === 'delete') {
-                            form.action = "{{ route('admin.tips-kerja.destroy') }}";
-                            document.getElementById('formMethod').value = "DELETE";
-                        }
-
-                        form.submit();
-                    }
-
-                    // ---- Checkbox Select All untuk "Sudah Terbit" ----
-                    document.getElementById('checkAllTerbit').addEventListener('change', function() {
-                        document.querySelectorAll('#sudah_terbit input[name="ids[]"]').forEach(cb => {
-                            cb.checked = this.checked;
-                        });
-                    });
-
-                    // ---- Checkbox Select All untuk "Belum Terbit" ----
-                    document.getElementById('checkAllBelum').addEventListener('change', function() {
-                        document.querySelectorAll('#belum_terbit input[name="ids[]"]').forEach(cb => {
-                            cb.checked = this.checked;
-                        });
-                    });
-
-                    // ---- Checkbox Select All untuk "Semua" ----
-                    document.getElementById('checkAllSemua').addEventListener('change', function() {
-                        document.querySelectorAll('#semua input[name="ids[]"]').forEach(cb => {
-                            cb.checked = this.checked;
-                        });
-                    });
-
-
-                    // ------------------ Check All Dynamic ------------------
-                    function checkAllToggle(source) {
-                        const table = document.querySelector(`#${activeTableId}`);
-                        if (!table) return;
-
-                        table.querySelectorAll("input[name='ids[]']").forEach(cb => cb.checked = source.checked);
-                    }
-
-                    document.getElementById("checkAllSemua").addEventListener("change", function() {
-                        checkAllToggle(this);
-                    });
-
-
-                    // ------------------ Search ------------------
-                    function searchTable() {
-                        let input = document.getElementById("search_input").value.toLowerCase();
-                        let filterBy = document.getElementById("filter_select").value;
-
-                        const colIndex = {
-                            "title": 1,
-                            "penulis": 2,
-                            "created_at": 3
-                        };
-
-                        if (activeTableId === 'semua') {
-                            searchInTable('semua');
-                        } else {
-                            searchInTable(activeTableId);
-                        }
-
-                        function searchInTable(id) {
-                            let table = document.querySelector(`#${id} table`);
-                            if (!table) return;
-
-                            let rows = table.getElementsByTagName("tr");
-
-                            for (let i = 1; i < rows.length; i++) {
-                                let colText = rows[i].cells[colIndex[filterBy]]?.innerText.toLowerCase() || "";
-                                rows[i].style.display = colText.includes(input) ? "" : "none";
-                            }
-                        }
-                    }
-                </script>
-
-
             </div>
         </main>
-        @include('admin.notif.modal_notif')
-        @include('admin.notif.modal_semua')
     </div>
+
+    <!-- Script Tab & Actions -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const btnAll = document.getElementById("btn_all");
+            const btnTerbit = document.getElementById("btn_terbit");
+            const btnBlmterbit = document.getElementById("btn_blmterbit");
+
+            const tabSemua = document.getElementById('semua');
+            const tabTerbit = document.getElementById('sudah_terbit');
+            const tabBlmterbit = document.getElementById('belum_terbit');
+
+            let activeTab = 'semua';
+
+            function resetTabs() {
+                tabSemua.classList.add('hidden');
+                tabTerbit.classList.add('hidden');
+                tabBlmterbit.classList.add('hidden');
+
+                btnAll.className = "pb-2 text-gray-600 hover:text-orange-500 cursor-pointer";
+                btnTerbit.className = "pb-2 text-gray-600 hover:text-orange-500 cursor-pointer";
+                btnBlmterbit.className = "pb-2 text-gray-600 hover:text-orange-500 cursor-pointer";
+            }
+
+            btnAll.addEventListener("click", () => {
+                resetTabs();
+                tabSemua.classList.remove('hidden');
+                btnAll.className = "pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer";
+                activeTab = 'semua';
+            });
+
+            btnTerbit.addEventListener("click", () => {
+                resetTabs();
+                tabTerbit.classList.remove('hidden');
+                btnTerbit.className = "pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer";
+                activeTab = 'sudah_terbit';
+            });
+
+            btnBlmterbit.addEventListener("click", () => {
+                resetTabs();
+                tabBlmterbit.classList.remove('hidden');
+                btnBlmterbit.className = "pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer";
+                activeTab = 'belum_terbit';
+            });
+
+            // Check All Handlers
+            document.getElementById('checkAllSemua')?.addEventListener('change', function() {
+                document.querySelectorAll('#semua input[name="ids[]"]').forEach(cb => cb.checked = this.checked);
+            });
+            document.getElementById('checkAllTerbit')?.addEventListener('change', function() {
+                document.querySelectorAll('#sudah_terbit input[name="ids[]"]').forEach(cb => cb.checked = this.checked);
+            });
+            document.getElementById('checkAllBelum')?.addEventListener('change', function() {
+                document.querySelectorAll('#belum_terbit input[name="ids[]"]').forEach(cb => cb.checked = this.checked);
+            });
+        });
+
+        function submitBulkStatus() {
+            const status = document.getElementById('bulk_status_select').value;
+            if (!status) {
+                alert('Pilih status terlebih dahulu!');
+                return;
+            }
+            const checked = document.querySelectorAll('input[name="ids[]"]:checked');
+            if (checked.length === 0) {
+                alert('Pilih setidaknya satu artikel untuk diperbarui!');
+                return;
+            }
+            let form = document.getElementById('bulkActionForm');
+            form.action = "{{ route('admin.tips-kerja.update.status') }}";
+            document.getElementById('bulkFormMethod').value = "PUT";
+            document.getElementById('bulkStatusField').value = status;
+            form.submit();
+        }
+
+        function submitBulkDelete() {
+            const checked = document.querySelectorAll('input[name="ids[]"]:checked');
+            if (checked.length === 0) {
+                alert('Pilih setidaknya satu artikel untuk dihapus!');
+                return;
+            }
+            if (confirm('Apakah Anda yakin ingin menghapus artikel yang dipilih?')) {
+                let form = document.getElementById('bulkActionForm');
+                form.action = "{{ route('admin.tips-kerja.destroy') }}";
+                document.getElementById('bulkFormMethod').value = "DELETE";
+                form.submit();
+            }
+        }
+
+        function confirmDeleteSingle(id) {
+            if (confirm('Apakah Anda yakin ingin menghapus tips kerja ini?')) {
+                let form = document.getElementById('singleDeleteForm');
+                form.action = "{{ url('/admin/tips/kerja') }}/" + id;
+                form.submit();
+            }
+        }
+
+        function searchTable() {
+            let input = document.getElementById("search_input").value.toLowerCase();
+            let visibleContainer = document.querySelector('#semua:not(.hidden), #sudah_terbit:not(.hidden), #belum_terbit:not(.hidden)');
+            if (!visibleContainer) return;
+
+            let rows = visibleContainer.querySelectorAll("tbody tr");
+            rows.forEach(row => {
+                let text = row.textContent.toLowerCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            });
+        }
+    </script>
 @endsection

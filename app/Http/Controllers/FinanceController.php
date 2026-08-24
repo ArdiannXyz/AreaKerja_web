@@ -75,7 +75,7 @@ class FinanceController extends Controller
     public function laporan(Request $request)
     {
 
-        $queryCash = CatatanCash::with(['user', 'hargaPembayaran', 'bank']);
+        $queryCash = CatatanCash::with(['user', 'bank']);
 
         if ($request->periode) {
             $queryCash->where('created_at', '>=', now()->subMonths($request->periode));
@@ -109,7 +109,7 @@ class FinanceController extends Controller
 
     public function detail($id)
     {
-        $transaksi = CatatanCash::with(['user', 'hargaPembayaran', 'bank'])->findOrFail($id);
+        $transaksi = CatatanCash::with(['user', 'bank'])->findOrFail($id);
 
         return response()->json([
             'id' => $transaksi->id,
@@ -127,7 +127,7 @@ class FinanceController extends Controller
     public function hal_detail()
     {
         $catatanKoins = CatatanKoin::with('user')->latest()->get();
-        $catatanCashs = CatatanCash::with(['user', 'bank', 'hargaPembayaran'])->latest()->get();
+        $catatanCashs = CatatanCash::with(['user', 'bank'])->latest()->get();
 
         return view('finance.detail-cat-koin', compact('catatanKoins', 'catatanCashs'));
     }
@@ -138,7 +138,7 @@ class FinanceController extends Controller
     {
         $periode = $request->periode;
 
-        $cashQuery = CatatanCash::with('hargaPembayaran')
+        $cashQuery = CatatanCash::with(['user', 'bank'])
             ->where('status', 'diterima');
 
         // Filter waktu
@@ -192,7 +192,7 @@ class FinanceController extends Controller
         $periode = $request->periode;
 
         // Base query
-        $cashQuery = CatatanCash::with('hargaPembayaran')
+        $cashQuery = CatatanCash::with(['user', 'bank'])
             ->where('status', 'diterima');
 
         // Terapkan filter periode (SAMA seperti di omset_perusahaan)

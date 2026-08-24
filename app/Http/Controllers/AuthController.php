@@ -261,6 +261,13 @@ class AuthController extends Controller
     public function regis_proses_perusahaan(Request $request)
     {
         try {
+            if (!$request->has('nama_perusahaan') && $request->has('username')) {
+                $request->merge(['nama_perusahaan' => $request->username]);
+            }
+            if (!$request->has('username') && $request->has('nama_perusahaan')) {
+                $request->merge(['username' => \Illuminate\Support\Str::slug($request->nama_perusahaan) . '_' . rand(100, 999)]);
+            }
+
             $valid = $request->validate([
                 'username'           => 'required|unique:users,username',
                 'email'              => 'required|email|unique:users,email',
@@ -271,13 +278,14 @@ class AuthController extends Controller
                 'agree_perusahaan'   => 'accepted'
             ], [
                 'username.required'           => 'Username wajib diisi.',
-                'username.unique'             => 'Username sudah digunakan.',
+                'username.unique'             => 'Username / Nama Perusahaan sudah digunakan.',
                 'email.required'              => 'Email wajib diisi.',
                 'email.email'                 => 'Format email tidak valid.',
                 'email.unique'                => 'Email sudah terdaftar.',
                 'password.required'           => 'Password wajib diisi.',
                 'password.min'                => 'Password minimal 8 karakter.',
                 'role.required'               => 'Role wajib diisi.',
+                'nama_perusahaan.required'    => 'Nama Perusahaan wajib diisi.',
                 'telepon_perusahaan.required' => 'Nomor telepon perusahaan wajib diisi.',
                 'agree_perusahaan.accepted'   => 'Anda harus menyetujui syarat dan ketentuan.',
                 'telepon_perusahaan.regex'    => 'Nomor telepon harus diawali dengan 628, atau 08.',
@@ -299,7 +307,7 @@ class AuthController extends Controller
 
             $user->perusahaan()->create([
                 'telepon_perusahaan' => $telepon,
-                'nama_perusahaan'    => $request->nama_perusahaan,
+                'nama_perusahaan'    => $valid['nama_perusahaan'],
                 'koin_perusahaan'    => 0,
             ]);
 
