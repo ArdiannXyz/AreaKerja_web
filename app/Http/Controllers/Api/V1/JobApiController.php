@@ -93,9 +93,10 @@ class JobApiController extends Controller
         $pelamar = $user->pelamar;
         $job = LowonganPerusahaan::findOrFail($id);
 
-        // Check if already applied
+        // Check if already applied (status other than 'saved')
         $existing = PelamarLowongan::where('pelamar_id', $pelamar->id)
             ->where('lowongan_id', $job->id)
+            ->where('status', '!=', 'saved')
             ->first();
 
         if ($existing) {
@@ -106,12 +107,22 @@ class JobApiController extends Controller
             ], 422);
         }
 
-        $application = PelamarLowongan::create([
-            'pelamar_id'  => $pelamar->id,
-            'lowongan_id' => $job->id,
-            'status'      => 'pending',
-            'is_read'     => 0,
-        ]);
+        // If previously saved, update status to pending
+        $saved = PelamarLowongan::where('pelamar_id', $pelamar->id)
+            ->where('lowongan_id', $job->id)
+            ->where('status', 'saved')
+            ->first();
+
+        if ($saved) {
+            $saved->update(['status' => 'pending']);
+            $application = $saved;
+        } else {
+            $application = PelamarLowongan::create([
+                'pelamar_id'  => $pelamar->id,
+                'lowongan_id' => $job->id,
+                'status'      => 'pending',
+            ]);
+        }
 
         return response()->json([
             'success' => true,
@@ -132,12 +143,77 @@ class JobApiController extends Controller
 
         $applications = PelamarLowongan::with(['lowongan.perusahaan'])
             ->where('pelamar_id', $user->pelamar->id)
+            ->where('status', '!=', 'saved')
             ->latest()
-            ->paginate(15);
+            ->paginate($request->input('per_page', 15));
 
         return response()->json([
             'success' => true,
             'data'    => $applications,
+        ]);
+    }
+
+    /**
+     * Bookmark / Save or Unsave a job.
+     */
+    public function toggleSaveJob(Request $request, $id)
+    {
+        $user = $request->user();
+        if (!$user->pelamar) {
+            return response()->json(['success' => false, 'message' => 'Profil pelamar tidak ditemukan.'], 404);
+        }
+
+        $pelamar = $user->pelamar;
+        $job = LowonganPerusahaan::findOrFail($id);
+
+        $savedRecord = PelamarLowongan::where('pelamar_id', $pelamar->id)
+            ->where('lowongan_id', $job->id)
+            ->where('status', 'saved')
+            ->first();
+
+        if ($savedRecord) {
+            $savedRecord->delete();
+            return response()->json([
+                'success' => true,
+                'is_saved' => false,
+                'message' => 'Lowongan berhasil dihapus dari daftar simpan.',
+            ]);
+        }
+
+        // Create saved record
+        $savedRecord = PelamarLowongan::create([
+            'pelamar_id'  => $pelamar->id,
+            'lowongan_id' => $job->id,
+            'status'      => 'saved',
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'is_saved' => true,
+            'message' => 'Lowongan berhasil disimpan.',
+            'data'    => $savedRecord,
+        ]);
+    }
+
+    /**
+     * Get list of saved/bookmarked jobs.
+     */
+    public function getSavedJobs(Request $request)
+    {
+        $user = $request->user();
+        if (!$user->pelamar) {
+            return response()->json(['success' => false, 'message' => 'Profil pelamar tidak ditemukan.'], 404);
+        }
+
+        $savedJobs = PelamarLowongan::with(['lowongan.perusahaan'])
+            ->where('pelamar_id', $user->pelamar->id)
+            ->where('status', 'saved')
+            ->latest()
+            ->paginate($request->input('per_page', 15));
+
+        return response()->json([
+            'success' => true,
+            'data'    => $savedJobs,
         ]);
     }
 }
