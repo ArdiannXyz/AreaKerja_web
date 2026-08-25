@@ -103,4 +103,66 @@ class NotificationApiController extends Controller
             'message' => 'Semua notifikasi berhasil ditandai telah dibaca.',
         ]);
     }
+
+    /**
+     * Delete a single notification.
+     */
+    public function destroy(Request $request, $id)
+    {
+        $user = $request->user();
+
+        $notification = Notifikasi::where('id', $id)
+            ->where(function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+                if ($user->perusahaan) {
+                    $q->orWhere('perusahaan_id', $user->perusahaan->id);
+                }
+            })
+            ->firstOrFail();
+
+        $notification->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notifikasi berhasil dihapus.',
+        ]);
+    }
+
+    /**
+     * Delete all notifications for current user.
+     */
+    public function destroyAll(Request $request)
+    {
+        $user = $request->user();
+
+        Notifikasi::where(function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+            if ($user->perusahaan) {
+                $q->orWhere('perusahaan_id', $user->perusahaan->id);
+            }
+        })->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Semua notifikasi berhasil dibersihkan.',
+        ]);
+    }
+
+    /**
+     * Register / Update Push Notification Device Token (Firebase FCM).
+     */
+    public function updateDeviceToken(Request $request)
+    {
+        $request->validate([
+            'fcm_token' => 'required|string',
+        ]);
+
+        $user = $request->user();
+        $user->update(['fcm_token' => $request->fcm_token]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Device FCM token berhasil diperbarui.',
+        ]);
+    }
 }
