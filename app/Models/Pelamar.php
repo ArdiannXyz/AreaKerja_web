@@ -107,9 +107,9 @@ class Pelamar extends Model
             && !empty($this->skills);
     }
 
-    public function getPengalamanOrganisasiAttribute()
+    public function pengalaman_organisasi()
     {
-        return collect();
+        return $this->hasMany(PengalamanOrganisasi::class, 'pelamar_id', 'id');
     }
 
     public function getSkillAttribute()
@@ -123,17 +123,37 @@ class Pelamar extends Model
         });
     }
 
+    public function alamat_pelamar()
+    {
+        return $this->hasMany(AlamatPelamar::class, 'pelamar_id', 'id');
+    }
+
     public function getAlamatPelamarAttribute()
     {
+        try {
+            $addresses = $this->alamat_pelamar()->get();
+            if ($addresses->isNotEmpty()) {
+                return $addresses;
+            }
+        } catch (\Throwable $e) {}
+
+        $user = $this->user ?? auth()->user();
+        $prov = $user?->provinsi_id ?? $this->provinsi;
+        $kota = $user?->kota_id ?? $this->kota;
+
+        if (!$prov && !$kota && !$this->alamat) {
+            return collect();
+        }
+
         return collect([
             (object)[
                 'id'        => 1,
                 'label'     => 'Alamat Utama',
-                'desa'      => $this->alamat,
-                'detail'    => $this->alamat,
-                'kecamatan' => $this->kota,
-                'kota'      => $this->kota,
-                'provinsi'  => $this->provinsi,
+                'desa'      => $this->alamat ?? 'Alamat Belum Diisi',
+                'detail'    => $this->alamat ?? 'Alamat Belum Diisi',
+                'kecamatan' => $this->kota ?? '-',
+                'kota'      => $this->kota ?? '-',
+                'provinsi'  => $this->provinsi ?? '-',
                 'kode_pos'  => '60111',
             ]
         ]);

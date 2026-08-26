@@ -26,10 +26,12 @@
 
                 <div class="w-full max-w-md mb-24">
 
-                    <!-- Logo -->
-                    <div class="flex items-center gap-2 mb-8 md:mb-14">
-                        <img src="{{ asset('images/logoarea.png') }}" alt="Logo" class="h-12 w-12">
-                        <span class="font-bold mb-1 text-orange-500">areakerja.com</span>
+                    <!-- Logo (Mobile only link to Landing Page) -->
+                    <div class="flex md:hidden items-center justify-center gap-2 mb-6">
+                        <a href="{{ route('beranda') }}" class="flex items-center gap-2 group" title="Kembali ke Beranda">
+                            <img src="{{ asset('images/logoarea.png') }}" alt="Logo" class="h-10 w-10 object-contain group-hover:scale-105 transition">
+                            <span class="font-bold mb-1 text-orange-500 group-hover:text-orange-600 transition">areakerja.com</span>
+                        </a>
                     </div>
 
                     <div class="pt-4">
@@ -221,6 +223,11 @@
 
             <section class="relative hidden md:flex md:w-2/5 lg:w-2/4 min:h-screen overflow-hidden">
                 <img src="{{ asset('images/gambar2.jpg') }}" alt="Background" class="w-full h-full object-cover">
+                <!-- Logo (Link to Landing Page) -->
+                <a href="{{ route('beranda') }}" class="absolute top-6 right-6 flex items-center gap-2 group transition z-20" title="Kembali ke Beranda">
+                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Logo" class="h-12 w-12 object-contain group-hover:scale-105 transition">
+                    <span class="font-semibold mb-1 text-white group-hover:text-orange-200 transition">areakerja.com</span>
+                </a>
                 <div
                     class="absolute inset-0 bg-black bg-opacity-40 flex flex-col items-center justify-center text-center text-white px-6 pb-56">
                     <h2 class="text-3xl font-semibold mb-4">Hallo, Jobseeker</h2>

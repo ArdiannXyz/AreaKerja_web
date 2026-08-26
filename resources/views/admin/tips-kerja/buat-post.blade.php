@@ -45,6 +45,26 @@
                     @enderror
                 </div>
 
+                <!-- Status Publikasi -->
+                <div>
+                    <label class="block mb-2 text-lg font-medium break-words">Status Publikasi</label>
+                    <select name="status" class="w-full border-2 border-gray-400 rounded-lg px-3 py-2 text-base">
+                        <option value="belum terbit" {{ old('status') == 'belum terbit' ? 'selected' : '' }}>Draf / Belum Terbit</option>
+                        <option value="terbit" {{ old('status') == 'terbit' ? 'selected' : '' }}>Langsung Diterbitkan</option>
+                    </select>
+                </div>
+
+                <!-- Kategori Artikel -->
+                <div>
+                    <label class="block mb-2 text-lg font-medium break-words">Kategori Artikel</label>
+                    <select name="kategori" class="w-full border-2 border-gray-400 rounded-lg px-3 py-2 text-base">
+                        <option value="Tips Kerja" {{ old('kategori') == 'Tips Kerja' ? 'selected' : '' }}>Tips Kerja</option>
+                        <option value="Interview & Gaji" {{ old('kategori') == 'Interview & Gaji' ? 'selected' : '' }}>Interview & Gaji</option>
+                        <option value="CV & Lamaran" {{ old('kategori') == 'CV & Lamaran' ? 'selected' : '' }}>CV & Lamaran</option>
+                        <option value="Top News" {{ old('kategori') == 'Top News' ? 'selected' : '' }}>Top News</option>
+                    </select>
+                </div>
+
                 <!-- Content -->
                 <div>
                     <label class="block mb-2 text-lg font-medium break-words">Isi Artikel <span class="text-red-500">*</span></label>

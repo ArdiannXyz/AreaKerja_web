@@ -20,7 +20,7 @@
     <meta name="twitter:image" content="{{ asset($data->gambar ?? 'default.jpg') }}">
 
 
-    <div class="bg-gray-50 font-sans mt-20" x-data="{
+    <div class="bg-slate-100 min-h-screen text-slate-800 pt-28 pb-16" x-data="{
         showConfirm: false,
         showSuccess: false,
         showConfirmTerima: false,
@@ -28,234 +28,213 @@
         showAlasan: false
     }">
 
-        <div class="max-w-7xl mx-auto py-8 px-4 md:px-8 grid md:grid-cols-3 gap-6">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
 
-            <!-- KIRI: DETAIL LOWONGAN -->
-            <div class="md:col-span-2 space-y-6">
-                <div class="bg-white rounded-lg shadow p-6 space-y-4">
-                    <div class="flex items-center gap-3">
-                        <img src="{{ asset('storage/' . $data->perusahaan->img_profile) }}" alt="logo"
-                            class="w-20 h-20 rounded-full">
-                        <div>
-                            <h1 class="text-xl font-semibold">{{ $data->nama }}</h1>
-                            <p class="text-gray-600">{{ $data->perusahaan->nama_perusahaan }}</p>
-                            <p class="text-gray-500 text-sm">{{ $data->alamat }}</p>
+            @if ($data->status === 'tutup')
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl flex items-center gap-3 shadow-sm">
+                    <i class="ph ph-lock-key text-rose-600 text-3xl shrink-0"></i>
+                    <div>
+                        <p class="font-extrabold text-base text-rose-900">Pendaftaran Ditutup (Kuota Terpenuhi)</p>
+                        <p class="text-xs text-rose-700 mt-0.5">Perusahaan telah menutup pendaftaran untuk lowongan ini karena kuota pelamar yang dibutuhkan sudah terpenuhi.</p>
+                    </div>
+                </div>
+            @endif
+
+            <!-- 1. HEADER CARD (TOP JOB BANNER CARD) -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-start gap-4">
+                    <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 bg-white p-1 shrink-0 flex items-center justify-center shadow-sm">
+                        @if (!empty($data->perusahaan->img_profile))
+                            <img src="{{ asset('storage/' . $data->perusahaan->img_profile) }}" alt="Logo" class="w-full h-full object-cover rounded-lg">
+                        @else
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode($data->perusahaan->nama_perusahaan ?? 'P') }}&background=f97316&color=fff&size=128" alt="Logo" class="w-full h-full object-cover rounded-lg">
+                        @endif
+                    </div>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">{{ $data->nama }}</h1>
+                        <p class="text-sm font-semibold text-slate-500 mt-1">{{ $data->perusahaan->nama_perusahaan }}</p>
+                        <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                            <i class="ph ph-map-pin text-orange-500"></i> {{ $data->alamat }}
+                        </p>
+
+                        <!-- Status & Batas Lamaran Badges -->
+                        <div class="flex items-center gap-2 flex-wrap mt-3">
+                            @if ($data->status === 'tutup')
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-700 text-xs font-extrabold rounded-full border border-rose-200 shadow-xs">
+                                    <i class="ph ph-lock-key"></i> Ditutup (Kuota Terpenuhi)
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-extrabold rounded-full border border-emerald-200 shadow-xs">
+                                    <i class="ph ph-check-circle"></i> Status: Aktif Menerima Pelamar
+                                </span>
+                            @endif
+
+                            @if ($data->batas_lamaran)
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 text-orange-700 text-xs font-extrabold rounded-full border border-orange-200 shadow-xs">
+                                    <i class="ph ph-calendar-blank text-orange-500"></i> Batas: {{ \Carbon\Carbon::parse($data->batas_lamaran)->format('d M Y') }}
+                                </span>
+                            @endif
                         </div>
                     </div>
+                </div>
 
-                    <p class="text-orange-600 font-medium">
-                        Rp {{ number_format($data->gaji_awal) }} - Rp {{ number_format($data->gaji_akhir) }} /bulan
+                <div class="flex flex-col items-start md:items-end gap-3 w-full md:w-auto">
+                    <!-- Salary Text (Orange Text) -->
+                    <p class="text-orange-600 font-extrabold text-base sm:text-lg md:text-xl whitespace-nowrap">
+                        Rp {{ number_format($data->gaji_awal, 0, ',', '.') }} - {{ number_format($data->gaji_akhir, 0, ',', '.') }} / Bulan
                     </p>
 
-                    <!-- Tombol Aksi -->
+                    <!-- Tombol Lamar & Bookmark -->
                     <div class="flex items-center gap-3">
-                        @php
-                            $disabled =
-                                isset($tawaran) &&
-                                in_array(strtolower($tawaran->status ?? ''), ['diterima', 'ditolak']);
-                        @endphp
-
                         @auth
                             @php
-                                $sudahDiterima = $statusLamaran === 'diterima';
-                                $disableButton = $isExpired || $sudahDiterima;
+                                $statusLower = strtolower($statusLamaran ?? '');
+                                $sudahMelamar = !empty($statusLamaran) && in_array($statusLower, ['pending', 'diterima', 'ditolak', 'proses', 'dikelola']);
+                                $sudahDiterima = $statusLower === 'diterima';
+                                $isTutup = ($data->status === 'tutup');
+                                $disableButton = $isExpired || $sudahMelamar || $isTutup;
                                 $kategori = Auth::user()->pelamar->kategori ?? null;
                             @endphp
 
-
-
-
                             @if ($kategori === 'pelamar' || $kategori === 'calon kandidat' || ($kategori === 'kandidat aktif' && !$tawaran))
-                                @if ($kategori === 'pelamar' || $kategori === 'calon kandidat' || ($kategori === 'kandidat aktif' && !$tawaran))
-                                    <button @click="if(!{{ $disableButton ? 'true' : 'false' }}) showConfirm = true"
-                                        :disabled="{{ $disableButton ? 'true' : 'false' }}"
-                                        class="px-5 py-2 rounded-lg text-white transition
-        {{ $disableButton ? 'bg-gray-300 cursor-not-allowed' : 'bg-orange-500 hover:bg-orange-600' }}">
-                                        @if ($isExpired)
-                                            Lamaran Kadaluarsa
-                                        @elseif ($sudahDiterima)
-                                            Sudah Diterima
-                                        @else
-                                            Lamar Cepat
-                                        @endif
-                                    </button>
-                                @endif
-
-
-
-
-                                {{-- simpan --}}
+                                <button 
+                                    @click="{{ $disableButton ? "Swal.fire({ title: 'Informasi Lamaran', text: '" . ($isTutup ? 'Pendaftaran lowongan ini telah ditutup oleh perusahaan karena kuota terpenuhi.' : ($sudahMelamar ? 'Anda sudah mengirimkan lamaran untuk lowongan ini.' : 'Lamaran untuk lowongan ini sudah kadaluarsa.')) . "', icon: 'info', confirmButtonColor: '#f97316', confirmButtonText: 'Mengerti', customClass: { popup: 'rounded-2xl shadow-xl' } })" : "showConfirm = true" }}"
+                                    :disabled="{{ $disableButton ? 'true' : 'false' }}"
+                                    class="px-6 py-2.5 rounded-xl text-white font-extrabold transition shadow-sm text-sm
+                                        {{ $disableButton ? 'bg-slate-400 cursor-not-allowed opacity-90' : 'bg-orange-500 hover:bg-orange-600' }}">
+                                    @if ($data->status === 'tutup')
+                                        Pendaftaran Ditutup (Kuota Full)
+                                    @elseif ($isExpired)
+                                        Lamaran Kadaluarsa
+                                    @elseif ($sudahDiterima)
+                                        Sudah Diterima
+                                    @elseif ($sudahMelamar)
+                                        Anda Sudah Mengirimkan Lamaran
+                                    @else
+                                        Lamar Cepat
+                                    @endif
+                                </button>
+                                {{-- Simpan Bookmark Button --}}
                                 <div x-data="saveLowongan({{ $data->id }}, {{ $isSaved ? 'true' : 'false' }})">
-                                    <button @click="toggleSave" class="px-4 py-2 rounded-lg border"
-                                        :class="saved
-                                            ?
-                                            ' text-orange-600 bg-orange-50 border-orange-200' :
-                                            'bg-gray-100 border-gray-400 text-gray-700'">
-
-                                        <!-- Bookmark (Belum disimpan) -->
-                                        <i x-show="!saved" class="ph ph-bookmark text-2xl text-gray-600"></i>
-
-                                        <!-- Bookmark (Sudah disimpan) -->
-                                        <i x-show="saved" class="ph-fill ph-bookmark text-2xl text-orange-500"></i>
-
+                                    <button type="button" @click="toggleSave"
+                                        class="p-2.5 rounded-xl border transition cursor-pointer flex items-center justify-center"
+                                        :class="saved ? 'text-orange-600 bg-orange-50 border-orange-200' : 'bg-slate-100 border-slate-200 text-slate-500 hover:text-orange-600'"
+                                        :title="saved ? 'Hapus dari Simpan' : 'Simpan Lowongan'">
+                                        <i x-show="!saved" class="ph ph-bookmark-simple text-xl"></i>
+                                        <i x-show="saved" class="ph-fill ph-bookmark-simple text-xl text-orange-500"></i>
                                     </button>
                                 </div>
                             @endif
-
-                            {{-- Jika kandidat aktif dan ADA tawaran --}}
-                            @if ($kategori === 'kandidat aktif' && $tawaran)
-                                <button @click="if(!{{ $disabled ? 'true' : 'false' }}) showConfirmTerima=true"
-                                    :disabled="{{ $disabled ? 'true' : 'false' }}"
-                                    class="px-5 py-2 rounded-md text-white transition"
-                                    :class="{{ $disabled ? "'bg-green-300 cursor-not-allowed'" : "'bg-green-500 hover:bg-green-600'" }}">
-                                    Terima
-                                </button>
-
-                                <button @click="if(!{{ $disabled ? 'true' : 'false' }}) showConfirmTolak=true"
-                                    :disabled="{{ $disabled ? 'true' : 'false' }}"
-                                    class="px-5 py-2 rounded-md text-white transition"
-                                    :class="{{ $disabled ? "'bg-red-300 cursor-not-allowed'" : "'bg-red-500 hover:bg-red-600'" }}">
-                                    Tolak
-                                </button>
-
-                                {{-- Tombol Bookmark --}}
-                                @auth
-                                    @php
-                                        $lowongan = $tawaran ? $tawaran->lowonganPerusahaan : $data; // fallback ke $data kalau gak ada tawaran
-                                        $sudahSimpan = Auth::user()->pelamar
-                                            ? Auth::user()
-                                                ->pelamar->simpanLowongans()
-                                                ->where('lowongan_id', $lowongan->id)
-                                                ->exists()
-                                            : false;
-                                    @endphp
-
-
-                                    <div>
-                                        @if (!$sudahSimpan)
-                                            <form action="{{ route('simpan-lowongan.store') }}" method="POST">
-                                                @csrf
-                                                <input type="hidden" name="lowongan_id" value="{{ $lowongan->id }}">
-                                                <button type="submit"
-                                                    class="p-2 rounded-md bg-gray-200 hover:bg-gray-300 transition"
-                                                    title="Simpan Lowongan">
-                                                    <i class="ph ph-bookmark text-2xl text-gray-600"></i>
-                                                </button>
-                                            </form>
-                                        @else
-                                            <form action="{{ route('simpan-lowongan.destroy', $lowongan->id) }}" method="POST">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="p-2 rounded-md bg-orange-100 hover:bg-orange-200 transition"
-                                                    title="Hapus dari Simpan">
-                                                    <i class="ph-fill ph-bookmark text-2xl text-orange-500"></i>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                @endauth
-                            @endif
+                        @else
+                            <a href="{{ route('login') }}" class="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold rounded-xl shadow-sm transition text-sm">
+                                Lamar Cepat
+                            </a>
                         @endauth
                     </div>
                 </div>
+            </div>
 
-                <!-- DETAIL LOWONGAN -->
-                <div class="bg-white rounded-lg shadow p-12 space-y-6">
-                    <div>
-                        <h2 class="font-semibold text-lg mb-2">Detail Lowongan</h2>
-                        <p class="text-semibold text-gray-500">Berikut merupakan deskripsi lengkap terkait perusahaan yang
-                            anda tuju</p>
-                        <div class="flex items-start gap-3 mt-4">
-
-                            <!-- ICON -->
-                            <svg width="23" height="19" viewBox="0 0 23 19" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M17.2198 5.39322H18.9611V3.65201H17.2198V5.39322ZM17.2198 9.91583H18.9611V8.17462H17.2198V9.91583ZM17.2198 14.4384H18.9611V12.6972H17.2198V14.4384ZM0 18.0905V8.4799L6.78392 3.65201L13.5678 8.4799V18.0905H8.8711V12.3501H4.69673V18.0905H0ZM15.8291 18.0905V7.34925L9.48053 2.79271V0H22.6131V18.0905H15.8291Z"
-                                    fill="black" fill-opacity="0.6" />
-                            </svg>
-
-                            <div>
-                                <h3 class="font-semibold text-lg">Jenis Lowongan</h3>
-
-                                <span
-                                    class="inline-block mt-2 px-4 py-1 bg-gray-300 rounded-md font-semibold text-gray-700 text-sm">
-                                    {{ $data->jenis }}
-                                </span>
-                            </div>
-                        </div>
-                        <hr class="mt-[40px]">
-                        <div class="mt-8">
-                            <h3 class="font-semibold text-lg mb-2">Lokasi</h3>
-                            <p class="text-gray-600"><i class="ph ph-map-pin text-2xl ml-5"></i><span
-                                    class="ml-3">{{ $data->alamat }}</span></p>
-                        </div>
-                    </div>
-                    <hr>
-                    <div>
-                        <h2 class="font-semibold text-lg mb-2">Requirements</h2>
-                        <p class="text-gray-700">
-                            @foreach (explode("\n", $data->syarat_pekerjaan) as $req)
-                                <li>{{ $req }}</li>
-                            @endforeach
-                        </p>
-                    </div>
-
-                    <div>
-                        <h2 class="font-semibold text-lg mb-2">Responsibilities</h2>
-                        <p class="text-gray-700">
-                            @foreach (preg_split("/\r\n|\n|\r/", $data->tanggung_jawab) as $res)
-                                @php
-                                    $trim = trim($res);
-                                    $isNumbered = preg_match('/^\d+[\.\-\)]\s*/', $trim);
-                                @endphp
-
-                                @if ($trim !== '')
-                                    @if ($isNumbered)
-                                        <li style="list-style-type: none;">{{ $trim }}</li>
-                                    @else
-                                        <li>{{ $trim }}</li>
-                                    @endif
-                                @endif
-                            @endforeach
-                        </p>
-                    </div>
+            <!-- 2. CARD DESKRIPSI -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-6 md:p-8 space-y-3">
+                <h2 class="font-extrabold text-xl text-slate-900">Deskripsi</h2>
+                <div class="text-sm md:text-base text-slate-600 leading-relaxed font-medium">
+                    {!! $data->deskripsi !!}
                 </div>
             </div>
 
-            <!-- KANAN: LOWONGAN LAIN -->
-            <div class="space-y-4">
-                <div class="flex justify-between items-center">
-                    <h2 class="font-semibold">Lowongan Lainnya di <span
-                            class="font-bold text-orange-500">{{ $data->perusahaan->nama_perusahaan }}</span></h2>
+            <!-- 3. CARD DETAIL LOWONGAN -->
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-6 md:p-8 space-y-6">
+                <div>
+                    <h2 class="font-extrabold text-xl text-slate-900">Detail Lowongan</h2>
+                    <p class="text-xs text-slate-400 mt-1 font-medium">Informasi terkait perusahaan yang anda tuju</p>
                 </div>
 
-                <div class="bg-white rounded-lg shadow p-4 space-y-4">
+                <!-- Batas Lamaran & Status Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200/70">
+                    <div>
+                        <h3 class="font-extrabold text-sm text-slate-800 mb-1.5 flex items-center gap-1.5">
+                            <i class="ph ph-calendar-blank text-orange-500 text-base"></i> Batas Lamaran (Deadline)
+                        </h3>
+                        <span class="inline-block bg-white text-orange-700 font-extrabold px-4 py-2 rounded-lg text-xs sm:text-sm border border-orange-200 shadow-2xs">
+                            {{ $data->batas_lamaran ? \Carbon\Carbon::parse($data->batas_lamaran)->format('d F Y') : 'Tidak Ada Batas Waktu' }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-extrabold text-sm text-slate-800 mb-1.5 flex items-center gap-1.5">
+                            <i class="ph ph-info text-orange-500 text-base"></i> Status Pendaftaran
+                        </h3>
+                        @if ($data->status === 'tutup')
+                            <span class="inline-block bg-rose-50 text-rose-700 font-extrabold px-4 py-2 rounded-lg text-xs sm:text-sm border border-rose-200 shadow-2xs">
+                                🔒 Pendaftaran Ditutup (Kuota Terpenuhi)
+                            </span>
+                        @else
+                            <span class="inline-block bg-emerald-50 text-emerald-700 font-extrabold px-4 py-2 rounded-lg text-xs sm:text-sm border border-emerald-200 shadow-2xs">
+                                🟢 Pendaftaran Dibuka (Aktif)
+                            </span>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Jenis Lowongan -->
+                <div>
+                    <h3 class="font-extrabold text-base text-slate-900 mb-2">Jenis Lowongan</h3>
+                    <span class="inline-block bg-slate-200 text-slate-700 font-bold px-6 py-2 rounded-xl text-xs sm:text-sm">
+                        {{ $data->jenis }}
+                    </span>
+                </div>
+
+                <!-- Lokasi -->
+                <div>
+                    <h3 class="font-extrabold text-base text-slate-900 mb-2">Lokasi</h3>
+                    <span class="inline-block bg-slate-200 text-slate-700 font-bold px-6 py-2 rounded-xl text-xs sm:text-sm">
+                        {{ $data->alamat }}
+                    </span>
+                </div>
+
+                <!-- Requirement -->
+                <div>
+                    <h3 class="font-extrabold text-base text-slate-900 mb-2">Requirement</h3>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-slate-600 space-y-1.5 leading-relaxed font-medium">
+                        @foreach (explode("\n", $data->syarat_pekerjaan) as $req)
+                            @if (trim($req) !== '')
+                                <li>{{ trim($req) }}</li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </div>
+
+                <!-- Responsibility -->
+                <div>
+                    <h3 class="font-extrabold text-base text-slate-900 mb-2">Responsibility</h3>
+                    <ul class="list-disc list-inside text-xs sm:text-sm text-slate-600 space-y-1.5 leading-relaxed font-medium">
+                        @foreach (preg_split("/\r\n|\n|\r/", $data->tanggung_jawab) as $res)
+                            @php $trim = trim($res); @endphp
+                            @if ($trim !== '')
+                                <li>{{ $trim }}</li>
+                            @endif
+                        @endforeach
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 4. LOWONGAN LAINNYA -->
+            <div class="pt-6 pb-8">
+                <h2 class="font-black text-2xl text-slate-900 mb-6">Lowongan Lainnya</h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @forelse ($lowonganLain as $item)
-                        <a href="{{ route('detail.lowongan.non.user', [
-                            'perusahaan' => $item->perusahaan->slug,
-                            'lowongan' => $item->slug,
-                        ]) }}"
-                            class="block border-b pb-4 hover:bg-gray-50 transition rounded-md p-2">
-                            <div class="flex items-start gap-3">
-                                <img src="{{ asset('storage/' . $data->perusahaan->img_profile) }}" alt="logo"
-                                    class="w-14 h-14 rounded-full">
-                                <div>
-                                    <h3 class="font-medium">{{ $item->nama }}</h3>
-                                    <p class="text-gray-500 text-sm">{{ $item->alamat }}</p>
-                                    <p class="text-sm text-gray-700">
-                                        Rp {{ number_format($item->gaji_awal) }} - Rp
-                                        {{ number_format($item->gaji_akhir) }}
-                                    </p>
-                                </div>
-                            </div>
-                        </a>
+                        <div class="h-full" onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $item->perusahaan->slug, 'lowongan' => $item->slug]) }}'">
+                            @include('non-user.components.card', ['d' => $item])
+                        </div>
                     @empty
-                        <p class="text-sm text-gray-500">Tidak ada lowongan lain.</p>
+                        <div class="col-span-3 text-center py-10 bg-white rounded-2xl border border-dashed border-slate-300">
+                            <p class="text-sm text-slate-400 font-medium">Tidak ada lowongan lain.</p>
+                        </div>
                     @endforelse
                 </div>
             </div>
+
         </div>
 
         {{-- ===================== MODAL ===================== --}}
@@ -405,53 +384,94 @@
             </div>
         </div>
 
-        @include('layouts.footer')
     </div>
+
+    @include('layouts.footer')
 
 
     {{-- SIMPAN LOWONGAN --}}
     <script>
         function saveLowongan(lowonganId, initialState) {
-
             return {
                 saved: initialState,
+                loading: false,
 
                 toggleSave() {
-                    if (!this.saved) {
-                        // SIMPAN
-                        fetch("{{ route('simpan-lowongan.store') }}", {
-                                method: "POST",
-                                headers: {
-                                    "Content-Type": "application/json",
-                                    "Accept": "application/json",
-                                    "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
-                                },
-                                body: JSON.stringify({
-                                    lowongan_id: lowonganId
-                                })
-                            })
-                            .then(r => r.ok && (this.saved = true))
-                            .catch(() => alert("Gagal menyimpan."))
-                    } else {
-                        // HAPUS
-                        fetch(`/pelamar/simpan-lowongan/${lowonganId}`, {
-                                method: "DELETE",
-                                headers: {
-                                    "Accept": "application/json",
-                                    "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
-                                }
-                            })
-                            .then(r => {
-                                if (r.ok) {
-                                    this.saved = false;
-                                    location.reload();
-                                }
-                            })
-                            .catch(() => alert("Gagal menghapus."));
+                    if (this.loading) return;
+                    this.loading = true;
 
-                    }
+                    let targetUrl = this.saved ? `/pelamar/simpan-lowongan/${lowonganId}` : "{{ route('simpan-lowongan.store') }}";
+                    let reqMethod = this.saved ? "DELETE" : "POST";
+
+                    fetch(targetUrl, {
+                        method: reqMethod,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Accept": "application/json",
+                            "X-CSRF-TOKEN": document.querySelector('meta[name=csrf-token]').content
+                        },
+                        body: reqMethod === "POST" ? JSON.stringify({ lowongan_id: lowonganId }) : null
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        this.loading = false;
+                        if (data.success) {
+                            this.saved = !this.saved;
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: this.saved ? 'Lowongan disimpan' : 'Dihapus dari simpanan',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'error',
+                                title: data.message || 'Gagal memperbarui simpanan',
+                                showConfirmButton: false,
+                                timer: 1500
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        this.loading = false;
+                        console.error(err);
+                    });
                 }
             }
         }
     </script>
+
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false,
+                    customClass: { popup: 'rounded-2xl shadow-xl' }
+                });
+            });
+        </script>
+    @endif
+
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Informasi Lamaran',
+                    text: "{{ session('error') }}",
+                    icon: 'info',
+                    confirmButtonColor: '#f97316',
+                    confirmButtonText: 'Mengerti',
+                    customClass: { popup: 'rounded-2xl shadow-xl' }
+                });
+            });
+        </script>
+    @endif
 @endsection

@@ -1,151 +1,244 @@
 @extends('layouts.index-perusahaan')
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <div class="bg-white p-6 font-medium mt-24">
+    <div class="bg-slate-50 min-h-screen text-slate-800 pt-28 pb-16" x-data="{ tab: '{{ request('tab', 'profil') }}' }">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
 
-        <!-- Header -->
-        <div class="flex items-start space-x-4 flex-col sm:flex-row">
-
-            <!-- Logo -->
-            @if (Auth::user()->perusahaan->img_profile)
-                <img id="pu" class="w-20 h-20 object-contain mb-3 profile-img"
-                    src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
-            @else
-                <img id="pu" class="w-20 h-20 object-contain mb-3"
-                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                    alt="">
+            <!-- Alert Notifikasi -->
+            @if (session('success'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-5 py-3.5 rounded-2xl flex items-center gap-3 shadow-xs">
+                    <i class="ph ph-check-circle text-emerald-600 text-2xl shrink-0"></i>
+                    <span class="text-sm font-semibold">{{ session('success') }}</span>
+                </div>
             @endif
-            <!-- Info Perusahaan -->
-            <div>
-                <span
-                    class="text-xl font-bold mb-4">{{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}</span>
-                <p class="text-sm font-semibold mb-1">{{ Auth::user()->perusahaan->jenis_perusahaan }}</p>
-                <p class="text-xs text-gray-400 mb-4">{{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }},
-                    {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }},
-                    {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}</p>
-                <a href="{{ route('profile.edit.perusahaan') }}"
-                    class="px-4 py-1 rounded-md border border-orange-400 text-orange-500 text-sm">
-                    Edit Profile
-                </a>
-            </div>
-        </div>
 
-        <!-- Deskripsi -->
-        @if (Auth::user()->perusahaan->deskripsi)
-            <div class="mt-6">
-                <div class="flex flex-col sm:flex-row items-start">
+            @if (session('error'))
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-5 py-3.5 rounded-2xl flex items-center gap-3 shadow-xs">
+                    <i class="ph ph-warning-circle text-rose-600 text-2xl shrink-0"></i>
+                    <span class="text-sm font-semibold">{{ session('error') }}</span>
+                </div>
+            @endif
 
-                    <label class="w-32 text-sm mt-2 mb-1">Deskripsi</label>
-                    <textarea name="deskripsi" readonly
-                        class="auto-grow flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none overflow-hidden text-gray-800 text-sm">{{ Auth::user()->perusahaan->deskripsi }}</textarea>
+            @if ($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-5 py-4 rounded-2xl shadow-xs">
+                    <div class="flex items-center gap-2 font-bold text-sm text-rose-900 mb-1">
+                        <i class="ph ph-warning text-lg"></i> Terjadi kesalahan:
+                    </div>
+                    <ul class="list-disc list-inside text-xs space-y-1">
+                        @foreach ($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <!-- 1. TOP HEADER BANNER CARD -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-center gap-5">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-orange-500/20 bg-slate-50 p-1 shrink-0 flex items-center justify-center shadow-sm relative group">
+                        @if (Auth::user()->perusahaan->img_profile)
+                            <img src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Logo" class="w-full h-full object-cover rounded-xl">
+                        @else
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username) }}&background=f97316&color=fff&size=128" alt="Logo" class="w-full h-full object-cover rounded-xl">
+                        @endif
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+                                {{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}
+                            </h1>
+                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                                ✓ Terverifikasi
+                            </span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-500 mt-1">
+                            {{ Auth::user()->perusahaan->jenis_perusahaan ?? 'Sektor Usaha Belum Diatur' }}
+                        </p>
+                        <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                            <i class="ph ph-map-pin text-orange-500"></i>
+                            {{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? 'Lokasi Utama' }},
+                            {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? 'Indonesia' }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 shrink-0">
+                    <a href="{{ route('profile.edit.perusahaan') }}" class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold rounded-xl shadow-sm transition text-sm flex items-center gap-2">
+                        <i class="ph ph-pencil-simple text-base"></i> Edit Profil
+                    </a>
                 </div>
             </div>
-        @else
-            <div class="mt-6">
-                <div class="flex flex-col sm:flex-row items-start">
 
-                    <label class="w-32 text-sm mt-2 mb-1">Deskripsi</label>
-                    <textarea name="deskripsi" readonly
-                        class="auto-grow flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none overflow-hidden text-gray-800 text-sm"></textarea>
-                </div>
-            </div>
-        @endif
+            <!-- 2. TAB NAVIGATION SYSTEM -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+                <!-- Tab Headers -->
+                <div class="flex border-b border-slate-200 bg-slate-50/50 px-4 md:px-8 gap-2 md:gap-6 overflow-x-auto">
+                    <button @click="tab = 'profil'"
+                        :class="tab === 'profil' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
+                        <i class="ph ph-buildings text-lg"></i> Profil Perusahaan
+                    </button>
 
-        <!-- Grid Form & Kontak -->
-        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <button @click="tab = 'alamat'"
+                        :class="tab === 'alamat' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
+                        <i class="ph ph-map-pin text-lg"></i> Alamat & Lokasi
+                    </button>
 
-
-            <!-- Kolom Kiri (span 2 kolom) -->
-            <div class="col-span-2 space-y-4">
-                <!-- Badan Usaha -->
-                <div class="flex flex-col sm:flex-row items-start mt-4">
-                    <label class="text-sm mb-1 sm:mb-0 sm:w-32">Badan Usaha</label>
-                    <input type="text" name="jenis_perusahaan" readonly
-                        value="{{ Auth::user()->perusahaan->jenis_perusahaan }}"
-                        class="w-full sm:flex-1 border border-orange-400 rounded-md px-4 py-4 focus:outline-none text-gray-800 text-sm">
-                </div>
-
-
-                <!-- Visi -->
-                <div class="flex flex-col sm:flex-row items-start mt-4">
-                    <label class="text-sm mb-1 sm:mb-0 sm:w-32">Visi</label>
-                    <textarea name="visi" readonly
-                        class="auto-grow w-full sm:flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none text-gray-800 text-sm">{{ Auth::user()->perusahaan->visi }}</textarea>
+                    <button @click="tab = 'keamanan'"
+                        :class="tab === 'keamanan' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
+                        <i class="ph ph-shield-check text-lg"></i> Keamanan & Akun
+                    </button>
                 </div>
 
+                <!-- Tab Contents -->
+                <div class="p-6 md:p-8">
 
-                <!-- Misi -->
-                <div class="flex flex-col sm:flex-row items-start mt-4">
-                    <label class="text-sm mb-1 sm:mb-0 sm:w-32">Misi</label>
-                    <textarea name="misi" readonly
-                        class="auto-grow w-full sm:flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none text-gray-800 text-sm">{{ Auth::user()->perusahaan->misi }}</textarea>
-                </div>
+                    <!-- TAB 1: PROFIL PERUSAHAAN -->
+                    <div x-show="tab === 'profil'" x-transition class="space-y-6">
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 mb-1">Informasi Perusahaan</h3>
+                            <p class="text-xs text-slate-500">Detail identitas publik perusahaan yang ditampilkan pada lowongan kerja.</p>
+                        </div>
 
-            </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Perusahaan</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->nama_perusahaan ?? '-' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
 
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Badan Usaha / Jenis Perusahaan</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->jenis_perusahaan ?? '-' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
 
-            <!-- Kolom Kanan (Kontak) -->
-            <div class="border border-orange-400 rounded-xl p-5 bg-white shadow-sm self-start min-h-[250px]">
-                <h2 class="font-semibold text-lg mb-4 flex items-center gap-2 text-orange-600">
-                    Kontak
-                </h2>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Website Resmi</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->website_perusahaan ?? 'Belum diisi' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
 
-                <ul class="space-y-3 text-sm">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon HRD</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->telepon_perusahaan ?? Auth::user()->telepon ?? '-' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
+                        </div>
 
-                    <!-- Website -->
-                    <li class="flex flex-col sm:flex-row">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Deskripsi Perusahaan</label>
+                            <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs md:text-sm text-slate-700 leading-relaxed font-medium min-h-[100px]">
+                                {!! nl2br(e(Auth::user()->perusahaan->deskripsi ?? 'Belum ada deskripsi perusahaan.')) !!}
+                            </div>
+                        </div>
 
-                        <span class="font-medium w-24 text-gray-700">Website</span>
-                        <span class="text-gray-800">
-                            :
-                            <a href="{{ Auth::user()->perusahaan->website_perusahaan }}"
-                                class="text-blue-600 hover:underline break-all">
-                                {{ Auth::user()->perusahaan->website_perusahaan }}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Visi</label>
+                                <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 leading-relaxed font-medium min-h-[80px]">
+                                    {{ Auth::user()->perusahaan->visi ?? 'Belum diisi' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Misi</label>
+                                <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 leading-relaxed font-medium min-h-[80px]">
+                                    {{ Auth::user()->perusahaan->misi ?? 'Belum diisi' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: ALAMAT & LOKASI -->
+                    <div x-show="tab === 'alamat'" x-cloak x-transition class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-base font-extrabold text-slate-900 mb-1">Daftar Alamat Perusahaan</h3>
+                                <p class="text-xs text-slate-500">Kelola lokasi kantor utama dan cabang perusahaan Anda.</p>
+                            </div>
+                            <a href="{{ route('alamat.perusahaan') }}" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition shadow-xs">
+                                Kelola Alamat Lengkap
                             </a>
-                        </span>
-                    </li>
+                        </div>
 
-                    <!-- Telepon -->
-                    <li class="flex flex-col sm:flex-row">
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 text-xs font-extrabold rounded-full">
+                                    Alamat Utama
+                                </span>
+                            </div>
+                            <p class="text-sm font-bold text-slate-800">
+                                {{ Auth::user()->perusahaan->alamatUtama->alamat_lengkap ?? 'Alamat Utama Belum Diatur' }}
+                            </p>
+                            <p class="text-xs text-slate-500">
+                                {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}, 
+                                {{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }}, 
+                                {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }}
+                            </p>
+                        </div>
+                    </div>
 
-                        <span class="font-medium w-24 text-gray-700">Telepon</span>
-                        <span class="text-gray-800">: {{ Auth::user()->perusahaan->telepon_perusahaan }}</span>
-                    </li>
+                    <!-- TAB 3: KEAMANAN & AKUN -->
+                    <div x-show="tab === 'keamanan'" x-cloak x-transition class="space-y-8">
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 mb-1">Keamanan Akun & Kredensial</h3>
+                            <p class="text-xs text-slate-500">Kelola kata sandi dan informasi keamanan akun terdaftar.</p>
+                        </div>
 
-                    <!-- Whatsapp -->
-                    <li class="flex flex-col sm:flex-row">
+                        <!-- Info Email Terkunci (Read-Only) -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <label class="block text-xs font-bold text-slate-700">Email Utama Akun</label>
+                                <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200 flex items-center gap-1">
+                                    <i class="ph ph-lock-key"></i> Terverifikasi & Terkunci
+                                </span>
+                            </div>
+                            <input type="email" readonly value="{{ Auth::user()->email }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-extrabold text-slate-800 cursor-not-allowed">
+                            <p class="text-xs text-slate-500 flex items-center gap-1.5">
+                                <i class="ph ph-info text-orange-500"></i>
+                                Email akun digunakan sebagai bukti identitas legalitas utama. Jika perlu perubahan email resmi, silakan hubungi Admin Support.
+                            </p>
+                        </div>
 
-                        <span class="font-medium w-24 text-gray-700">Whatsapp</span>
-                        <span class="text-gray-800">: {{ Auth::user()->perusahaan->whatsapp }}</span>
-                    </li>
+                        <!-- Form Ganti Password -->
+                        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
+                            <h4 class="font-extrabold text-sm text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                                <i class="ph ph-key text-orange-500 text-lg"></i> Ubah Kata Sandi (Password)
+                            </h4>
 
-                    <!-- Email -->
-                    <li class="flex flex-col sm:flex-row">
+                            <form action="{{ route('password.update') }}" method="POST" class="space-y-4">
+                                @csrf
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Kata Sandi Lama <span class="text-red-500">*</span></label>
+                                    <input type="password" name="old_password" required placeholder="Masukkan kata sandi saat ini"
+                                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                                </div>
 
-                        <span class="font-medium w-24 text-gray-700">Email</span>
-                        <span class="text-gray-800 break-all">: {{ Auth::user()->email }}</span>
-                    </li>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kata Sandi Baru <span class="text-red-500">*</span></label>
+                                        <input type="password" name="new_password" required placeholder="Minimal 8 karakter"
+                                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                                    </div>
 
-                </ul>
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Konfirmasi Kata Sandi Baru <span class="text-red-500">*</span></label>
+                                        <input type="password" name="new_password_confirmation" required placeholder="Ulangi kata sandi baru"
+                                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                                    </div>
+                                </div>
+
+                                <div class="flex justify-end pt-2">
+                                    <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-6 py-2.5 rounded-xl text-sm shadow-sm transition">
+                                        Simpan Password Baru
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+
+                </div>
             </div>
 
         </div>
     </div>
-
-
-    <script>
-        function autoGrow(el) {
-            el.style.height = "auto";
-            el.style.height = el.scrollHeight + "px";
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll(".auto-grow").forEach((el) => {
-                autoGrow(el);
-                el.addEventListener("input", () => autoGrow(el));
-            });
-        });
-    </script>
-
     @include('layouts.footer')
 @endsection

@@ -27,8 +27,8 @@
             </div>
 
             <!-- Gambar -->
-            <img src="{{ $event->image ? asset('storage/' . $event->image) : asset('images/default.jpg') }}"
-                alt="{{ $event->title }}" class="w-full rounded-xl mb-4 object-cover max-h-[300px]">
+            <img src="{{ !empty($event->image) ? asset('storage/' . $event->image) : asset('images/woi.jpg') }}"
+                alt="{{ $event->title ?? 'Event' }}" class="w-full rounded-xl mb-4 object-cover max-h-[300px]">
 
             <!-- Judul & Deskripsi -->
             <h2 class="text-lg font-bold mb-2 break-words">{{ $event->title }}</h2>

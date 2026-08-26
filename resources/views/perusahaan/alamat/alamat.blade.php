@@ -1,6 +1,6 @@
 @extends('layouts.index-perusahaan')
 @section('content')
-    @if (Auth::user()->perusahaan->alamat_perusahaan->count())
+    @if (!empty($alamat_perusahaan) && $alamat_perusahaan->count())
         <div class="bg-white min-h-screen p-4 sm:p-8 mt-20">
             <!-- Header -->
            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-4">
@@ -55,7 +55,7 @@
             </div>
 
             <!-- Box Alamat -->
-            @foreach (Auth::user()->perusahaan->alamat_perusahaan as $almtp)
+            @foreach ($alamat_perusahaan as $almtp)
               <div class="mt-6 border border-orange-400 rounded-md p-4 sm:p-6 px-6 max-w-full sm:max-w-[500px]">
 
                     <h3 class="font-semibold text-orange-500">{{ $almtp->label }}</h3>

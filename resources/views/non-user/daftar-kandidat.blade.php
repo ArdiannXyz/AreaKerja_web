@@ -239,6 +239,40 @@
             }
 
             function goToStep(step) {
+                @auth
+                    const isKandidatAktif = {{ isset($isKandidatAktif) && $isKandidatAktif ? 'true' : 'false' }};
+                    const pendingTxId = {{ isset($transaksiPending) && $transaksiPending ? $transaksiPending->id : 'null' }};
+
+                    if (isKandidatAktif) {
+                        Swal.fire({
+                            icon: 'info',
+                            title: 'Sudah Terdaftar',
+                            text: 'Anda sudah terdaftar sebagai Kandidat Aktif AreaKerja.',
+                            confirmButtonColor: '#f97316',
+                            confirmButtonText: 'Mengerti'
+                        });
+                        return;
+                    }
+
+                    if (pendingTxId) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Pendaftaran Dalam Proses',
+                            text: 'Anda sudah mengajukan pendaftaran kandidat. Silakan selesaikan proses transaksi pembayaran Anda.',
+                            showCancelButton: true,
+                            confirmButtonColor: '#f97316',
+                            cancelButtonColor: '#6b7280',
+                            confirmButtonText: 'Lihat Transaksi Saya',
+                            cancelButtonText: 'Tutup'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = `/pelamar/kandidat/transaksi/${pendingTxId}`;
+                            }
+                        });
+                        return;
+                    }
+                @endauth
+
                 if (step === 2 && !selectedDivisi) {
                     Swal.fire({
                         icon: 'warning',
@@ -330,7 +364,8 @@
             }
         </script>
         <a href="#top"
-            class="fixed bottom-6 right-6 bg-orange-500 text-white px-3 py-3 rounded-full shadow-lg hover:bg-orange-600 transition">
+            class="fixed bottom-6 right-6 bg-orange-500 text-white p-3 rounded-full shadow-lg hover:bg-orange-600 transition z-40 flex items-center justify-center"
+            title="Kembali ke Atas">
             <svg width="24" height="23" viewBox="0 0 31 28" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <g clip-path="url(#clip0_231_4417)">
                     <path
@@ -344,8 +379,22 @@
                     </clipPath>
                 </defs>
             </svg>
-
         </a>
+    </div>
 
-        @include('layouts.footer')
-    @endsection
+    @if (session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    title: 'Informasi Pendaftaran',
+                    text: "{{ session('error') }}",
+                    icon: 'warning',
+                    confirmButtonColor: '#f97316',
+                    confirmButtonText: 'Mengerti'
+                });
+            });
+        </script>
+    @endif
+
+    @include('layouts.footer')
+@endsection

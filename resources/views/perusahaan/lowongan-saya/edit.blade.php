@@ -134,12 +134,25 @@
                         placeholder="Contoh: Minimal D3/S1, menguasai Vue.js atau React, pengalaman minimal 1 tahun...">{{ old('syarat_pekerjaan', $data->syarat_pekerjaan) }}</textarea>
                 </div>
 
-                <div>
-                    <label class="block font-medium mb-1">Batas Waktu</label>
-                    <input type="date" name="batas_lamaran" value="{{ $data->batas_lamaran }}"
-                        class="w-60 border-2 rounded-md px-3 py-2 focus:ring-orange-400 focus:border-orange-400">
-                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block font-medium mb-1">Batas Waktu Lamaran (Deadline)</label>
+                        <input type="date" name="batas_lamaran" value="{{ old('batas_lamaran', $data->batas_lamaran ? \Carbon\Carbon::parse($data->batas_lamaran)->format('Y-m-d') : '') }}"
+                            class="w-full border-2 rounded-md px-3 py-2 focus:ring-orange-400 focus:border-orange-400">
+                    </div>
 
+                    <div>
+                        <label class="block font-medium mb-1">Status Pendaftaran</label>
+                        <select name="status" class="w-full border-2 rounded-md px-3 py-2 focus:ring-orange-400 focus:border-orange-400">
+                            <option value="buka" {{ old('status', $data->status ?? 'buka') == 'buka' ? 'selected' : '' }}>
+                                🟢 Buka Pendaftaran (Aktif)
+                            </option>
+                            <option value="tutup" {{ old('status', $data->status ?? 'buka') == 'tutup' ? 'selected' : '' }}>
+                                🔒 Tutup Pendaftaran (Kuota Full)
+                            </option>
+                        </select>
+                    </div>
+                </div>
             </div>
 
             <div class="flex justify-center space-x-4 pt-6">

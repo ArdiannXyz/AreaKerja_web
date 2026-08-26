@@ -1,264 +1,341 @@
 @extends('admin.sidebar.index')
 @section('sidebaradmin')
-    <div class="p-4 sm:ml-64" x-data="{ openNotif: false, openAllNotif: false }">
+    <div class="p-4 sm:p-6 sm:ml-64 bg-slate-50 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
+        <!-- HEADER TOP BAR -->
+        <header class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                    <i class="ph ph-note-pencil text-orange-500 text-2xl"></i> Edit Profil Admin
+                </h1>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Perbarui data profil, foto, dan informasi alamat Anda.</p>
+            </div>
 
-        <!-- Header -->
-        <header class="w-full flex flex-col sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-3 gap-3">
-
-            <!-- Judul -->
-            <h1 class="text-lg sm:text-xl font-semibold">Edit Profile</h1>
-
-            <!-- Right Section -->
-            <div class="flex items-center gap-3 sm:gap-4">
-
+            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
-                <button @click="openNotif = true" class="relative">
-                    <!-- Icon Lonceng -->
-                    <svg class="w-7 h-7 sm:w-[31px] sm:h-[32px]" viewBox="0 0 31 32" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_722_7956)">
-                            <path
-                                d="M23.076 14.9431L22.6747 12.7383L21.1101 13.0055L21.5756 15.5633C21.6168 15.7894 21.7387 15.9922 21.9146 16.127L24.4524 18.0732L24.6985 19.4255L7.4876 22.3654L7.24147 21.0131L8.93911 18.3434C9.05673 18.1585 9.09972 17.9276 9.05861 17.7015L8.43786 14.2911C8.21777 13.0934 8.29153 11.8668 8.65169 10.7352C9.01186 9.60353 9.64569 8.60691 10.4892 7.84595C11.3326 7.08499 12.3559 6.58665 13.4555 6.40126C14.5552 6.21586 15.6924 6.34997 16.7522 6.79004L16.4051 4.88278C15.595 4.65063 14.7612 4.55689 13.9346 4.605L13.6165 2.85717L12.0518 3.12444L12.37 4.87227C10.4802 5.41568 8.87215 6.70676 7.85685 8.49588C6.84155 10.285 6.49109 12.445 6.87324 14.5583L7.42973 17.6158L5.7321 20.2855C5.61447 20.4704 5.57149 20.7013 5.6126 20.9274L6.07815 23.4852C6.11931 23.7114 6.24121 23.9141 6.41702 24.049C6.59284 24.1838 6.80817 24.2396 7.01565 24.2042L12.4919 23.2688L12.647 24.1214C12.8528 25.252 13.4623 26.2659 14.3414 26.9401C15.2205 27.6142 16.2971 27.8934 17.3345 27.7162C18.3719 27.539 19.2851 26.9199 19.8732 25.9951C20.4612 25.0704 20.676 23.9157 20.4702 22.785L20.315 21.9324L25.7912 20.997C25.9987 20.9616 26.1813 20.8378 26.2989 20.6528C26.4165 20.4679 26.4595 20.2369 26.4183 20.0108L25.9528 17.453C25.9116 17.2269 25.7896 17.0241 25.6138 16.8894L23.076 14.9431ZM18.9055 23.0523C19.029 23.7307 18.9002 24.4235 18.5473 24.9784C18.1945 25.5332 17.6466 25.9047 17.0242 26.011C16.4017 26.1173 15.7557 25.9498 15.2283 25.5453C14.7008 25.1408 14.3351 24.5325 14.2117 23.8541L14.0565 23.0015L18.7504 22.1997L18.9055 23.0523Z"
-                                fill="black" />
-                        </g>
-                    </svg>
-
-                    @if ($global_notifikasi_unread > 0)
-                        <span id="notif-badge"
-                            class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] sm:text-xs font-bold px-1.5 py-0.5 rounded-full">
+                <button @click="openNotif = true" class="relative p-2.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 rounded-xl text-slate-600 transition shadow-xs">
+                    <i class="ph ph-bell text-xl"></i>
+                    @if (isset($global_notifikasi_unread) && $global_notifikasi_unread > 0)
+                        <span id="notif-badge" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white">
                             {{ $global_notifikasi_unread }}
                         </span>
                     @endif
                 </button>
 
-                <!-- Profile Box -->
-                <div class="flex items-center gap-2 bg-white px-2 py-2 border border-gray-500 shadow-md rounded-2xl">
+                {{-- Profil Admin Pill --}}
+                <div class="flex items-center gap-3 bg-slate-100/80 px-3.5 py-2 rounded-2xl border border-slate-200">
+                    @if (Auth::user()?->avatar)
+                        <img id="pu" class="w-9 h-9 object-cover rounded-xl border border-slate-200"
+                            src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
+                    @else
+                        <img id="pu" class="w-9 h-9 rounded-xl border border-slate-200"
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=f97316&color=fff&size=128">
+                    @endif
 
-                    <a href="#">
-                        @if (Auth::user()->role == 'admin')
-                            @if (Auth::user()->admin->img_profile)
-                                <img id="pu" class="w-9 h-9 sm:w-10 sm:h-10 object-cover rounded-full profile-img"
-                                    src="{{ asset('storage/' . Auth::user()->admin->img_profile) }}" alt="Profile">
-                            @else
-                                <img id="pu" class="w-9 h-9 sm:w-10 sm:h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                                    alt="">
-                            @endif
-                        @else
-                            <img class="w-9 h-9 sm:w-10 sm:h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                                alt="">
-                        @endif
-                    </a>
-
-                    <div class="text-xs sm:text-sm mr-2 sm:mr-14 leading-tight">
-                        <span class="font-semibold block truncate max-w-[100px] sm:max-w-none">
-                            {{ Auth::user()->username }}
-                        </span>
-                        <p class="text-gray-500 text-[11px] sm:text-sm truncate max-w-[100px] sm:max-w-none">
-                            {{ Auth::user()->email }}
-                        </p>
+                    <div class="text-left">
+                        <div class="flex items-center gap-1.5">
+                            <span class="font-extrabold text-slate-800 text-xs leading-tight">{{ Auth::user()->username }}</span>
+                            <span class="bg-orange-100 text-orange-700 text-[10px] font-extrabold px-1.5 py-0.2 rounded-md">Admin</span>
+                        </div>
+                        <p class="text-slate-500 text-[11px] leading-tight mt-0.5">{{ Auth::user()->email }}</p>
                     </div>
-
                 </div>
             </div>
-
         </header>
 
+        <!-- MAIN FORM CONTAINER -->
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-xs p-6 md:p-8">
 
-        <div class="p-4">
+            @if ($errors->any())
+                <div class="mb-6 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-xs font-bold space-y-1">
+                    <div class="flex items-center gap-1.5 text-sm font-extrabold">
+                        <i class="ph ph-warning-circle text-lg"></i> Perhatian: Form Belum Lengkap
+                    </div>
+                    <ul class="list-disc list-inside space-y-0.5 font-semibold">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
-            <div class="p-6 rounded-lg border-2 border-gray-400 shadow">
-                {{-- header --}}
-                {{-- <h2 class="text-lg font-semibold mb-6">Edit Profile</h2> --}}
+            <form id="profileEditForm" action="{{ route('admin.update.profile', Auth::user()->id) }}" method="POST"
+                enctype="multipart/form-data" class="space-y-6">
+                @csrf
+                @method('PUT')
 
-                {{-- form --}}
-                <form action="{{ route('admin.update.profile', Auth::user()->admin->id) }}" method="POST"
-                    enctype="multipart/form-data" class="space-y-4">
-                    @csrf
-                    @method('PUT')
-
-                    {{-- profile --}}
-                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-8">
-                        @if (Auth::user()->admin->img_profile)
-                            <img id="pu" class="w-24 h-24 object-cover rounded-full"
+                <!-- AVATAR UPLOAD SECTION -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-100">
+                    <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+                        @if (Auth::user()->admin && Auth::user()->admin->img_profile)
+                            <img id="pa" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border-2 border-orange-500/20 shadow-xs"
                                 src="{{ asset('storage/' . Auth::user()->admin->img_profile) }}" alt="Profile">
                         @else
-                            <img id="pu" class="w-24 h-24 object-cover rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                            <img id="pa" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border-2 border-orange-500/20 shadow-xs"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=f97316&color=fff&size=128"
                                 alt="Profile">
                         @endif
 
-                        <div class="text-center sm:text-left">
-                            <h3 class="font-semibold">{{ Auth::user()->username }}</h3>
-                            <p class="text-sm text-gray-500">{{ Auth::user()->email }}</p>
-                        </div>
-
-                        <div class="flex flex-col gap-3 scale-90 sm:ml-auto">
-                            <input type="file" name="img_profile" id="fileinputadmin" accept="image/*" class="hidden">
-
-                            <button type="button" onclick="document.getElementById('fileinputadmin').click();"
-                                class="flex items-center gap-2 px-4 py-2 text-sm border-2 border-gray-400 bg-green-600 hover:bg-green-700 text-white rounded-md">
-                                Upload
-                            </button>
-
-                            <button type="button"
-                                onclick="event.preventDefault(); document.getElementById('removeadminForm').submit();"
-                                class="flex items-center gap-2 px-4 py-2 text-sm border-2 border-gray-400 bg-red-500 hover:bg-red-600 text-white rounded-md">
-                                Remove
-                            </button>
+                        <div>
+                            <h3 class="font-extrabold text-lg text-slate-900">{{ Auth::user()->username }}</h3>
+                            <p class="text-xs text-slate-500 font-medium mt-0.5">Unggah foto profil baru dengan format JPG atau PNG.</p>
                         </div>
                     </div>
 
-                    {{-- email & username --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-1 text-sm font-medium">Email</label>
-                            <input type="email" name="email" value="{{ Auth::user()->email }}" readonly
-                                class="w-full p-2 border-2 border-gray-400 shadow rounded-md text-sm">
-                        </div>
+                    <div class="flex items-center gap-3">
+                        <input type="file" name="img_profile" id="fileinputadmin" accept="image/*" class="hidden">
 
-                        <div>
-                            <label class="block mb-1 text-sm font-medium">Username</label>
-                            <input type="text" name="username" value="{{ Auth::user()->username }}"
-                                class="w-full p-2 border-2 border-gray-400 shadow rounded-md text-sm">
-                        </div>
-                    </div>
+                        <button type="button" onclick="document.getElementById('fileinputadmin').click();"
+                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2">
+                            <i class="ph ph-upload-simple text-base"></i> Unggah Foto
+                        </button>
 
-                    {{-- nama lengkap --}}
-                    <div>
-                        <label class="block mb-1 text-sm font-medium">Nama Lengkap</label>
-                        <input type="text" name="nama_lengkap" value="{{ Auth::user()->admin->nama_lengkap }}"
-                            class="w-full sm:w-[455px] p-2 border-2 border-gray-400 shadow rounded-md text-sm">
-                    </div>
-
-                    {{-- provinsi - kota - kecamatan --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block mb-1 text-sm font-medium">Provinsi</label>
-                            <select id="provinsiSelect" name="provinsi_id"
-                                class="w-full border-2 border-gray-400 rounded-md px-3 py-2">
-                                <option value="">Pilih Provinsi</option>
-                                @foreach ($provinsis as $prov)
-                                    <option value="{{ $prov->id }}"
-                                        {{ $data->provinsi_id == $prov->id ? 'selected' : '' }}>
-                                        {{ $prov->nama }}
-                                    </option>
-                                @endforeach
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block mb-1 text-sm font-medium">Kota/Kabupaten</label>
-                            <select id="kotaSelect" name="kota_id"
-                                class="w-full border-2 border-gray-400 rounded-md px-3 py-2">
-                                <option value="">Pilih Kota</option>
-                                @if ($data->kota)
-                                    <option value="{{ $data->kota_id }}" selected>{{ $data->kota->nama }}</option>
-                                @endif
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block mb-1 text-sm font-medium">Kecamatan</label>
-                            <select id="kecamatanSelect" name="kecamatan_id"
-                                class="w-full border-2 border-gray-400 rounded-md px-3 py-2">
-                                <option value="">Pilih Kecamatan</option>
-                                @if ($data->kecamatan)
-                                    <option value="{{ $data->kecamatan_id }}" selected>{{ $data->kecamatan->nama }}
-                                    </option>
-                                @endif
-                            </select>
-                        </div>
-                    </div>
-
-                    {{-- desa & kode pos --}}
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block mb-1 text-sm font-medium">Desa</label>
-                            <input type="text" name="desa" value="{{ Auth::user()->admin->desa }}"
-                                class="w-full p-2 border-2 border-gray-400 shadow rounded-md text-sm">
-                        </div>
-
-                        <div>
-                            <label class="block mb-1 text-sm font-medium">Kode Pos</label>
-                            <input type="text" name="kode_pos" value="{{ Auth::user()->admin->kode_pos }}"
-                                class="w-full p-2 border-2 border-gray-400 shadow rounded-md text-sm">
-                        </div>
-                    </div>
-
-                    {{-- detail --}}
-                    <div>
-                        <label class="block mb-1 text-sm font-medium">Detail Lainnya</label>
-                        <input type="text" name="detail_alamat" value="{{ Auth::user()->admin->detail_alamat }}"
-                            class="w-full p-2 border-2 border-gray-400 shadow rounded-md text-sm">
-                    </div>
-
-                    {{-- Button --}}
-                    <div class="flex justify-center items-center gap-4 pt-2">
-                        <a href="{{ route('admin.profile') }}"
-                            class="bg-red-600 text-white font-medium px-10 py-2 rounded-md hover:bg-red-700 border border-red-500 transition">Batal
-                        </a>
-
-                        <button type="submit"
-                            class="bg-green-600 text-white font-medium px-10 py-2 rounded-md hover:bg-green-700 border border-green-500 transition">Simpan
+                        <button type="button"
+                            onclick="event.preventDefault(); document.getElementById('removeadminForm').submit();"
+                            class="px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2">
+                            <i class="ph ph-trash text-base"></i> Hapus Foto
                         </button>
                     </div>
+                </div>
 
-                </form>
-            </div>
+                <!-- FORM INPUTS -->
+                <div class="space-y-6">
+
+                    <!-- EMAIL & USERNAME -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div>
+                            <div class="flex items-center justify-between mb-1.5">
+                                <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Email</label>
+                                <span class="text-[10px] font-extrabold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200 flex items-center gap-1">
+                                    <i class="ph ph-lock-key"></i> Terverifikasi & Terkunci
+                                </span>
+                            </div>
+                            <input type="email" value="{{ Auth::user()->email }}" disabled readonly
+                                class="w-full border border-slate-300 bg-slate-100 text-slate-500 rounded-xl px-4 py-2.5 text-sm font-semibold cursor-not-allowed select-none">
+                        </div>
+
+                        <div>
+                            <label class="block mb-1.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Username <span class="text-rose-500">*</span></label>
+                            <input type="text" name="username" value="{{ old('username', Auth::user()->username) }}" required
+                                class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                        </div>
+                    </div>
+
+                    <!-- NAMA LENGKAP -->
+                    <div>
+                        <label class="block mb-1.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Nama Lengkap <span class="text-rose-500">*</span></label>
+                        <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', Auth::user()->admin->nama_lengkap ?? '') }}" required
+                            placeholder="Masukkan Nama Lengkap Anda"
+                            class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                    </div>
+
+                    <!-- ALAMAT SECTION HEADER -->
+                    <div class="pt-4 border-t border-slate-100">
+                        <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
+                            <i class="ph ph-map-pin text-base text-orange-500"></i> Detail Alamat & Lokasi
+                        </h3>
+
+                        <!-- PROVINSI, KOTA, KECAMATAN -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600">Provinsi <span class="text-rose-500">*</span></label>
+                                <select id="provinsiSelect" name="provinsi_id" required
+                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition bg-white">
+                                    <option value="">Pilih Provinsi</option>
+                                    @foreach ($provinsis as $prov)
+                                        <option value="{{ $prov->id }}"
+                                            {{ (string)(old('provinsi_id', $data->provinsi_id ?? '')) === (string)$prov->id ? 'selected' : '' }}>
+                                            {{ $prov->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600">Kota / Kabupaten <span class="text-rose-500">*</span></label>
+                                <select id="kotaSelect" name="kota_id" required
+                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition bg-white">
+                                    <option value="">Pilih Kota</option>
+                                    @if (isset($data->kota) && $data->kota)
+                                        <option value="{{ $data->kota_id }}" selected>{{ $data->kota->nama }}</option>
+                                    @endif
+                                </select>
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600">Kecamatan <span class="text-rose-500">*</span></label>
+                                <select id="kecamatanSelect" name="kecamatan_id" required
+                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition bg-white">
+                                    <option value="">Pilih Kecamatan</option>
+                                    @if (isset($data->kecamatan) && $data->kecamatan)
+                                        <option value="{{ $data->kecamatan_id }}" selected>{{ $data->kecamatan->nama }}</option>
+                                    @endif
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- DESA & KODE POS -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600">Desa / Kelurahan</label>
+                                <input type="text" name="desa" value="{{ old('desa', Auth::user()->admin->desa ?? '') }}"
+                                    placeholder="Masukkan Desa / Kelurahan"
+                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                            </div>
+
+                            <div>
+                                <label class="block mb-1.5 text-xs font-semibold text-slate-600">Kode Pos</label>
+                                <input type="text" name="kode_pos" value="{{ old('kode_pos', Auth::user()->admin->kode_pos ?? '') }}"
+                                    placeholder="Masukkan Kode Pos"
+                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                            </div>
+                        </div>
+
+                        <!-- DETAIL ALAMAT -->
+                        <div>
+                            <label class="block mb-1.5 text-xs font-semibold text-slate-600">Alamat Lengkap</label>
+                            <input type="text" name="detail_alamat" value="{{ old('detail_alamat', Auth::user()->admin->detail_alamat ?? '') }}"
+                                placeholder="Contoh: Jl. Area Kerja No. 123"
+                                class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ACTION BUTTONS -->
+                <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
+                    <a href="{{ route('admin.profile') }}"
+                        class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                        Batal
+                    </a>
+
+                    <button type="submit"
+                        class="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition flex items-center gap-2">
+                        <i class="ph ph-floppy-disk text-base"></i> Simpan Perubahan
+                    </button>
+                </div>
+
+            </form>
 
         </div>
 
-
-        <form id="removeadminForm" action="{{ route('admin.destroy.profile', Auth::user()->admin->id) }}" method="POST"
-            class="hidden">
+        <form id="removeadminForm" action="{{ route('admin.destroy.profile', Auth::user()->id) }}" method="POST" class="hidden">
             @csrf
             @method('DELETE')
         </form>
+
         @include('admin.notif.modal_notif')
         @include('admin.notif.modal_semua')
     </div>
 
-    </div>
-
-
-    {{-- Script AJAX Dinamis --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- Script AJAX Dinamis & Validation Alert --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const profileEditForm = document.getElementById('profileEditForm');
             const provinsiSelect = document.getElementById('provinsiSelect');
             const kotaSelect = document.getElementById('kotaSelect');
             const kecamatanSelect = document.getElementById('kecamatanSelect');
+            let isConfirmedSubmit = false;
 
-            // Saat provinsi berubah
-            provinsiSelect.addEventListener('change', function() {
-                const provinsiId = this.value;
-                kotaSelect.innerHTML = '<option>Memuat...</option>';
-                kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+            if (profileEditForm) {
+                profileEditForm.addEventListener('submit', function(e) {
+                    if (isConfirmedSubmit) return true;
 
-                fetch(`{{ route('admin.get.kota', '') }}/${provinsiId}`)
-                    .then(res => res.json())
-                    .then(data => {
+                    e.preventDefault();
+
+                    if (!provinsiSelect.value) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Dropdown Alamat Belum Lengkap',
+                            text: 'Harap pilih Provinsi terlebih dahulu!',
+                            confirmButtonColor: '#f97316'
+                        }).then(() => provinsiSelect.focus());
+                        return false;
+                    }
+                    if (!kotaSelect.value) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Dropdown Alamat Belum Lengkap',
+                            text: 'Harap pilih Kota / Kabupaten terlebih dahulu!',
+                            confirmButtonColor: '#f97316'
+                        }).then(() => kotaSelect.focus());
+                        return false;
+                    }
+                    if (!kecamatanSelect.value) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Dropdown Alamat Belum Lengkap',
+                            text: 'Harap pilih Kecamatan terlebih dahulu!',
+                            confirmButtonColor: '#f97316'
+                        }).then(() => kecamatanSelect.focus());
+                        return false;
+                    }
+
+                    Swal.fire({
+                        title: 'Simpan Perubahan Profil & Alamat?',
+                        text: 'Pastikan data alamat dan profil yang Anda masukkan sudah benar.',
+                        icon: 'question',
+                        showCancelButton: true,
+                        confirmButtonColor: '#f97316',
+                        cancelButtonColor: '#64748b',
+                        confirmButtonText: 'Ya, Simpan Sekarang!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            isConfirmedSubmit = true;
+                            profileEditForm.submit();
+                        }
+                    });
+                });
+            }
+
+            if (provinsiSelect) {
+                provinsiSelect.addEventListener('change', function() {
+                    const provinsiId = this.value;
+                    kotaSelect.innerHTML = '<option value="">Memuat Kota...</option>';
+                    kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+
+                    if (!provinsiId) {
                         kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
-                        const options = data.map(k => `<option value="${k.id}">${k.nama}</option>`);
-                        kotaSelect.insertAdjacentHTML('beforeend', options.join(''));
-                    });
-            });
+                        return;
+                    }
 
-            // Saat kota berubah
-            kotaSelect.addEventListener('change', function() {
-                const kotaId = this.value;
-                kecamatanSelect.innerHTML = '<option>Memuat...</option>';
+                    fetch(`{{ route('admin.get.kota', '') }}/${provinsiId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
+                            const options = data.map(k => `<option value="${k.id}">${k.nama}</option>`);
+                            kotaSelect.insertAdjacentHTML('beforeend', options.join(''));
+                        })
+                        .catch(() => {
+                            kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
+                        });
+                });
+            }
 
-                fetch(`{{ route('admin.get.kecamatan', '') }}/${kotaId}`)
-                    .then(res => res.json())
-                    .then(data => {
+            if (kotaSelect) {
+                kotaSelect.addEventListener('change', function() {
+                    const kotaId = this.value;
+                    kecamatanSelect.innerHTML = '<option value="">Memuat Kecamatan...</option>';
+
+                    if (!kotaId) {
                         kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-                        const options = data.map(k => `<option value="${k.id}">${k.nama}</option>`);
-                        kecamatanSelect.insertAdjacentHTML('beforeend', options.join(''));
-                    });
-            });
+                        return;
+                    }
+
+                    fetch(`{{ route('admin.get.kecamatan', '') }}/${kotaId}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                            const options = data.map(k => `<option value="${k.id}">${k.nama}</option>`);
+                            kecamatanSelect.insertAdjacentHTML('beforeend', options.join(''));
+                        })
+                        .catch(() => {
+                            kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                        });
+                });
+            }
         });
     </script>
 @endsection
