@@ -30,6 +30,16 @@
 
         <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
 
+            @if ($data->status === 'tutup')
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl flex items-center gap-3 shadow-sm">
+                    <i class="ph ph-lock-key text-rose-600 text-3xl shrink-0"></i>
+                    <div>
+                        <p class="font-extrabold text-base text-rose-900">Pendaftaran Ditutup (Kuota Terpenuhi)</p>
+                        <p class="text-xs text-rose-700 mt-0.5">Perusahaan telah menutup pendaftaran untuk lowongan ini karena kuota pelamar yang dibutuhkan sudah terpenuhi.</p>
+                    </div>
+                </div>
+            @endif
+
             <!-- 1. HEADER CARD (TOP JOB BANNER CARD) -->
             <div class="bg-white rounded-2xl shadow-sm border border-slate-200/90 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="flex items-start gap-4">
@@ -46,6 +56,25 @@
                         <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
                             <i class="ph ph-map-pin text-orange-500"></i> {{ $data->alamat }}
                         </p>
+
+                        <!-- Status & Batas Lamaran Badges -->
+                        <div class="flex items-center gap-2 flex-wrap mt-3">
+                            @if ($data->status === 'tutup')
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-100 text-rose-700 text-xs font-extrabold rounded-full border border-rose-200 shadow-xs">
+                                    <i class="ph ph-lock-key"></i> Ditutup (Kuota Terpenuhi)
+                                </span>
+                            @else
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-extrabold rounded-full border border-emerald-200 shadow-xs">
+                                    <i class="ph ph-check-circle"></i> Status: Aktif Menerima Pelamar
+                                </span>
+                            @endif
+
+                            @if ($data->batas_lamaran)
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-orange-50 text-orange-700 text-xs font-extrabold rounded-full border border-orange-200 shadow-xs">
+                                    <i class="ph ph-calendar-blank text-orange-500"></i> Batas: {{ \Carbon\Carbon::parse($data->batas_lamaran)->format('d M Y') }}
+                                </span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -62,17 +91,20 @@
                                 $statusLower = strtolower($statusLamaran ?? '');
                                 $sudahMelamar = !empty($statusLamaran) && in_array($statusLower, ['pending', 'diterima', 'ditolak', 'proses', 'dikelola']);
                                 $sudahDiterima = $statusLower === 'diterima';
-                                $disableButton = $isExpired || $sudahMelamar;
+                                $isTutup = ($data->status === 'tutup');
+                                $disableButton = $isExpired || $sudahMelamar || $isTutup;
                                 $kategori = Auth::user()->pelamar->kategori ?? null;
                             @endphp
 
                             @if ($kategori === 'pelamar' || $kategori === 'calon kandidat' || ($kategori === 'kandidat aktif' && !$tawaran))
                                 <button 
-                                    @click="{{ $disableButton ? "Swal.fire({ title: 'Informasi Lamaran', text: '" . ($sudahMelamar ? 'Anda sudah mengirimkan lamaran untuk lowongan ini.' : 'Lamaran untuk lowongan ini sudah kadaluarsa.') . "', icon: 'info', confirmButtonColor: '#f97316', confirmButtonText: 'Mengerti', customClass: { popup: 'rounded-2xl shadow-xl' } })" : "showConfirm = true" }}"
+                                    @click="{{ $disableButton ? "Swal.fire({ title: 'Informasi Lamaran', text: '" . ($isTutup ? 'Pendaftaran lowongan ini telah ditutup oleh perusahaan karena kuota terpenuhi.' : ($sudahMelamar ? 'Anda sudah mengirimkan lamaran untuk lowongan ini.' : 'Lamaran untuk lowongan ini sudah kadaluarsa.')) . "', icon: 'info', confirmButtonColor: '#f97316', confirmButtonText: 'Mengerti', customClass: { popup: 'rounded-2xl shadow-xl' } })" : "showConfirm = true" }}"
                                     :disabled="{{ $disableButton ? 'true' : 'false' }}"
                                     class="px-6 py-2.5 rounded-xl text-white font-extrabold transition shadow-sm text-sm
                                         {{ $disableButton ? 'bg-slate-400 cursor-not-allowed opacity-90' : 'bg-orange-500 hover:bg-orange-600' }}">
-                                    @if ($isExpired)
+                                    @if ($data->status === 'tutup')
+                                        Pendaftaran Ditutup (Kuota Full)
+                                    @elseif ($isExpired)
                                         Lamaran Kadaluarsa
                                     @elseif ($sudahDiterima)
                                         Sudah Diterima
@@ -82,7 +114,6 @@
                                         Lamar Cepat
                                     @endif
                                 </button>
-
                                 {{-- Simpan Bookmark Button --}}
                                 <div x-data="saveLowongan({{ $data->id }}, {{ $isSaved ? 'true' : 'false' }})">
                                     <button type="button" @click="toggleSave"
@@ -116,6 +147,33 @@
                 <div>
                     <h2 class="font-extrabold text-xl text-slate-900">Detail Lowongan</h2>
                     <p class="text-xs text-slate-400 mt-1 font-medium">Informasi terkait perusahaan yang anda tuju</p>
+                </div>
+
+                <!-- Batas Lamaran & Status Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200/70">
+                    <div>
+                        <h3 class="font-extrabold text-sm text-slate-800 mb-1.5 flex items-center gap-1.5">
+                            <i class="ph ph-calendar-blank text-orange-500 text-base"></i> Batas Lamaran (Deadline)
+                        </h3>
+                        <span class="inline-block bg-white text-orange-700 font-extrabold px-4 py-2 rounded-lg text-xs sm:text-sm border border-orange-200 shadow-2xs">
+                            {{ $data->batas_lamaran ? \Carbon\Carbon::parse($data->batas_lamaran)->format('d F Y') : 'Tidak Ada Batas Waktu' }}
+                        </span>
+                    </div>
+
+                    <div>
+                        <h3 class="font-extrabold text-sm text-slate-800 mb-1.5 flex items-center gap-1.5">
+                            <i class="ph ph-info text-orange-500 text-base"></i> Status Pendaftaran
+                        </h3>
+                        @if ($data->status === 'tutup')
+                            <span class="inline-block bg-rose-50 text-rose-700 font-extrabold px-4 py-2 rounded-lg text-xs sm:text-sm border border-rose-200 shadow-2xs">
+                                🔒 Pendaftaran Ditutup (Kuota Terpenuhi)
+                            </span>
+                        @else
+                            <span class="inline-block bg-emerald-50 text-emerald-700 font-extrabold px-4 py-2 rounded-lg text-xs sm:text-sm border border-emerald-200 shadow-2xs">
+                                🟢 Pendaftaran Dibuka (Aktif)
+                            </span>
+                        @endif
+                    </div>
                 </div>
 
                 <!-- Jenis Lowongan -->

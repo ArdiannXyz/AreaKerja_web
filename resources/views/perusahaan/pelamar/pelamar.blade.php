@@ -74,8 +74,7 @@
                                     <th class="px-6 py-4 text-center font-semibold">Tanggal</th>
                                     <th class="px-6 py-4 text-center font-semibold">Nama</th>
                                     <th class="px-6 py-4 text-center font-semibold">CV</th>
-                                    <th class="px-6 py-4 text-center font-semibold">Status</th>
-                                    <th class="px-6 py-4 text-center font-semibold">Waktu</th>
+                                    <th class="px-6 py-4 text-center font-semibold">Status / Aksi</th>
                                 </tr>
                             </thead>
 
@@ -87,15 +86,15 @@
                                                 {{ $p->created_at?->format('d M Y') }}
                                             </td>
 
-                                            <td class="px-4 py-4 break-words">
-                                                {{ $p->pelamar->nama_pelamar }}
+                                            <td class="px-4 py-4 break-words font-semibold text-slate-800">
+                                                {{ $p->pelamar->nama_pelamar ?? 'Pelamar' }}
                                             </td>
 
                                             <td class="px-4 py-4">
                                                 <div class="flex justify-center items-center">
-                                                    <button onclick="openConfirmModal({{ $p->pelamar->id }})">
+                                                    <button onclick="openConfirmModal({{ $p->pelamar->id }})" title="Unduh CV">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="w-5 h-5 text-orange-500" fill="currentColor"
+                                                            class="w-6 h-6 text-orange-500 hover:text-orange-600 transition" fill="currentColor"
                                                             viewBox="0 0 24 24">
                                                             <path d="M12 3v12l4-4h-3V3h-2v8H8l4 4zM4 19h16v2H4z" />
                                                         </svg>
@@ -104,43 +103,24 @@
                                             </td>
 
                                             <td class="px-4 py-4 whitespace-nowrap">
-                                                @if ($p->status === 'diterima' || $p->status === 'ditolak')
-                                                    <button
-                                                        class="bg-gray-400 text-white px-4 py-1 rounded cursor-not-allowed"
-                                                        disabled>
-                                                        Terima
-                                                    </button>
-                                                    <button
-                                                        class="bg-gray-400 text-white px-4 py-1 rounded cursor-not-allowed ml-1"
-                                                        disabled>
-                                                        Tolak
-                                                    </button>
+                                                @if ($p->status === 'diterima')
+                                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 font-extrabold text-xs rounded-full border border-emerald-200">
+                                                        ✓ Diterima
+                                                    </span>
+                                                @elseif ($p->status === 'ditolak')
+                                                    <span class="px-3 py-1 bg-rose-100 text-rose-700 font-extrabold text-xs rounded-full border border-rose-200">
+                                                        ✕ Ditolak
+                                                    </span>
                                                 @else
                                                     <a href="{{ route('pelamar.konfirmasi', $p->id) }}"
-                                                        class="bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded">
+                                                        class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-4 py-1.5 rounded-lg text-xs transition shadow-xs">
                                                         Terima
                                                     </a>
 
                                                     <button onclick="openTolakModal({{ $p->id }})"
-                                                        class="bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded ml-1">
+                                                        class="bg-rose-500 hover:bg-rose-600 text-white font-bold px-4 py-1.5 rounded-lg text-xs transition shadow-xs ml-1">
                                                         Tolak
                                                     </button>
-                                                @endif
-                                            </td>
-
-                                            <td class="px-4 py-4 whitespace-nowrap">
-                                                @if ($p->expired_at)
-                                                    @php
-                                                        $sisaHari = now()->diffInDays($p->expired_at, false);
-                                                    @endphp
-
-                                                    @if ($sisaHari > 0)
-                                                        {{ $sisaHari }} hari
-                                                    @else
-                                                        <span class="text-red-600 font-semibold">Expired</span>
-                                                    @endif
-                                                @else
-                                                    <span class="text-gray-800">-</span>
                                                 @endif
                                             </td>
                                         </tr>
@@ -149,21 +129,6 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
-
-                <!-- Footer Info -->
-                <div class="flex items-start gap-2 text-red-500 text-sm mt-4 break-words">
-                    <svg class="w-[33px] h-[33px] text-red-500" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
-                        viewBox="0 0 24 24">
-                        <path fill-rule="evenodd"
-                            d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v5a1 1 0 1 0 2 0V8Zm-1 7a1 1 0 1 0 0 2h.01a1 1 0 1 0 0-2H12Z"
-                            clip-rule="evenodd" />
-                    </svg>
-
-                    <p class="break-words">
-                        Informasi pelamar akan hilang dalam waktu 30 hari setelah<br>
-                        anda konfirmasi <span class="font-semibold">Terima</span>.
-                    </p>
                 </div>
 
             </div>

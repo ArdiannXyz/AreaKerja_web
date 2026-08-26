@@ -103,9 +103,14 @@
 
                 <!-- Email -->
                 <div>
-                    <label class="block text-sm font-medium mb-1">Email <span class="text-red-500">*</span></label>
-                    <input type="text" value="{{ Auth::user()->email }}" name="email" readonly
-                        class="w-full border text-black border-gray-300 shadow rounded-md px-3 py-2 focus:ring-2 focus:ring-orange-500 focus:outline-none truncate">
+                    <div class="flex items-center justify-between mb-1">
+                        <label class="block text-sm font-medium text-slate-700">Email</label>
+                        <span class="text-[10px] font-extrabold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200 flex items-center gap-1">
+                            <i class="ph ph-lock-key"></i> Terverifikasi & Terkunci
+                        </span>
+                    </div>
+                    <input type="text" value="{{ Auth::user()->email }}" disabled readonly
+                        class="w-full border text-slate-500 bg-slate-100 border-slate-300 shadow-xs rounded-md px-3 py-2 cursor-not-allowed select-none truncate">
                 </div>
 
                 <!-- Username -->

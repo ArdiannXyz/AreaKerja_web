@@ -148,6 +148,11 @@ class PelamarController extends Controller
 
         $Data = LowonganPerusahaan::with('perusahaan')
             ->whereNotNull('published_at')
+            ->where('status', '!=', 'tutup')
+            ->where(function ($q) {
+                $q->whereNull('expired_at')
+                  ->orWhere('expired_at', '>', now());
+            })
 
             ->when($kategori, function ($q) use ($KategoriList, $kategori) {
                 if ($KategoriList->contains($kategori)) {
@@ -562,14 +567,18 @@ class PelamarController extends Controller
             "expired_at"  => $expiredAt,
         ]);
 
-        Mail::to($pelamar->user->email)
-            ->send(new KonfirmasiLamaranMail(
-                $pelamar,
-                $pelamarlowongan->lowongan_perusahaan,
-                $konfirmasi,
-                $pelamarlowongan,
-                $mapsUrl
-            ));
+        try {
+            Mail::to($pelamar->user->email)
+                ->send(new KonfirmasiLamaranMail(
+                    $pelamar,
+                    $pelamarlowongan->lowongan_perusahaan,
+                    $konfirmasi,
+                    $pelamarlowongan,
+                    $mapsUrl
+                ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Gagal mengirim email konfirmasi lamaran: ' . $e->getMessage());
+        }
 
         $statusText = $pelamarlowongan->status === 'diterima' ? 'Diterima' : 'Ditolak';
         $statusColor = $statusText === 'Diterima' ? 'green' : 'red';
@@ -603,13 +612,17 @@ class PelamarController extends Controller
             'expired_at' => null,
         ]);
 
-        Mail::to($pelamar->user->email)
-            ->send(new KonfirmasiLamaranMail(
-                $pelamar,
-                $pelamarlowongan->lowongan_perusahaan,
-                null,
-                $pelamarlowongan
-            ));
+        try {
+            Mail::to($pelamar->user->email)
+                ->send(new KonfirmasiLamaranMail(
+                    $pelamar,
+                    $pelamarlowongan->lowongan_perusahaan,
+                    null,
+                    $pelamarlowongan
+                ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Gagal mengirim email penolakan lamaran: ' . $e->getMessage());
+        }
 
         Notifikasi::create([
             'user_id' => $pelamar->user_id,

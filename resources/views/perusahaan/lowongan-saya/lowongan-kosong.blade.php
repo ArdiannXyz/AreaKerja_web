@@ -30,14 +30,6 @@
                         </div>
                     </div>
 
-                    <!-- Tombol tambah -->
-                    <div class="hidden md:block">
-                        <a href="{{ route('lowongan.create.form') }}"
-                            class="absolute w-16 h-16 border border-orange-500 rounded-md flex items-center justify-center text-orange-500 hover:bg-orange-50">
-                            <i class="ph ph-plus text-xl"></i>
-                        </a>
-                    </div>
-
                 </div>
             </div>
     </div>
@@ -45,19 +37,20 @@
     <div class="max-w-5xl mx-auto px-4 mb-10">
         <h2 class="text-lg font-semibold mb-3 flex">Lowongan</h2>
 
-        <a href="{{ route('lowongan.create.form') }}"
-            class="block md:hidden ml-auto mb-4 w-10 h-10 border border-orange-500 rounded-md flex items-center justify-center text-orange-500 hover:bg-orange-50">
-            <i class="ph ph-plus text-xl"></i>
-        </a>
+        <!-- Filter Bar -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-end gap-3 mb-6 w-full">
 
-        <!-- Filter -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-end gap-3 mb-3 w-full">
+            <!-- Tombol Tambah Lowongan (Sejajar & Konsisten) -->
+            <a href="{{ route('lowongan.create.form') }}"
+                class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-4 py-2.5 rounded-md transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap text-sm">
+                <i class="ph ph-plus text-lg"></i> Tambah Lowongan
+            </a>
 
             <!-- Trigger Boost -->
             <div class="relative flex justify-end lg:inline-flex items-center gap-2 group w-full lg:w-auto">
 
                 <button id="openBoostBtn"
-                    class="bg-orange-500 text-white px-4 py-2.5 rounded-md hover:bg-orange-600 w-auto justify-end lg:w-auto">
+                    class="bg-orange-500 text-white px-4 py-2.5 rounded-md hover:bg-orange-600 w-auto justify-end lg:w-auto text-sm font-semibold">
                     Boost Lowongan
                 </button>
 
@@ -115,12 +108,12 @@
                     @endforeach
                 </select>
 
-                <button class="bg-orange-500 text-white px-4 py-2 rounded-md w-full sm:w-auto">
+                <button class="bg-orange-500 text-white px-4 py-2.5 text-sm font-semibold rounded-md w-full sm:w-auto">
                     Filter
                 </button>
 
                 <a href="{{ route('lowongan.saya.perusahaan') }}"
-                    class="bg-orange-500 text-white px-4 py-2 rounded-md text-center w-full sm:w-auto">
+                    class="bg-orange-500 text-white px-4 py-2.5 text-sm font-semibold rounded-md text-center w-full sm:w-auto">
                     Reset
                 </a>
             </form>
@@ -132,31 +125,73 @@
                 @if ($d->paket_id && $d->published_at)
                     <!-- Card Published -->
 
-                    <a href="{{ route('lowongan.detail', [
-                        'perusahaan' => $d->perusahaan->slug,
-                        'lowongan' => $d->slug,
-                    ]) }}"
-                        class="block">
-                        <div
-                            class="flex shadow-md rounded-md border p-4 mb-2 hover:shadow-lg hover:scale-105 transition-all duration-500">
-                            <div>
-                                <img src="{{ asset('Icon/seveninc.png') }}" alt="">
-                            </div>
-                            <div class="w-full">
-                                <p>{{ Auth::user()->perusahaan->nama_perusahaan }}</p>
-                                <h1 class="font-semibold">{{ $d->nama }} - {{ $d->jenis }}</h1>
-                                <span>Yogyakarta</span>
-                                <div class="mt-5 block lg:flex md:flex justify-between items-center w-full">
-                                    <span class="px-3 bg-[#d7d6d6] text-[#565656] py-2 rounded-md">
-                                        Rp.{{ $d->gaji_awal }} - Rp.{{ $d->gaji_akhir }} per bulan
-                                    </span>
-                                    <span class="block mt-3 text-[#565656] pl-0 lg:pl-10 md:pl-10">
-                                        <p id="countdown-{{ $d->id }}" class="text-red-500 font-medium"></p>
-                                    </span>
+                    <div class="border rounded-xl shadow-sm bg-white p-5 mb-4 border-slate-200">
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-100 pb-4 mb-4">
+                            <div class="flex items-start gap-4">
+                                @if (Auth::user()->perusahaan->img_profile)
+                                    <img src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" class="w-12 h-12 object-cover rounded-xl border border-slate-200" alt="Logo">
+                                @else
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->perusahaan->nama_perusahaan ?? 'P') }}&background=f97316&color=fff&size=128" class="w-12 h-12 object-cover rounded-xl border border-slate-200" alt="Logo">
+                                @endif
+                                <div>
+                                    <div class="flex items-center gap-2 flex-wrap mb-1">
+                                        <p class="text-xs font-semibold text-slate-500">{{ Auth::user()->perusahaan->nama_perusahaan }}</p>
+                                        @if ($d->status === 'tutup')
+                                            <span class="px-2.5 py-0.5 bg-rose-100 text-rose-700 text-xs font-extrabold rounded-full border border-rose-200">
+                                                🔒 Pendaftaran Ditutup (Kuota Terpenuhi)
+                                            </span>
+                                        @else
+                                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-extrabold rounded-full border border-emerald-200">
+                                                🟢 Aktif (Menerima Pelamar)
+                                            </span>
+                                        @endif
+                                    </div>
+                                    <a href="{{ route('lowongan.detail', ['perusahaan' => $d->perusahaan->slug, 'lowongan' => $d->slug]) }}" class="hover:text-orange-600 transition">
+                                        <h1 class="font-extrabold text-lg text-slate-900 leading-snug">{{ $d->nama }} - <span class="text-slate-600 text-base font-medium">{{ $d->jenis }}</span></h1>
+                                    </a>
+                                    <p class="text-xs text-slate-400 mt-0.5"><i class="ph ph-map-pin text-orange-500"></i> {{ $d->alamat ?? 'Yogyakarta' }}</p>
                                 </div>
                             </div>
+
+                            <!-- Tombol Aksi (Tutup/Buka, Edit, Hapus) -->
+                            <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                                <form action="{{ route('lowongan.toggleStatus', $d->id) }}" method="POST" class="inline">
+                                    @csrf
+                                    @method('PUT')
+                                    @if ($d->status === 'tutup')
+                                        <button type="submit" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1.5" title="Buka Kembali Pendaftaran">
+                                            <i class="ph ph-lock-key-open text-sm"></i> Buka Pendaftaran
+                                        </button>
+                                    @else
+                                        <button type="submit" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1.5" onclick="return confirm('Tutup pendaftaran lowongan ini karena kuota sudah terpenuhi?')" title="Tutup Pendaftaran (Kuota Full)">
+                                            <i class="ph ph-lock-key text-sm"></i> Tutup Lowongan (Kuota Full)
+                                        </button>
+                                    @endif
+                                </form>
+
+                                <a href="{{ route('lowongan.edit.form', ['perusahaan' => Auth::user()->perusahaan->slug, 'lowongan' => $d->slug]) }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1">
+                                    <i class="ph ph-pencil-simple text-sm"></i> Edit
+                                </a>
+
+                                <form action="{{ route('lowongan.destroy', $d->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus lowongan ini?')">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1">
+                                        <i class="ph ph-trash text-sm"></i> Hapus
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                    </a>
+
+                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 text-xs">
+                            <span class="px-3 py-1.5 bg-slate-100 text-slate-700 font-bold rounded-lg border border-slate-200">
+                                Gaji: Rp {{ number_format($d->gaji_awal, 0, ',', '.') }} - Rp {{ number_format($d->gaji_akhir, 0, ',', '.') }} / bulan
+                            </span>
+                            <span class="text-slate-500 font-medium">
+                                Sisa Masa Tayang: <span id="countdown-{{ $d->id }}" class="text-red-500 font-bold"></span>
+                            </span>
+                        </div>
+                    </div>
 
                     <!-- 🔹 Script Countdown per Lowongan -->
                     <script>
@@ -227,7 +262,11 @@
                     <div
                         class="flex shadow-md p-4 border rounded-md mb-2 hover:shadow-lg hover:scale-105 transition-all duration-500">
                         <div>
-                            <img src="{{ asset('Icon/seveninc.png') }}" alt="">
+                            @if (Auth::user()->perusahaan->img_profile)
+                                <img src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" class="w-12 h-12 object-cover rounded-xl border border-slate-200" alt="Logo">
+                            @else
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->perusahaan->nama_perusahaan ?? 'P') }}&background=f97316&color=fff&size=128" class="w-12 h-12 object-cover rounded-xl border border-slate-200" alt="Logo">
+                            @endif
                         </div>
                         <div class="w-full">
                             <a href="{{ route('lowongan.detail', [

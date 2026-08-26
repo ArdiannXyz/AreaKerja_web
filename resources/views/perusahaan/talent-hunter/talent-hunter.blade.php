@@ -19,7 +19,7 @@
             </div>
         </section>
     </div>
-    <section class="text-white py-20 rounded-b-[50px]" style="background: linear-gradient(to right, orange, #ff7b00)">
+    <section class="w-full text-white py-20" style="background: linear-gradient(to right, orange, #ff7b00)">
         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center px-6">
 
             <div class="flex justify-center">

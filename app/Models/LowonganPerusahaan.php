@@ -23,6 +23,7 @@ class LowonganPerusahaan extends Model
         'deskripsi',
         'alamat',
         'kategori',
+        'status',
         'batas_lamaran',
         'syarat_pekerjaan',
         'tanggung_jawab',

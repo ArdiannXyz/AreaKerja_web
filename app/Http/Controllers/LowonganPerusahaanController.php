@@ -149,6 +149,7 @@ class LowonganPerusahaanController extends Controller
             'gaji_akhir'       => 'nullable|numeric',
             'alamat'           => 'nullable|string',
             'kategori'         => 'nullable|string',
+            'status'           => 'nullable|string',
             'batas_lamaran'    => 'nullable|date',
             'deskripsi'        => 'nullable|string',
             'syarat_pekerjaan' => 'nullable|string',
@@ -191,6 +192,23 @@ class LowonganPerusahaanController extends Controller
     {
         $lowongan->delete();
         return redirect()->route('lowongan.saya.perusahaan')->with('success', 'Lowongan berhasil dihapus');
+    }
+
+    public function toggleStatus($id)
+    {
+        $perusahaan = Auth::user()->perusahaan;
+        $lowongan = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
+            ->where('id', $id)
+            ->firstOrFail();
+
+        $newStatus = ($lowongan->status === 'tutup') ? 'buka' : 'tutup';
+        $lowongan->update(['status' => $newStatus]);
+
+        $statusMsg = ($newStatus === 'tutup') 
+            ? "Lowongan '{$lowongan->nama}' berhasil DITUTUP (Kuota Terpenuhi)." 
+            : "Lowongan '{$lowongan->nama}' berhasil DIBUKA KEMBALI.";
+
+        return redirect()->back()->with('success', $statusMsg);
     }
 
     public function destroyPendidikan(LowonganPerusahaan $lowongan)

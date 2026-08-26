@@ -223,7 +223,7 @@ class PerusahaanController extends Controller
     // PENGATURAN
     public function pengaturanForm()
     {
-        return view('perusahaan.pengaturan');
+        return redirect()->route('profile.perusahaan', ['tab' => 'keamanan']);
     }
 
     public function updatePassword(Request $request)

@@ -142,9 +142,11 @@
                 <section class="mb-10">
                     <div id="section-umpan-lowongan" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                         @foreach ($Data as $d)
-                            <div class="h-full" onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $d->perusahaan->slug, 'lowongan' => $d->slug]) }}'">
-                                @include('non-user.components.card', ['lowongan' => $d])
-                            </div>
+                            @if ($d->published_at && (!$d->expired_at || $d->expired_at > now()) && $d->perusahaan)
+                                <div class="h-full" onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $d->perusahaan->slug ?? 'perusahaan', 'lowongan' => $d->slug ?? $d->id]) }}'">
+                                    @include('non-user.components.card', ['lowongan' => $d])
+                                </div>
+                            @endif
                         @endforeach
                     </div>
                 </section>

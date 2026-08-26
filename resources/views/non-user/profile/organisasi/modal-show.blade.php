@@ -28,7 +28,7 @@
                                     <h4 class="font-extrabold text-slate-900 text-base leading-snug">
                                         {{ $org->jabatan }}
                                     </h4>
-                                    <p class="text-sm font-semibold text-orange-600">
+                                    <p class="text-sm font-semibold text-slate-900">
                                         {{ $org->nama_organisasi }}
                                     </p>
                                     <p class="text-xs text-slate-400 mt-0.5">

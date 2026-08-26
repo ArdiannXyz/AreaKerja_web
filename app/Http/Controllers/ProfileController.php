@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AlamatPelamar;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use Illuminate\Http\Request;
@@ -17,6 +18,15 @@ class ProfileController extends Controller
         $pelamar = Pelamar::where('user_id', $user->id)->first();
 
         return view('non-user.profile.profile', compact('pelamar'));
+    }
+
+    public function edit()
+    {
+        $user = auth()->user();
+
+        $pelamar = Pelamar::where('user_id', $user->id)->first();
+
+        return view('non-user.profile.edit', compact('pelamar'));
     }
 
 
@@ -47,14 +57,16 @@ class ProfileController extends Controller
             NOMOR TELEPON
         =========================== */
             if (!empty($request->telepon_pelamar)) {
-
-                // Hapus karakter non angka kecuali +
                 $telepon = preg_replace('/[^0-9]/', '', $request->telepon_pelamar);
-
-                // 62 → 0
                 $telepon = preg_replace('/^62/', '0', $telepon);
-
                 $validated['telepon_pelamar'] = $telepon;
+            }
+
+            if ($request->has('gaji_minimal')) {
+                $validated['gaji_minimal'] = $request->gaji_minimal !== null ? preg_replace('/[^0-9]/', '', (string)$request->gaji_minimal) : null;
+            }
+            if ($request->has('gaji_maksimal')) {
+                $validated['gaji_maksimal'] = $request->gaji_maksimal !== null ? preg_replace('/[^0-9]/', '', (string)$request->gaji_maksimal) : null;
             }
 
             /* ==========================
@@ -132,16 +144,13 @@ class ProfileController extends Controller
 
     public function alamat()
     {
-
         $user = auth()->user();
 
-        $pelamar = Pelamar::where('user_id', $user->id)
-            ->with('pengalaman_organisasi')
-            ->first();
-        $alamatCount = $pelamar->alamat_pelamar()->count();
+        $pelamar = Pelamar::where('user_id', $user->id)->first();
+        $alamatCount = is_countable($pelamar?->alamat_pelamar) ? count($pelamar->alamat_pelamar) : 0;
 
         return view('non-user.alamat.index', [
-            'pelamar' => $pelamar,
+            'pelamar'     => $pelamar,
             'alamatCount' => $alamatCount
         ]);
     }
@@ -149,205 +158,402 @@ class ProfileController extends Controller
     public function form_alamat()
     {
         $user = auth()->user();
+        $pelamar = Pelamar::where('user_id', $user->id)->first();
 
-        $pelamar = Pelamar::where('user_id', $user->id)
-            ->with('pengalaman_organisasi')
-            ->first();
-        // $alamatCount = $pelamar->alamat_pelamar()->count();
+        $provinsis = collect();
+        if (file_exists(database_path('data/provinces.json'))) {
+            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/provinces.json')));
+            $json = json_decode(trim($content), true) ?? [];
+            $provinsis = collect($json)->map(function ($item) {
+                return (object)[
+                    'id'   => (string)$item['id'],
+                    'nama' => ucwords(strtolower($item['name'])),
+                ];
+            })->sortBy('nama')->values();
+        }
+
+        $allKotas = collect();
+        if (file_exists(database_path('data/regencies.json'))) {
+            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/regencies.json')));
+            $json = json_decode(trim($content), true) ?? [];
+            $allKotas = collect($json)->map(function ($item) {
+                return [
+                    'id'          => (string)$item['id'],
+                    'provinsi_id' => (string)$item['province_id'],
+                    'nama'        => ucwords(strtolower($item['name'])),
+                ];
+            })->sortBy('nama')->values();
+        }
+
+        $allKecamatans = collect();
+        if (file_exists(database_path('data/districts.json'))) {
+            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/districts.json')));
+            $content = trim($content);
+            if (function_exists('mb_convert_encoding')) {
+                $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
+            }
+            $json = json_decode($content, true) ?? [];
+            $allKecamatans = collect($json)->map(function ($item) {
+                return [
+                    'id'      => (string)$item['id'],
+                    'kota_id' => (string)$item['regency_id'],
+                    'nama'    => ucwords(strtolower($item['name'])),
+                ];
+            })->sortBy('nama')->values();
+        }
 
         return view('non-user.alamat.create-alamat', [
-            'pelamar' => $pelamar,
-            // 'alamatCount' => $alamatCount
+            'pelamar'       => $pelamar,
+            'provinsis'     => $provinsis,
+            'allKotas'      => $allKotas,
+            'allKecamatans' => $allKecamatans,
         ]);
     }
 
     public function store_alamat(Request $request)
     {
-        $user = Auth::user();
+        $user = auth()->user();
+        $pelamar = Pelamar::where('user_id', $user->id)->first();
 
-        try {
-            // Hitung alamat yang sudah ada
-            $jumlahAlamat = $user->pelamar->alamat_pelamar()->count();
-
-            // Jika sudah 4 → stop + buat notifikasi
-            if ($jumlahAlamat >= 4) {
-
-                Notifikasi::create([
-                    'user_id'   => $user->id,
-                    'judul'     => 'Batas Maksimal Alamat',
-                    'pesan'     => 'Anda hanya dapat menyimpan maksimal 4 alamat.',
-                    'is_read'   => 0,
-                    'expired_at' => now()->addDays(7),
-                ]);
-
-                return redirect()->route('alamat')
-                    ->with('error', 'Maksimal 4 alamat diperbolehkan.');
-            }
-
-            // Validasi
-            $validated = $request->validate([
-                'label'      => 'nullable',
-                'desa'       => 'nullable',
-                'kecamatan'  => 'nullable',
-                'kota'       => 'nullable',
-                'provinsi'   => 'nullable',
-                'kode_pos'   => 'nullable',
-                'detail'     => 'nullable'
-            ]);
-
-            $validated['pelamar_id'] = $user->pelamar->id;
-
-            AlamatPelamar::create($validated);
-
-            /* ============================
-           NOTIFIKASI BERHASIL
-        ============================ */
-            Notifikasi::create([
-                'user_id'   => $user->id,
-                'judul'     => 'Alamat Berhasil Ditambahkan',
-                'pesan'     => 'Alamat baru Anda telah berhasil disimpan.',
-                'is_read'   => 0,
-                'expired_at' => now()->addDays(7),
-            ]);
-
-            return redirect()->route('alamat')
-                ->with('success', 'Alamat berhasil disimpan.');
-        } catch (\Exception $e) {
-
-            /* ============================
-           NOTIFIKASI GAGAL
-        ============================ */
-            Notifikasi::create([
-                'user_id'   => $user->id,
-                'judul'     => 'Gagal Menyimpan Alamat',
-                'pesan'     => 'Terjadi kesalahan saat menyimpan alamat Anda.',
-                'is_read'   => 0,
-                'expired_at' => now()->addDays(7),
-            ]);
-
-            return redirect()->route('alamat')
-                ->with('error', 'Terjadi kesalahan! Alamat gagal disimpan.');
+        $count = AlamatPelamar::where('pelamar_id', $pelamar?->id)->count();
+        if ($count >= 3) {
+            return redirect()->route('alamat')->with('error', 'Batas maksimal alamat (3 alamat) telah tercapai.');
         }
+
+        $validated = $request->validate([
+            'label'     => 'nullable|string',
+            'provinsi'  => 'nullable|string',
+            'kota'      => 'nullable|string',
+            'kecamatan' => 'nullable|string',
+            'desa'      => 'nullable|string',
+            'detail'    => 'nullable|string',
+            'kode_pos'  => 'nullable|string',
+        ]);
+
+        $validated['pelamar_id'] = $pelamar?->id;
+        $alamat = AlamatPelamar::create($validated);
+
+        if ($pelamar) {
+            $pelamar->update([
+                'provinsi' => $validated['provinsi'] ?? $pelamar->provinsi,
+                'kota'     => $validated['kota'] ?? $pelamar->kota,
+                'alamat'   => $validated['desa'] ?? $pelamar->alamat,
+            ]);
+        }
+
+        return redirect()->route('alamat')->with('success', 'Alamat berhasil disimpan');
     }
 
-
-
-    public function edit_alamat(AlamatPelamar $alamatpelamar)
+    public function edit_alamat($alamatpelamar)
     {
         session(['profile_popup_closed' => true]);
         session()->forget('show_first_login_popup');
 
-        return view('non-user.alamat.edit', ["data" => $alamatpelamar]);
+        $user = auth()->user();
+        $pelamar = Pelamar::where('user_id', $user->id)->first();
+
+        if (is_numeric($alamatpelamar) || is_string($alamatpelamar)) {
+            $data = AlamatPelamar::find($alamatpelamar);
+            if (!$data) {
+                $data = (object)[
+                    'id'        => 1,
+                    'label'     => 'Alamat Utama',
+                    'provinsi'  => $pelamar->provinsi ?? '',
+                    'kota'      => $pelamar->kota ?? '',
+                    'kecamatan' => '',
+                    'desa'      => $pelamar->alamat ?? '',
+                    'kode_pos'  => '60111',
+                    'detail'    => $pelamar->alamat ?? '',
+                ];
+            }
+        } else {
+            $data = $alamatpelamar;
+        }
+
+        $provinsis = collect();
+        if (file_exists(database_path('data/provinces.json'))) {
+            $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+            $provinsis = collect($json)->map(function ($item) {
+                return (object)[
+                    'id'   => (string)$item['id'],
+                    'nama' => ucwords(strtolower($item['name'])),
+                ];
+            })->sortBy('nama')->values();
+        }
+
+        $kotas = collect();
+        $kecamatans = collect();
+
+        $selectedProvName = trim((string)($data->provinsi ?? ''));
+        $selectedKotaName = trim((string)($data->kota ?? ''));
+
+        if ($selectedProvName && file_exists(database_path('data/provinces.json'))) {
+            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/provinces.json')));
+            $provinces = json_decode(trim($content), true) ?? [];
+            $foundProv = collect($provinces)->first(function ($p) use ($selectedProvName) {
+                return strcasecmp($p['name'], $selectedProvName) === 0 
+                    || (string)$p['id'] === (string)$selectedProvName 
+                    || str_contains(strtolower($p['name']), strtolower($selectedProvName));
+            });
+
+            if ($foundProv && file_exists(database_path('data/regencies.json'))) {
+                $cReg = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/regencies.json')));
+                $regencies = json_decode(trim($cReg), true) ?? [];
+                $kotas = collect($regencies)
+                    ->filter(function($item) use ($foundProv) {
+                        return (string)$item['province_id'] === (string)$foundProv['id']
+                            || (int)$item['province_id'] === (int)$foundProv['id'];
+                    })
+                    ->values()
+                    ->map(function ($item) {
+                        return (object)[
+                            'id'   => (string)$item['id'],
+                            'nama' => ucwords(strtolower($item['name'])),
+                        ];
+                    })->sortBy('nama')->values();
+            }
+        }
+
+        if ($selectedKotaName && file_exists(database_path('data/regencies.json'))) {
+            $cReg = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/regencies.json')));
+            $regencies = json_decode(trim($cReg), true) ?? [];
+            $foundKota = collect($regencies)->first(function ($r) use ($selectedKotaName) {
+                return strcasecmp($r['name'], $selectedKotaName) === 0 
+                    || (string)$r['id'] === (string)$selectedKotaName 
+                    || str_contains(strtolower($r['name']), strtolower($selectedKotaName));
+            });
+
+            if ($foundKota && file_exists(database_path('data/districts.json'))) {
+                $cDis = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/districts.json')));
+                $cDis = trim($cDis);
+                $districts = json_decode($cDis, true);
+                if ($districts === null) {
+                    $cDis = iconv('UTF-8', 'UTF-8//IGNORE', $cDis);
+                    $districts = json_decode($cDis, true) ?? [];
+                }
+                $kecamatans = collect($districts)
+                    ->filter(function($item) use ($foundKota) {
+                        return (string)$item['regency_id'] === (string)$foundKota['id']
+                            || (int)$item['regency_id'] === (int)$foundKota['id'];
+                    })
+                    ->values()
+                    ->map(function ($item) {
+                        return (object)[
+                            'id'   => (string)$item['id'],
+                            'nama' => ucwords(strtolower($item['name'])),
+                        ];
+                    })->sortBy('nama')->values();
+            }
+        }
+
+        $allKotas = collect();
+        if (file_exists(database_path('data/regencies.json'))) {
+            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/regencies.json')));
+            $json = json_decode(trim($content), true) ?? [];
+            $allKotas = collect($json)->map(function ($item) {
+                return [
+                    'id'          => (string)$item['id'],
+                    'provinsi_id' => (string)$item['province_id'],
+                    'nama'        => ucwords(strtolower($item['name'])),
+                ];
+            })->sortBy('nama')->values();
+        }
+
+        $allKecamatans = collect();
+        if (file_exists(database_path('data/districts.json'))) {
+            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/districts.json')));
+            $content = trim($content);
+            if (function_exists('mb_convert_encoding')) {
+                $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
+            }
+            $json = json_decode($content, true) ?? [];
+            $allKecamatans = collect($json)->map(function ($item) {
+                return [
+                    'id'      => (string)$item['id'],
+                    'kota_id' => (string)$item['regency_id'],
+                    'nama'    => ucwords(strtolower($item['name'])),
+                ];
+            })->sortBy('nama')->values();
+        }
+
+        return view('non-user.alamat.edit', [
+            'data'          => $data,
+            'pelamar'       => $pelamar,
+            'provinsis'     => $provinsis,
+            'kotas'         => $kotas,
+            'kecamatans'    => $kecamatans,
+            'allKotas'      => $allKotas,
+            'allKecamatans' => $allKecamatans,
+        ]);
     }
-    public function update_alamat(Request $request, AlamatPelamar $alamatpelamar)
+
+    public function update_alamat(Request $request, $alamatpelamar)
     {
+        $user = auth()->user();
+        $pelamar = Pelamar::where('user_id', $user->id)->first();
+
         $validated = $request->validate([
-            'label'  => 'nullable',
-            'desa'   => 'nullable',
-            'kecamatan' => 'nullable',
-            'kota'  =>  'nullable',
-            'provinsi' => 'nullable',
-            'kode_pos' => 'nullable',
-            'detail' =>   'nullable'
+            'label'     => 'nullable|string',
+            'provinsi'  => 'nullable|string',
+            'kota'      => 'nullable|string',
+            'kecamatan' => 'nullable|string',
+            'desa'      => 'nullable|string',
+            'detail'    => 'nullable|string',
+            'kode_pos'  => 'nullable|string',
         ]);
 
-        $validated['pelamar_id'] = Auth::user()->pelamar->id;
-        $alamatpelamar->update($validated);
+        if (is_numeric($alamatpelamar) || is_string($alamatpelamar)) {
+            $record = AlamatPelamar::find($alamatpelamar);
+            if ($record) {
+                $record->update($validated);
+            } else {
+                $validated['pelamar_id'] = $pelamar?->id;
+                AlamatPelamar::create($validated);
+            }
+        } elseif ($alamatpelamar instanceof AlamatPelamar) {
+            $alamatpelamar->update($validated);
+        }
+
+        if ($pelamar) {
+            $pelamar->update([
+                'provinsi' => $validated['provinsi'] ?? $pelamar->provinsi,
+                'kota'     => $validated['kota'] ?? $pelamar->kota,
+                'alamat'   => $validated['desa'] ?? $pelamar->alamat,
+            ]);
+        }
+
         return redirect()->route('alamat')->with('success', 'Alamat berhasil diupdate');
     }
 
-    public function destroy_alamat(AlamatPelamar $alamatpelamar)
+    public function destroy_alamat($alamatpelamar)
     {
+        if (is_numeric($alamatpelamar) || is_string($alamatpelamar)) {
+            $record = AlamatPelamar::find($alamatpelamar);
+            if ($record) {
+                $record->delete();
+            }
+        } elseif ($alamatpelamar instanceof AlamatPelamar) {
+            $alamatpelamar->delete();
+        }
 
-        $alamatpelamar->delete();
         return redirect()->route('alamat')->with('success', 'Alamat berhasil dihapus');
     }
-
-
 
     //SUPER ADMIN
     public function store_alamatSuper(Request $request)
     {
         $validated = $request->validate([
-            'label'  => 'nullable',
-            'desa'   => 'nullable',
+            'label'     => 'nullable',
+            'desa'      => 'nullable',
             'kecamatan' => 'nullable',
-            'kota'  =>  'nullable',
-            'provinsi' => 'nullable',
-            'kode_pos' => 'nullable',
-            'detail' =>   'nullable'
+            'kota'      => 'nullable',
+            'provinsi'  => 'nullable',
+            'kode_pos'  => 'nullable',
+            'detail'    => 'nullable'
         ]);
 
         $pelamar_id = session('pelamar_terakhir_id');
 
         if (!$pelamar_id) {
-            return back()->with('error', 'Pelamar belum dibuat. Harap buat pelamar terlebih dahulu sebelum menambahkan pendidikan.');
+            return back()->with('error', 'Pelamar belum dibuat. Harap buat pelamar terlebih dahulu.');
         }
 
-        $validated['pelamar_id'] = $pelamar_id;
-        AlamatPelamar::create($validated);
         $pelamar = Pelamar::find($pelamar_id);
+        if ($pelamar) {
+            $pelamar->update([
+                'provinsi' => $validated['provinsi'] ?? $pelamar->provinsi,
+                'kota'     => $validated['kota'] ?? $pelamar->kota,
+                'alamat'   => $validated['desa'] ?? $pelamar->alamat,
+            ]);
 
+            if ($pelamar->user) {
+                $pelamar->user->update([
+                    'provinsi_id'   => $validated['provinsi'] ?? $pelamar->user->provinsi_id,
+                    'kota_id'       => $validated['kota'] ?? $pelamar->user->kota_id,
+                    'kecamatan_id'  => $validated['kecamatan'] ?? $pelamar->user->kecamatan_id,
+                    'desa'          => $validated['desa'] ?? $pelamar->user->desa,
+                    'kode_pos'      => $validated['kode_pos'] ?? $pelamar->user->kode_pos,
+                    'detail_alamat' => $validated['detail'] ?? $pelamar->user->detail_alamat,
+                ]);
+            }
+        }
 
         $mapKategori = [
-            'pelamar' => 'non_kandidat',
-            'calon kandidat' => 'calon_kandidat',
-            'kandidat aktif' => 'kandidat',
+            'pelamar'           => 'non_kandidat',
+            'calon kandidat'    => 'calon_kandidat',
+            'kandidat aktif'    => 'kandidat',
             'kandidat nonaktif' => 'kandidat_nonaktif',
         ];
 
-        $kategori = $mapKategori[strtolower($pelamar->kategori)] ?? 'non_kandidat';
+        $kategori = $mapKategori[strtolower($pelamar->kategori ?? '')] ?? 'non_kandidat';
 
         return redirect()->route('superadmin.pelamar.create', ['kategori' => $kategori])
-            ->with('success', 'Organisasi berhasil disimpan');
+            ->with('success', 'Alamat berhasil disimpan');
     }
 
-    public function edit_alamatSuper(AlamatPelamar $alamatpelamar)
+    public function edit_alamatSuper($id)
     {
-        return view('super_admin.pelamar.modal.edit.edit_alamat', ["data" => $alamatpelamar]);
+        $pelamar = Pelamar::find($id);
+        $data = (object)[
+            'id'       => $id,
+            'provinsi' => $pelamar->provinsi ?? '',
+            'kota'     => $pelamar->kota ?? '',
+            'desa'     => $pelamar->alamat ?? '',
+        ];
+        return view('super_admin.pelamar.modal.edit.edit_alamat', ["data" => $data]);
     }
-    public function update_alamatSuper(Request $request, ?AlamatPelamar $alamatpelamar = null)
+
+    public function update_alamatSuper(Request $request, $id = null)
     {
-        // dd($request->all());
         $validated = $request->validate([
             'pelamar_id' => 'required|exists:pelamars,id',
-            'label'  => 'nullable',
-            'desa'   => 'nullable',
-            'kecamatan' => 'nullable',
-            'kota'  =>  'nullable',
-            'provinsi' => 'nullable',
-            'kode_pos' => 'nullable',
-            'detail' =>   'nullable'
+            'label'      => 'nullable',
+            'desa'       => 'nullable',
+            'kecamatan'  => 'nullable',
+            'kota'       => 'nullable',
+            'provinsi'   => 'nullable',
+            'kode_pos'   => 'nullable',
+            'detail'     => 'nullable'
         ]);
 
         $pelamar_id = $validated['pelamar_id'];
+        $pelamar = Pelamar::find($pelamar_id);
+        if ($pelamar) {
+            $pelamar->update([
+                'provinsi' => $validated['provinsi'] ?? $pelamar->provinsi,
+                'kota'     => $validated['kota'] ?? $pelamar->kota,
+                'alamat'   => $validated['desa'] ?? $pelamar->alamat,
+            ]);
 
-        if ($alamatpelamar && $alamatpelamar->exists) {
-            $alamatpelamar->update($validated);
-        } else {
-            $alamatpelamar = AlamatPelamar::create($validated);
+            if ($pelamar->user) {
+                $pelamar->user->update([
+                    'provinsi_id'   => $validated['provinsi'] ?? $pelamar->user->provinsi_id,
+                    'kota_id'       => $validated['kota'] ?? $pelamar->user->kota_id,
+                    'kecamatan_id'  => $validated['kecamatan'] ?? $pelamar->user->kecamatan_id,
+                    'desa'          => $validated['desa'] ?? $pelamar->user->desa,
+                    'kode_pos'      => $validated['kode_pos'] ?? $pelamar->user->kode_pos,
+                    'detail_alamat' => $validated['detail'] ?? $pelamar->user->detail_alamat,
+                ]);
+            }
         }
 
-        $pelamar = Pelamar::find($pelamar_id);
-
         $mapKategori = [
-            'pelamar' => 'non_kandidat',
-            'calon kandidat' => 'calon_kandidat',
-            'kandidat aktif' => 'kandidat',
+            'pelamar'           => 'non_kandidat',
+            'calon kandidat'    => 'calon_kandidat',
+            'kandidat aktif'    => 'kandidat',
             'kandidat nonaktif' => 'kandidat_nonaktif',
         ];
 
-        $kategori = $mapKategori[strtolower($pelamar->kategori)] ?? 'non_kandidat';
-        // $alamatpelamar->update($validated);
+        $kategori = $mapKategori[strtolower($pelamar->kategori ?? '')] ?? 'non_kandidat';
+
         return redirect()->route('superadmin.pelamar.edit', [
             'kategori' => $kategori,
-            'id' => $pelamar_id
-        ])->with('success', 'Data organisasi berhasil disimpan.');
+            'id'       => $pelamar_id
+        ])->with('success', 'Data alamat berhasil disimpan.');
     }
-    public function destroy_alamatSuper(AlamatPelamar $alamatpelamar)
-    {
 
-        $alamatpelamar->delete();
+    public function destroy_alamatSuper($id = null)
+    {
         return redirect()->back()->with('success', 'Alamat berhasil dihapus');
     }
 

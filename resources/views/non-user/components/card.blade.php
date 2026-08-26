@@ -1,4 +1,7 @@
-@if ($d->published_at && (!$d->expired_at || $d->expired_at > now()))
+@php
+    $d = $lowongan ?? $d ?? null;
+@endphp
+@if ($d && $d->published_at && (!$d->expired_at || $d->expired_at > now()))
     <div x-cloak x-data="{ open: false, showConfirm: false, showSuccess: false }"
         class="bg-white border border-slate-200/90 rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative group flex flex-col justify-between h-full cursor-pointer border-l-4 border-l-transparent hover:border-l-orange-500">
 
@@ -6,6 +9,16 @@
             {{-- Header Badges & Option Menu --}}
             <div class="flex items-start justify-between gap-3 mb-3">
                 <div class="flex flex-wrap items-center gap-1.5">
+                    @if (($d->status ?? 'buka') === 'tutup')
+                        <span class="bg-rose-100 text-rose-700 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm border border-rose-200">
+                            <i class="ph ph-lock-key text-xs"></i> Ditutup
+                        </span>
+                    @else
+                        <span class="bg-emerald-100 text-emerald-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm border border-emerald-200">
+                            <i class="ph ph-check-circle text-xs"></i> Buka
+                        </span>
+                    @endif
+
                     @if (!is_null($d->boosted_until))
                         <span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                             <i class="ph ph-rocket-launch text-xs"></i> Boosted
@@ -15,12 +28,6 @@
                     @if ($d->rekomendasi !== null)
                         <span class="bg-sky-100 text-sky-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
                             Direkomendasikan
-                        </span>
-                    @endif
-
-                    @if ($d->urgent ?? true)
-                        <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
-                            dibutuhkan segera
                         </span>
                     @endif
                 </div>
@@ -141,9 +148,12 @@
         </div>
 
         {{-- Card Footer --}}
-        <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-2 text-xs text-slate-400">
+        <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-2 text-xs text-slate-500 font-medium">
             <span class="flex items-center gap-1">
-                <i class="ph ph-clock text-slate-400"></i> Aktif {{ $d->published_at ? $d->published_at->diffForHumans() : 'Baru saja' }}
+                <i class="ph ph-clock text-slate-400"></i> {{ $d->published_at ? $d->published_at->diffForHumans() : 'Baru saja' }}
+            </span>
+            <span class="flex items-center gap-1 font-extrabold {{ $d->batas_lamaran && \Carbon\Carbon::parse($d->batas_lamaran)->isPast() ? 'text-rose-600' : 'text-slate-600' }}">
+                <i class="ph ph-calendar-blank text-orange-500"></i> Batas: {{ $d->batas_lamaran ? \Carbon\Carbon::parse($d->batas_lamaran)->format('d M Y') : 'Tanpa Batas' }}
             </span>
         </div>
 
