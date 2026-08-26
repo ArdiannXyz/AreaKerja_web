@@ -80,6 +80,10 @@ Route::controller(PelamarController::class)->group(function () {
 
 
 
+// REGION DROPDOWNS API
+Route::get('/get-kota/{provinsi_id}', [AdminController::class, 'getKota'])->name('public.get.kota');
+Route::get('/get-kecamatan/{kota_id}', [AdminController::class, 'getKecamatan'])->name('public.get.kecamatan');
+
 //CV CONTROLLER
 Route::controller(CVController::class)->group(function () {
     //DOWNLOAD CV
@@ -204,6 +208,7 @@ Route::prefix('pelamar')->middleware('auth', 'role:pelamar', 'CheckUserStatus')-
     Route::controller(ProfileController::class)->group(function () {
         //profile
         Route::get('/profile', 'index')->name('profile.index');
+        Route::get('/edit/profile', 'edit')->name('profile.edit');
         Route::put('/update/profile/{pelamar:id}', 'update_profile')->name('profile.update');
         Route::delete('/delete/profile/{pelamar:id}', 'destroy_profile')->name('profile.destroy');
 
@@ -475,6 +480,7 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/tips/kerja/{id}/edit', 'edit')->name('admin.tips-kerja.edit');
         Route::put('/tips/kerja/{id}', 'update')->name('admin.tips-kerja.update');
         Route::delete('/tips/kerja/{id}', 'destroy_single')->name('admin.tips-kerja.destroy.single');
+        Route::put('/tips/kerja/{id}/toggle-status', 'toggleStatus')->name('admin.tips-kerja.toggleStatus');
         Route::put('/update/status/', 'update_status')->name('admin.tips-kerja.update.status');
         Route::delete('/delete', 'destroy')->name('admin.tips-kerja.destroy');
     });
@@ -903,6 +909,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
         Route::get('/edit/lowongan/{perusahaan}/{lowongan}', 'edit')->name('lowongan.edit.form');
         Route::put('/update/lowongan/{lowongan:id}', 'update')->name('lowongan.update');
         Route::delete('/lowongan/{lowongan:id}', 'destroy')->name('lowongan.destroy');
+        Route::put('/lowongan/{id}/toggle-status', 'toggleStatus')->name('lowongan.toggleStatus');
 
         //paket lowongan
         Route::post('/paket/beli', 'beliPaket')->name('paket.beli');

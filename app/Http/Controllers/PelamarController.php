@@ -58,12 +58,18 @@ class PelamarController extends Controller
         $tawaran = null;
 
         if ($pelamar) {
-            $pelamarLowongan = PelamarLowongan::where('pelamar_id', $pelamar->id)
+            $lamaranRecord = PelamarLowongan::where('pelamar_id', $pelamar->id)
                 ->where('lowongan_id', $lowongan->id)
+                ->where('status', '!=', 'saved')
+                ->latest()
                 ->first();
 
-            $statusLamaran = $pelamarLowongan?->status;
-            $isSaved = $pelamarLowongan && $pelamarLowongan->status === 'saved';
+            $statusLamaran = $lamaranRecord?->status;
+
+            $isSaved = PelamarLowongan::where('pelamar_id', $pelamar->id)
+                ->where('lowongan_id', $lowongan->id)
+                ->where('status', 'saved')
+                ->exists();
         }
 
         $isExpired = false;
@@ -142,6 +148,11 @@ class PelamarController extends Controller
 
         $Data = LowonganPerusahaan::with('perusahaan')
             ->whereNotNull('published_at')
+            ->where('status', '!=', 'tutup')
+            ->where(function ($q) {
+                $q->whereNull('expired_at')
+                  ->orWhere('expired_at', '>', now());
+            })
 
             ->when($kategori, function ($q) use ($KategoriList, $kategori) {
                 if ($KategoriList->contains($kategori)) {
@@ -227,6 +238,9 @@ class PelamarController extends Controller
 
         if ($cek) {
             if ($cek->status === 'saved') {
+                if ($request->wantsJson() || $request->ajax()) {
+                    return response()->json(['success' => true, 'message' => 'Lowongan sudah ada di daftar simpan.']);
+                }
                 return back()->with('error', 'Lowongan sudah ada di daftar simpan.');
             }
             $cek->update(['status' => 'saved']);
@@ -238,10 +252,14 @@ class PelamarController extends Controller
             ]);
         }
 
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Lowongan berhasil disimpan.']);
+        }
+
         return back()->with('success', 'Lowongan berhasil disimpan.');
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
         $pelamar = Auth::user()->pelamar;
 
@@ -251,10 +269,17 @@ class PelamarController extends Controller
             ->first();
 
         if (!$simpan) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Lowongan tidak ditemukan di daftar simpan.'], 404);
+            }
             return back()->with('error', 'Lowongan tidak ditemukan di daftar simpan.');
         }
 
         $simpan->delete();
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Lowongan berhasil dihapus dari daftar simpan.']);
+        }
 
         return back()->with('success', 'Lowongan berhasil dihapus dari daftar simpan.');
     }
@@ -421,6 +446,15 @@ class PelamarController extends Controller
 
         $pelamar = Pelamar::where('user_id', Auth::id())->firstOrFail();
 
+        $alreadyApplied = PelamarLowongan::where('pelamar_id', $pelamar->id)
+            ->where('lowongan_id', $request->lowongan_id)
+            ->where('status', '!=', 'saved')
+            ->exists();
+
+        if ($alreadyApplied) {
+            return back()->with('error', 'Anda sudah mengirimkan lamaran untuk lowongan ini.');
+        }
+
         $pelamar->lowongans()->attach($request->lowongan_id, [
             'status'     => 'pending',
             'created_at' => now(),
@@ -533,14 +567,18 @@ class PelamarController extends Controller
             "expired_at"  => $expiredAt,
         ]);
 
-        Mail::to($pelamar->user->email)
-            ->send(new KonfirmasiLamaranMail(
-                $pelamar,
-                $pelamarlowongan->lowongan_perusahaan,
-                $konfirmasi,
-                $pelamarlowongan,
-                $mapsUrl
-            ));
+        try {
+            Mail::to($pelamar->user->email)
+                ->send(new KonfirmasiLamaranMail(
+                    $pelamar,
+                    $pelamarlowongan->lowongan_perusahaan,
+                    $konfirmasi,
+                    $pelamarlowongan,
+                    $mapsUrl
+                ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Gagal mengirim email konfirmasi lamaran: ' . $e->getMessage());
+        }
 
         $statusText = $pelamarlowongan->status === 'diterima' ? 'Diterima' : 'Ditolak';
         $statusColor = $statusText === 'Diterima' ? 'green' : 'red';
@@ -574,13 +612,17 @@ class PelamarController extends Controller
             'expired_at' => null,
         ]);
 
-        Mail::to($pelamar->user->email)
-            ->send(new KonfirmasiLamaranMail(
-                $pelamar,
-                $pelamarlowongan->lowongan_perusahaan,
-                null,
-                $pelamarlowongan
-            ));
+        try {
+            Mail::to($pelamar->user->email)
+                ->send(new KonfirmasiLamaranMail(
+                    $pelamar,
+                    $pelamarlowongan->lowongan_perusahaan,
+                    null,
+                    $pelamarlowongan
+                ));
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Gagal mengirim email penolakan lamaran: ' . $e->getMessage());
+        }
 
         Notifikasi::create([
             'user_id' => $pelamar->user_id,
@@ -674,21 +716,31 @@ class PelamarController extends Controller
 
 
     //TIPS KERJA
-    public function tips_kerja()
+    public function tips_kerja(Request $request)
     {
-        $head = TipsKerja::where('status', 'terbit')
-            ->orderBy('created_at', 'desc')
-            ->first();
+        $kategori = $request->query('kategori');
 
-        $others = TipsKerja::where('status', 'terbit')
-            ->when($head, function ($query) use ($head) {
-                return $query->where('id', '!=', $head->id);
+        $query = TipsKerja::where('status', 'terbit');
+
+        if ($kategori && $kategori !== 'Semua') {
+            $query->where('kategori', $kategori);
+        }
+
+        $head = (clone $query)->orderBy('created_at', 'desc')->first();
+
+        if (!$head && $kategori) {
+            $head = TipsKerja::where('status', 'terbit')->orderBy('created_at', 'desc')->first();
+        }
+
+        $others = (clone $query)
+            ->when($head, function ($q) use ($head) {
+                return $q->where('id', '!=', $head->id);
             })
             ->orderBy('created_at', 'desc')
             ->get();
 
         return view('non-user.tips-kerja', [
-            "head" => $head,
+            "head"   => $head,
             "others" => $others
         ]);
     }
@@ -711,6 +763,20 @@ class PelamarController extends Controller
     //HAL DAFTAR KANDIDAT
     public function daftar_kandidat()
     {
+        $user = auth()->user();
+        $isKandidatAktif = false;
+        $transaksiPending = null;
+
+        if ($user) {
+            $isKandidatAktif = in_array(strtolower($user->pelamar->kategori ?? ''), ['kandidat aktif', 'kandidat', 'calon kandidat']);
+            
+            $transaksiPending = CatatanCash::where('user_id', $user->id)
+                ->where('pesanan', 'Pendaftaran Kandidat')
+                ->whereIn('status', ['pending', 'menunggu_verifikasi'])
+                ->latest()
+                ->first();
+        }
+
         $divisis = collect([
             (object)['id' => 1, 'divisi' => 'Teknologi Informasi & Software'],
             (object)['id' => 2, 'divisi' => 'Marketing & Komunikasi'],
@@ -721,8 +787,10 @@ class PelamarController extends Controller
         ]);
 
         return view('non-user.daftar-kandidat', [
-            "divisis"    => $divisis,
-            'daftarBank' => DaftarBank::all(),
+            "divisis"          => $divisis,
+            'daftarBank'       => DaftarBank::all(),
+            'isKandidatAktif'  => $isKandidatAktif,
+            'transaksiPending' => $transaksiPending,
         ]);
     }
 
@@ -753,12 +821,30 @@ class PelamarController extends Controller
 
     public function storePendaftaran(Request $request)
     {
+        $user = auth()->user();
+
+        // 1. Cek apakah pelamar sudah menjadi kandidat aktif
+        if ($user && $user->pelamar && in_array(strtolower($user->pelamar->kategori ?? ''), ['kandidat aktif', 'kandidat'])) {
+            return redirect()->route('pelamar.daftar-kandidat')
+                ->with('error', 'Anda sudah terdaftar sebagai Kandidat Aktif.');
+        }
+
+        // 2. Cek apakah pelamar sudah memiliki transaksi pendaftaran kandidat yang pending
+        $transaksiExist = CatatanCash::where('user_id', $user->id)
+            ->where('pesanan', 'Pendaftaran Kandidat')
+            ->whereIn('status', ['pending', 'menunggu_verifikasi'])
+            ->latest()
+            ->first();
+
+        if ($transaksiExist) {
+            return redirect()->route('kandidat.transaksi', $transaksiExist->id)
+                ->with('error', 'Anda sudah mendaftar sebagai Kandidat. Silakan selesaikan transaksi pembayaran Anda.');
+        }
+
         $request->validate([
             'divisi' => 'required|string',
             'daftar_bank_id' => 'required|exists:daftar_bank,id',
         ]);
-
-        $user = auth()->user();
 
         // Update divisi pelamar
         if ($user->pelamar) {
@@ -964,7 +1050,7 @@ class PelamarController extends Controller
 
         $transaksi = CatatanCash::where('user_id', $user->id)
             ->where('pesanan', 'Pendaftaran Kandidat')
-            ->with(['hargaPembayaran', 'bank'])
+            ->with(['bank'])
             ->orderBy('created_at', 'DESC')
             ->get();
 

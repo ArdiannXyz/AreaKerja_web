@@ -12,8 +12,9 @@ class EventController extends Controller
         return (object)[
             'id'                    => 1,
             'title'                 => 'Event Area Kerja',
-            'status'                => 'aktif',
-            'content'               => 'Deskripsi event',
+            'status'                => 'buka',
+            'content'               => 'Deskripsi event Area Kerja',
+            'image'                 => null,
             'tgl_mulai'             => now(),
             'jam_mulai'             => '09:00',
             'tgl_akhir'             => now()->addDays(2),

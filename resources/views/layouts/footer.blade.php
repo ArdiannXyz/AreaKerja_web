@@ -12,18 +12,18 @@
     <div class="grid md:grid-cols-3 gap-8">
 
         <!-- Logo + Description -->
-        <div class="mt-[-10%]">
-            <div>
-                <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Logo" class="w-20 h-17">
+        <div class="mt-1">
+            <div class="mb-2">
+                <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Logo" class="w-20 h-auto object-contain">
             </div>
-            <div class="text-sm leading-relaxed ">
+            <div class="text-sm leading-relaxed">
                 <p>Lamar Pekerjaan Kamu - Dengan <br> waktu dan langkah yang cepat</p>
             </div>
         </div>
 
         <!-- Kategori -->
         <div>
-            <h3 class="mb-4 text-xl">Kategori</h3>
+            <h3 class="mb-4 text-xl font-bold">Kategori</h3>
             @auth
                 @if (Auth::user()->role == 'pelamar')
                     <ul class="grid grid-cols-2 gap-y-3 text-sm">
@@ -54,30 +54,30 @@
             @endauth
 
             @guest
-                <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Beranda</a></li>
-                <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Tips Kerja</a></li>
-                <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Provinsi Lainnya</a></li>
-                <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Pasang Lowongan</a></li>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Beranda</a></li>
+                    <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Tips Kerja</a></li>
+                    <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Provinsi Lainnya</a></li>
+                    <li><a href="#" class="hover:text-orange-200 transition hover:scale-105">Pasang Lowongan</a></li>
+                </ul>
             @endguest
 
         </div>
 
         <!-- Kontak -->
         <div>
-            <h3 class="mb-4 text-xl">Berlangganan Berita</h3>
+            <h3 class="mb-4 text-xl font-bold">Berlangganan Berita</h3>
 
             <form action="{{ route('subscribe.email') }}" method="POST"
-                class="flex flex-col sm:flex-row bg-white border-none overflow-hidden rounded-lg shadow-md">
+                class="flex flex-col sm:flex-row items-center gap-3">
                 @csrf
-                <input type="email" name="email" placeholder="Email address"
-                    class="flex-1 px-3 py-2 text-black focus:outline-none 
-                  border-none
-                   rounded-md sm:rounded-none w-full">
+                <div class="flex-1 w-full bg-white rounded-lg shadow-md overflow-hidden">
+                    <input type="email" name="email" placeholder="Email address"
+                        class="w-full px-3 py-2.5 text-black focus:outline-none border-none text-sm">
+                </div>
 
                 <button type="submit"
-                    class="bg-black text-orange-500 px-4 foucus:outline-none border-none py-2 hover:bg-gray-800 
-                   rounded-md sm:rounded-none
-                   w-full sm:w-auto text-center">
+                    class="bg-white text-orange-600 font-extrabold px-6 py-2.5 hover:bg-orange-50 transition duration-200 rounded-lg shadow-md w-full sm:w-auto text-center cursor-pointer text-sm">
                     Submit
                 </button>
 

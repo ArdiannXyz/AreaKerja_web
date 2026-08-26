@@ -1,70 +1,69 @@
 <!-- Main modal -->
 <div id="create_organisasimodal" tabindex="-1" aria-hidden="true"
-    class="hidden inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 flex justify-center items-center p-3">
+    class="hidden fixed inset-0 bg-slate-900/25 overflow-y-auto overflow-x-hidden top-0 right-0 left-0 z-50 flex justify-center items-center p-4">
 
-    <div class="relative w-full max-w-sm md:max-w-md">
+    <div class="relative w-full max-w-lg">
         <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow-lg dark:bg-gray-700">
+        <div class="relative bg-white text-slate-800 rounded-2xl shadow-2xl border border-slate-100 overflow-hidden">
 
             <!-- Modal header -->
-            <div class="flex items-center justify-between p-3 md:p-5 border-b border-gray-200 dark:border-gray-600">
-                <h3 class="text-base md:text-lg font-semibold">Tambah Pengalaman Organisasi</h3>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-white">
+                <h3 class="text-lg font-bold text-slate-900">Tambah Pengalaman Organisasi</h3>
 
                 <button type="button"
-                    class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg w-8 h-8 flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    class="text-slate-400 hover:bg-slate-100 hover:text-slate-700 rounded-full w-8 h-8 flex justify-center items-center transition"
                     data-modal-hide="create_organisasimodal">
-                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
             </div>
 
             <!-- Modal body -->
-            <div class="p-4 md:p-6">
+            <div class="p-6 bg-white">
                 <form action="{{ route('organisasi.store') }}" method="POST" class="space-y-4">
                     @csrf
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-1">Nama Organisasi</label>
-                        <input type="text" name="nama_organisasi"
-                            class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Organisasi <span class="text-red-500">*</span></label>
+                        <input type="text" name="nama_organisasi" placeholder="Contoh: Himpunan Mahasiswa / OSIS"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
                             required>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-1">Jabatan</label>
-                        <input type="text" name="jabatan"
-                            class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Jabatan <span class="text-red-500">*</span></label>
+                        <input type="text" name="jabatan" placeholder="Contoh: Ketua / Anggota Divisi Humas"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
                             required>
                     </div>
 
-                    <!-- Grid responsif -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Grid tahun -->
+                    <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Awal</label>
-                            <input type="number" name="tahun_awal"
-                                class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Tahun Awal <span class="text-red-500">*</span></label>
+                            <input type="number" name="tahun_awal" placeholder="2020"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
                                 required>
                         </div>
 
                         <div>
-                            <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Akhir</label>
-                            <input type="number" name="tahun_akhir"
-                                class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400">
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Tahun Akhir</label>
+                            <input type="number" name="tahun_akhir" placeholder="2022 (Kosongkan jika aktif)"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition">
                         </div>
                     </div>
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-1">Deskripsi</label>
-                        <textarea name="deskripsi" rows="3"
-                            class="w-full border rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400"></textarea>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Deskripsi</label>
+                        <textarea name="deskripsi" rows="3" placeholder="Tuliskan tugas atau pencapaian Anda selama di organisasi ini..."
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"></textarea>
                     </div>
 
                     <!-- Tombol -->
-                    <div class="flex justify-end md:justify-end">
+                    <div class="flex justify-end pt-2">
                         <button type="submit"
-                            class="w-full md:w-auto bg-orange-500 font-medium hover:bg-orange-600 text-white px-5 py-2 rounded-lg shadow-md transition">
+                            class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-6 py-2.5 rounded-xl shadow-sm transition text-sm">
                             Simpan
                         </button>
                     </div>

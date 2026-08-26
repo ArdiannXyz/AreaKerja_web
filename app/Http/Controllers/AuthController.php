@@ -226,17 +226,6 @@ class AuthController extends Controller
             ->latest()
             ->get();
 
-        if (
-            $perusahaan->is_berlangganan == 1 &&
-            $perusahaan->tanggal_expired &&
-            Carbon::now()->lt($perusahaan->tanggal_expired) &&
-            $request->query('show') !== 'dashboard'
-        ) {
-            return view('perusahaan.langganan.dah_langganan', [
-                'perusahaan' => $perusahaan
-            ]);
-        }
-
         // Paket topup default
         $hargaPembayarans = collect([
             (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000, 'icon' => 'bitcoin.png'],
@@ -426,15 +415,20 @@ class AuthController extends Controller
         $lastLowongan = LowonganPerusahaan::whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])->count();
         $growthLowongan = $this->calcGrowth($lastLowongan, $currentLowongan);
 
+        $latestLowongans = LowonganPerusahaan::with('perusahaan')->latest()->take(5)->get();
+        $latestPerusahaans = Perusahaan::latest()->take(5)->get();
+
         return view('admin.dashboard', [
-            'totalPerusahaan'   => $currentPerusahaan,
-            'growthPerusahaan'  => $growthPerusahaan,
-            'totalKandidat'     => $currentKandidat,
-            'growthKandidat'    => $growthKandidat,
-            'totalNonKandidat'  => $currentNonKandidat,
-            'growthNonKandidat' => $growthNonKandidat,
-            'totalLowongan'     => $currentLowongan,
-            'growthLowongan'    => $growthLowongan,
+            'totalPerusahaan'    => $currentPerusahaan,
+            'growthPerusahaan'   => $growthPerusahaan,
+            'totalKandidat'      => $currentKandidat,
+            'growthKandidat'     => $growthKandidat,
+            'totalNonKandidat'   => $currentNonKandidat,
+            'growthNonKandidat'  => $growthNonKandidat,
+            'totalLowongan'      => $currentLowongan,
+            'growthLowongan'     => $growthLowongan,
+            'latestLowongans'    => $latestLowongans,
+            'latestPerusahaans'  => $latestPerusahaans,
         ]);
     }
 

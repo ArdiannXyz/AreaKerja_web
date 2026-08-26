@@ -1,11 +1,24 @@
-@if ($d->published_at && (!$d->expired_at || $d->expired_at > now()))
+@php
+    $d = $lowongan ?? $d ?? null;
+@endphp
+@if ($d && $d->published_at && (!$d->expired_at || $d->expired_at > now()))
     <div x-cloak x-data="{ open: false, showConfirm: false, showSuccess: false }"
-        class="bg-white border border-slate-200/90 rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative group flex flex-col justify-between cursor-pointer border-l-4 border-l-transparent hover:border-l-orange-500">
+        class="bg-white border border-slate-200/90 rounded-2xl p-5 md:p-6 shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 relative group flex flex-col justify-between h-full cursor-pointer border-l-4 border-l-transparent hover:border-l-orange-500">
 
         <div>
             {{-- Header Badges & Option Menu --}}
             <div class="flex items-start justify-between gap-3 mb-3">
                 <div class="flex flex-wrap items-center gap-1.5">
+                    @if (($d->status ?? 'buka') === 'tutup')
+                        <span class="bg-rose-100 text-rose-700 text-[11px] font-extrabold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm border border-rose-200">
+                            <i class="ph ph-lock-key text-xs"></i> Ditutup
+                        </span>
+                    @else
+                        <span class="bg-emerald-100 text-emerald-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm border border-emerald-200">
+                            <i class="ph ph-check-circle text-xs"></i> Buka
+                        </span>
+                    @endif
+
                     @if (!is_null($d->boosted_until))
                         <span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
                             <i class="ph ph-rocket-launch text-xs"></i> Boosted
@@ -17,41 +30,76 @@
                             Direkomendasikan
                         </span>
                     @endif
-
-                    @if ($d->urgent ?? true)
-                        <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-sm">
-                            dibutuhkan segera
-                        </span>
-                    @endif
                 </div>
 
-                {{-- Option Menu (3 dots) --}}
-                <div x-data="{ showMenu: false }" class="relative shrink-0">
-                    <button @click.stop="showMenu = !showMenu"
-                        class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-full transition">
-                        <i class="ph ph-dots-three-vertical text-xl"></i>
-                    </button>
+                {{-- Bookmark Button (AJAX Top Right Header) --}}
+                @auth
+                    @php
+                        $sudahSimpan = Auth::user()->pelamar
+                            ? Auth::user()->pelamar->simpanLowongans()->where('lowongan_id', $d->id)->exists()
+                            : false;
+                    @endphp
 
-                    <!-- Share Popup Menu -->
-                    <div x-show="showMenu" @click.outside="showMenu = false" @click.stop x-transition x-cloak
-                        class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-100 z-30 py-2">
-                        <!-- LinkedIn -->
-                        <a href="{{ route('lowongan.share', ['platform' => 'linkedin', 'companySlug' => $d->perusahaan->slug, 'jobSlug' => $d->slug]) }}"
-                            class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition">
-                            <i class="ph ph-linkedin-logo text-lg text-blue-700"></i> LinkedIn
-                        </a>
-                        <!-- Email -->
-                        <a href="{{ route('lowongan.share', ['platform' => 'email', 'companySlug' => $d->perusahaan->slug, 'jobSlug' => $d->slug]) }}"
-                            class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition">
-                            <i class="ph ph-envelope text-lg text-red-500"></i> Gmail
-                        </a>
-                        <!-- WhatsApp -->
-                        <a href="{{ route('lowongan.share', ['platform' => 'whatsapp', 'companySlug' => $d->perusahaan->slug, 'jobSlug' => $d->slug]) }}"
-                            class="flex items-center gap-3 px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition">
-                            <i class="ph ph-whatsapp-logo text-lg text-green-600"></i> WhatsApp
-                        </a>
+                    <div x-data="{ saved: {{ $sudahSimpan ? 'true' : 'false' }}, loading: false }" @click.stop class="shrink-0">
+                        <button type="button"
+                            @click.prevent.stop="
+                                if (loading) return;
+                                loading = true;
+                                let targetUrl = saved ? '/pelamar/simpan-lowongan/{{ $d->id }}' : '{{ route('simpan-lowongan.store') }}';
+                                let reqMethod = saved ? 'DELETE' : 'POST';
+                                
+                                fetch(targetUrl, {
+                                    method: reqMethod,
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                    },
+                                    body: reqMethod === 'POST' ? JSON.stringify({ lowongan_id: {{ $d->id }} }) : null
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    loading = false;
+                                    if (data.success) {
+                                        saved = !saved;
+                                        Swal.fire({
+                                            toast: true,
+                                            position: 'top-end',
+                                            icon: 'success',
+                                            title: saved ? 'Lowongan disimpan' : 'Dihapus dari simpanan',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            toast: true,
+                                            position: 'top-end',
+                                            icon: 'error',
+                                            title: data.message || 'Gagal menyimpan',
+                                            showConfirmButton: false,
+                                            timer: 1500
+                                        });
+                                    }
+                                })
+                                .catch(err => {
+                                    loading = false;
+                                    console.error(err);
+                                });
+                            "
+                            class="transition p-1.5 rounded-full hover:bg-orange-50 cursor-pointer text-slate-400 hover:text-orange-600"
+                            :title="saved ? 'Hapus dari Simpan' : 'Simpan Lowongan'">
+                            
+                            <i x-show="!saved" class="ph ph-bookmark-simple text-xl text-slate-400 hover:text-orange-600 transition"></i>
+                            <i x-show="saved" class="ph-fill ph-bookmark-simple text-xl text-orange-600 hover:text-orange-700 transition"></i>
+                        </button>
                     </div>
-                </div>
+                @else
+                    <a href="{{ route('login') }}" @click.stop
+                        class="p-1.5 text-slate-400 hover:text-orange-500 hover:bg-orange-50 rounded-full transition shrink-0"
+                        title="Simpan Lowongan">
+                        <i class="ph ph-bookmark-simple text-xl"></i>
+                    </a>
+                @endauth
             </div>
 
             {{-- Job Title & Perusahaan Logo --}}
@@ -79,17 +127,16 @@
                 </div>
             </div>
 
-            {{-- Rentang Gaji --}}
+            {{-- Rentang Gaji (Solid Orange Background Bar) --}}
             <div class="my-3">
-                <span class="inline-flex items-center gap-1.5 bg-slate-100 text-slate-800 font-bold px-3 py-1.5 rounded-lg text-xs border border-slate-200/80">
-                    <i class="ph ph-currency-dollar text-orange-500 text-sm"></i>
-                    Rp {{ number_format($d->gaji_awal, 0, ',', '.') }} – Rp {{ number_format($d->gaji_akhir, 0, ',', '.') }} / bulan
+                <span class="inline-block bg-orange-500 text-white font-extrabold px-4 py-1.5 rounded-md text-xs sm:text-sm shadow-sm">
+                    Rp {{ number_format($d->gaji_awal, 0, ',', '.') }} per bulan
                 </span>
             </div>
 
             {{-- Indicator Lamar Cepat --}}
-            <div class="flex items-center gap-1.5 text-xs font-bold text-orange-600 mb-3">
-                <i class="ph-fill ph-paper-plane-right text-sm"></i> Lamar dengan cepat
+            <div class="flex items-center gap-2 text-xs md:text-sm font-extrabold text-orange-600 mb-3">
+                <i class="ph-fill ph-caret-right text-base text-orange-600"></i> Lamar dengan cepat:
             </div>
 
             {{-- Deskripsi / Bullet highlights --}}
@@ -101,37 +148,13 @@
         </div>
 
         {{-- Card Footer --}}
-        <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-2 text-xs text-slate-400">
+        <div class="flex items-center justify-between border-t border-slate-100 pt-3 mt-2 text-xs text-slate-500 font-medium">
             <span class="flex items-center gap-1">
-                <i class="ph ph-clock text-slate-400"></i> Aktif {{ $d->published_at ? $d->published_at->diffForHumans() : 'Baru saja' }}
+                <i class="ph ph-clock text-slate-400"></i> {{ $d->published_at ? $d->published_at->diffForHumans() : 'Baru saja' }}
             </span>
-
-            {{-- Bookmark Button --}}
-            @auth
-                @php
-                    $sudahSimpan = Auth::user()->pelamar
-                        ? Auth::user()->pelamar->simpanLowongans()->where('lowongan_id', $d->id)->exists()
-                        : false;
-                @endphp
-
-                @if (!$sudahSimpan)
-                    <form action="{{ route('simpan-lowongan.store') }}" method="POST" @click.stop>
-                        @csrf
-                        <input type="hidden" name="lowongan_id" value="{{ $d->id }}">
-                        <button type="submit" class="text-slate-400 hover:text-orange-600 transition p-1" title="Simpan Lowongan">
-                            <i class="ph ph-bookmark-simple text-xl"></i>
-                        </button>
-                    </form>
-                @else
-                    <form action="{{ route('simpan-lowongan.destroy', $d->id) }}" method="POST" @click.stop>
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-orange-600 hover:text-red-500 transition p-1" title="Hapus dari Simpan">
-                            <i class="ph-fill ph-bookmark-simple text-xl"></i>
-                        </button>
-                    </form>
-                @endif
-            @endauth
+            <span class="flex items-center gap-1 font-extrabold {{ $d->batas_lamaran && \Carbon\Carbon::parse($d->batas_lamaran)->isPast() ? 'text-rose-600' : 'text-slate-600' }}">
+                <i class="ph ph-calendar-blank text-orange-500"></i> Batas: {{ $d->batas_lamaran ? \Carbon\Carbon::parse($d->batas_lamaran)->format('d M Y') : 'Tanpa Batas' }}
+            </span>
         </div>
 
         {{-- Modal Konfirmasi Lamar --}}
