@@ -24,6 +24,7 @@ class User extends Authenticatable
         'verified',
         'status',
         'alasan_freeze_akun',
+        'fcm_token',
     ];
 
     protected $hidden = [
