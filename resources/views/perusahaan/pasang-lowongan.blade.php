@@ -1,266 +1,220 @@
 @extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
-    <div class="pt-24 px-4 md:px-0">
-        <section class="relative overflow-hidden rounded-2xl max-w-6xl mx-auto min-h-[260px] md:min-h-[300px] flex items-center bg-gradient-to-r from-gray-900 via-gray-800 to-orange-900 shadow-xl">
-            <!-- Background Image with Overlay -->
-            <img src="{{ asset('images/tangan.png') }}"
-                alt="Header Image" class="absolute inset-0 w-full h-full object-cover object-center opacity-30 mix-blend-overlay">
-            <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent"></div>
+    <section class="relative mt-20 w-full overflow-hidden min-h-[340px] md:min-h-[400px] flex items-center bg-gray-900 shadow-md">
+        <!-- Background Image with Dark Overlay -->
+        <img src="{{ asset('images/tangan.png') }}" alt="Pasang Lowongan"
+            class="absolute inset-0 w-full h-full object-cover object-center opacity-70">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30"></div>
 
-            <!-- Content -->
-            <div class="relative z-10 px-8 md:px-14 py-8 text-white max-w-2xl">
-                <div class="inline-flex items-center gap-2 bg-orange-500/20 border border-orange-500/40 text-orange-300 text-xs font-semibold px-3 py-1 rounded-full mb-3">
-                    <i class="ph ph-briefcase"></i> Paket Publikasi Lowongan
-                </div>
-                <h1 class="text-3xl md:text-4xl font-bold tracking-tight text-white mb-2">
-                    Pasang Lowongan
-                </h1>
-                <p class="text-sm md:text-base text-gray-200 mb-6 font-normal leading-relaxed">
-                    Dapatkan kandidat dan karyawan berkualitas terbaik untuk kemajuan perusahaan Anda.
-                </p>
-                <a href="{{ route('lowongan.create.form') }}"
-                    class="inline-flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white text-sm font-semibold px-6 py-2.5 rounded-xl shadow-lg hover:shadow-orange-500/30 hover:scale-105 active:scale-95 transition-all duration-200">
-                    <i class="ph ph-plus-circle text-lg"></i>
-                    Tambah Lowongan
-                </a>
-            </div>
-        </section>
-    </div>
-    <section class="py-16 space-y-6">
-        <div class="max-w-6xl mx-auto px-6">
-            <div class="flex flex-col md:flex-row justify-center flex-wrap md:mt-16 ">
-                @php
-                    function formatDurasi($hari)
-                    {
-                        $bulan = intdiv($hari, 30);
-                        $sisaHari = $hari % 30;
+        <!-- Hero Content -->
+        <div class="relative z-10 px-6 sm:px-12 md:px-20 lg:px-28 max-w-4xl text-white py-12">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight mb-3">
+                Pasang Lowongan
+            </h1>
+            <p class="text-sm sm:text-base md:text-lg text-gray-200 mb-6 font-normal max-w-2xl leading-relaxed">
+                Dapatkan karyawan berkualitas untuk perusahaan anda
+            </p>
+            <a href="{{ route('lowongan.create.form') }}"
+                class="inline-flex items-center justify-center bg-[#FF7A00] hover:bg-orange-600 text-white font-semibold text-sm sm:text-base px-8 py-2.5 rounded-xl shadow-md transition-all duration-200 hover:scale-105 active:scale-95">
+                Tambah
+            </a>
+        </div>
+    </section>
 
-                        $minggu = intdiv($sisaHari, 7);
-                        $hariAkhir = $sisaHari % 7;
+    <!-- Pricing / Paket Lowongan Cards Section -->
+    <section class="py-16 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            @php
+                $warnaHeader = [
+                    'Gold'   => 'bg-[#F59E0B]',
+                    'Silver' => 'bg-[#8A929A]',
+                    'Bronze' => 'bg-[#5F554B]',
+                ];
+                $warnaBtn = [
+                    'Gold'   => 'bg-[#F59E0B] hover:bg-amber-600',
+                    'Silver' => 'bg-[#8A929A] hover:bg-slate-600',
+                    'Bronze' => 'bg-[#5F554B] hover:bg-stone-800',
+                ];
+            @endphp
 
-                        $output = [];
-
-                        if ($bulan > 0) {
-                            $output[] = $bulan . ' Bulan';
-                        }
-
-                        if ($minggu > 0) {
-                            $output[] = $minggu . ' Minggu';
-                        }
-
-                        if ($hariAkhir > 0) {
-                            $output[] = $hariAkhir . ' Hari';
-                        }
-
-                        // Jika semua 0 (misal batas_listing kosong)
-                        if (empty($output)) {
-                            return '0 Hari';
-                        }
-
-                        return implode(' ', $output);
-                    }
-
-                    // Warna header tetap
-                    $warnaHeader = [
-                        'Gold' => 'bg-yellow-500',
-                        'Silver' => 'bg-gray-500',
-                        'Bronze' => 'bg-amber-700',
-                    ];
-                @endphp
-
-
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch justify-center max-w-5xl mx-auto">
                 @foreach ($pakets as $paket)
-                    <div class="w-72 mx-auto mt-6">
-                        <div
-                            class="bg-white border border-gray-300 rounded-xl shadow-sm hover:shadow-lg overflow-hidden flex flex-col transition-all duration-500 hover:scale-105">
+                    <div class="bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1">
+                        
+                        <!-- Header Paket -->
+                        <div class="py-3.5 text-center {{ $warnaHeader[$paket->nama] ?? 'bg-[#FF7A00]' }}">
+                            <h3 class="text-xl font-bold text-white uppercase tracking-wider">
+                                {{ $paket->nama }}
+                            </h3>
+                        </div>
 
-                            <!-- Header Paket -->
-                            <div class="py-3 text-center {{ $warnaHeader[$paket->nama] ?? 'bg-orange-500' }}">
-                                <h3 class="text-xl font-bold text-white uppercase tracking-wide">
-                                    {{ $paket->nama }}
-                                </h3>
-                            </div>
-
-                            <!-- Isi Card -->
-                            <div class="p-6 flex-1 flex flex-col">
-
-                                <!-- Deskripsi -->
-                                <h4 class="text-base font-semibold mb-1 text-center">Lebih Banyak Benefit</h4>
-                                <p class="text-sm text-gray-700 mb-3 text-center">
+                        <!-- Card Content -->
+                        <div class="p-6 sm:p-7 flex-1 flex flex-col justify-between">
+                            <div>
+                                <h4 class="text-base font-bold text-gray-900 mb-1 text-center">
+                                    Lebih Banyak Benefit
+                                </h4>
+                                <p class="text-xs text-gray-500 mb-4 text-center font-medium leading-relaxed">
                                     {{ $paket->deskripsi }}
                                 </p>
 
-                                <!-- Durasi Publish -->
-                                <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-4 mb-4">
-                                    <div class="flex items-center justify-center gap-3">
-                                        <div class="p-2 bg-blue-50 text-blue-600 rounded-lg">
-                                            <i class="ph ph-calendar-dots text-2xl"></i>
-                                        </div>
-                                        <div>
-                                            <p class="text-sm text-gray-500 font-medium leading-tight">Masa Publikasi</p>
-                                            <p class="text-lg font-bold text-gray-900">
-                                                {{ formatDurasi($paket->batas_listing) }}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
+                                <hr class="my-4 border-gray-200">
 
-
-
-                                <hr class="my-3 border-gray-300">
-
-                                <ul class="text-sm text-gray-700 space-y-2 mb-6 flex-1">
-                                    @foreach (explode("\n", $paket->benefit) as $item)
-                                        <li class="flex items-start">
-                                            <span class="mr-2">✔</span>
-                                            {{ trim($item) }}
+                                <ul class="text-xs text-gray-700 space-y-3 mb-6">
+                                    @if (!empty($paket->benefit))
+                                        @foreach (explode("\n", $paket->benefit) as $item)
+                                            @if(trim($item))
+                                                <li class="flex items-center gap-2.5">
+                                                    <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                                    <span class="font-medium text-slate-800">{{ trim($item) }}</span>
+                                                </li>
+                                            @endif
+                                        @endforeach
+                                    @else
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">Website & Aplikasi</span>
                                         </li>
-                                    @endforeach
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">Instagram Post & Story</span>
+                                        </li>
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">Highlight Story Favorit</span>
+                                        </li>
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">Google Jobs & Bisnis</span>
+                                        </li>
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">Facebook Post & Story</span>
+                                        </li>
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">Twitter</span>
+                                        </li>
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">LinkedIn</span>
+                                        </li>
+                                        <li class="flex items-center gap-2.5">
+                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
+                                            <span class="font-medium text-slate-800">Telegram</span>
+                                        </li>
+                                    @endif
                                 </ul>
-
-                                <!-- Tombol -->
-                                <button type="button"
-                                    onclick="openModal({{ $paket->id }}, '{{ $paket->nama }}', {{ $paket->harga }})"
-                                    class="{{ $warnaHeader[$paket->nama] ?? 'bg-orange-500' }} 
-                           text-white font-semibold py-2 rounded-md hover:opacity-90 w-full transition">
-                                    Pasang Lowongan
-                                </button>
-
                             </div>
+
+                            <!-- Button Pasang Lowongan -->
+                            <button type="button"
+                                onclick="openModal({{ $paket->id }}, '{{ $paket->nama }}', {{ $paket->harga }})"
+                                class="{{ $warnaBtn[$paket->nama] ?? 'bg-[#FF7A00] hover:bg-orange-600' }} text-white font-semibold py-2.5 rounded-lg w-full transition duration-200 shadow-sm text-sm">
+                                Pasang Lowongan
+                            </button>
                         </div>
                     </div>
                 @endforeach
-
-
             </div>
         </div>
     </section>
 
+    <!-- Steps Section (Langkah - Langkah) -->
+    <section class="py-14 bg-white">
+        <div class="max-w-5xl mx-auto px-4 text-center">
+            <h2 class="text-2xl sm:text-3xl font-bold text-[#FF7A00]">Langkah - Langkah</h2>
+            <div class="w-32 h-1 bg-[#FF7A00] mx-auto mt-2 mb-9 rounded-full"></div>
 
-    <!-- Steps Section -->
-    <!-- Steps Section -->
-    <section class="py-12 bg-white">
-        <div class="max-w-5xl mx-auto text-center">
-
-            <!-- Judul -->
-            <h2 class="text-2xl font-bold text-orange-600">Langkah - Langkah</h2>
-            <div class="w-32 h-1 bg-orange-500 mx-auto mt-5 mb-7 rounded"></div>
-
-            <!-- Steps Box -->
-            <div class="grid md:grid-cols-4 grid-cols-1 text-left font-semibold overflow-hidden rounded-lg">
-
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-left overflow-hidden rounded-xl shadow-sm">
                 <!-- Step 1 -->
-                <div class="bg-orange-600 p-6 text-white">
-                    <h3 class="text-xl font-bold">01</h3>
-                    <p class="text-sm mt-2 font-normal text-white">
+                <div class="bg-[#E65100] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                    <h3 class="text-2xl font-black mb-2">01</h3>
+                    <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Pilih paket pemasangan lowongan sesuai yang anda inginkan
                     </p>
                 </div>
 
                 <!-- Step 2 -->
-                <div class="bg-orange-400 p-6 text-white">
-                    <h3 class="text-xl font-bold">02</h3>
-                    <p class="text-sm mt-2 font-normal text-white">
+                <div class="bg-[#F57C00] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                    <h3 class="text-2xl font-black mb-2">02</h3>
+                    <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Kirim materi lowongan via formulir website atau whatsapp kami
                     </p>
                 </div>
 
                 <!-- Step 3 -->
-                <div class="bg-orange-500 p-6 text-white">
-                    <h3 class="text-xl font-bold">03</h3>
-                    <p class="text-sm mt-2 font-normal text-white">
+                <div class="bg-[#FB8C00] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                    <h3 class="text-2xl font-black mb-2">03</h3>
+                    <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Anda akan diberi instruksi pembayaran
                     </p>
                 </div>
 
                 <!-- Step 4 -->
-                <div class="bg-yellow-500 p-6 text-white">
-                    <h3 class="text-xl font-bold">04</h3>
-                    <p class="text-sm mt-2 font-normal text-white">
+                <div class="bg-[#FFA726] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                    <h3 class="text-2xl font-black mb-2">04</h3>
+                    <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Lowongan anda siap di publish!
                     </p>
                 </div>
-
             </div>
         </div>
     </section>
 
-
-    <!-- Why Choose Us -->
-    <section class="max-w-6xl mx-auto px-4 py-12">
-        <h2 class="text-2xl font-bold text-orange-600 text-center mb-5">
+    <!-- Why Choose Us (Kenapa Harus Area Kerja ?) -->
+    <section class="py-14 bg-white max-w-6xl mx-auto px-4 sm:px-6">
+        <h2 class="text-2xl sm:text-3xl font-bold text-[#FF7A00] text-center mb-2">
             Kenapa Harus Area Kerja ?
         </h2>
-        <div class="w-32 h-1 bg-orange-500 mx-auto mt-5 mb-7 rounded"></div>
-        <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div class="w-32 h-1 bg-[#FF7A00] mx-auto mb-10 rounded-full"></div>
 
-            <!-- Image -->
+        <div class="grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
+            <!-- Left Image -->
             <div class="flex justify-center">
-                <img src="{{ asset('images/wongwong.png') }}" alt="Team" class="rounded-lg ">
+                <img src="{{ asset('images/wongwong.png') }}" alt="Area Kerja" class="max-w-full md:max-w-sm h-auto object-contain">
             </div>
 
-            <!-- Text -->
-            <div class="space-y-3">
-                <div class="flex items-start gap-3">
-                    <img src="{{ asset('images/2.png') }}" alt="www" class="w-20 h-20">
-                    <p class="text-sm text-orange-600">Website kami menjangkau ratusan perusahaan yang siap menerima ribuan
-                        pencari
-                        kerja</p>
-                </div>
-                <div class="flex items-start gap-3">
-                    <img src="{{ asset('images/3.png') }}" alt="obrol" class="w-20 h-20">
-                    <p class="text-sm text-orange-600">Akun media sosial kami didedikasikan untuk membagikan info pekerjaan
-                        setiap hari
+            <!-- Right Benefit Points -->
+            <div class="space-y-6">
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('images/2.png') }}" alt="Website Icon" class="w-16 h-16 shrink-0 object-contain">
+                    <p class="text-xs sm:text-sm font-medium text-[#FF7A00] leading-relaxed">
+                        Website kami menjangkau ratusan perusahaan yang siap menerima ribuan pencari kerja.
                     </p>
                 </div>
-                <div class="flex items-start gap-3">
-                    <img src="{{ asset('images/1.png') }}" alt="rp" class="w-20 h-20">
-                    <p class="text-sm text-orange-600">Harga yang ramah bagi para pencari kerja dengan keuntungan peluang
-                        kerja yang
-                        besar</p>
+
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('images/3.png') }}" alt="Social Media Icon" class="w-16 h-16 shrink-0 object-contain">
+                    <p class="text-xs sm:text-sm font-medium text-[#FF7A00] leading-relaxed">
+                        Akun media social kami diikuti ratusan ribu pencari kerja serta memiliki jaringan social media yang lengkap
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <img src="{{ asset('images/1.png') }}" alt="Harga Icon" class="w-16 h-16 shrink-0 object-contain">
+                    <p class="text-xs sm:text-sm font-medium text-[#FF7A00] leading-relaxed">
+                        Harga yang ramah bagi para pencari kerja tetapi dengan keuntungan peluang yang besar
+                    </p>
                 </div>
             </div>
-
         </div>
     </section>
 
-    <!-- Floating Button -->
-
-
-
-    </div>
-    </section>
-
-    <!-- Floating Button -->
+    <!-- Floating Back to Top Button -->
     <a href="#top"
-        class="fixed bottom-6 right-6 bg-orange-500 text-white px-3 py-3 rounded-full shadow-lg hover:bg-orange-600 transition">
-        <svg width="24" height="23" viewBox="0 0 31 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <g clip-path="url(#clip0_231_4417)">
-                <path
-                    d="M26.6695 18.25L15.532 7.31684L4.3945 18.25L0.973172 14.8841L15.532 0.561196L30.0908 14.8841L26.6695 18.25Z"
-                    fill="white" />
-            </g>
-            <defs>
-                <clipPath id="clip0_231_4417">
-                    <rect width="29.1176" height="26.9608" fill="white"
-                        transform="translate(30.0586 27.2148) rotate(-180)" />
-                </clipPath>
-            </defs>
-        </svg>
-
+        class="fixed bottom-6 right-6 bg-[#FF7A00] text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-orange-600 transition hover:scale-110 active:scale-95 z-30">
+        <i class="ph ph-caret-up text-2xl font-bold"></i>
     </a>
 
-
-    <!-- Modal -->
-    <div id="paketModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 scale-[0.85] md:scale-100">
-
-            <!-- Header -->
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-xl font-bold text-gray-800">Konfirmasi Pembelian Paket</h2>
-                <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 transition">
+    <!-- Modal Pembelian / Konfirmasi Paket -->
+    <div id="paketModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
+        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
+                <h2 class="text-lg font-bold text-gray-800">Konfirmasi Pembelian Paket</h2>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition text-lg font-bold">
                     ✕
                 </button>
             </div>
@@ -269,111 +223,88 @@
                 @csrf
                 <input type="hidden" name="paket_id" id="modal_paket_id">
 
-                <!-- Detail Paket -->
-                <div class="space-y-2 bg-gray-50 p-4 rounded-xl border border-gray-200 mb-4">
-                    <p class="text-sm">
-                        Paket:
-                        <span id="modal_paket_name" class="font-semibold text-gray-800"></span>
+                <!-- Detail Paket Info -->
+                <div class="space-y-2 bg-orange-50/50 p-4 rounded-xl border border-orange-100 mb-4">
+                    <p class="text-xs text-gray-600 flex justify-between">
+                        <span>Paket Dipilih:</span>
+                        <span id="modal_paket_name" class="font-bold text-gray-900"></span>
                     </p>
-                    <p class="text-sm">
-                        Harga:
-                        <span id="modal_paket_price" class="font-semibold text-orange-600"></span> koin
+                    <p class="text-xs text-gray-600 flex justify-between">
+                        <span>Biaya:</span>
+                        <span class="font-bold text-[#FF7A00]"><span id="modal_paket_price"></span> Koin</span>
                     </p>
-                    <p class="text-sm">
-                        Koin Anda:
-                        <span class="font-semibold text-green-600">{{ $perusahaan->koin_perusahaan ?? 0 }}</span>
+                    <p class="text-xs text-gray-600 flex justify-between">
+                        <span>Saldo Koin Anda:</span>
+                        <span class="font-bold text-emerald-600">{{ $perusahaan->koin_perusahaan ?? 0 }} Koin</span>
                     </p>
                 </div>
 
                 <!-- Dropdown Lowongan -->
-                <div class="flex items-center justify-between mb-2">
-                    <label class="text-sm font-medium text-gray-700">Pilih Lowongan</label>
-                    <a href="{{ route('lowongan.create.form') }}"
-                        class="text-xs text-orange-500 hover:text-orange-600 font-semibold flex items-center gap-1 hover:underline">
-                        <i class="ph ph-plus-circle"></i> + Tambah Lowongan Baru
-                    </a>
-                </div>
-                <select name="lowongan_id" id="modal_lowongan_select" required
-                    class="w-full border-2 border-gray-300 rounded-xl px-3 py-2 mb-2 focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition">
-                    <option value=""> Pilih Lowongan </option>
-                    @foreach ($perusahaan->pasanglowongan as $lowongan)
-                        <option value="{{ $lowongan->id }}">{{ $lowongan->nama }}</option>
-                    @endforeach
-                    <option value="__create_new__" class="text-orange-600 font-semibold bg-orange-50">
-                        ➕ [Buat Lowongan Baru]
-                    </option>
-                </select>
                 <div class="mb-4">
-                    <p class="text-xs text-gray-500">
-                        Belum punya draft lowongan? 
-                        <a href="{{ route('lowongan.create.form') }}" class="text-orange-600 font-semibold hover:underline">
-                            Klik di sini untuk membuat lowongan baru
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-xs font-bold text-gray-700">Pilih Lowongan yang Dipasang</label>
+                        <a href="{{ route('lowongan.create.form') }}"
+                            class="text-xs text-[#FF7A00] hover:underline font-semibold">
+                            + Buat Baru
                         </a>
-                    </p>
+                    </div>
+                    <select name="lowongan_id" id="modal_lowongan_select" required
+                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                        <option value="">-- Pilih Draft Lowongan --</option>
+                        @if (!empty($perusahaan->pasanglowongan))
+                            @foreach ($perusahaan->pasanglowongan as $lowongan)
+                                <option value="{{ $lowongan->id }}">{{ $lowongan->nama }}</option>
+                            @endforeach
+                        @endif
+                        <option value="__create_new__" class="text-orange-600 font-semibold bg-orange-50">
+                            ➕ [Buat Lowongan Baru]
+                        </option>
+                    </select>
                 </div>
 
-                <!-- Button -->
-                <div class="flex justify-end gap-3 mt-4">
+                <!-- Buttons -->
+                <div class="flex justify-end gap-3 pt-2">
                     <button type="button" onclick="closeModal()"
-                        class="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 rounded-xl font-medium transition">
+                        class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold transition">
                         Batal
                     </button>
-
                     <button type="submit"
-                        class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-xl font-semibold shadow-md transition">
-                        Konfirmasi
+                        class="px-5 py-2 bg-[#FF7A00] hover:bg-orange-600 text-white rounded-xl text-xs font-bold shadow-xs transition">
+                        Konfirmasi Pembelian
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Animation -->
-    <style>
-        @keyframes scaleIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.8);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        .animate-scaleIn {
-            animation: scaleIn 0.25s ease-out;
-        }
-    </style>
-
-
     {{-- MODAL TIDAK CUKUP KOIN --}}
     <div x-data="{ open: {{ session('koin_kurang') ? 'true' : 'false' }} }" x-show="open" x-cloak
-        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-        <div x-transition class="bg-white p-8 rounded-2xl shadow-lg w-[400px] text-center">
-
-            <h2 class="text-xl font-semibold mb-4 italic">Upss!!</h2>
-
-            <p class="mb-6 text-gray-700">
-                Koin anda kurang silahkan Top Up terlebih dahulu.
+        class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
+        <div x-transition class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl max-w-sm w-full text-center">
+            <div class="w-12 h-12 rounded-full bg-orange-100 text-[#FF7A00] flex items-center justify-center mx-auto mb-3">
+                <i class="ph ph-warning-circle text-2xl font-bold"></i>
+            </div>
+            <h2 class="text-lg font-bold text-slate-800 mb-2">Koin Tidak Mencukupi</h2>
+            <p class="text-xs text-gray-500 mb-5 leading-relaxed">
+                Jumlah koin Anda saat ini tidak cukup untuk memasang paket ini. Silakan lakukan Top Up terlebih dahulu.
             </p>
-
-            <a href="{{ route('perusahaan.dashboard') }}"
-                class="px-6 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition">
-                Top Up
-            </a>
+            <div class="flex gap-3 justify-center">
+                <button @click="open = false" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-xl text-xs font-semibold">
+                    Tutup
+                </button>
+                <a href="{{ route('perusahaan.dashboard') }}"
+                    class="px-5 py-2 bg-[#FF7A00] text-white rounded-xl text-xs font-bold hover:bg-orange-600 transition shadow-xs">
+                    Top Up Sekarang
+                </a>
+            </div>
         </div>
     </div>
-
-
-
 
     <script>
         function openModal(paketId, paketName, paketPrice) {
             document.getElementById('modal_paket_id').value = paketId;
             document.getElementById('modal_paket_name').textContent = paketName;
-            document.getElementById('modal_paket_price').textContent = paketPrice.toLocaleString();
+            document.getElementById('modal_paket_price').textContent = Number(paketPrice).toLocaleString();
             document.getElementById('paketModal').classList.remove('hidden');
         }
 
@@ -394,3 +325,4 @@
     </script>
     @include('layouts.footer')
 @endsection
+

@@ -60,6 +60,38 @@ class LowonganPerusahaanController extends Controller
         $perusahaan = Auth::user()->perusahaan;
         $pakets = PaketLowongan::whereIn('nama', ['Gold', 'Silver', 'Bronze'])->get();
 
+        if ($pakets->isEmpty()) {
+            $pakets = collect([
+                (object)[
+                    'id'            => 1,
+                    'nama'          => 'Gold',
+                    'deskripsi'     => '5 Kali Publikasi di semua jaringan Areakerja.com',
+                    'harga'         => 150,
+                    'harga_koin'    => 150,
+                    'batas_listing' => 30,
+                    'benefit'       => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram",
+                ],
+                (object)[
+                    'id'            => 2,
+                    'nama'          => 'Silver',
+                    'deskripsi'     => '3 Kali Publikasi di semua jaringan Areakerja.com',
+                    'harga'         => 100,
+                    'harga_koin'    => 100,
+                    'batas_listing' => 21,
+                    'benefit'       => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram",
+                ],
+                (object)[
+                    'id'            => 3,
+                    'nama'          => 'Bronze',
+                    'deskripsi'     => '1 Kali Publikasi di semua jaringan Areakerja.com',
+                    'harga'         => 50,
+                    'harga_koin'    => 50,
+                    'batas_listing' => 14,
+                    'benefit'       => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram",
+                ],
+            ]);
+        }
+
         foreach ($pakets as $paket) {
             $paket->harga = $paket->harga_koin ?? 100;
         }
@@ -69,19 +101,45 @@ class LowonganPerusahaanController extends Controller
 
     public function createForm()
     {
-        $pakets = PaketLowongan::all();
+        $perusahaan = Auth::user()->perusahaan;
         $categories = $this->getCategories();
-        return view('perusahaan.lowongan-saya.tambah-lowongan', compact('pakets', 'categories'));
+        $alamats = $perusahaan ? $perusahaan->alamatPerusahaan : collect();
+
+        $pakets = PaketLowongan::whereIn('nama', ['Bronze', 'Silver', 'Gold'])
+            ->orderByRaw("FIELD(nama, 'Bronze', 'Silver', 'Gold')")
+            ->get();
+
+        if ($pakets->isEmpty()) {
+            $defaultPakets = [
+                ['nama' => 'Bronze', 'deskripsi' => '1 Kali Publikasi di semua jaringan Areakerja.com', 'harga_koin' => 50, 'batas_listing' => 14, 'benefit' => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram"],
+                ['nama' => 'Silver', 'deskripsi' => '3 Kali Publikasi di semua jaringan Areakerja.com', 'harga_koin' => 100, 'batas_listing' => 21, 'benefit' => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram"],
+                ['nama' => 'Gold',   'deskripsi' => '5 Kali Publikasi di semua jaringan Areakerja.com', 'harga_koin' => 150, 'batas_listing' => 30, 'benefit' => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram"],
+            ];
+            foreach ($defaultPakets as $dp) {
+                try {
+                    PaketLowongan::firstOrCreate(['nama' => $dp['nama']], $dp);
+                } catch (\Throwable $e) {
+                    // ignore
+                }
+            }
+            $pakets = PaketLowongan::whereIn('nama', ['Bronze', 'Silver', 'Gold'])
+                ->orderByRaw("FIELD(nama, 'Bronze', 'Silver', 'Gold')")
+                ->get();
+        }
+
+        return view('perusahaan.lowongan-saya.tambah-lowongan', compact('pakets', 'categories', 'perusahaan', 'alamats'));
     }
 
     public function store(Request $request)
     {
+        $perusahaan = Auth::user()->perusahaan;
+
         $valid = $request->validate([
             'nama'             => 'required|string|max:255',
             'alamat'           => 'required|string|max:255',
             'jenis'            => 'required|string',
             'kategori'         => 'required|string',
-            'label_gaji'       => 'required|string|max:100',
+            'label_gaji'       => 'nullable|string|max:100',
             'benefit'          => 'required|string',
             'gaji_awal'        => 'required|numeric|min:0',
             'gaji_akhir'       => 'required|numeric|min:0',
@@ -89,13 +147,48 @@ class LowonganPerusahaanController extends Controller
             'tanggung_jawab'   => 'required|string',
             'syarat_pekerjaan' => 'required|string',
             'batas_lamaran'    => 'required|date',
+            'paket_id'         => 'nullable|exists:paket_lowongans,id',
         ]);
 
-        $valid['perusahaan_id'] = Auth::user()->perusahaan->id;
+        if (empty($valid['label_gaji'])) {
+            $formatAwal = 'Rp ' . number_format($valid['gaji_awal'], 0, ',', '.');
+            $formatAkhir = 'Rp ' . number_format($valid['gaji_akhir'], 0, ',', '.');
+            $valid['label_gaji'] = "$formatAwal - $formatAkhir";
+        }
+
+        $valid['perusahaan_id'] = $perusahaan->id;
         $valid['slug'] = Str::slug($request->nama . '-' . time());
 
+        // Handle selected package purchase
+        if (!empty($valid['paket_id'])) {
+            $paket = PaketLowongan::find($valid['paket_id']);
+            if ($paket) {
+                $biayaKoin = $paket->harga_koin ?? 50;
+                if (($perusahaan->koin_perusahaan ?? 0) < $biayaKoin) {
+                    return redirect()->back()
+                        ->withInput()
+                        ->with('koin_kurang', true)
+                        ->withErrors(['paket_id' => 'Koin Anda tidak mencukupi untuk memilih paket ' . $paket->nama . ' (' . $biayaKoin . ' Koin). Silakan top up koin terlebih dahulu.']);
+                }
+
+                $perusahaan->decrement('koin_perusahaan', $biayaKoin);
+                $valid['published_at'] = now();
+                $valid['expired_at'] = now()->addDays($paket->batas_listing ?? 14);
+
+                try {
+                    CatatanKoin::create([
+                        'user_id'       => Auth::id(),
+                        'koin_terpakai' => $biayaKoin,
+                        'keterangan'    => 'Pembelian Paket ' . $paket->nama . ' untuk lowongan: ' . $valid['nama'],
+                    ]);
+                } catch (\Throwable $e) {
+                    // ignore
+                }
+            }
+        }
+
         LowonganPerusahaan::create($valid);
-        return redirect()->route('lowongan.saya.perusahaan')->with('success', 'Lowongan berhasil ditambahkan!');
+        return redirect()->route('lowongan.saya.perusahaan')->with('success', 'Lowongan berhasil ditambahkan dan langsung dipublikasikan!');
     }
 
     public function show(Perusahaan $perusahaan, LowonganPerusahaan $lowongan)

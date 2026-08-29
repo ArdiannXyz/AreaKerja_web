@@ -148,6 +148,29 @@ Route::controller(PelamarController::class)->group(function () {
     Route::get('/pelamar/tips-kerja/{tips}', 'detail')->name('pelamar.tips-kerja.show');
 });
 
+// SYARAT DAN KETENTUAN
+Route::get('/images/syarat-dan-ketentuan-banner.png', function () {
+    $uploadedPath = 'C:/Users/Fput/.gemini/antigravity/brain/61116b4b-cfa8-4d95-9a8f-a6ae6ea8ede6/.user_uploaded/media_1788007404614.png';
+    $targetPath = public_path('images/syarat-ketentuan.png');
+
+    if (file_exists($uploadedPath)) {
+        if (!file_exists($targetPath)) {
+            @copy($uploadedPath, $targetPath);
+        }
+        return response()->file($uploadedPath);
+    }
+
+    if (file_exists($targetPath)) {
+        return response()->file($targetPath);
+    }
+
+    return response()->file(public_path('images/gambarkom.jpg'));
+});
+
+Route::get('/syarat-dan-ketentuan', function () {
+    return view('layouts.syarat-dan-ketentuan');
+})->name('syarat.ketentuan');
+
 //EMAIL SUBSCRIBER
 Route::controller(EmailSubController::class)->group(function () {
     Route::post('/email-subscribe', 'index')->name('subscribe.email');
@@ -159,6 +182,12 @@ Route::controller(PelamarController::class)->middleware('CheckUserStatus')->grou
     Route::get('/pelamar/beranda', 'index')->name('pelamar.beranda');
     Route::get('/pelamar/detail-lowongan/{perusahaan}/{lowongan}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
     Route::get('/pelamar/daftar-kandidat', 'daftar_kandidat')->name('pelamar.daftar-kandidat');
+});
+
+// EVENT UNTUK NON USER, PELAMAR & KANDIDAT
+Route::controller(EventController::class)->group(function () {
+    Route::get('/event', 'publicEventList')->name('pelamar.event.index');
+    Route::get('/event/{id}', 'publicEventShow')->name('pelamar.event.show');
 });
 
 /**---------------------------------------------- PELAMAR PREFIX ---------------------------------------------------------------*/
@@ -826,9 +855,9 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
         Route::post('/alamat-perusahaan/{id}/utama', 'setUtama')->name('alamat-perusahaan.setUtama');
 
         Route::post('/create/alamat', 'store_alamat')->name('alamat.store.perusahaan');
-        Route::get('/edit/alamat/{alamatperusahaan:id}', 'edit_alamat')->name('alamat.edit.perusahaan');
-        Route::put('/update/alamat/{alamatperusahaan:id}', 'update_alamat')->name('alamat.update.perusahaan');
-        Route::delete('/delete/alamat/{alamatperusahaan:id}', 'destroy_alamat')->name('alamat.destroy.perusahaan');
+        Route::get('/edit/alamat/{id}', 'edit_alamat')->name('alamat.edit.perusahaan');
+        Route::put('/update/alamat/{id}', 'update_alamat')->name('alamat.update.perusahaan');
+        Route::delete('/delete/alamat/{id}', 'destroy_alamat')->name('alamat.destroy.perusahaan');
 
         //pelamar
         Route::get('pelamar/{lowongan:slug}', 'pelamar')->name('perusahaan.pelamar');

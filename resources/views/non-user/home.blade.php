@@ -147,24 +147,44 @@
             <div x-show="tab === 'umpan'" x-transition>
                 <section class="mb-10">
                     <div id="section-umpan-lowongan" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                        @foreach ($Data as $d)
+                        @php
+                            $isSearchPage = request()->routeIs('lowongan.search') || !empty($adaPencarian);
+                            $displayData = $isSearchPage ? $Data : $Data->take(6);
+                        @endphp
+
+                        @forelse ($displayData as $d)
                             @if ($d->published_at && (!$d->expired_at || $d->expired_at > now()) && $d->perusahaan)
                                 <div class="h-full" onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $d->perusahaan->slug ?? 'perusahaan', 'lowongan' => $d->slug ?? $d->id]) }}'">
                                     @include('non-user.components.card', ['lowongan' => $d])
                                 </div>
                             @endif
-                        @endforeach
+                        @empty
+                            <div class="col-span-1 md:col-span-2 text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300">
+                                <i class="ph ph-briefcase text-5xl text-slate-300 mb-2 inline-block"></i>
+                                <p class="text-slate-600 font-semibold">Tidak ada lowongan pekerjaan yang ditemukan.</p>
+                            </div>
+                        @endforelse
                     </div>
                 </section>
 
-                <!-- Tombol Muat Lebih Banyak (Hanya muncul jika lowongan > 6) -->
-                @if (count($Data) > 6)
-                    <div class="flex justify-center mt-8">
-                        <button type="button"
-                            class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-8 py-3 rounded-xl shadow-md transition text-xs sm:text-sm">
-                            Muat lebih banyak...
-                        </button>
-                    </div>
+                @if (!$isSearchPage)
+                    <!-- Tombol Muat Lebih Banyak di Beranda (Hanya muncul jika total lowongan > 6) -->
+                    @if (count($Data) > 6)
+                        <div class="flex justify-center mt-8">
+                            <a href="{{ route('lowongan.search') }}"
+                                class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-xs sm:text-sm inline-flex items-center justify-center gap-2 hover:scale-[1.02]">
+                                <span>Muat lebih banyak...</span>
+                                <i class="ph ph-arrow-right font-bold text-sm"></i>
+                            </a>
+                        </div>
+                    @endif
+                @else
+                    <!-- Pagination di Halaman Search / Semua Lowongan -->
+                    @if ($Data instanceof \Illuminate\Contracts\Pagination\Paginator && $Data->hasPages())
+                        <div class="mt-8 flex justify-center">
+                            {{ $Data->appends(request()->query())->links() }}
+                        </div>
+                    @endif
                 @endif
             </div>
 

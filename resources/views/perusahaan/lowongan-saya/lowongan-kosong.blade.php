@@ -38,58 +38,33 @@
         <h2 class="text-lg font-semibold mb-3 flex">Lowongan</h2>
 
         <!-- Filter Bar -->
-        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-end gap-3 mb-6 w-full">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mb-6 w-full">
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <!-- Tombol Tambah Lowongan -->
+                <a href="{{ route('lowongan.create.form') }}"
+                    class="h-10 bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap text-sm">
+                    <i class="ph ph-plus text-base font-bold"></i> Tambah Lowongan
+                </a>
 
-            <!-- Tombol Tambah Lowongan (Sejajar & Konsisten) -->
-            <a href="{{ route('lowongan.create.form') }}"
-                class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-4 py-2.5 rounded-md transition shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap text-sm">
-                <i class="ph ph-plus text-lg"></i> Tambah Lowongan
-            </a>
-
-            <!-- Trigger Boost -->
-            <div class="relative flex justify-end lg:inline-flex items-center gap-2 group w-full lg:w-auto">
-
-                <button id="openBoostBtn"
-                    class="bg-orange-500 text-white px-4 py-2.5 rounded-md hover:bg-orange-600 w-auto justify-end lg:w-auto text-sm font-semibold">
-                    Boost Lowongan
-                </button>
-
-                <!-- Tooltip -->
-                <div
-                    class="absolute bottom-full right-0 translate-x-0 mb-2 lg:left-1/2 lg:-translate-x-1/2 w-64 sm:w-72 bg-gray-200 text-gray-800 text-xs rounded-lg rounded-br-none px-3 py-2 opacity-0 invisible shadow-sm group-hover:opacity-100 group-hover:visible transition duration-200 z-10 text-center">
-                    Boost Lowongan membuat lowongan Anda tampil paling atas.
-                    Lowongan yang di-boost akan diprioritaskan agar lebih mudah dilihat.
-                </div>
-            </div>
-
-            <!-- Modal Boost (tidak diubah logic) -->
-            <div id="boostModal"
-                class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4">
-                <div class="bg-white rounded-xl shadow-2xl w-full max-w-md p-6 relative">
-                    <button id="closeBoostBtn" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">✕</button>
-                    <h2 class="text-xl font-semibold mb-4">Boost Lowongan</h2>
-
-                    <label class="block font-semibold mb-2">Pilih Lowongan</label>
-                    <select id="lowonganSelect" class="w-full border p-2 rounded-lg">
-                        @foreach ($lowongans as $l)
-                            @if ($l->published_at)
-                                <option value="{{ $l->id }}">{{ $l->nama }}</option>
-                            @endif
-                        @endforeach
-                    </select>
-
-                    <button onclick="showConfirmBoost()"
-                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg mt-5 w-full">
-                        Boost Sekarang
+                <!-- Trigger Boost -->
+                <div class="relative group">
+                    <button id="openBoostBtn"
+                        class="h-10 bg-orange-500 hover:bg-orange-600 text-white px-4 rounded-xl text-sm font-bold shadow-xs flex items-center gap-1.5 transition">
+                        <i class="ph ph-rocket-launch text-base"></i> Boost Lowongan
                     </button>
+
+                    <!-- Tooltip -->
+                    <div
+                        class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-64 sm:w-72 bg-slate-800 text-white text-xs rounded-xl px-3.5 py-2 opacity-0 invisible shadow-lg group-hover:opacity-100 group-hover:visible transition duration-200 z-10 text-center pointer-events-none">
+                        Boost Lowongan membuat lowongan Anda tampil paling atas dan diprioritaskan.
+                    </div>
                 </div>
             </div>
 
             <!-- Form Filter -->
-            <form method="GET" class="flex flex-col sm:flex-row flex-wrap gap-3 w-full lg:w-auto">
-
+            <form method="GET" class="flex items-center gap-2.5 flex-wrap">
                 <select name="paket"
-                    class="border border-gray-300 rounded-md text-sm px-8 py-2.5 leading-relaxed w-full sm:w-auto focus:outline-none focus:ring-1 focus:ring-gray-300">
+                    class="h-10 bg-white border border-slate-300 rounded-xl text-sm px-3 text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400">
                     <option value="">Jenis Paket</option>
                     @foreach ($pakets as $paket)
                         <option value="{{ $paket->id }}" {{ request('paket') == $paket->id ? 'selected' : '' }}>
@@ -99,7 +74,7 @@
                 </select>
 
                 <select name="jenis"
-                    class="border border-gray-300 rounded-md text-sm px-8 py-2.5 leading-relaxed w-full sm:w-auto focus:outline-none focus:ring-1 focus:ring-gray-300">
+                    class="h-10 bg-white border border-slate-300 rounded-xl text-sm px-3 text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400">
                     <option value="">Jenis Lowongan</option>
                     @foreach ($jenisLowongan as $jenis)
                         <option value="{{ $jenis }}" {{ request('jenis') == $jenis ? 'selected' : '' }}>
@@ -108,17 +83,39 @@
                     @endforeach
                 </select>
 
-                <button class="bg-orange-500 text-white px-4 py-2.5 text-sm font-semibold rounded-md w-full sm:w-auto">
-                    Filter
+                <button type="submit" class="h-10 bg-orange-500 hover:bg-orange-600 text-white px-4 text-sm font-bold rounded-xl shadow-xs transition flex items-center gap-1">
+                    <i class="ph ph-funnel text-base"></i> Filter
                 </button>
 
                 <a href="{{ route('lowongan.saya.perusahaan') }}"
-                    class="bg-orange-500 text-white px-4 py-2.5 text-sm font-semibold rounded-md text-center w-full sm:w-auto">
-                    Reset
+                    class="h-10 bg-slate-100 hover:bg-slate-200 border border-slate-300 text-slate-700 px-3.5 text-sm font-semibold rounded-xl flex items-center justify-center transition shadow-2xs" title="Reset Filter">
+                    <i class="ph ph-arrow-counter-clockwise text-base"></i> Reset
                 </a>
             </form>
         </div>
 
+        <!-- Modal Boost -->
+        <div id="boostModal"
+            class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4">
+            <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
+                <button id="closeBoostBtn" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">✕</button>
+                <h2 class="text-xl font-bold mb-4 text-slate-800">Boost Lowongan</h2>
+
+                <label class="block font-semibold mb-2 text-sm text-slate-700">Pilih Lowongan</label>
+                <select id="lowonganSelect" class="w-full border border-slate-300 p-2.5 rounded-xl text-sm focus:ring-1 focus:ring-orange-400 outline-none">
+                    @foreach ($lowongans as $l)
+                        @if ($l->published_at)
+                            <option value="{{ $l->id }}">{{ $l->nama }}</option>
+                        @endif
+                    @endforeach
+                </select>
+
+                <button onclick="showConfirmBoost()"
+                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-xl mt-5 w-full shadow-xs transition">
+                    Boost Sekarang
+                </button>
+            </div>
+        </div>
 
         <div class="flex flex-col gap-4">
             @forelse ($Data as $d)
@@ -137,11 +134,11 @@
                                     <div class="flex items-center gap-2 flex-wrap mb-1">
                                         <p class="text-xs font-semibold text-slate-500">{{ Auth::user()->perusahaan->nama_perusahaan }}</p>
                                         @if ($d->status === 'tutup')
-                                            <span class="px-2.5 py-0.5 bg-rose-100 text-rose-700 text-xs font-extrabold rounded-full border border-rose-200">
+                                            <span class="px-2.5 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200">
                                                 🔒 Pendaftaran Ditutup (Kuota Terpenuhi)
                                             </span>
                                         @else
-                                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-extrabold rounded-full border border-emerald-200">
+                                            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
                                                 🟢 Aktif (Menerima Pelamar)
                                             </span>
                                         @endif
@@ -159,25 +156,25 @@
                                     @csrf
                                     @method('PUT')
                                     @if ($d->status === 'tutup')
-                                        <button type="submit" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1.5" title="Buka Kembali Pendaftaran">
-                                            <i class="ph ph-lock-key-open text-sm"></i> Buka Pendaftaran
+                                        <button type="submit" class="h-8.5 px-3 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-emerald-700 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1.5" title="Buka Kembali Pendaftaran">
+                                            <i class="ph ph-lock-key-open text-sm font-bold text-emerald-600"></i> Buka Pendaftaran
                                         </button>
                                     @else
-                                        <button type="submit" class="px-3.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1.5" onclick="return confirm('Tutup pendaftaran lowongan ini karena kuota sudah terpenuhi?')" title="Tutup Pendaftaran (Kuota Full)">
-                                            <i class="ph ph-lock-key text-sm"></i> Tutup Lowongan (Kuota Full)
+                                        <button type="submit" class="h-8.5 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1.5" onclick="return confirm('Tutup pendaftaran lowongan ini karena kuota sudah terpenuhi?')" title="Tutup Pendaftaran (Kuota Full)">
+                                            <i class="ph ph-lock-key text-sm text-slate-500"></i> Tutup Lowongan (Kuota Full)
                                         </button>
                                     @endif
                                 </form>
 
-                                <a href="{{ route('lowongan.edit.form', ['perusahaan' => Auth::user()->perusahaan->slug, 'lowongan' => $d->slug]) }}" class="px-3 py-1.5 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1">
-                                    <i class="ph ph-pencil-simple text-sm"></i> Edit
+                                <a href="{{ route('lowongan.edit.form', ['perusahaan' => Auth::user()->perusahaan->slug, 'lowongan' => $d->slug]) }}" class="h-8.5 px-3 bg-white hover:bg-amber-50 border border-amber-300 text-amber-700 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1">
+                                    <i class="ph ph-pencil-simple text-sm text-amber-600"></i> Edit
                                 </a>
 
                                 <form action="{{ route('lowongan.destroy', $d->id) }}" method="POST" class="inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus lowongan ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1">
-                                        <i class="ph ph-trash text-sm"></i> Hapus
+                                    <button type="submit" class="h-8.5 px-3 bg-white hover:bg-red-50 border border-red-200 text-red-600 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1">
+                                        <i class="ph ph-trash text-sm text-red-500"></i> Hapus
                                     </button>
                                 </form>
                             </div>

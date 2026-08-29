@@ -72,14 +72,49 @@ class Perusahaan extends Model
         return $slug;
     }
 
+    public function alamatPerusahaan()
+    {
+        return $this->hasMany(AlamatPerusahaan::class, 'perusahaan_id', 'id');
+    }
+
     public function getAlamatUtamaAttribute()
     {
+        if (\Illuminate\Support\Facades\Schema::hasTable('alamat_perusahaan')) {
+            $utama = $this->alamatPerusahaan()->where('utama', 1)->first();
+            if ($utama) {
+                $detailText = $utama->detail ?: ($utama->desa ?: $this->alamat);
+                return (object)[
+                    'alamat_lengkap' => $detailText,
+                    'desa'           => $utama->desa ?? $detailText,
+                    'detail'         => $detailText,
+                    'kode_pos'       => $utama->kode_pos ?? '60111',
+                    'kota'           => (object)['nama' => $utama->kota ?? $this->kota ?? 'Surabaya'],
+                    'provinsi'       => (object)['nama' => $utama->provinsi ?? $this->provinsi ?? 'Jawa Timur'],
+                    'kecamatan'      => (object)['nama' => $utama->kecamatan ?? '-'],
+                ];
+            }
+        }
+
+        if (!empty($this->alamat)) {
+            return (object)[
+                'alamat_lengkap' => $this->alamat,
+                'desa'           => $this->alamat,
+                'detail'         => $this->alamat,
+                'kode_pos'       => '60111',
+                'kota'           => (object)['nama' => $this->kota ?? 'Surabaya'],
+                'provinsi'       => (object)['nama' => $this->provinsi ?? 'Jawa Timur'],
+                'kecamatan'      => (object)['nama' => '-'],
+            ];
+        }
+
         return (object)[
-            'desa'      => $this->alamat,
-            'detail'    => $this->alamat,
-            'kode_pos'  => '60111',
-            'kota'      => (object)['nama' => $this->kota ?? 'Surabaya'],
-            'provinsi'  => (object)['nama' => $this->provinsi ?? 'Jawa Timur'],
+            'alamat_lengkap' => null,
+            'desa'           => null,
+            'detail'         => null,
+            'kode_pos'       => null,
+            'kota'           => (object)['nama' => $this->kota ?? '-'],
+            'provinsi'       => (object)['nama' => $this->provinsi ?? '-'],
+            'kecamatan'      => (object)['nama' => '-'],
         ];
     }
 

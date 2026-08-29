@@ -111,17 +111,16 @@
                                 <p class="text-red-500 text-sm mt-1 error-message" data-field="password"></p>
                             </div>
 
-                            <label class="flex items-center text-sm font-medium gap-1">
-                                <input type="checkbox" id="agree_pelamar" name="agree_pelamar" class="mr-2">
-                                Saya menyetujui
-                                <a href="{{ url('syarat/ketentuan') }}" class="text-orange-500">Syarat dan Ketentuan</a>
+                            <label class="flex items-center text-xs sm:text-sm font-medium gap-1 cursor-pointer">
+                                <input type="checkbox" id="agree_pelamar" name="agree_pelamar" required class="mr-2 rounded text-orange-500 focus:ring-orange-500">
+                                <span>Saya menyetujui <button type="button" onclick="openTermsModal('pelamar')" class="text-orange-500 font-semibold hover:underline cursor-pointer">Syarat dan Ketentuan</button> yang berlaku</span>
                             </label>
-                            <p class="error-message text-red-500 text-sm" data-field="agree_pelamar"></p>
+                            <p class="error-message text-red-500 text-xs mt-1" data-field="agree_pelamar"></p>
 
                             <input type="hidden" name="role" value="pelamar">
 
                             <button type="submit"
-                                class="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 mt-6">
+                                class="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 mt-6 cursor-pointer transition shadow-sm">
                                 Daftar
                             </button>
                         </form>
@@ -155,8 +154,6 @@
                                 </p>
                             </div>
 
-
-
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 m-2">Kata Sandi</label>
                                 <input type="password" name="password" placeholder="Kata Sandi"
@@ -164,22 +161,78 @@
                                 <p class="text-red-500 text-sm mt-1 error-message" data-field="password"></p>
                             </div>
 
-                            <label class="flex items-center text-sm font-medium gap-1">
-                                <input type="checkbox" id="agree_perusahaan" name="agree_perusahaan" class="mr-2">
-                                Saya menyetujui
-                                <a href="{{ url('syarat/ketentuan') }}" class="text-orange-500">Syarat dan
-                                    Ketentuan</a>
+                            <label class="flex items-center text-xs sm:text-sm font-medium gap-1 cursor-pointer">
+                                <input type="checkbox" id="agree_perusahaan" name="agree_perusahaan" required class="mr-2 rounded text-orange-500 focus:ring-orange-500">
+                                <span>Saya menyetujui <button type="button" onclick="openTermsModal('perusahaan')" class="text-orange-500 font-semibold hover:underline cursor-pointer">Syarat dan Ketentuan</button> yang berlaku</span>
                             </label>
-                            <p class="error-message text-red-500 text-sm" data-field="agree_perusahaan"></p>
+                            <p class="error-message text-red-500 text-xs mt-1" data-field="agree_perusahaan"></p>
 
 
                             <input type="hidden" name="role" value="perusahaan">
 
                             <button type="submit"
-                                class="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 mt-6">
+                                class="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 mt-6 cursor-pointer transition shadow-sm">
                                 Daftar
                             </button>
                         </form>
+                    </div>
+                </div>
+            </div>
+
+            {{-- =============== MODAL SYARAT DAN KETENTUAN =============== --}}
+            <div id="termsModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/60 backdrop-blur-xs p-4">
+                <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden animate-fadeIn">
+                    <!-- Modal Header -->
+                    <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                        <div class="flex items-center gap-2">
+                            <i class="ph ph-file-text text-orange-500 text-xl font-bold"></i>
+                            <h3 class="font-bold text-slate-800 text-base sm:text-lg">Syarat &amp; Ketentuan Penggunaan</h3>
+                        </div>
+                        <button type="button" onclick="closeTermsModal()" class="text-slate-400 hover:text-slate-600 text-2xl font-bold leading-none cursor-pointer">&times;</button>
+                    </div>
+
+                    <!-- Modal Body (Scrollable) -->
+                    <div class="p-6 overflow-y-auto space-y-4 text-xs sm:text-sm text-slate-700 leading-relaxed text-justify">
+                        <p>
+                            Dokumen Syarat dan Ketentuan Penggunaan ("S&amp;K") ini menyatakan hak, kewajiban, dan ketentuan yang perlu Anda setujui untuk dapat menggunakan layanan, fitur, dan platform <strong>AreaKerja</strong>. Harap baca dengan seksama sebelum melakukan registrasi.
+                        </p>
+
+                        <h4 class="font-bold text-slate-900 text-sm">1. Pihak yang Terlibat</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li><strong>AreaKerja</strong>, sebagai penyedia platform bursa kerja, manajemen talenta, dan perantara rekrutmen.</li>
+                            <li><strong>Pencari Kerja (Pelamar/Kandidat)</strong>, yaitu individu yang mencari informasi dan melamar lowongan kerja.</li>
+                            <li><strong>Perusahaan (Mitra Employer)</strong>, yaitu entitas/organisasi yang mempublikasikan lowongan kerja dan merekrut talenta.</li>
+                        </ul>
+
+                        <h4 class="font-bold text-slate-900 text-sm">2. Ketentuan Akun &amp; Keamanan</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Pengguna wajib berusia minimal 18 tahun atau memiliki izin yang sah sesuai hukum yang berlaku.</li>
+                            <li>Data yang dimasukkan saat pendaftaran harus valid, akurat, dan dapat dipertanggungjawabkan.</li>
+                            <li>Pengguna bertanggung jawab penuh atas kerahasiaan kata sandi dan seluruh aktivitas akun.</li>
+                            <li>Dilarang membuat akun palsu atau mengatasnamakan entitas lain tanpa wewenang legal.</li>
+                        </ul>
+
+                        <h4 class="font-bold text-slate-900 text-sm">3. Etika &amp; Larangan Penggunaan</h4>
+                        <ul class="list-disc pl-5 space-y-1">
+                            <li>Dilarang menyalahgunakan data pelamar atau perusahaan untuk penipuan, pungutan liar, atau tindakan melanggar hukum.</li>
+                            <li>AreaKerja berhak membatasi, membekukan, atau menghapus akun yang melanggar ketentuan tanpa pemberitahuan sebelumnya.</li>
+                        </ul>
+
+                        <h4 class="font-bold text-slate-900 text-sm">4. Privasi &amp; Data Pribadi</h4>
+                        <p>
+                            Data pribadi Anda akan diproses sesuai Kebijakan Privasi AreaKerja dan hanya digunakan untuk keperluan proses rekrutmen, penelusuran lowongan, serta notifikasi resmi platform.
+                        </p>
+                    </div>
+
+                    <!-- Modal Footer -->
+                    <div class="px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-end gap-3">
+                        <button type="button" onclick="closeTermsModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-100 transition cursor-pointer">
+                            Tutup
+                        </button>
+                        <button type="button" onclick="acceptTermsModal()" class="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm transition shadow-sm cursor-pointer flex items-center gap-1.5">
+                            <i class="ph ph-check-circle text-base"></i>
+                            <span>Saya Paham &amp; Setuju</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -404,6 +457,36 @@
                 document.getElementById("successModal").classList.remove("flex");
                 document.getElementById("successModal_perusahaan").classList.add("hidden");
                 document.getElementById("successModal_perusahaan").classList.remove("flex");
+            }
+
+            // ================= TERMS MODAL HANDLERS =================
+            let currentTermsTarget = 'agree_pelamar';
+
+            function openTermsModal(target) {
+                currentTermsTarget = target === 'perusahaan' ? 'agree_perusahaan' : 'agree_pelamar';
+                const modal = document.getElementById('termsModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            }
+
+            function closeTermsModal() {
+                const modal = document.getElementById('termsModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            }
+
+            function acceptTermsModal() {
+                const cb = document.getElementById(currentTermsTarget) || document.getElementById('agree_pelamar');
+                if (cb) {
+                    cb.checked = true;
+                }
+                const err = document.querySelector(`.error-message[data-field="${currentTermsTarget}"]`);
+                if (err) err.textContent = '';
+                closeTermsModal();
             }
         </script>
 
