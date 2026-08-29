@@ -57,9 +57,15 @@
                 </div>
 
                 {{-- Tagline under search bar --}}
-                <p class="text-xs text-white/90 font-medium mb-6">
+                <p class="text-xs text-white/90 font-medium mb-4">
                     Lamar Pekerjaan Kamu - Dengan waktu dan langkah yang cepat
                 </p>
+
+                {{-- Quick Nav Pills (Matching Figma) --}}
+                <div class="flex items-center justify-center gap-6 text-[11px] font-bold tracking-wider uppercase text-white/80">
+                    <span class="hover:text-white transition cursor-pointer">UMPAN LOWONGAN</span>
+                    <span class="hover:text-white transition cursor-pointer">PENCARIAN BARU - BARU INI</span>
+                </div>
 
             </div>
         </section>

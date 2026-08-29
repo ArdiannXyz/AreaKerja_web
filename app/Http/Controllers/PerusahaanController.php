@@ -140,60 +140,140 @@ class PerusahaanController extends Controller
 
     public function form_alamat()
     {
+        $provinsis = collect();
+        $provincesFile = database_path('data/provinces.json');
+        if (file_exists($provincesFile)) {
+            $json = json_decode(file_get_contents($provincesFile), true);
+            $provinsis = collect($json)->map(function ($item) {
+                return (object)[
+                    'id'   => (string)$item['id'],
+                    'nama' => ucwords(strtolower($item['name'])),
+                ];
+            });
+        }
+
         return view('perusahaan.alamat.buat-alamat', [
-            'provinsis' => collect(),
+            'provinsis' => $provinsis,
         ]);
     }
 
     public function getKota($provinsi_id)
     {
-        return response()->json([]);
+        return app(AdminController::class)->getKota($provinsi_id);
     }
 
     public function getKecamatan($kota_id)
     {
-        return response()->json([]);
+        return app(AdminController::class)->getKecamatan($kota_id);
     }
 
     public function store_alamat(Request $request)
     {
         $perusahaan = Auth::user()->perusahaan;
-        $validated = $request->validate([
-            'alamat'   => 'nullable|string|max:255',
-            'kota'     => 'nullable|string|max:255',
-            'provinsi' => 'nullable|string|max:255',
+        $alamatDetail = $request->detail ?? $request->desa ?? $request->alamat ?? $perusahaan->alamat;
+        $kotaValue = $request->kota ?? $request->kota_id ?? $perusahaan->kota;
+        $provinsiValue = $request->provinsi ?? $request->provinsi_id ?? $perusahaan->provinsi;
+
+        if (is_numeric($provinsiValue) && file_exists(database_path('data/provinces.json'))) {
+            $provinces = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+            foreach ($provinces as $p) {
+                if ((string)$p['id'] === (string)$provinsiValue) {
+                    $provinsiValue = ucwords(strtolower($p['name']));
+                    break;
+                }
+            }
+        }
+
+        if (is_numeric($kotaValue) && file_exists(database_path('data/regencies.json'))) {
+            $regencies = json_decode(file_get_contents(database_path('data/regencies.json')), true);
+            foreach ($regencies as $r) {
+                if ((string)$r['id'] === (string)$kotaValue) {
+                    $kotaValue = ucwords(strtolower($r['name']));
+                    break;
+                }
+            }
+        }
+
+        $perusahaan->update([
+            'alamat'   => $alamatDetail,
+            'kota'     => $kotaValue,
+            'provinsi' => $provinsiValue,
         ]);
 
-        $perusahaan->update($validated);
         return redirect()->route('alamat.perusahaan')->with('success', 'Alamat berhasil diperbarui.');
     }
 
     public function edit_alamat($id = null)
     {
         $perusahaan = Auth::user()->perusahaan;
+
+        $provinsis = collect();
+        $provincesFile = database_path('data/provinces.json');
+        if (file_exists($provincesFile)) {
+            $json = json_decode(file_get_contents($provincesFile), true);
+            $provinsis = collect($json)->map(function ($item) {
+                return (object)[
+                    'id'   => (string)$item['id'],
+                    'nama' => ucwords(strtolower($item['name'])),
+                ];
+            });
+        }
+
+        $provinsiNama = $perusahaan->provinsi ?? 'Jawa Timur';
+        $kotaNama = $perusahaan->kota ?? 'Surabaya';
+
         $data = (object)[
-            'id'        => 1,
-            'label'     => 'Alamat Utama',
-            'desa'      => $perusahaan->alamat,
-            'detail'    => $perusahaan->alamat,
-            'kota'      => $perusahaan->kota,
-            'provinsi'  => $perusahaan->provinsi,
-            'kode_pos'  => '60111',
+            'id'           => $id ?? 1,
+            'label'        => 'Alamat Utama',
+            'desa'         => $perusahaan->alamat ?? '',
+            'detail'       => $perusahaan->alamat ?? '',
+            'provinsi_id'  => $provinsiNama,
+            'provinsi'     => (object)['id' => $provinsiNama, 'nama' => $provinsiNama],
+            'kota_id'      => $kotaNama,
+            'kota'         => (object)['id' => $kotaNama, 'nama' => $kotaNama],
+            'kecamatan_id' => $kotaNama,
+            'kecamatan'    => (object)['id' => $kotaNama, 'nama' => $kotaNama],
+            'kode_pos'     => '60111',
         ];
 
         return view('perusahaan.alamat.edit', [
             'data'      => $data,
-            'provinsis' => collect(),
+            'provinsis' => $provinsis,
         ]);
     }
 
     public function update_alamat(Request $request, $id = null)
     {
         $perusahaan = Auth::user()->perusahaan;
+
+        $alamatDetail = $request->detail ?? $request->desa ?? $request->alamat ?? $perusahaan->alamat;
+        $kotaValue = $request->kota ?? $request->kota_id ?? $perusahaan->kota;
+        $provinsiValue = $request->provinsi ?? $request->provinsi_id ?? $perusahaan->provinsi;
+
+        if (is_numeric($provinsiValue) && file_exists(database_path('data/provinces.json'))) {
+            $provinces = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+            foreach ($provinces as $p) {
+                if ((string)$p['id'] === (string)$provinsiValue) {
+                    $provinsiValue = ucwords(strtolower($p['name']));
+                    break;
+                }
+            }
+        }
+
+        if (is_numeric($kotaValue) && file_exists(database_path('data/regencies.json'))) {
+            $regencies = json_decode(file_get_contents(database_path('data/regencies.json')), true);
+            foreach ($regencies as $r) {
+                if ((string)$r['id'] === (string)$kotaValue) {
+                    $kotaValue = ucwords(strtolower($r['name']));
+                    break;
+                }
+            }
+        }
+
         $perusahaan->update([
-            'alamat'   => $request->detail ?? $request->desa ?? $request->alamat,
-            'kota'     => $request->kota,
-            'provinsi' => $request->provinsi,
+            'alamat'   => $alamatDetail,
+            'kota'     => $kotaValue,
+            'provinsi' => $provinsiValue,
         ]);
 
         return redirect()->route('alamat.perusahaan')->with('success', 'Alamat berhasil diperbarui.');
