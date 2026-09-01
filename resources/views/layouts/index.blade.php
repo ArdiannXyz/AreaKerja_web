@@ -224,10 +224,10 @@
 
     {{-- Navbar --}}
     <header class="{{ $isBeranda ? 'bg-[#ff7a00] text-white' : 'bg-white text-slate-800 border-b border-slate-100 shadow-sm' }} fixed top-0 left-0 w-full z-50 transition-all duration-200">
-        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
 
             <!-- Logo & Hamburger (Kiri) -->
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-3 shrink-0">
                 <!-- Hamburger Button (HANYA MUNCUL DI HP < 768px) -->
                 <button @click="openMenu = !openMenu" type="button" class="flex md:hidden p-1.5 rounded-lg {{ $isBeranda ? 'text-white hover:bg-white/10' : 'text-[#ff7a00] hover:bg-orange-50' }} focus:outline-none focus:ring-2 focus:ring-orange-400" aria-label="Toggle Menu">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -238,19 +238,19 @@
                 </button>
 
                 <!-- Logo -->
-                <a href="{{ route('beranda') }}" class="flex items-center gap-2.5 sm:gap-3">
+                <a href="{{ route('beranda') }}" class="flex items-center gap-2 sm:gap-2.5">
                     @if ($isBeranda)
-                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-8 sm:h-9 lg:h-10 object-contain">
-                        <span class="font-bold text-lg sm:text-2xl lg:text-[26px] text-white tracking-tight">areakerja.com</span>
+                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-7 sm:h-8 lg:h-9 object-contain">
+                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-white tracking-tight">areakerja.com</span>
                     @else
-                        <img src="{{ asset('images/logoarea.png') }}" alt="Areakerja Logo" class="h-8 sm:h-9 lg:h-10 object-contain">
-                        <span class="font-bold text-lg sm:text-2xl lg:text-[26px] text-[#ff7a00] tracking-tight">areakerja.com</span>
+                        <img src="{{ asset('images/logoarea.png') }}" alt="Areakerja Logo" class="h-7 sm:h-8 lg:h-9 object-contain">
+                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#ff7a00] tracking-tight">areakerja.com</span>
                     @endif
                 </a>
             </div>
 
             <!-- Menu Desktop & Laptop (Tengah) - Tampil di layar >= 768px -->
-            <nav class="hidden md:flex items-center font-semibold text-xs sm:text-sm lg:text-base {{ $isBeranda ? 'text-white' : 'text-[#ff7a00]' }} gap-4 sm:gap-6 lg:gap-9 xl:gap-12">
+            <nav class="hidden md:flex items-center justify-center font-semibold text-xs sm:text-sm lg:text-[15px] {{ $isBeranda ? 'text-white' : 'text-[#ff7a00]' }} gap-4 lg:gap-6 xl:gap-8 flex-1 px-4">
                 <a href="{{ route('beranda') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-orange-600' }} transition-colors whitespace-nowrap">
                     Beranda
                 </a>
@@ -259,6 +259,9 @@
                 </a>
                 <a href="{{ url('/pelamar/tips-kerja') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-orange-600' }} transition-colors whitespace-nowrap">
                     Tips Kerja
+                </a>
+                <a href="{{ route('pelamar.event.index') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-orange-600' }} transition-colors whitespace-nowrap">
+                    Event
                 </a>
                 <a href="{{ route('pelamar.daftar-kandidat') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-orange-600' }} transition-colors whitespace-nowrap">
                     Daftar Kandidat
@@ -269,7 +272,7 @@
             </nav>
 
             <!-- Aksi (Kanan) -->
-            <div class="flex items-center gap-3 sm:gap-4">
+            <div class="flex items-center gap-3 sm:gap-4 shrink-0">
                 @auth
                     {{-- Notifikasi (Hanya jika Login) --}}
                     <button @click="openNotif = true" class="relative p-2 rounded-full {{ $isBeranda ? 'hover:bg-white/10 text-white' : 'hover:bg-orange-50 text-[#ff7a00]' }} transition">
@@ -306,6 +309,10 @@
                     <a href="{{ url('/pelamar/tips-kerja') }}"
                         class="px-6 py-3 {{ $isBeranda ? 'text-white hover:bg-orange-700' : 'text-slate-700 hover:bg-orange-50 hover:text-orange-600' }} transition duration-300 font-medium">
                         Tips Kerja
+                    </a>
+                    <a href="{{ route('pelamar.event.index') }}"
+                        class="px-6 py-3 {{ $isBeranda ? 'text-white hover:bg-orange-700' : 'text-slate-700 hover:bg-orange-50 hover:text-orange-600' }} transition duration-300 font-medium">
+                        Event
                     </a>
                     <a href="{{ route('pelamar.daftar-kandidat') }}"
                         class="px-6 py-3 {{ $isBeranda ? 'text-white hover:bg-orange-700' : 'text-slate-700 hover:bg-orange-50 hover:text-orange-600' }} transition duration-300 font-medium">

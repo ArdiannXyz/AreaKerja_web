@@ -158,21 +158,41 @@
                             </a>
                         </div>
 
-                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
-                            <div class="flex items-center gap-2">
-                                <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 text-xs font-extrabold rounded-full">
-                                    Alamat Utama
-                                </span>
+                        @php
+                            $almtUtama = Auth::user()->perusahaan->alamatUtama;
+                        @endphp
+
+                        @if ($almtUtama && !empty($almtUtama->alamat_lengkap))
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 text-xs font-extrabold rounded-full">
+                                        Alamat Utama
+                                    </span>
+                                </div>
+                                <p class="text-sm font-bold text-slate-800">
+                                    {{ $almtUtama->alamat_lengkap }}
+                                </p>
+                                <p class="text-xs text-slate-500">
+                                    {{ $almtUtama->kecamatan->nama ?? '-' }}, 
+                                    {{ $almtUtama->kota->nama ?? '-' }}, 
+                                    {{ $almtUtama->provinsi->nama ?? '-' }}
+                                </p>
                             </div>
-                            <p class="text-sm font-bold text-slate-800">
-                                {{ Auth::user()->perusahaan->alamatUtama->alamat_lengkap ?? 'Alamat Utama Belum Diatur' }}
-                            </p>
-                            <p class="text-xs text-slate-500">
-                                {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}, 
-                                {{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }}, 
-                                {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }}
-                            </p>
-                        </div>
+                        @else
+                            <div class="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-6 text-center space-y-3">
+                                <div class="w-12 h-12 mx-auto bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">
+                                    <i class="ph ph-map-pin text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800">Alamat Utama Belum Diatur</h4>
+                                    <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Silakan atur salah satu alamat kantor perusahaan Anda sebagai alamat utama agar dapat ditampilkan pada profil dan lowongan kerja.</p>
+                                </div>
+                                <a href="{{ route('alamat.perusahaan') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition shadow-xs mt-2">
+                                    <i class="ph ph-plus-circle"></i>
+                                    Atur Alamat Utama
+                                </a>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- TAB 3: KEAMANAN & AKUN -->
@@ -182,55 +202,34 @@
                             <p class="text-xs text-slate-500">Kelola kata sandi dan informasi keamanan akun terdaftar.</p>
                         </div>
 
-                        <!-- Info Email Terkunci (Read-Only) -->
+                        <!-- Info Email (Read-Only) -->
                         <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
                             <div class="flex items-center justify-between flex-wrap gap-2">
                                 <label class="block text-xs font-bold text-slate-700">Email Utama Akun</label>
                                 <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200 flex items-center gap-1">
-                                    <i class="ph ph-lock-key"></i> Terverifikasi & Terkunci
+                                    <i class="ph ph-check-circle"></i> Terverifikasi
                                 </span>
                             </div>
                             <input type="email" readonly value="{{ Auth::user()->email }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-extrabold text-slate-800 cursor-not-allowed">
-                            <p class="text-xs text-slate-500 flex items-center gap-1.5">
-                                <i class="ph ph-info text-orange-500"></i>
-                                Email akun digunakan sebagai bukti identitas legalitas utama. Jika perlu perubahan email resmi, silakan hubungi Admin Support.
-                            </p>
                         </div>
 
-                        <!-- Form Ganti Password -->
-                        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs space-y-4">
-                            <h4 class="font-extrabold text-sm text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                                <i class="ph ph-key text-orange-500 text-lg"></i> Ubah Kata Sandi (Password)
-                            </h4>
-
-                            <form action="{{ route('password.update') }}" method="POST" class="space-y-4">
-                                @csrf
+                        <!-- Ganti Password dengan OTP -->
+                        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-start gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                                    <i class="ph ph-key text-2xl font-bold"></i>
+                                </div>
                                 <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Kata Sandi Lama <span class="text-red-500">*</span></label>
-                                    <input type="password" name="old_password" required placeholder="Masukkan kata sandi saat ini"
-                                        class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                                    <h4 class="font-extrabold text-sm text-slate-900">Ubah Kata Sandi (Password)</h4>
+                                    <p class="text-xs text-slate-500 mt-1 max-w-md leading-relaxed">
+                                        Untuk menjaga keamanan akun perusahaan Anda, proses penggantian kata sandi memerlukan verifikasi kode OTP yang dikirimkan ke email terdaftar.
+                                    </p>
                                 </div>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kata Sandi Baru <span class="text-red-500">*</span></label>
-                                        <input type="password" name="new_password" required placeholder="Minimal 8 karakter"
-                                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Konfirmasi Kata Sandi Baru <span class="text-red-500">*</span></label>
-                                        <input type="password" name="new_password_confirmation" required placeholder="Ulangi kata sandi baru"
-                                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
-                                    </div>
-                                </div>
-
-                                <div class="flex justify-end pt-2">
-                                    <button type="submit" class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-6 py-2.5 rounded-xl text-sm shadow-sm transition">
-                                        Simpan Password Baru
-                                    </button>
-                                </div>
-                            </form>
+                            </div>
+                            <a href="{{ route('verifikasi_pelamar') }}" class="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-xs shrink-0">
+                                <i class="ph ph-shield-check text-base"></i>
+                                Ganti Password via OTP
+                            </a>
                         </div>
 
                     </div>

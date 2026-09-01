@@ -388,44 +388,50 @@ class AuthController extends Controller
     {
         $now = Carbon::now();
         $startThisMonth = $now->copy()->startOfMonth();
-        $startThreeMonthsAgo = $now->copy()->subMonths(3)->startOfMonth();
+        $startLastMonth = $now->copy()->subMonth()->startOfMonth();
         $endLastMonth = $startThisMonth->copy()->subSecond();
 
-        $currentPerusahaan = Perusahaan::whereBetween('created_at', [$startThisMonth, $now])->count();
-        $lastPerusahaan = Perusahaan::whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])->count();
-        $growthPerusahaan = $this->calcGrowth($lastPerusahaan, $currentPerusahaan);
+        // 1. PERUSAHAAN (Total & Pertumbuhan)
+        $totalPerusahaan = Perusahaan::count();
+        $newPerusahaanThisMonth = Perusahaan::where('created_at', '>=', $startThisMonth)->count();
+        $newPerusahaanLastMonth = Perusahaan::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthPerusahaan = $this->calcGrowth($newPerusahaanLastMonth, $newPerusahaanThisMonth);
 
-        $currentKandidat = Pelamar::where('kategori', 'kandidat aktif')
-            ->whereBetween('created_at', [$startThisMonth, $now])
-            ->count();
-        $lastKandidat = Pelamar::where('kategori', 'kandidat aktif')
-            ->whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])
-            ->count();
-        $growthKandidat = $this->calcGrowth($lastKandidat, $currentKandidat);
+        // 2. KANDIDAT AKTIF (Total & Pertumbuhan)
+        $totalKandidat = Pelamar::where('kategori', 'kandidat aktif')->count();
+        $newKandidatThisMonth = Pelamar::where('kategori', 'kandidat aktif')->where('created_at', '>=', $startThisMonth)->count();
+        $newKandidatLastMonth = Pelamar::where('kategori', 'kandidat aktif')->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthKandidat = $this->calcGrowth($newKandidatLastMonth, $newKandidatThisMonth);
 
-        $currentNonKandidat = Pelamar::where('kategori', 'pelamar')
-            ->whereBetween('created_at', [$startThisMonth, $now])
-            ->count();
-        $lastNonKandidat = Pelamar::where('kategori', 'pelamar')
-            ->whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])
-            ->count();
-        $growthNonKandidat = $this->calcGrowth($lastNonKandidat, $currentNonKandidat);
+        // 3. NON KANDIDAT / PELAMAR BIASA (Total & Pertumbuhan)
+        $totalNonKandidat = Pelamar::where(function ($q) {
+            $q->whereNull('kategori')->orWhere('kategori', 'pelamar')->orWhere('kategori', '');
+        })->count();
+        $newNonKandidatThisMonth = Pelamar::where(function ($q) {
+            $q->whereNull('kategori')->orWhere('kategori', 'pelamar')->orWhere('kategori', '');
+        })->where('created_at', '>=', $startThisMonth)->count();
+        $newNonKandidatLastMonth = Pelamar::where(function ($q) {
+            $q->whereNull('kategori')->orWhere('kategori', 'pelamar')->orWhere('kategori', '');
+        })->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthNonKandidat = $this->calcGrowth($newNonKandidatLastMonth, $newNonKandidatThisMonth);
 
-        $currentLowongan = LowonganPerusahaan::whereBetween('created_at', [$startThisMonth, $now])->count();
-        $lastLowongan = LowonganPerusahaan::whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])->count();
-        $growthLowongan = $this->calcGrowth($lastLowongan, $currentLowongan);
+        // 4. LOWONGAN KERJA (Total & Pertumbuhan)
+        $totalLowongan = LowonganPerusahaan::count();
+        $newLowonganThisMonth = LowonganPerusahaan::where('created_at', '>=', $startThisMonth)->count();
+        $newLowonganLastMonth = LowonganPerusahaan::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthLowongan = $this->calcGrowth($newLowonganLastMonth, $newLowonganThisMonth);
 
         $latestLowongans = LowonganPerusahaan::with('perusahaan')->latest()->take(5)->get();
         $latestPerusahaans = Perusahaan::latest()->take(5)->get();
 
         return view('admin.dashboard', [
-            'totalPerusahaan'    => $currentPerusahaan,
+            'totalPerusahaan'    => $totalPerusahaan,
             'growthPerusahaan'   => $growthPerusahaan,
-            'totalKandidat'      => $currentKandidat,
+            'totalKandidat'      => $totalKandidat,
             'growthKandidat'     => $growthKandidat,
-            'totalNonKandidat'   => $currentNonKandidat,
+            'totalNonKandidat'   => $totalNonKandidat,
             'growthNonKandidat'  => $growthNonKandidat,
-            'totalLowongan'      => $currentLowongan,
+            'totalLowongan'      => $totalLowongan,
             'growthLowongan'     => $growthLowongan,
             'latestLowongans'    => $latestLowongans,
             'latestPerusahaans'  => $latestPerusahaans,
@@ -436,7 +442,8 @@ class AuthController extends Controller
     {
         if ($last == 0 && $current > 0) return 100;
         if ($last == 0 && $current == 0) return 0;
-        return round((($current - $last) / $last) * 100, 1);
+        if ($last > 0 && $current == 0) return 0;
+        return round((($current - $last) / max($last, 1)) * 100, 1);
     }
 
     public function loginproses_admin(Request $request)

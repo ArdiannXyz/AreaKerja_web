@@ -218,47 +218,84 @@ class AdminController extends Controller
                 'kecamatan_id.required' => 'Kecamatan wajib dipilih pada dropdown alamat.',
             ]);
 
-            $user->username = $request->username;
-            $user->nama_lengkap = $request->nama_lengkap;
-            $user->provinsi_id = $request->provinsi_id;
-            $user->kota_id = $request->kota_id;
-            $user->kecamatan_id = $request->kecamatan_id;
-            $user->desa = $request->desa;
-            $user->kode_pos = $request->kode_pos;
-            $user->detail_alamat = $request->detail_alamat;
-
+            $imagePath = null;
             if ($request->hasFile('img_profile')) {
-                $user->avatar = $request->file('img_profile')->store('images', 'public');
+                $imagePath = $request->file('img_profile')->store('images', 'public');
+                $user->avatar = $imagePath;
             }
 
+            $user->username = $request->username;
+            $user->nama_lengkap = $request->nama_lengkap;
             $user->save();
 
-            try {
-                if (Schema::hasTable('admins')) {
-                    $adminUpdate = array_filter([
-                        'nama_lengkap'  => $request->nama_lengkap,
-                        'provinsi_id'   => $request->provinsi_id,
-                        'kota_id'       => $request->kota_id,
-                        'kecamatan_id'  => $request->kecamatan_id,
-                        'desa'          => $request->desa,
-                        'kode_pos'      => $request->kode_pos,
-                        'detail_alamat' => $request->detail_alamat,
-                        'updated_at'    => now(),
-                    ], function ($val) {
-                        return $val !== null;
-                    });
-
-                    if ($imagePath) {
-                        $adminUpdate['img_profile'] = $imagePath;
-                    }
-
-                    DB::table('admins')->updateOrInsert(
-                        ['user_id' => $user->id],
-                        $adminUpdate
-                    );
+            // Ensure related tables exist and have corresponding rows to avoid FK constraint errors
+            if (Schema::hasTable('provinsis') && $request->provinsi_id) {
+                $provName = null;
+                if (file_exists(database_path('data/provinces.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->provinsi_id);
+                    if ($found) $provName = ucwords(strtolower($found['name']));
                 }
-            } catch (\Throwable $e) {
-                // Table admins fallback
+                DB::table('provinsis')->updateOrInsert(
+                    ['id' => $request->provinsi_id],
+                    ['nama' => $provName ?? 'Provinsi ' . $request->provinsi_id, 'updated_at' => now()]
+                );
+            }
+
+            if (Schema::hasTable('kotas') && $request->kota_id) {
+                $kotaName = null;
+                if (file_exists(database_path('data/regencies.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/regencies.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->kota_id);
+                    if ($found) $kotaName = ucwords(strtolower($found['name']));
+                }
+                DB::table('kotas')->updateOrInsert(
+                    ['id' => $request->kota_id],
+                    [
+                        'provinsi_id' => $request->provinsi_id,
+                        'nama' => $kotaName ?? 'Kota ' . $request->kota_id,
+                        'updated_at' => now()
+                    ]
+                );
+            }
+
+            if (Schema::hasTable('kecamatans') && $request->kecamatan_id) {
+                $kecName = null;
+                if (file_exists(database_path('data/districts.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/districts.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->kecamatan_id);
+                    if ($found) $kecName = ucwords(strtolower($found['name']));
+                }
+                DB::table('kecamatans')->updateOrInsert(
+                    ['id' => $request->kecamatan_id],
+                    [
+                        'kota_id' => $request->kota_id,
+                        'nama' => $kecName ?? 'Kecamatan ' . $request->kecamatan_id,
+                        'updated_at' => now()
+                    ]
+                );
+            }
+
+            if (Schema::hasTable('admins')) {
+                $adminUpdate = [
+                    'nama_lengkap'  => $request->nama_lengkap,
+                    'provinsi_id'   => $request->provinsi_id,
+                    'kota_id'       => $request->kota_id,
+                    'kecamatan_id'  => $request->kecamatan_id,
+                    'desa'          => $request->desa,
+                    'kode_pos'      => $request->kode_pos,
+                    'detail_alamat' => $request->detail_alamat,
+                    'updated_at'    => now(),
+                ];
+
+                if ($imagePath) {
+                    $adminUpdate['img_profile'] = $imagePath;
+                }
+
+                DB::table('admins')->updateOrInsert(
+                    ['user_id' => $user->id],
+                    $adminUpdate
+                );
             }
 
             Notifikasi::create([

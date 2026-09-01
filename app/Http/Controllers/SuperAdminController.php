@@ -39,82 +39,54 @@ class SuperAdminController extends Controller
         $startThreeMonthsAgo = $now->copy()->subMonths(3)->startOfMonth();
 
         // Akhir bulan lalu
+        $startLastMonth = $now->copy()->subMonth()->startOfMonth();
         $endLastMonth = $startThisMonth->copy()->subSecond();
-
 
         // ===========================
         // PELAMAR
         // ===========================
-        $currentPelamar = Pelamar::whereBetween('created_at', [
-            $startThisMonth,
-            $now
-        ])->count();
-
-        $lastPelamar = Pelamar::whereBetween('created_at', [
-            $startThreeMonthsAgo,
-            $endLastMonth
-        ])->count();
-
-        $growthPelamar = $this->calcGrowth($lastPelamar, $currentPelamar);
-
+        $totalPelamar = Pelamar::count();
+        $newPelamarThisMonth = Pelamar::where('created_at', '>=', $startThisMonth)->count();
+        $newPelamarLastMonth = Pelamar::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthPelamar = $this->calcGrowth($newPelamarLastMonth, $newPelamarThisMonth);
 
         // ===========================
         // PERUSAHAAN
         // ===========================
-        $currentPerusahaan = Perusahaan::whereBetween('created_at', [
-            $startThisMonth,
-            $now
-        ])->count();
-
-        $lastPerusahaan = Perusahaan::whereBetween('created_at', [
-            $startThreeMonthsAgo,
-            $endLastMonth
-        ])->count();
-
-        $growthPerusahaan = $this->calcGrowth($lastPerusahaan, $currentPerusahaan);
-
+        $totalPerusahaan = Perusahaan::count();
+        $newPerusahaanThisMonth = Perusahaan::where('created_at', '>=', $startThisMonth)->count();
+        $newPerusahaanLastMonth = Perusahaan::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthPerusahaan = $this->calcGrowth($newPerusahaanLastMonth, $newPerusahaanThisMonth);
 
         // ===========================
         // ADMIN
         // ===========================
-        $currentAdmin = User::where('role', 'admin')
-            ->whereBetween('created_at', [$startThisMonth, $now])
-            ->count();
-
-        $lastAdmin = User::where('role', 'admin')
-            ->whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])
-            ->count();
-
-        $growthAdmin = $this->calcGrowth($lastAdmin, $currentAdmin);
-
+        $totalAdmin = User::where('role', 'admin')->count();
+        $newAdminThisMonth = User::where('role', 'admin')->where('created_at', '>=', $startThisMonth)->count();
+        $newAdminLastMonth = User::where('role', 'admin')->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthAdmin = $this->calcGrowth($newAdminLastMonth, $newAdminThisMonth);
 
         // ===========================
         // SUPER ADMIN
         // ===========================
-        $currentSuperAdmin = User::where('role', 'super_admin')
-            ->whereBetween('created_at', [$startThisMonth, $now])
-            ->count();
-
-        $lastSuperAdmin = User::where('role', 'super_admin')
-            ->whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])
-            ->count();
-
-        $growthSuperAdmin = $this->calcGrowth($lastSuperAdmin, $currentSuperAdmin);
-
+        $totalSuperAdmin = User::where('role', 'super_admin')->count();
+        $newSuperAdminThisMonth = User::where('role', 'super_admin')->where('created_at', '>=', $startThisMonth)->count();
+        $newSuperAdminLastMonth = User::where('role', 'super_admin')->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthSuperAdmin = $this->calcGrowth($newSuperAdminLastMonth, $newSuperAdminThisMonth);
 
         return view('super_admin.dashboard', [
             "title" => "Dashboard",
 
-            'totalPelamar'       => $currentPelamar,
+            'totalPelamar'       => $totalPelamar,
             'growthPelamar'      => $growthPelamar,
 
-            'totalPerusahaan'    => $currentPerusahaan,
+            'totalPerusahaan'    => $totalPerusahaan,
             'growthPerusahaan'   => $growthPerusahaan,
 
-            'totalAdmin'         => $currentAdmin,
+            'totalAdmin'         => $totalAdmin,
             'growthAdmin'        => $growthAdmin,
 
-            'totalSuperAdmin'    => $currentSuperAdmin,
+            'totalSuperAdmin'    => $totalSuperAdmin,
             'growthSuperAdmin'   => $growthSuperAdmin,
         ]);
     }
@@ -126,8 +98,9 @@ class SuperAdminController extends Controller
     {
         if ($last == 0 && $current > 0) return 100;
         if ($last == 0 && $current == 0) return 0;
+        if ($last > 0 && $current == 0) return 0;
 
-        return round((($current - $last) / $last) * 100, 1);
+        return round((($current - $last) / max($last, 1)) * 100, 1);
     }
 
 

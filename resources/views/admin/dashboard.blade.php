@@ -50,9 +50,6 @@
             <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Perusahaan</span>
-                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md {{ $growthPerusahaan >= 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }}">
-                        {{ $growthPerusahaan >= 0 ? '+' : '' }}{{ $growthPerusahaan }}%
-                    </span>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalPerusahaan }}</span>
@@ -64,9 +61,6 @@
             <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Kandidat Aktif</span>
-                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md {{ $growthKandidat >= 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }}">
-                        {{ $growthKandidat >= 0 ? '+' : '' }}{{ $growthKandidat }}%
-                    </span>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalKandidat }}</span>
@@ -78,9 +72,6 @@
             <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pelamar / Public</span>
-                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md {{ $growthNonKandidat >= 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }}">
-                        {{ $growthNonKandidat >= 0 ? '+' : '' }}{{ $growthNonKandidat }}%
-                    </span>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalNonKandidat }}</span>
@@ -92,9 +83,6 @@
             <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lowongan Kerja</span>
-                    <span class="text-[11px] font-bold px-2 py-0.5 rounded-md {{ $growthLowongan >= 0 ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-rose-50 text-rose-700 border border-rose-200' }}">
-                        {{ $growthLowongan >= 0 ? '+' : '' }}{{ $growthLowongan }}%
-                    </span>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalLowongan }}</span>

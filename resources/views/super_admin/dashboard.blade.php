@@ -59,32 +59,12 @@
         <!-- Cards -->
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            @php
-                function growthClass($value)
-                {
-                    return $value > 0
-                        ? 'bg-green-100 text-green-700'
-                        : ($value < 0
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-gray-200 text-gray-700');
-                }
-
-                function growthIcon($value)
-                {
-                    return $value > 0 ? '↑' : ($value < 0 ? '↓' : '→');
-                }
-            @endphp
-
             <!-- PELAMAR -->
             <div
                 class="bg-white border border-gray-100 shadow-md hover:shadow-lg rounded-md p-5 w-full hover:bg-gray-50 hover:scale-105 transition duration-300 break-words">
                 <h3 class="text-gray-700 text-sm font-medium mb-2">Pelamar</h3>
                 <div class="flex items-center gap-2">
                     <span class="text-2xl font-bold text-gray-900">{{ $totalPelamar }}</span>
-
-                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ growthClass($growthPelamar) }}">
-                        {{ growthIcon($growthPelamar) }} {{ $growthPelamar }}%
-                    </span>
                 </div>
             </div>
 
@@ -94,10 +74,6 @@
                 <h3 class="text-gray-700 text-sm font-medium mb-2">Perusahaan</h3>
                 <div class="flex items-center gap-2">
                     <span class="text-2xl font-bold text-gray-900">{{ $totalPerusahaan }}</span>
-
-                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ growthClass($growthPerusahaan) }}">
-                        {{ growthIcon($growthPerusahaan) }} {{ $growthPerusahaan }}%
-                    </span>
                 </div>
             </div>
 
@@ -107,10 +83,6 @@
                 <h3 class="text-gray-700 text-sm font-medium mb-2">Admin</h3>
                 <div class="flex items-center gap-2">
                     <span class="text-2xl font-bold text-gray-900">{{ $totalAdmin }}</span>
-
-                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ growthClass($growthAdmin) }}">
-                        {{ growthIcon($growthAdmin) }} {{ $growthAdmin }}%
-                    </span>
                 </div>
             </div>
 
@@ -120,10 +92,6 @@
                 <h3 class="text-gray-700 text-sm font-medium mb-2">Super Admin</h3>
                 <div class="flex items-center gap-2">
                     <span class="text-2xl font-bold text-gray-900">{{ $totalSuperAdmin }}</span>
-
-                    <span class="px-2 py-0.5 rounded-full text-xs font-semibold {{ growthClass($growthSuperAdmin) }}">
-                        {{ growthIcon($growthSuperAdmin) }} {{ $growthSuperAdmin }}%
-                    </span>
                 </div>
             </div>
 
