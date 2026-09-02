@@ -6,24 +6,24 @@
         {{-- Top Title Bar --}}
         <div class="border-b-2 border-[#00509d] bg-white py-4 mb-8">
             <h1 class="text-center font-bold text-[#00509d] text-lg md:text-xl">
-                Lowongan Tersimpan
+                Lamaran Kerja
             </h1>
         </div>
 
         @guest
-            {{-- TAMPILAN BELUM LOGIN (GUEST) SESUAI FIGMA --}}
+            {{-- TAMPILAN BELUM LOGIN SESUAI FIGMA (Lowongan Tersimpan - Belum Login.png) --}}
             <div class="max-w-md mx-auto px-4 py-16 text-center flex flex-col items-center justify-center min-h-[50vh]">
-                {{-- Icon --}}
+                {{-- Briefcase Icon in Blue --}}
                 <div class="w-24 h-24 mb-6 flex items-center justify-center text-[#00509d]">
                     <svg class="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
-                        <polyline points="9 10 11 12 15 8"></polyline>
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
                     </svg>
                 </div>
 
                 {{-- Message --}}
                 <p class="text-[#00509d] font-bold text-base md:text-lg leading-relaxed mb-8 max-w-xs">
-                    Simpan lowongan pekerjaan favorit anda untuk dilamar nanti
+                    Lacak semua status lamaran anda dengan mudah
                 </p>
 
                 {{-- Action Buttons --}}
@@ -39,12 +39,12 @@
                 </div>
             </div>
         @else
-            {{-- TAMPILAN SUDAH LOGIN SESUAI FIGMA --}}
+            {{-- TAMPILAN SUDAH LOGIN --}}
             <div class="max-w-6xl mx-auto px-4 sm:px-6">
-                @if ($simpanlowongan && $simpanlowongan->count() > 0)
+                @if (isset($lamaranList) && $lamaranList->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-10">
-                        @foreach ($simpanlowongan as $item)
-                            @php $lowongan = $item->lowongan; @endphp
+                        @foreach ($lamaranList as $item)
+                            @php $lowongan = $item->lowongan_perusahaan; @endphp
                             @if ($lowongan)
                                 <div class="h-full cursor-pointer"
                                     onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $lowongan->perusahaan->slug ?? 'perusahaan', 'lowongan' => $lowongan->slug ?? $lowongan->id]) }}'">
@@ -53,22 +53,13 @@
                             @endif
                         @endforeach
                     </div>
-
-                    @if ($simpanlowongan->count() > 6)
-                        <div class="flex justify-center mt-8 mb-12">
-                            <button class="bg-[#004e98] hover:bg-[#003d7a] text-white font-bold px-8 py-3 rounded-lg shadow-sm hover:shadow transition text-sm">
-                                Muat lebih banyak....
-                            </button>
-                        </div>
-                    @endif
                 @else
-                    {{-- Kosong Setelah Login --}}
                     <div class="max-w-md mx-auto px-4 py-16 text-center flex flex-col items-center justify-center min-h-[50vh]">
                         <div class="w-20 h-20 mb-4 flex items-center justify-center text-slate-300">
-                            <i class="ph ph-bookmark-simple text-6xl"></i>
+                            <i class="ph ph-briefcase text-6xl"></i>
                         </div>
-                        <h3 class="text-slate-700 font-bold text-base mb-1">Belum Ada Lowongan Tersimpan</h3>
-                        <p class="text-slate-500 text-xs md:text-sm mb-6">Simpan lowongan kerja yang menarik perhatian Anda untuk dilamar nanti.</p>
+                        <h3 class="text-slate-700 font-bold text-base mb-1">Belum Ada Lamaran Kerja</h3>
+                        <p class="text-slate-500 text-xs md:text-sm mb-6">Anda belum mengajukan lamaran ke lowongan pekerjaan apapun.</p>
                         <a href="{{ route('beranda') }}"
                             class="bg-[#00509d] hover:bg-[#003d7a] text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm shadow-sm transition">
                             Cari Lowongan Sekarang

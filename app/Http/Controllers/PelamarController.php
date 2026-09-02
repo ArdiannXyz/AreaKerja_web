@@ -286,7 +286,13 @@ class PelamarController extends Controller
 
     public function lowongansimpanform()
     {
-        $pelamar = Auth::user()->pelamar;
+        $user = Auth::user();
+        $pelamar = $user?->pelamar;
+
+        if (!$pelamar) {
+            $simpanlowongan = collect();
+            return view('non-user.lowongan-tersimpan', compact('simpanlowongan'));
+        }
 
         $simpanlowongan = PelamarLowongan::with('lowongan.perusahaan')
             ->where('pelamar_id', $pelamar->id)
@@ -302,6 +308,23 @@ class PelamarController extends Controller
             ->get();
 
         return view('non-user.lowongan-tersimpan', compact('simpanlowongan'));
+    }
+
+    public function lamaranKerja()
+    {
+        $user = Auth::user();
+        $pelamar = $user?->pelamar;
+        $lamaranList = collect();
+
+        if ($pelamar) {
+            $lamaranList = PelamarLowongan::with('lowongan_perusahaan.perusahaan')
+                ->where('pelamar_id', $pelamar->id)
+                ->where('status', '!=', 'saved')
+                ->latest()
+                ->get();
+        }
+
+        return view('non-user.lamaran-kerja', compact('lamaranList'));
     }
 
 

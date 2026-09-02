@@ -1,6 +1,36 @@
 @extends('layouts.index')
 @section('content')
 
+@guest
+    <div class="bg-white min-h-screen text-slate-800 pt-20 pb-20">
+        {{-- Top Title Bar --}}
+        <div class="border-b-2 border-[#00509d] bg-white py-4 mb-8">
+            <h1 class="text-center font-bold text-[#00509d] text-lg md:text-xl">
+                Profil
+            </h1>
+        </div>
+
+        {{-- TAMPILAN BELUM LOGIN SESUAI FIGMA (Profil - Belum Login.png) --}}
+        <div class="max-w-md mx-auto px-4 py-20 text-center flex flex-col items-center justify-center min-h-[50vh]">
+            {{-- Message --}}
+            <p class="text-[#00509d] font-bold text-base md:text-lg leading-relaxed mb-10 max-w-xs">
+                Siapkan CV mu dengan melengkapi data diri untuk kemudahan dalam melamar pekerjaan
+            </p>
+
+            {{-- Action Buttons --}}
+            <div class="flex items-center justify-center gap-4 w-full max-w-xs">
+                <a href="{{ route('login') }}"
+                    class="flex-1 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm shadow-sm transition">
+                    Masuk
+                </a>
+                <a href="{{ route('register') }}"
+                    class="flex-1 border-2 border-[#00509d] text-[#00509d] hover:bg-[#00509d] hover:text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm transition">
+                    Daftar
+                </a>
+            </div>
+        </div>
+    </div>
+@else
     <h2 class="text-xl font-semibold mb-6 mt-28 ml-12 text-gray-800">Profil Akun</h2>
     <div class="bg-white mx-12 pb-16 mb-12">
         <!-- Header: Avatar & Tombol Aksi View -->
@@ -24,7 +54,7 @@
                             @if (optional($pelamar)->kategori === 'kandidat aktif')
                                 <div class="absolute bottom-1 right-1 z-20">
                                     <div class="relative group bg-white rounded-full">
-                                        <img src="{{ asset('images/logoarea.png') }}" class="h-10 w-11" alt="Badge Areakerja">
+                                        <img src="{{ asset('images/logo_area_kerja_biru.png') }}" class="h-10 w-11 object-contain" alt="Badge Areakerja">
                                         <div class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-56 bg-gray-200 text-gray-800 text-xs rounded-md px-3 py-2 opacity-0 invisible shadow-lg group-hover:opacity-100 group-hover:visible transition duration-200 z-50 text-center">
                                             Badge Areakerja diberikan kepada pengguna yang telah resmi menjadi <strong>Kandidat Areakerja</strong>.
                                         </div>
@@ -386,6 +416,7 @@
     @include('non-user.profile.skill.modal-show')
     @include('non-user.profile.kerja.modal-show')
     @include('non-user.profile.pendidikan.modal-show')
+@endguest
 
     @include('layouts.footer')
 

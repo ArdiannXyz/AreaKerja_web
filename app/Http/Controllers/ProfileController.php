@@ -14,8 +14,7 @@ class ProfileController extends Controller
     public function index()
     {
         $user = auth()->user();
-
-        $pelamar = Pelamar::where('user_id', $user->id)->first();
+        $pelamar = $user ? Pelamar::where('user_id', $user->id)->first() : null;
 
         return view('non-user.profile.profile', compact('pelamar'));
     }
