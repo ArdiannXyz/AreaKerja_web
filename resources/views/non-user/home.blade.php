@@ -1,45 +1,45 @@
 @extends('layouts.index')
 @section('content')
 
-    <div class="bg-slate-100 min-h-screen text-slate-800">
+    <div class="bg-white min-h-screen text-slate-800">
 
         {{-- Hero Header Section --}}
-        <section class="bg-[#ff7a00] text-white pt-28 pb-16 px-4 sm:px-6 relative overflow-hidden">
+        <section class="bg-[#0054a6] md:bg-gradient-to-b md:from-[#0054a6] md:to-[#005eb8] text-white pt-24 md:pt-28 pb-14 md:pb-16 px-4 sm:px-6 relative overflow-hidden">
             <div class="max-w-5xl mx-auto relative z-10 text-center">
 
                 {{-- Title & Subtitle --}}
-                <div class="mb-8">
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-white leading-tight drop-shadow-sm">
-                        Temukan Karir Impian Anda di areakerja.com
+                <div class="mb-6 md:mb-8">
+                    <h1 class="text-2xl sm:text-3xl md:text-5xl font-bold text-white leading-tight drop-shadow-sm">
+                        Temukan Karir Impian Anda<br class="hidden sm:inline"> di areakerja.com
                     </h1>
-                    <p class="text-white/90 text-sm md:text-base mt-3 font-medium max-w-2xl mx-auto leading-relaxed">
-                        Ribuan lowongan kerja terbaru dari perusahaan terverifikasi di indonesia siap anda lamar hari ini
+                    <p class="text-white/90 text-xs sm:text-sm md:text-base mt-3 font-normal max-w-2xl mx-auto leading-relaxed">
+                        Ribuan lowongan kerja terbaru dari perusahaan terverifikasi di indonesia<br class="hidden sm:inline"> siap anda lamar hari ini
                     </p>
                 </div>
 
                 {{-- Search Bar Container --}}
-                <div class="w-full flex justify-center mb-6">
+                <div class="w-full flex justify-center mb-4">
                     <div class="w-full max-w-4xl">
                         <form action="{{ route('lowongan.search') }}" method="GET">
-                            <div class="bg-white p-2 md:p-2.5 rounded-2xl shadow-2xl flex flex-col md:flex-row items-center gap-2">
+                            <div class="bg-white p-1.5 md:p-2 rounded-2xl shadow-xl flex flex-col md:flex-row items-center gap-1.5 md:gap-2">
 
                                 {{-- Posisi / Kata Kunci --}}
-                                <div class="flex items-center gap-3 px-4 py-2 w-full md:w-1/2">
-                                    <i class="ph ph-magnifying-glass text-xl text-slate-400"></i>
+                                <div class="flex items-center gap-2.5 px-3 py-1.5 w-full md:w-1/2">
+                                    <i class="ph ph-magnifying-glass text-lg text-slate-400"></i>
                                     <input type="text" name="posisi" value="{{ request('posisi') }}"
                                         placeholder="Posisi lowongan, kata kunci, ..."
-                                        class="w-full border-none focus:ring-0 text-xs md:text-sm text-slate-800 placeholder-slate-400 bg-transparent font-medium">
+                                        class="w-full border-none focus:ring-0 text-xs md:text-sm text-slate-800 placeholder-slate-400 bg-transparent font-medium p-0">
                                 </div>
 
                                 {{-- Separator --}}
                                 <div class="hidden md:block h-6 w-px bg-slate-200"></div>
 
                                 {{-- Lokasi --}}
-                                <div class="flex items-center gap-3 px-4 py-2 w-full md:w-1/2">
-                                    <i class="ph ph-map-pin text-xl text-slate-400"></i>
+                                <div class="flex items-center gap-2.5 px-3 py-1.5 w-full md:w-1/2">
+                                    <i class="ph ph-map-pin text-lg text-slate-400"></i>
                                     <input type="text" name="lokasi" value="{{ request('lokasi') }}"
-                                        placeholder="Kota, provinsi kode pos, eta..."
-                                        class="w-full border-none focus:ring-0 text-xs md:text-sm text-slate-800 placeholder-slate-400 bg-transparent font-medium">
+                                        placeholder="Kota, provinsi, kode pos, eta..."
+                                        class="w-full border-none focus:ring-0 text-xs md:text-sm text-slate-800 placeholder-slate-400 bg-transparent font-medium p-0">
                                 </div>
 
                                 <input type="hidden" name="kategori" id="kategoriInput">
@@ -47,7 +47,7 @@
 
                                 {{-- Button Search --}}
                                 <button type="submit"
-                                    class="w-full md:w-auto bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs md:text-sm px-6 py-3 rounded-xl shadow-md transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer border border-orange-600">
+                                    class="w-full md:w-auto bg-[#004e98] hover:bg-[#003d7a] text-white font-bold text-xs md:text-sm px-6 py-2.5 md:py-3 rounded-xl shadow-sm transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer">
                                     <span>Cari Lowongan Kerja</span>
                                 </button>
 
@@ -57,15 +57,9 @@
                 </div>
 
                 {{-- Tagline under search bar --}}
-                <p class="text-xs text-white/90 font-medium mb-4">
+                <p class="text-[11px] md:text-xs text-white/90 font-normal">
                     Lamar Pekerjaan Kamu - Dengan waktu dan langkah yang cepat
                 </p>
-
-                {{-- Quick Nav Pills (Matching Figma) --}}
-                <div class="flex items-center justify-center gap-6 text-[11px] font-bold tracking-wider uppercase text-white/80">
-                    <span class="hover:text-white transition cursor-pointer">UMPAN LOWONGAN</span>
-                    <span class="hover:text-white transition cursor-pointer">PENCARIAN BARU - BARU INI</span>
-                </div>
 
             </div>
         </section>
@@ -79,7 +73,7 @@
                     <!-- TAB LOWONGAN KERJA -->
                     <button @click="tab = 'umpan'"
                         :class="tab === 'umpan'
-                            ? 'pb-3 border-b-4 border-orange-500 text-orange-600 font-extrabold text-base md:text-lg'
+                            ? 'pb-3 border-b-4 border-[#00509d] text-[#00509d] font-bold text-base md:text-lg'
                             : 'pb-3 text-slate-400 hover:text-slate-600 font-bold text-base md:text-lg transition'">
                         Lowongan Kerja
                     </button>
@@ -87,7 +81,7 @@
                     <!-- TAB PALING DICARI -->
                     <button @click="tab = 'riwayat'"
                         :class="tab === 'riwayat'
-                            ? 'pb-3 border-b-4 border-orange-500 text-orange-600 font-extrabold text-base md:text-lg'
+                            ? 'pb-3 border-b-4 border-[#00509d] text-[#00509d] font-bold text-base md:text-lg'
                             : 'pb-3 text-slate-400 hover:text-slate-600 font-bold text-base md:text-lg transition'">
                         Paling Dicari
                     </button>
@@ -98,7 +92,7 @@
             <div x-show="tab === 'riwayat'" x-cloak x-transition>
                 <div class="flex justify-between items-center mb-6 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
                     <h3 class="text-sm font-semibold text-slate-600 flex items-center gap-2">
-                        <i class="ph ph-clock-counter-clockwise text-orange-500 text-lg"></i>
+                        <i class="ph ph-clock-counter-clockwise text-[#00509d] text-lg"></i>
                         Riwayat pencarian Anda
                     </h3>
 
@@ -114,7 +108,7 @@
                     @if (!empty($riwayat) && count($riwayat) > 0)
                         @foreach ($riwayat as $r)
                             <h4 class="font-bold text-base text-slate-800 mb-3 flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 bg-orange-500 rounded-full"></span>
+                                <span class="w-2.5 h-2.5 bg-[#00509d] rounded-full"></span>
                                 {{ $r['posisi'] ?: 'Nama Lowongan' }} <span class="text-slate-400 font-normal">•</span> {{ $r['lokasi'] ?: 'Lokasi apapun' }}
                             </h4>
 
@@ -172,9 +166,8 @@
                     @if (count($Data) > 6)
                         <div class="flex justify-center mt-8">
                             <a href="{{ route('lowongan.search') }}"
-                                class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-8 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 text-xs sm:text-sm inline-flex items-center justify-center gap-2 hover:scale-[1.02]">
-                                <span>Muat lebih banyak...</span>
-                                <i class="ph ph-arrow-right font-bold text-sm"></i>
+                                class="bg-[#004e98] hover:bg-[#003d7a] text-white font-bold px-8 py-3 rounded-lg shadow-sm hover:shadow transition-all duration-200 text-xs sm:text-sm inline-flex items-center justify-center gap-2">
+                                <span>Muat lebih banyak....</span>
                             </a>
                         </div>
                     @endif
@@ -197,14 +190,14 @@
     <script>
         function resetKategoriUI() {
             document.querySelectorAll('.kategori-btn').forEach(el => {
-                el.classList.remove('bg-orange-500', 'border-orange-500', 'text-white', 'shadow-md');
+                el.classList.remove('bg-[#00509d]', 'border-[#00509d]', 'text-white', 'shadow-md');
                 el.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
             });
         }
 
         function resetJenisUI() {
             document.querySelectorAll('.jenis-btn').forEach(el => {
-                el.classList.remove('bg-orange-500', 'border-orange-500', 'text-white', 'shadow-md');
+                el.classList.remove('bg-[#00509d]', 'border-[#00509d]', 'text-white', 'shadow-md');
                 el.classList.add('bg-slate-50', 'border-slate-200', 'text-slate-700');
             });
         }
@@ -221,7 +214,7 @@
 
             resetKategoriUI();
             btn.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
-            btn.classList.add('bg-orange-500', 'border-orange-500', 'text-white', 'shadow-md');
+            btn.classList.add('bg-[#00509d]', 'border-[#00509d]', 'text-white', 'shadow-md');
             input.value = value;
         }
 
@@ -237,7 +230,7 @@
 
             resetJenisUI();
             btn.classList.remove('bg-slate-50', 'border-slate-200', 'text-slate-700');
-            btn.classList.add('bg-orange-500', 'border-orange-500', 'text-white', 'shadow-md');
+            btn.classList.add('bg-[#00509d]', 'border-[#00509d]', 'text-white', 'shadow-md');
             input.value = value;
         }
 

@@ -182,7 +182,11 @@ Route::controller(PelamarController::class)->middleware('CheckUserStatus')->grou
     Route::get('/pelamar/beranda', 'index')->name('pelamar.beranda');
     Route::get('/pelamar/detail-lowongan/{perusahaan}/{lowongan}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
     Route::get('/pelamar/daftar-kandidat', 'daftar_kandidat')->name('pelamar.daftar-kandidat');
+    Route::get('/lowongan-tersimpan', 'lowongansimpanform')->name('lowongan.tersimpan');
+    Route::get('/lamaran-kerja', 'lamaranKerja')->name('pelamar.lamaran-kerja');
 });
+
+Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index')->middleware('CheckUserStatus');
 
 // EVENT UNTUK NON USER, PELAMAR & KANDIDAT
 Route::controller(EventController::class)->group(function () {
@@ -209,7 +213,6 @@ Route::prefix('pelamar')->middleware('auth', 'role:pelamar', 'CheckUserStatus')-
         //simpan lowongan
         Route::post('/simpan-lowongan', 'store')->name('simpan-lowongan.store');
         Route::delete('/simpan-lowongan/{id}', 'destroy')->name('simpan-lowongan.destroy');
-        Route::get('/lowongan-tersimpan', 'lowongansimpanform')->name('lowongan.tersimpan');
 
         //detail lowongan
 
@@ -236,7 +239,6 @@ Route::prefix('pelamar')->middleware('auth', 'role:pelamar', 'CheckUserStatus')-
     //PROFILE CONTROLLER
     Route::controller(ProfileController::class)->group(function () {
         //profile
-        Route::get('/profile', 'index')->name('profile.index');
         Route::get('/edit/profile', 'edit')->name('profile.edit');
         Route::put('/update/profile/{pelamar:id}', 'update_profile')->name('profile.update');
         Route::delete('/delete/profile/{pelamar:id}', 'destroy_profile')->name('profile.destroy');
