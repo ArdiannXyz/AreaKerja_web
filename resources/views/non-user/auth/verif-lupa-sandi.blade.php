@@ -1,13 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reset Password | Areakerja</title>
+    <title>Atur Ulang Kata Sandi | AreaKerja</title>
+    @vite('resources/css/app.css')
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_biru.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         body {
@@ -16,253 +21,251 @@
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <div class="flex min-h-screen w-screen overflow-x-hidden">
+<body class="bg-slate-50 min-h-screen">
+    <div class="flex flex-col lg:flex-row min-h-screen">
 
-        <!-- Background kiri -->
-        <section class="relative lg:h-auto w-2/4 hidden lg:block">
-            <img src="{{ asset('images/gambar2.jpg') }}" alt="Background"
+        <!-- ================= PANEL KIRI (BANNER DESKTOP) ================= -->
+        <section class="relative lg:w-1/2 hidden lg:flex flex-col justify-between overflow-hidden bg-slate-900 text-white p-12">
+            <!-- Background Image -->
+            <img src="{{ asset('images/auth_team.png') }}" alt="Team Background"
                 class="absolute inset-0 w-full h-full object-cover">
-            <div class="absolute inset-0 bg-black bg-opacity-50"></div>
 
-            <div class="relative z-10 flex flex-col items-center justify-center h-full text-center text-white px-6">
-                <h1 class="text-3xl font-bold mt-[-45%] mb-10">Hallo, Jobseeker</h1>
-                <p class="text-sm mb-10">Untuk tetap terhubung dengan kami, silakan<br> masuk dengan informasi pribadi
-                    Anda</p>
-                <a href="{{ route('login') }}"
-                    class="px-20 py-4 border border-white rounded-full hover:bg-white hover:text-black transition">
-                    Masuk
+            <!-- Subtle Overlay -->
+            <div class="absolute inset-0 bg-black/20"></div>
+
+            <!-- Center Content -->
+            <div class="relative z-10 text-center max-w-md mx-auto my-auto py-12">
+                <h1 class="text-3xl sm:text-4xl font-bold mb-4 tracking-tight leading-tight">Hallo, Pekerja</h1>
+                <p class="text-sm text-white/90 mb-8 leading-relaxed">
+                    untuk tetap terhubung dengan kami, silakan masuk dengan informasi pribadi Anda
+                </p>
+                <a href="{{ url('/login') }}"
+                    class="inline-block px-14 py-3 border-2 border-white text-white font-bold rounded-full hover:bg-white hover:text-slate-900 transition duration-300 text-sm tracking-wider uppercase shadow-md">
+                    MASUK
                 </a>
+            </div>
+
+            <!-- Bottom Spacer -->
+            <div class="relative z-10 text-xs text-white/50 text-center">
+                © {{ date('Y') }} AreaKerja. All rights reserved.
             </div>
         </section>
 
-        <!-- Form Reset Password -->
-        <div class="flex w-full lg:w-4/5 bg-white items-center justify-center">
-            <div class="w-full max-w-md px-6 py-10">
-                <h2 class="text-2xl font-semibold text-orange-600 mb-2">Lupa Kata Sandi</h2>
-                <p class="text-gray-600 text-sm mb-6">Masukkan kata sandi baru.<br>Kata sandi harus mengandung:</p>
-
-                <!-- Syarat Password -->
-                <!-- Indikator Password -->
-                <div class="grid grid-cols-5 gap-4 text-center mb-6 text-xs">
-                    <div id="rule-length" class="text-red-500">
-                        <span class="font-bold">8+</span><br>Karakter
-                    </div>
-                    <div id="rule-uppercase" class="text-red-500">
-                        <span class="font-bold">AA</span><br>Huruf Besar
-                    </div>
-                    <div id="rule-lowercase" class="text-red-500">
-                        <span class="font-bold">aa</span><br>Huruf Kecil
-                    </div>
-                    <div id="rule-number" class="text-red-500">
-                        <span class="font-bold">123</span><br>Angka
-                    </div>
-                    <div id="rule-symbol" class="text-red-500">
-                        <span class="font-bold">@#$</span><br>Simbol
-                    </div>
-                </div>
+        <!-- ================= PANEL KANAN (FORM RESET PASSWORD) ================= -->
+        <div class="flex w-full lg:w-1/2 bg-white items-center justify-center min-h-screen py-8 sm:py-12 px-6 sm:px-12">
+            <div class="w-full max-w-md flex flex-col justify-between min-h-[500px] sm:min-h-0 sm:justify-center">
 
 
-                <form id="reset-passwordForm" action="{{ route('password.update.pelamar', ['token' => $token]) }}"
-                    method="POST" class="space-y-4">
-                    @csrf
 
-                    <input type="hidden" name="email" value="{{ $email }}">
-                    <input type="hidden" name="token" value="{{ $token }}">
+                <!-- Form Container -->
+                <div class="my-auto sm:my-0">
+                    <!-- Judul -->
+                    <h2 class="text-2xl sm:text-3xl font-bold text-center text-[#00509d] mb-1">Lupa Kata Sandi</h2>
+                    <p class="text-xs sm:text-sm text-slate-500 text-center mb-8">
+                        Masukkan kata sandi baru untuk akun Anda.
+                    </p>
 
-                    <!-- Password Baru -->
+                    <form id="reset-passwordForm" action="{{ route('password.update.pelamar', ['token' => $token]) }}" method="POST" class="space-y-4">
+                        @csrf
+                        <input type="hidden" name="email" value="{{ $email }}">
+                        <input type="hidden" name="token" value="{{ $token }}">
 
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Kata Sandi Baru</label>
-                        <input type="password" id="password" name="password" placeholder="Kata Sandi"
-                            class="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500" required>
-                    </div>
-
-
-                    <!-- Konfirmasi Password -->
-                    <div>
-                        <label class="block text-sm font-medium mb-1">Konfirmasi Kata Sandi</label>
-                        <input type="password" id="password_confirmation" name="password_confirmation"
-                            placeholder="Kata Sandi"
-                            class="w-full border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500" required>
-                    </div>
-
-                    {{-- <!-- Indikator -->
-                    <div class="text-sm text-gray-600 mb-4">
-                        <ul class="space-y-1">
-                            <li id="length" class="text-red-500">❌ Minimal 8 karakter</li>
-                            <li id="uppercase" class="text-red-500">❌ Huruf Besar (A-Z)</li>
-                            <li id="lowercase" class="text-red-500">❌ Huruf Kecil (a-z)</li>
-                            <li id="number" class="text-red-500">❌ Angka (0-9)</li>
-                            <li id="symbol" class="text-red-500">❌ Simbol (@$!%*?&#)</li>
-                        </ul>
-                    </div> --}}
-
-                    <!-- Submit -->
-                    <button type="submit"
-                        class="w-full bg-orange-600 text-white py-2 rounded-md hover:bg-orange-700 transition">
-                        Ulang Kata Sandi
-                    </button>
-                </form>
-
-                {{-- modal lupa pw --}}
-                <div id="successModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50">
-                    <!-- Konten Modal -->
-                    <div
-                        class="relative bg-white rounded-2xl shadow-lg w-[90%] max-w-md p-8 text-center animate-fadeIn">
-
-                        <!-- Tombol X -->
-                        <button onclick="closeModal()"
-                            class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-xl font-bold">
-                            &times;
-                        </button>
-
-                        <!-- Judul -->
-                        <h2 class="text-2xl font-bold mb-3">
-                            Password Anda Berhasil Diperbarui
-                        </h2>
-
-                        <!-- Pesan -->
-                        <p class="text-gray-700 mb-6">
-                            Kata sandi akun Anda telah berhasil diubah.
-                            Silakan masuk kembali untuk melanjutkan.
-                        </p>
-
-                        <!-- Gambar ilustrasi -->
-                        <div class="flex justify-center mb-6">
-                            <img src="{{ asset('images/orang.png') }}" alt="Ilustrasi" class="w-30 h-28">
+                        <!-- Kata Sandi Baru -->
+                        <div x-data="{ showPass: false }">
+                            <div class="relative flex items-center">
+                                <input :type="showPass ? 'text' : 'password'" id="password" name="password" placeholder="Kata Sandi Baru" required
+                                    class="w-full px-4 py-3.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] outline-none transition pr-11 placeholder:text-slate-400">
+                                <button type="button" @click="showPass = !showPass" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 transition cursor-pointer">
+                                    <i :class="showPass ? 'ph ph-eye-slash' : 'ph ph-eye'" class="text-xl leading-none"></i>
+                                </button>
+                            </div>
+                            <!-- Inline Alert Text -->
+                            <p id="password-error" class="hidden text-rose-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                                <i class="ph ph-warning-circle text-sm shrink-0"></i>
+                                <span id="password-error-text"></span>
+                            </p>
                         </div>
 
-                        <!-- Tombol aksi -->
-                        <div class="flex justify-center gap-6">
-                            <button id="goLogin"
-                                class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg">
-                                Masuk
+                        <!-- Konfirmasi Kata Sandi -->
+                        <div x-data="{ showPassConfirm: false }">
+                            <div class="relative flex items-center">
+                                <input :type="showPassConfirm ? 'text' : 'password'" id="password_confirmation" name="password_confirmation" placeholder="Ulangi Kata Sandi" required
+                                    class="w-full px-4 py-3.5 border border-slate-300 rounded-xl text-sm focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] outline-none transition pr-11 placeholder:text-slate-400">
+                                <button type="button" @click="showPassConfirm = !showPassConfirm" class="absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400 hover:text-slate-600 transition cursor-pointer">
+                                    <i :class="showPassConfirm ? 'ph ph-eye-slash' : 'ph ph-eye'" class="text-xl leading-none"></i>
+                                </button>
+                            </div>
+                            <!-- Inline Alert Text -->
+                            <p id="confirm-error" class="hidden text-rose-500 text-xs mt-1.5 flex items-center gap-1 font-medium">
+                                <i class="ph ph-warning-circle text-sm shrink-0"></i>
+                                <span id="confirm-error-text"></span>
+                            </p>
+                        </div>
+
+                        <div class="pt-3">
+                            <button type="submit" id="submit-btn"
+                                class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-bold py-3.5 rounded-xl shadow-md transition duration-200 text-sm tracking-normal cursor-pointer">
+                                Simpan Kata Sandi
                             </button>
                         </div>
-                    </div>
+
+                        <div class="text-center pt-2">
+                            <a href="{{ route('login') }}" class="text-xs sm:text-sm text-slate-500 hover:text-[#00509d] font-semibold transition">
+                                Batal
+                            </a>
+                        </div>
+                    </form>
                 </div>
-                <div class="text-center mt-4">
-                    <div class="text-center mt-4">
-                        <a href="{{ route('login') }}" class="text-orange-600 font-medium hover:underline">Kembali</a>
-                    </div>
-                </div>
+
+                <!-- Spacer on mobile -->
+                <div class="h-6 sm:hidden"></div>
+
             </div>
         </div>
+
     </div>
 
-
-
-    <!-- Script Validasi Password -->
+    <!-- Form Inline Validation & Submission Script -->
     <script>
-        const password = document.getElementById('password');
+        const form = document.getElementById("reset-passwordForm");
+        const passwordInput = document.getElementById("password");
+        const confirmInput = document.getElementById("password_confirmation");
+        const submitBtn = document.getElementById("submit-btn");
 
-        password.addEventListener('input', function() {
-            const val = password.value;
+        const passError = document.getElementById("password-error");
+        const passErrorText = document.getElementById("password-error-text");
+        const confError = document.getElementById("confirm-error");
+        const confErrorText = document.getElementById("confirm-error-text");
 
-            // Aturan
-            document.getElementById('rule-length').className = val.length >= 8 ? "text-green-500" : "text-red-500";
-            document.getElementById('rule-uppercase').className = /[A-Z]/.test(val) ? "text-green-500" :
-                "text-red-500";
-            document.getElementById('rule-lowercase').className = /[a-z]/.test(val) ? "text-green-500" :
-                "text-red-500";
-            document.getElementById('rule-number').className = /[0-9]/.test(val) ? "text-green-500" :
-                "text-red-500";
-            document.getElementById('rule-symbol').className = /[@$!%*?&#]/.test(val) ? "text-green-500" :
-                "text-red-500";
-        });
-    </script>
-    {{-- modal lupa pw --}}
-    <script>
-        document.getElementById("reset-passwordForm").addEventListener("submit", async function(e) {
+        function showPassError(msg) {
+            passErrorText.textContent = msg;
+            passError.classList.remove("hidden");
+            passwordInput.classList.add("border-rose-500", "focus:ring-rose-400", "focus:border-rose-500");
+            passwordInput.classList.remove("border-slate-300", "focus:ring-[#00509d]", "focus:border-[#00509d]");
+        }
+
+        function clearPassError() {
+            passError.classList.add("hidden");
+            passwordInput.classList.remove("border-rose-500", "focus:ring-rose-400", "focus:border-rose-500");
+            passwordInput.classList.add("border-slate-300", "focus:ring-[#00509d]", "focus:border-[#00509d]");
+        }
+
+        function showConfError(msg) {
+            confErrorText.textContent = msg;
+            confError.classList.remove("hidden");
+            confirmInput.classList.add("border-rose-500", "focus:ring-rose-400", "focus:border-rose-500");
+            confirmInput.classList.remove("border-slate-300", "focus:ring-[#00509d]", "focus:border-[#00509d]");
+        }
+
+        function clearConfError() {
+            confError.classList.add("hidden");
+            confirmInput.classList.remove("border-rose-500", "focus:ring-rose-400", "focus:border-rose-500");
+            confirmInput.classList.add("border-slate-300", "focus:ring-[#00509d]", "focus:border-[#00509d]");
+        }
+
+        passwordInput.addEventListener("input", clearPassError);
+        confirmInput.addEventListener("input", clearConfError);
+
+        form.addEventListener("submit", async function(e) {
             e.preventDefault();
+            clearPassError();
+            clearConfError();
 
-            let formData = new FormData(this);
+            const password = passwordInput.value;
+            const confirm = confirmInput.value;
 
-            let response = await fetch(this.action, {
-                method: "POST",
-                headers: {
-                    "X-CSRF-TOKEN": document.querySelector('input[name="_token"]').value,
-                    "Accept": "application/json",
-                    "X-Requested-With": "XMLHttpRequest"
-                },
-                body: formData
-            });
-
-            let data = await response.json();
-
-            // =============================
-            //  Jika VALIDASI GAGAL
-            // =============================
-            if (data.errors) {
-                if (data.errors.password) {
-                    let list = "";
-                    data.errors.password.forEach(msg => {
-                        list += `<li style="text-align:center;">${msg}</li>`;
-                    });
-
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Password tidak valid',
-                        html: `<ul style="text-align:center; font-size:14px; list-style:none; padding:0;">${list}</ul>`,
-                        confirmButtonColor: '#d33'
-                    });
-
-                    return;
-                }
-
-
-                if (data.errors.email) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Email tidak valid',
-                        text: data.errors.email[0],
-                        confirmButtonColor: '#d33'
-                    });
-                    return;
-                }
+            // 1. Cek minimal 8 karakter
+            if (password.length < 8) {
+                showPassError("Kata sandi tidak boleh kurang dari 8 karakter.");
+                passwordInput.focus();
+                return;
             }
 
-            // =============================
-            //  Jika TOKEN SALAH
-            // =============================
-            if (data.success === false && data.message) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: data.message,
-                    confirmButtonColor: '#d33'
+            // 2. Cek minimal 1 huruf besar
+            if (!/[A-Z]/.test(password)) {
+                showPassError("Kata sandi harus mengandung minimal 1 huruf besar (A-Z).");
+                passwordInput.focus();
+                return;
+            }
+
+            // 3. Cek minimal 1 huruf kecil
+            if (!/[a-z]/.test(password)) {
+                showPassError("Kata sandi harus mengandung minimal 1 huruf kecil (a-z).");
+                passwordInput.focus();
+                return;
+            }
+
+            // 4. Cek minimal 1 angka
+            if (!/[0-9]/.test(password)) {
+                showPassError("Kata sandi harus mengandung minimal 1 angka (0-9).");
+                passwordInput.focus();
+                return;
+            }
+
+            // 5. Cek minimal 1 simbol unik
+            if (!/[@$!%*?&#]/.test(password)) {
+                showPassError("Kata sandi harus mengandung minimal 1 simbol unik (@$!%*?&#).");
+                passwordInput.focus();
+                return;
+            }
+
+            // 6. Cek konfirmasi kata sandi cocok
+            if (password !== confirm) {
+                showConfError("Ulangi kata sandi tidak cocok dengan kata sandi baru.");
+                confirmInput.focus();
+                return;
+            }
+
+            // Submit form via fetch / AJAX
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `
+                <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                Menyimpan...
+            `;
+
+            try {
+                const formData = new FormData(form);
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
                 });
-                return;
+
+                const data = await response.json();
+
+                if (response.ok && data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Kata Sandi Berhasil Diubah!',
+                        text: 'Silakan masuk kembali dengan kata sandi baru Anda.',
+                        confirmButtonText: 'MASUK',
+                        confirmButtonColor: '#00509d'
+                    }).then(() => {
+                        window.location.href = "{{ route('login') }}";
+                    });
+                } else {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Simpan Kata Sandi';
+
+                    if (data.errors && data.errors.password) {
+                        showPassError(data.errors.password[0]);
+                    } else if (data.message) {
+                        showPassError(data.message);
+                    }
+                }
+            } catch (err) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan Kata Sandi';
+                showPassError("Terjadi kesalahan sistem. Silakan coba lagi.");
             }
-
-            // =============================
-            //  Jika BERHASIL
-            // =============================
-            if (data.success) {
-                let modal = document.getElementById("successModal");
-                modal.classList.remove("hidden");
-                modal.classList.add("flex");
-                return;
-            }
-
-            // Jika error lain
-            Swal.fire({
-                icon: 'error',
-                title: 'Kesalahan',
-                text: 'Terjadi kesalahan, coba lagi.',
-                confirmButtonColor: '#d33'
-            });
-        });
-
-        document.getElementById("goLogin").addEventListener("click", function() {
-            window.location.href = "{{ route('login') }}";
         });
     </script>
-
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 </body>
 
 </html>

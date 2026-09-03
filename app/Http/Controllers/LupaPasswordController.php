@@ -61,12 +61,12 @@ class LupaPasswordController extends Controller
         ]);
 
         try {
-            Mail::raw("Kode OTP Anda adalah: {$otp}", function ($message) use ($user) {
+            Mail::send('emails.otp-verification', ['user' => $user, 'otp' => $otp], function ($message) use ($user) {
                 $message->to($user->email)
                     ->subject('Kode Verifikasi OTP - AreaKerja');
             });
         } catch (\Throwable $e) {
-            Log::info("OTP untuk {$user->email}: {$otp}");
+            Log::info("OTP untuk {$user->email}: {$otp} | Error: " . $e->getMessage());
         }
 
         return response()->json([
@@ -115,17 +115,16 @@ class LupaPasswordController extends Controller
         );
 
         try {
-            Mail::raw("Kode OTP Anda adalah: {$otp}", function ($message) use ($user) {
+            Mail::send('emails.otp-verification', ['user' => $user, 'otp' => $otp], function ($message) use ($user) {
                 $message->to($user->email)
                     ->subject('Kode Verifikasi OTP - AreaKerja');
             });
         } catch (\Throwable $e) {
-            Log::info("OTP untuk {$user->email}: {$otp}");
+            Log::info("OTP untuk {$user->email}: {$otp} | Error: " . $e->getMessage());
         }
 
         return redirect()->route('password.otp.form.pelamar', $token)
-            ->with('success', 'Kode OTP telah dikirim ke email Anda.')
-            ->with('dev_otp', $otp);
+            ->with('success', 'Kode OTP telah dikirim ke email Anda.');
     }
 
     public function showOtpForm_pelamar($token)
@@ -282,10 +281,14 @@ class LupaPasswordController extends Controller
         );
 
         //kirim email otp
-        Mail::raw("Kode OTP Anda adalah: {$otp}", function ($message) use ($user) {
-            $message->to($user->email)
-                ->subject('Kode Verifikasi OTP - AreaKerja');
-        });
+        try {
+            Mail::send('emails.otp-verification', ['user' => $user, 'otp' => $otp], function ($message) use ($user) {
+                $message->to($user->email)
+                    ->subject('Kode Verifikasi OTP - AreaKerja');
+            });
+        } catch (\Throwable $e) {
+            Log::info("OTP Perusahaan untuk {$user->email}: {$otp} | Error: " . $e->getMessage());
+        }
 
         return redirect()->route('password.otp.form.perusahaan', $token)->with('success', 'Kode OTP telah dikirim ke email Anda.');
     }

@@ -248,6 +248,9 @@
                 <a href="{{ url('/talent-hunter') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
                     Talent Hunter
                 </a>
+                <a href="{{ route('pelamar.event.index') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                    Event
+                </a>
                 <a href="{{ url('/pelamar/tips-kerja') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
                     Tips Kerja
                 </a>
@@ -322,6 +325,10 @@
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Talent Hunter
                         </a>
+                        <a href="{{ route('pelamar.event.index') }}" @click="openMenu = false"
+                            class="block py-2 hover:translate-x-1.5 transition duration-200">
+                            Event
+                        </a>
                         <a href="{{ url('/pelamar/tips-kerja') }}" @click="openMenu = false"
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Tips kerja
@@ -332,7 +339,7 @@
                         </a>
                         <a href="{{ url('/lowongan') }}" @click="openMenu = false"
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Lowongan kerja
+                            Pasang Lowongan
                         </a>
                     </nav>
 
