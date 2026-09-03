@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\EmailSubscriber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 use Symfony\Component\Mime\Email;
 use Illuminate\Support\Facades\View;
 use Spatie\Browsershot\Browsershot;
@@ -12,9 +14,30 @@ use App\Helpers\BrowserPath;
 
 class EmailSubController extends Controller
 {
+    private function ensureTable()
+    {
+        if (!Schema::hasTable('email_subscribers')) {
+            try {
+                Schema::create('email_subscribers', function ($table) {
+                    $table->id();
+                    $table->string('email')->unique();
+                    $table->boolean('is_active')->default(true);
+                    $table->unsignedBigInteger('pelamar_id')->nullable();
+                    $table->unsignedBigInteger('perusahaan_id')->nullable();
+                    $table->timestamps();
+
+                    $table->index('pelamar_id');
+                    $table->index('perusahaan_id');
+                });
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error('email_subscribers table create error: ' . $e->getMessage());
+            }
+        }
+    }
 
     public function index(Request $request)
     {
+        $this->ensureTable();
         $request->validate([
             'email' => 'required|email|unique:email_subscribers,email',
         ], [
@@ -52,6 +75,7 @@ class EmailSubController extends Controller
     //hal emailnya
     public function halEmail()
     {
+        $this->ensureTable();
         $subscribers = EmailSubscriber::with('pelamar.user', 'perusahaan.user')
             ->latest()
             ->get();
@@ -62,6 +86,7 @@ class EmailSubController extends Controller
 
     public function bulkDelete(Request $request)
     {
+        $this->ensureTable();
         $request->validate([
             'ids' => 'required|array',
             'ids.*' => 'exists:email_subscribers,id',
@@ -80,6 +105,7 @@ class EmailSubController extends Controller
 
     public function downloadPdf(Request $request)
     {
+        $this->ensureTable();
         if ($request->filled('ids')) {
             $subscribers = EmailSubscriber::with(['pelamar', 'perusahaan'])
                 ->whereIn('id', $request->ids)

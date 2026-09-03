@@ -32,8 +32,6 @@ class CleanInactiveLowongan extends Command
                 ->orWhere('last_activity', '<', now()->subMonths(6));
         })
             ->whereDoesntHave('pelamar')
-            ->whereDoesntHave('pembelianKandidat')
-            ->whereDoesntHave('simpanLowongans')
             ->delete();
 
         $this->info("{$count} lowongan tidak aktif berhasil dihapus.");

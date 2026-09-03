@@ -253,4 +253,15 @@ class EventController extends Controller
         }
         return view('admin.event.detail-event', compact('event'));
     }
+
+    public function updateStatus(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:buka,tutup,draft',
+        ]);
+
+        $event->update($validated);
+
+        return back()->with('success', 'Status event berhasil diperbarui.');
+    }
 }

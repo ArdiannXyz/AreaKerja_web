@@ -60,7 +60,11 @@ class CatatanCash extends Model
         return $this->belongsTo(DaftarBank::class, 'daftar_bank_id');
     }
 
-    public function perusahaan()
+    /**
+     *Accessor: mengambil perusahaan melalui relasi user.
+     * Bukan relasi Eloquent langsung — hanya shortcut convenience.
+     */
+    public function getPerusahaanAttribute()
     {
         return $this->user?->perusahaan;
     }

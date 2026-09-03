@@ -1,106 +1,143 @@
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+{{-- ============================================================
+    FOOTER PERUSAHAAN — AreaKerja
+    Footer khusus halaman dashboard & panel perusahaan
+    ============================================================ --}}
 
-<!-- Paksa semua teks pakai Poppins -->
 <style>
-    footer {
+    .ak-pfooter {
         font-family: 'Poppins', sans-serif;
+        background-color: #00509d;
+        color: #fff;
+    }
+    .ak-pfooter-link {
+        display: inline-block;
+        color: rgba(255, 255, 255, 0.72);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        text-decoration: none;
+        transition: color 0.18s ease, transform 0.18s ease;
+        padding: 0.1rem 0;
+    }
+    .ak-pfooter-link:hover,
+    .ak-pfooter-link:focus {
+        color: #ffffff;
+        transform: translateX(3px);
+        outline: none;
+    }
+    .ak-pfooter-heading {
+        font-size: 0.8125rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: rgba(255, 255, 255, 0.45);
+        margin-bottom: 1rem;
+    }
+    .ak-pfooter-social {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        color: rgba(255, 255, 255, 0.8);
+        transition: background 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+        text-decoration: none;
+    }
+    .ak-pfooter-social:hover {
+        background: rgba(255, 255, 255, 0.14);
+        border-color: rgba(255, 255, 255, 0.5);
+        color: #ffffff;
+        transform: translateY(-2px);
+    }
+    .ak-pfooter-bottom-link {
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.75rem;
+        text-decoration: none;
+        transition: color 0.18s ease;
+    }
+    .ak-pfooter-bottom-link:hover {
+        color: #ffffff;
     }
 </style>
 
-<!-- Footer -->
-<footer class="bg-orange-500 text-white px-8 md:px-16 py-10">
-    <div class="grid md:grid-cols-4 gap-8">
+<footer class="ak-pfooter" aria-label="Footer Perusahaan AreaKerja">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 lg:px-8 pt-12 pb-10">
 
-        <!-- Logo + Description -->
-        <div class="mt-[-10%]">
-            <div>
-                <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Logo" class="w-20 h-20 ">
+        {{-- Desktop Grid --}}
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
+
+            {{-- COL 1: Brand --}}
+            <div class="col-span-2 md:col-span-4 lg:col-span-2 space-y-5 pr-4">
+                <a href="{{ route('perusahaan.dashboard') }}" class="inline-block" aria-label="Dashboard Perusahaan">
+                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}"
+                         alt="AreaKerja Logo"
+                         class="h-7 w-auto object-contain">
+                </a>
+                <p class="text-white/70 text-sm leading-relaxed max-w-xs">
+                    Kelola lowongan, temukan kandidat terbaik, dan kembangkan tim Anda bersama AreaKerja.
+                </p>
+                {{-- Social Media --}}
+                <div class="flex items-center gap-2.5 pt-1">
+                    <a href="#" class="ak-pfooter-social" aria-label="Facebook AreaKerja" rel="noopener noreferrer">
+                        <i class="ph-fill ph-facebook-logo" style="font-size:16px;"></i>
+                    </a>
+                    <a href="#" class="ak-pfooter-social" aria-label="Instagram AreaKerja" rel="noopener noreferrer">
+                        <i class="ph-fill ph-instagram-logo" style="font-size:16px;"></i>
+                    </a>
+                    <a href="#" class="ak-pfooter-social" aria-label="Twitter / X AreaKerja" rel="noopener noreferrer">
+                        <i class="ph-fill ph-twitter-logo" style="font-size:16px;"></i>
+                    </a>
+                    <a href="#" class="ak-pfooter-social" aria-label="LinkedIn AreaKerja" rel="noopener noreferrer">
+                        <i class="ph-fill ph-linkedin-logo" style="font-size:16px;"></i>
+                    </a>
+                </div>
             </div>
-            <div class="text-sm leading-relaxed ">
-                <p class="mb-5">Lamar Pekerjaan Kamu - Dengan <br> waktu dan langkah yang cepat</p>
-                <p>Copyright © 2024 <br>areakerja.com</p>
+
+            {{-- COL 2: Lowongan --}}
+            <div class="space-y-1">
+                <p class="ak-pfooter-heading">Lowongan</p>
+                <ul class="space-y-2.5">
+                    <li><a href="{{ route('lowongan.saya.perusahaan') }}" class="ak-pfooter-link">Lowongan Saya</a></li>
+                    <li><a href="{{ route('paket.form') }}" class="ak-pfooter-link">Pasang Lowongan</a></li>
+                    <li><a href="{{ route('perusahaan.event.index') }}" class="ak-pfooter-link">Event</a></li>
+                </ul>
             </div>
-        </div>
 
-        <!-- Kategori -->
-        <div>
-            <h3 class="mb-4 text-xl">Kategori</h3>
-            <ul class="grid gap-y-3 text-sm">
-                <li><a href="#" class="hover:text-orange-200 transition">Beranda</a></li>
-                <li><a href="#" class="hover:text-orange-200 transition">Tips Kerja</a></li>
-                <li><a href="#" class="hover:text-orange-200 transition">Provinsi Lainnya</a></li>
-                <li><a href="#" class="hover:text-orange-200 transition">Pasang Lowongan</a></li>
-            </ul>
-        </div>
-
-<div class="flex gap-2">
-  <div class="grid grid-cols-2 gap-x-4 gap-y-2">
-    <!-- Facebook -->
-    <a href="#"
-      class="border-2 w-12 h-12 border-white rounded-md p-2 hover:bg-orange-600 transition duration-300 hover:scale-110">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-        <path
-          d="M22,12A10,10,0,1,0,9.74,21.92V14.89H7.1V12h2.64V9.79c0-2.6,1.54-4.04,3.9-4.04a15.87,15.87,0,0,1,2.3.2v2.53H14.9c-1.27,0-1.66.79-1.66,1.6V12h2.83l-.45,2.89H13.24v7A10,10,0,0,0,22,12Z" />
-      </svg>
-    </a>
-
-    <!-- LinkedIn -->
-    <a href="#"
-      class="border-2 w-12 h-12 border-white rounded-md p-2 hover:bg-orange-600 transition duration-300 hover:scale-110">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-        <path
-          d="M19 0h-14C2.2 0 0 2.2 0 5v14c0 2.8 2.2 5 5 5h14c2.8 0 5-2.2 5-5V5c0-2.8-2.2-5-5-5zm-8.7 19H7V9h3.3v10zm-1.6-11.5c-1.1 0-1.9-.9-1.9-2s.9-2 1.9-2 1.9.9 1.9 2-.8 2-1.9 2zm12.3 11.5h-3.3v-5.4c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V19h-3.3V9h3.2v1.4h.1c.4-.7 1.5-1.5 3-1.5 3.2 0 3.8 2.1 3.8 5.1V19z" />
-      </svg>
-    </a>
-
-    <!-- Instagram -->
-    <a href="#"
-      class="border-2 w-12 h-12 border-white rounded-md p-2 hover:bg-orange-600 transition duration-300 hover:scale-110">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-        <path
-          d="M7.75 2h8.5A5.75 5.75 0 0 1 22 7.75v8.5A5.75 5.75 0 0 1 16.25 22h-8.5A5.75 5.75 0 0 1 2 16.25v-8.5A5.75 5.75 0 0 1 7.75 2ZM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 1.5a3.5 3.5 0 1 1 0 7 3.5 3.5 0 0 1 0-7Zm5.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z" />
-      </svg>
-    </a>
-
-    <!-- Twitter -->
-    <a href="#"
-      class="border-2 w-12 h-12 border-white rounded-md p-2 hover:bg-orange-600 transition duration-300 hover:scale-110">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24">
-        <path
-          d="M22.46 6c-.77.35-1.6.58-2.46.69a4.21 4.21 0 0 0 1.84-2.32 8.27 8.27 0 0 1-2.65 1.02 4.15 4.15 0 0 0-7.06 3.78 11.76 11.76 0 0 1-8.54-4.33 4.15 4.15 0 0 0 1.28 5.55 4.1 4.1 0 0 1-1.88-.52v.05a4.15 4.15 0 0 0 3.32 4.06 4.22 4.22 0 0 1-1.88.07 4.15 4.15 0 0 0 3.87 2.88A8.33 8.33 0 0 1 2 19.54a11.75 11.75 0 0 0 6.36 1.86c7.63 0 11.8-6.32 11.8-11.8v-.54A8.37 8.37 0 0 0 22.46 6Z" />
-      </svg>
-    </a>
-  </div>
-</div>
-
-
-        <!-- Kontak -->
-        <div>
-            <h3 class="mb-4 text-xl">Kontak Kami</h3>
-            <div class="flex gap-2 text-sm">
-                <form class="overflow-hidden bg-white rounded-[10px]">
-                    <input type="email" placeholder="Email address"
-                        class="flex-1 px-4 py-2 text-black focus:outline-none">
-                </form>
-                <button type="submit"
-                    class="text-white border-2 border-gray-50  bg-orange-500 px-5 rounded-[10px]">Submit</button>
+            {{-- COL 3: Kandidat --}}
+            <div class="space-y-1">
+                <p class="ak-pfooter-heading">Kandidat</p>
+                <ul class="space-y-2.5">
+                    <li><a href="{{ route('perusahaan.kandidat.ak') }}" class="ak-pfooter-link">Cari Kandidat</a></li>
+                    <li><a href="{{ route('perusahaan.kandidat.saya') }}" class="ak-pfooter-link">Kandidat Saya</a></li>
+                    <li><a href="{{ route('talent-hunter.index') }}" class="ak-pfooter-link">Talent Hunter</a></li>
+                </ul>
             </div>
+
+            {{-- COL 4: Akun --}}
+            <div class="space-y-1">
+                <p class="ak-pfooter-heading">Akun</p>
+                <ul class="space-y-2.5">
+                    <li><a href="{{ route('profile.perusahaan') }}" class="ak-pfooter-link">Profil Perusahaan</a></li>
+                    <li><a href="{{ route('perusahaan.pengaturan') }}" class="ak-pfooter-link">Pengaturan</a></li>
+                    <li><a href="{{ route('pelamar.bantuan') }}" class="ak-pfooter-link">Bantuan</a></li>
+                </ul>
+            </div>
+
         </div>
     </div>
 
-    <!-- Divider -->
-    <div class="my-6"></div>
-
-    <!-- Bottom Section -->
-    <div class="flex flex-col md:flex-row items-center justify-between gap-4 text-sm">
-        <!-- Left text -->
-
-
-        <!-- Social icons -->
-
-
-        <!-- Right copyright -->
-
+    {{-- Bottom Bar --}}
+    <hr style="border:none; border-top:1px solid rgba(255,255,255,0.1); margin:0;">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 lg:px-8 py-4">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <p class="text-white/50 text-xs">
+                &copy; {{ date('Y') }} AreaKerja.com. All rights reserved.
+            </p>
+            <div class="flex items-center gap-4 sm:gap-5">
+                <a href="{{ route('syarat.ketentuan') }}" class="ak-pfooter-bottom-link">Syarat &amp; Ketentuan</a>
+                <a href="{{ route('pelamar.bantuan') }}" class="ak-pfooter-bottom-link">Bantuan</a>
+            </div>
+        </div>
     </div>
-
 </footer>

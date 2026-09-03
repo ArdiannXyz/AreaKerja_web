@@ -97,7 +97,7 @@ Route::get('/', [AuthController::class, 'beranda']);
 
 
 //LOGIN AUTH
-Route::controller(AuthController::class)->middleware('guest')->group(function () {
+Route::controller(AuthController::class)->middleware(['guest', 'throttle:5,1'])->group(function () {
     Route::get('/login', 'login_non_user')->name('login');
     Route::post('/loginproses', 'loginproses')->name('loginproses');
 });
@@ -108,7 +108,7 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 
-Route::controller(AuthController::class)->group(function () {
+Route::controller(AuthController::class)->middleware('throttle:5,1')->group(function () {
     //register pelamar
     Route::get('/register', 'regis_non_user')->name('register');
     Route::post('/registerproses', 'regis_proses')->name('registerproses');
@@ -117,7 +117,7 @@ Route::controller(AuthController::class)->group(function () {
 
 
 //VERFIKASI PASSWORD 
-Route::controller(LupaPasswordController::class)->group(function () {
+Route::controller(LupaPasswordController::class)->middleware('throttle:5,1')->group(function () {
     Route::get('/verifikasi', 'showEmailForm_pelamar')->name('verifikasi_pelamar');
     Route::post('/verifikasi', 'sendOtp')->name('password.email.pelamar');
 
@@ -150,15 +150,7 @@ Route::controller(PelamarController::class)->group(function () {
 
 // SYARAT DAN KETENTUAN
 Route::get('/images/syarat-dan-ketentuan-banner.png', function () {
-    $uploadedPath = 'C:/Users/Fput/.gemini/antigravity/brain/61116b4b-cfa8-4d95-9a8f-a6ae6ea8ede6/.user_uploaded/media_1788007404614.png';
     $targetPath = public_path('images/syarat-ketentuan.png');
-
-    if (file_exists($uploadedPath)) {
-        if (!file_exists($targetPath)) {
-            @copy($uploadedPath, $targetPath);
-        }
-        return response()->file($uploadedPath);
-    }
 
     if (file_exists($targetPath)) {
         return response()->file($targetPath);
@@ -337,7 +329,7 @@ Route::controller(TipsKerjaController::class)->group(function () {
 
 
 
-    
+
 
 
 
@@ -461,7 +453,7 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/finance/koin/detail/{id}', function ($id) {
             $data = App\Models\CatatanKoin::findOrFail($id);
             return response()->json($data);
-        });
+        })->name('admin.finance.koin.detail');
         Route::get('/finance/tunai', 'cashHal')->name('admin.finance.cash');
 
         //provinsi kota kecamatan
@@ -475,7 +467,7 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/admin/lowongan/{perusahaan}/{lowongan}', 'detailLowongan')->name('admin.lowongan.detail');
         Route::get('/perusahaan/talent/hunter', function () {
             return view('perusahaan.talenthunter-perusahaan');
-        });
+        })->name('admin.perusahaan.talent-hunter');
 
         //freeze akun
         Route::post('/user/freeze/{id}', 'bekukan')->name('admin.freeze');
@@ -521,13 +513,13 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
     //EVENT CONTROLLER
     Route::controller(EventController::class)->group(function () {
         //event
-        Route::get('/event', 'index_admin')->name('admin.eventform');
-        Route::post('/event/store', 'store_event_admin')->name('admin.event.store');
-        Route::get('/event/create', 'createForm_admin')->name('admin.event.createForm');
-        Route::put('/update/event/{event}', 'update_event_admin')->name('admin.event.update');
-        Route::get('/event/{event}', 'detail_admin')->name('admin.detail.event');
-        Route::get('/event/{event}/edit', 'edit_admin')->name('admin.edit.event');
-        Route::delete('/delete/event/{event}', 'destroy_admin')->name('admin.event.destroy');
+        Route::get('/event', 'index')->name('admin.eventform');
+        Route::post('/event/store', 'store_event')->name('admin.event.store');
+        Route::get('/event/create', 'createForm')->name('admin.event.createForm');
+        Route::put('/update/event/{event}', 'update_event')->name('admin.event.update');
+        Route::get('/event/{event}', 'detail_event')->name('admin.detail.event');
+        Route::get('/event/{event}/edit', 'edit_event')->name('admin.edit.event');
+        Route::delete('/delete/event/{event}', 'destroy_event')->name('admin.event.destroy');
 
         Route::put('/events/status/{event}', 'updateStatus')->name('admin.event.updateStatus');
     });
@@ -678,9 +670,9 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/event/store', 'store_event')->name('superadmin.event.store');
         Route::get('/event/create', 'createForm')->name('superadmin.event.createForm');
         Route::put('/update/event/{event}', 'update_event')->name('superadmin.event.update');
-        Route::get('/event/{event}', 'detail')->name('superadmin.detail.event');
-        Route::get('/event/{event}/edit', 'edit')->name('superadmin.edit.event');
-        Route::delete('/delete/event/{event}', 'destroy')->name('superadmin.event.destroy');
+        Route::get('/event/{event}', 'detail_event')->name('superadmin.detail.event');
+        Route::get('/event/{event}/edit', 'edit_event')->name('superadmin.edit.event');
+        Route::delete('/delete/event/{event}', 'destroy_event')->name('superadmin.event.destroy');
         Route::put('/events/status/{event}', 'updateStatus')->name('event.updateStatus');
     });
 
@@ -763,7 +755,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
 
 
     //MANAJEMEN LOWONGAN CONTROLLER
-    Route::controller(ManajemenLowonganController::class)->group(function () { 
+    Route::controller(ManajemenLowonganController::class)->group(function () {
         //manajemen lowongan
         Route::get('/manajemen/lowongan/gold', 'gold')->name('superadmin.manajemen.lowongan.gold')->middleware('auth');
         Route::get('/manajemen/lowongan/silver', 'silver')->name('superadmin.manajemen.lowongan.silver')->middleware('auth');
@@ -999,6 +991,6 @@ Route::controller(AuthController::class)->middleware('auth')->group(function () 
 });
 
 //register perusahaan
-Route::controller(AuthController::class)->middleware('guest')->group(function () {
+Route::controller(AuthController::class)->middleware(['guest', 'throttle:5,1'])->group(function () {
     Route::post('/registerproses_perusahaan', 'regis_proses_perusahaan')->name('registerproses_perusahaan');
 });
