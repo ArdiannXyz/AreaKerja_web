@@ -1,173 +1,243 @@
 @extends('layouts.index-perusahaan')
 @section('content')
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <div class="bg-white p-6 font-medium mt-24">
+    <div class="bg-slate-50 min-h-screen text-slate-800 pt-28 pb-16" x-data="{ tab: '{{ request('tab', 'profil') }}' }">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
 
-        <!-- Header -->
-        <div class="flex items-start space-x-4 flex-col sm:flex-row">
-
-            <!-- Logo -->
-            @if (Auth::user()->perusahaan->img_profile)
-                <img id="pu" class="w-20 h-20 object-contain mb-3 profile-img"
-                    src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
-            @else
-                <img id="pu" class="w-20 h-20 object-contain mb-3"
-                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                    alt="">
+            <!-- Alert Notifikasi -->
+            @if (session('success'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 px-5 py-3.5 rounded-2xl flex items-center gap-3 shadow-xs">
+                    <i class="ph ph-check-circle text-emerald-600 text-2xl shrink-0"></i>
+                    <span class="text-sm font-semibold">{{ session('success') }}</span>
+                </div>
             @endif
-            <!-- Info Perusahaan -->
-            <div>
-                <span
-                    class="text-xl font-bold mb-4">{{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}</span>
-                <p class="text-sm font-semibold mb-1">{{ Auth::user()->perusahaan->jenis_perusahaan }}</p>
-                <p class="text-xs text-gray-400 mb-4">{{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }},
-                    {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }},
-                    {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}</p>
-                <a href="{{ route('profile.edit.perusahaan') }}"
-                    class="px-4 py-1 rounded-md border border-orange-400 text-orange-500 text-sm">
-                    Edit Profile
-                </a>
-            </div>
-        </div>
 
-        <!-- Deskripsi -->
-        @if (Auth::user()->perusahaan->deskripsi)
-            <div class="mt-6">
-                <div class="flex flex-col sm:flex-row items-start">
-
-                    <label class="w-32 text-sm mt-2 mb-1">Deskripsi</label>
-                    <textarea name="deskripsi" readonly
-                        class="auto-grow flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none overflow-hidden text-gray-800 text-sm">{{ Auth::user()->perusahaan->deskripsi }}</textarea>
+            @if (session('error'))
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-5 py-3.5 rounded-2xl flex items-center gap-3 shadow-xs">
+                    <i class="ph ph-warning-circle text-rose-600 text-2xl shrink-0"></i>
+                    <span class="text-sm font-semibold">{{ session('error') }}</span>
                 </div>
-            </div>
-        @else
-            <div class="mt-6">
-                <div class="flex flex-col sm:flex-row items-start">
+            @endif
 
-                    <label class="w-32 text-sm mt-2 mb-1">Deskripsi</label>
-                    <textarea name="deskripsi" readonly
-                        class="auto-grow flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none overflow-hidden text-gray-800 text-sm"></textarea>
+            @if ($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 px-5 py-4 rounded-2xl shadow-xs">
+                    <div class="flex items-center gap-2 font-bold text-sm text-rose-900 mb-1">
+                        <i class="ph ph-warning text-lg"></i> Terjadi kesalahan:
+                    </div>
+                    <ul class="list-disc list-inside text-xs space-y-1">
+                        @foreach ($errors->all() as $err)
+                            <li>{{ $err }}</li>
+                        @endforeach
+                    </ul>
                 </div>
-            </div>
-        @endif
+            @endif
 
-        <!-- Grid Form & Kontak -->
-        <div class="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-
-            <!-- Kolom Kiri (span 2 kolom) -->
-            <div class="col-span-2 space-y-4">
-                <!-- Badan Usaha -->
-                <div class="flex flex-col sm:flex-row items-start mt-4">
-                    <label class="text-sm mb-1 sm:mb-0 sm:w-32">Badan Usaha</label>
-                    <input type="text" name="jenis_perusahaan" readonly
-                        value="{{ Auth::user()->perusahaan->jenis_perusahaan }}"
-                        class="w-full sm:flex-1 border border-orange-400 rounded-md px-4 py-4 focus:outline-none text-gray-800 text-sm">
-                </div>
-
-
-                <!-- Visi -->
-                <div class="flex flex-col sm:flex-row items-start mt-4">
-                    <label class="text-sm mb-1 sm:mb-0 sm:w-32">Visi</label>
-                    <textarea name="visi" readonly
-                        class="auto-grow w-full sm:flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none text-gray-800 text-sm">{{ Auth::user()->perusahaan->visi }}</textarea>
+            <!-- 1. TOP HEADER BANNER CARD -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                <div class="flex items-center gap-5">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-orange-500/20 bg-slate-50 p-1 shrink-0 flex items-center justify-center shadow-sm relative group">
+                        @if (Auth::user()->perusahaan->img_profile)
+                            <img src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Logo" class="w-full h-full object-cover rounded-xl">
+                        @else
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username) }}&background=f97316&color=fff&size=128" alt="Logo" class="w-full h-full object-cover rounded-xl">
+                        @endif
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
+                                {{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}
+                            </h1>
+                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                                ✓ Terverifikasi
+                            </span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-500 mt-1">
+                            {{ Auth::user()->perusahaan->jenis_perusahaan ?? 'Sektor Usaha Belum Diatur' }}
+                        </p>
+                        <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
+                            <i class="ph ph-map-pin text-orange-500"></i>
+                            {{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? 'Lokasi Utama' }},
+                            {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? 'Indonesia' }}
+                        </p>
+                    </div>
                 </div>
 
-
-                <!-- Misi -->
-                <div class="flex flex-col sm:flex-row items-start mt-4">
-                    <label class="text-sm mb-1 sm:mb-0 sm:w-32">Misi</label>
-                    <textarea name="misi" readonly
-                        class="auto-grow w-full sm:flex-1 border border-orange-400 rounded-md p-2 focus:outline-none resize-none text-gray-800 text-sm">{{ Auth::user()->perusahaan->misi }}</textarea>
-                </div>
-
-            </div>
-
-
-            <!-- Kolom Kanan (Kontak) -->
-            <div class="border border-orange-400 rounded-xl p-5 bg-white shadow-sm self-start min-h-[250px]">
-                <h2 class="font-semibold text-lg mb-4 flex items-center gap-2 text-orange-600">
-                    Kontak
-                </h2>
-
-                <ul class="space-y-3 text-sm">
-
-                    <!-- Website -->
-                    <li class="flex flex-col sm:flex-row">
-
-                        <span class="font-medium w-24 text-gray-700">Website</span>
-                        <span class="text-gray-800">
-                            :
-                            <a href="{{ Auth::user()->perusahaan->website_perusahaan }}"
-                                class="text-blue-600 hover:underline break-all">
-                                {{ Auth::user()->perusahaan->website_perusahaan }}
-                            </a>
-                        </span>
-                    </li>
-
-                    <!-- Telepon -->
-                    <li class="flex flex-col sm:flex-row">
-
-                        <span class="font-medium w-24 text-gray-700">Telepon</span>
-                        <span class="text-gray-800">: {{ Auth::user()->perusahaan->telepon_perusahaan }}</span>
-                    </li>
-
-                    <!-- Whatsapp -->
-                    <li class="flex flex-col sm:flex-row">
-
-                        <span class="font-medium w-24 text-gray-700">Whatsapp</span>
-                        <span class="text-gray-800">: {{ Auth::user()->perusahaan->whatsapp }}</span>
-                    </li>
-
-                    <!-- Email -->
-                    <li class="flex flex-col sm:flex-row">
-
-                        <span class="font-medium w-24 text-gray-700">Email</span>
-                        <span class="text-gray-800 break-all">: {{ Auth::user()->email }}</span>
-                    </li>
-
-                </ul>
-            </div>
-
-        </div>
-
-        <!-- Separator -->
-        <div class="my-6 border-t "></div>
-
-        <!-- Tombol Lowongan -->
-        <div class="flex justify-center">
-            <div class="flex flex-col items-center space-y-3">
-                <div class="w-28 h-28 border border-orange-400 rounded-md flex items-center justify-center">
-                    <a href="{{ route('lowongan.saya.perusahaan') }}">
-                        <svg width="45" height="45" viewBox="0 0 45 45" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M42.1875 19.6875H25.3125V2.8125C25.3125 2.06658 25.0162 1.35121 24.4887 0.823763C23.9613 0.296317 23.2459 0 22.5 0C21.7541 0 21.0387 0.296317 20.5113 0.823763C19.9838 1.35121 19.6875 2.06658 19.6875 2.8125V19.6875H2.8125C2.06658 19.6875 1.35121 19.9838 0.823763 20.5113C0.296317 21.0387 0 21.7541 0 22.5C0 23.2459 0.296317 23.9613 0.823763 24.4887C1.35121 25.0162 2.06658 25.3125 2.8125 25.3125H19.6875V42.1875C19.6875 42.9334 19.9838 43.6488 20.5113 44.1762C21.0387 44.7037 21.7541 45 22.5 45C23.2459 45 23.9613 44.7037 24.4887 44.1762C25.0162 43.6488 25.3125 42.9334 25.3125 42.1875V25.3125H42.1875C42.9334 25.3125 43.6488 25.0162 44.1762 24.4887C44.7037 23.9613 45 23.2459 45 22.5C45 21.7541 44.7037 21.0387 44.1762 20.5113C43.6488 19.9838 42.9334 19.6875 42.1875 19.6875Z"
-                                fill="#FA6601" />
-                        </svg>
+                <div class="flex items-center gap-3 shrink-0">
+                    <a href="{{ route('profile.edit.perusahaan') }}" class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold rounded-xl shadow-sm transition text-sm flex items-center gap-2">
+                        <i class="ph ph-pencil-simple text-base"></i> Edit Profil
                     </a>
                 </div>
-                <a href="{{ route('lowongan.saya.perusahaan') }}"
-                    class="mt-2 px-4 py-1 bg-orange-500 text-white text-sm rounded-md">Lowongan</a>
             </div>
+
+            <!-- 2. TAB NAVIGATION SYSTEM -->
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 overflow-hidden">
+                <!-- Tab Headers -->
+                <div class="flex border-b border-slate-200 bg-slate-50/50 px-4 md:px-8 gap-2 md:gap-6 overflow-x-auto">
+                    <button @click="tab = 'profil'"
+                        :class="tab === 'profil' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
+                        <i class="ph ph-buildings text-lg"></i> Profil Perusahaan
+                    </button>
+
+                    <button @click="tab = 'alamat'"
+                        :class="tab === 'alamat' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
+                        <i class="ph ph-map-pin text-lg"></i> Alamat & Lokasi
+                    </button>
+
+                    <button @click="tab = 'keamanan'"
+                        :class="tab === 'keamanan' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
+                        <i class="ph ph-shield-check text-lg"></i> Keamanan & Akun
+                    </button>
+                </div>
+
+                <!-- Tab Contents -->
+                <div class="p-6 md:p-8">
+
+                    <!-- TAB 1: PROFIL PERUSAHAAN -->
+                    <div x-show="tab === 'profil'" x-transition class="space-y-6">
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 mb-1">Informasi Perusahaan</h3>
+                            <p class="text-xs text-slate-500">Detail identitas publik perusahaan yang ditampilkan pada lowongan kerja.</p>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Perusahaan</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->nama_perusahaan ?? '-' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Badan Usaha / Jenis Perusahaan</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->jenis_perusahaan ?? '-' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Website Resmi</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->website_perusahaan ?? 'Belum diisi' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Nomor WhatsApp / Telepon HRD</label>
+                                <input type="text" readonly value="{{ Auth::user()->perusahaan->telepon_perusahaan ?? Auth::user()->telepon ?? '-' }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1.5">Deskripsi Perusahaan</label>
+                            <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs md:text-sm text-slate-700 leading-relaxed font-medium min-h-[100px]">
+                                {!! nl2br(e(Auth::user()->perusahaan->deskripsi ?? 'Belum ada deskripsi perusahaan.')) !!}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Visi</label>
+                                <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 leading-relaxed font-medium min-h-[80px]">
+                                    {{ Auth::user()->perusahaan->visi ?? 'Belum diisi' }}
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1.5">Misi</label>
+                                <div class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3.5 text-xs text-slate-700 leading-relaxed font-medium min-h-[80px]">
+                                    {{ Auth::user()->perusahaan->misi ?? 'Belum diisi' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: ALAMAT & LOKASI -->
+                    <div x-show="tab === 'alamat'" x-cloak x-transition class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h3 class="text-base font-extrabold text-slate-900 mb-1">Daftar Alamat Perusahaan</h3>
+                                <p class="text-xs text-slate-500">Kelola lokasi kantor utama dan cabang perusahaan Anda.</p>
+                            </div>
+                            <a href="{{ route('alamat.perusahaan') }}" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition shadow-xs">
+                                Kelola Alamat Lengkap
+                            </a>
+                        </div>
+
+                        @php
+                            $almtUtama = Auth::user()->perusahaan->alamatUtama;
+                        @endphp
+
+                        @if ($almtUtama && !empty($almtUtama->alamat_lengkap))
+                            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 text-xs font-extrabold rounded-full">
+                                        Alamat Utama
+                                    </span>
+                                </div>
+                                <p class="text-sm font-bold text-slate-800">
+                                    {{ $almtUtama->alamat_lengkap }}
+                                </p>
+                                <p class="text-xs text-slate-500">
+                                    {{ $almtUtama->kecamatan->nama ?? '-' }}, 
+                                    {{ $almtUtama->kota->nama ?? '-' }}, 
+                                    {{ $almtUtama->provinsi->nama ?? '-' }}
+                                </p>
+                            </div>
+                        @else
+                            <div class="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-6 text-center space-y-3">
+                                <div class="w-12 h-12 mx-auto bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">
+                                    <i class="ph ph-map-pin text-2xl"></i>
+                                </div>
+                                <div>
+                                    <h4 class="text-sm font-bold text-slate-800">Alamat Utama Belum Diatur</h4>
+                                    <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Silakan atur salah satu alamat kantor perusahaan Anda sebagai alamat utama agar dapat ditampilkan pada profil dan lowongan kerja.</p>
+                                </div>
+                                <a href="{{ route('alamat.perusahaan') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition shadow-xs mt-2">
+                                    <i class="ph ph-plus-circle"></i>
+                                    Atur Alamat Utama
+                                </a>
+                            </div>
+                        @endif
+                    </div>
+
+                    <!-- TAB 3: KEAMANAN & AKUN -->
+                    <div x-show="tab === 'keamanan'" x-cloak x-transition class="space-y-8">
+                        <div>
+                            <h3 class="text-base font-extrabold text-slate-900 mb-1">Keamanan Akun & Kredensial</h3>
+                            <p class="text-xs text-slate-500">Kelola kata sandi dan informasi keamanan akun terdaftar.</p>
+                        </div>
+
+                        <!-- Info Email (Read-Only) -->
+                        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <label class="block text-xs font-bold text-slate-700">Email Utama Akun</label>
+                                <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200 flex items-center gap-1">
+                                    <i class="ph ph-check-circle"></i> Terverifikasi
+                                </span>
+                            </div>
+                            <input type="email" readonly value="{{ Auth::user()->email }}" class="w-full bg-slate-100 border border-slate-200 rounded-xl px-4 py-2.5 text-sm font-extrabold text-slate-800 cursor-not-allowed">
+                        </div>
+
+                        <!-- Ganti Password dengan OTP -->
+                        <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div class="flex items-start gap-3.5">
+                                <div class="w-11 h-11 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                                    <i class="ph ph-key text-2xl font-bold"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-extrabold text-sm text-slate-900">Ubah Kata Sandi (Password)</h4>
+                                    <p class="text-xs text-slate-500 mt-1 max-w-md leading-relaxed">
+                                        Untuk menjaga keamanan akun perusahaan Anda, proses penggantian kata sandi memerlukan verifikasi kode OTP yang dikirimkan ke email terdaftar.
+                                    </p>
+                                </div>
+                            </div>
+                            <a href="{{ route('verifikasi_pelamar') }}" class="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-xs shrink-0">
+                                <i class="ph ph-shield-check text-base"></i>
+                                Ganti Password via OTP
+                            </a>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
         </div>
-
     </div>
-
-
-    <script>
-        function autoGrow(el) {
-            el.style.height = "auto";
-            el.style.height = el.scrollHeight + "px";
-        }
-
-        document.addEventListener("DOMContentLoaded", () => {
-            document.querySelectorAll(".auto-grow").forEach((el) => {
-                autoGrow(el);
-                el.addEventListener("input", () => autoGrow(el));
-            });
-        });
-    </script>
-
     @include('layouts.footer')
 @endsection

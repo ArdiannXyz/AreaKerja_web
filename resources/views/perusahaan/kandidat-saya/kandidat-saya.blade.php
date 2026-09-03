@@ -37,14 +37,15 @@
             <table class="w-full border-collapse bg-white">
                 <thead>
                     <tr>
-                        <th class="p-4 sm:p-7 text-center font-semibold">Nama</th>
-                        <th class="p-4 sm:p-7 text-center font-semibold">Skill</th>
-                        <th class="p-4 sm:p-7 text-center font-semibold">CV</th>
-                        <th class="p-4 sm:p-7 text-center font-semibold">Hapus</th>
-                        <th class="p-4 sm:p-7 text-center font-semibold">Lowongan</th>
-                        <th class="p-4 sm:p-7 text-center font-semibold">Ekspektasi Range Gaji</th>
-                        <th class="p-4 sm:p-7 text-center font-semibold">Status</th>
-                        <th class="p-4 sm:p-7 text-center font-semibold">Sumber</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Profil</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Nama</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Skill</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">CV</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Aksi</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Lowongan</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Ekspektasi Range Gaji</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Status</th>
+                        <th class="p-4 sm:p-5 text-center font-semibold">Sumber</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -52,15 +53,45 @@
                         @php
                             $pelamar = $r->pelamar;
                             $skillUtama = $pelamar->skill->first()->skill ?? '-';
+                            $isKandidat = ($pelamar && in_array(strtolower($pelamar->kategori ?? ''), ['kandidat aktif', 'kandidat', 'calon_kandidat', 'calon kandidat']));
+                            $statusLower = strtolower($r->status ?? '');
 
-                            $sumber = isset($r->lowonganPerusahaan) ? 'Lowongan' : 'Pembelian';
+                            if ($statusLower === 'ditolak') {
+                                $actionLabel = 'Hapus';
+                                $confirmTitle = 'Hapus Data Rekrutan?';
+                                $confirmMsg = 'Apakah Anda yakin ingin menghapus data kandidat yang telah menolak ini?';
+                                $confirmBtn = 'Ya, Hapus!';
+                            } elseif ($isKandidat) {
+                                $actionLabel = 'Batalkan Rekrutan';
+                                $confirmTitle = 'Batalkan Rekrutan?';
+                                $confirmMsg = 'Apakah Anda yakin ingin membatalkan rekrutan kandidat ini?';
+                                $confirmBtn = 'Ya, Batalkan!';
+                            } else {
+                                $actionLabel = 'Tolak Lamaran';
+                                $confirmTitle = 'Tolak Lamaran?';
+                                $confirmMsg = 'Apakah Anda yakin ingin menolak lamaran pelamar ini?';
+                                $confirmBtn = 'Ya, Tolak!';
+                            }
                         @endphp
                         <tr class="border-b">
+                            <!-- Profil (Foto) -->
+                            <td class="p-3 text-center">
+                                <div class="flex justify-center">
+                                    @if (!empty($pelamar->img_profile))
+                                        <img src="{{ asset('storage/' . $pelamar->img_profile) }}"
+                                            alt="Foto Profile" class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm">
+                                    @else
+                                        <div class="w-10 h-10 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-800 shadow-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 256 256">
+                                                <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM74.08,197.5a64,64,0,0,1,107.84,0,87.83,87.83,0,0,1-107.84,0ZM96,120a32,32,0,1,1,32,32A32,32,0,0,1,96,120Zm97.76,66.41a79.66,79.66,0,0,0-36.06-28.75,48,48,0,1,0-59.4,0,79.66,79.66,0,0,0-36.06,28.75,88,88,0,1,1,131.52,0Z"/>
+                                            </svg>
+                                        </div>
+                                    @endif
+                                </div>
+                            </td>
                             <!-- Nama -->
-                            <td class="p-10 flex items-center text-center gap-3">
-                                <img src="{{ asset('storage/' . $pelamar->img_profile) }}"
-                                    class="w-10 h-10 rounded-full object-cover">
-                                <span>{{ $pelamar->nama_pelamar }}</span>
+                            <td class="p-3 text-center">
+                                <span class="font-medium text-gray-800">{{ $pelamar->nama_pelamar }}</span>
                             </td>
                             <!-- Skill -->
                             <td class="p-3 text-center">{{ $skillUtama }}</td>
@@ -77,22 +108,20 @@
                                     </button>
                                 </div>
                             </td>
-                            <!-- Hapus -->
-                            <td class="p-3">
+                            <!-- Aksi (Batalkan Rekrutan / Tolak Lamaran / Hapus) -->
+                            <td class="p-3 text-center">
                                 <form action="{{ route('perusahaan.destroy.kandidat', $r->id) }}" method="POST"
-                                    onsubmit="return confirm('Yakin ingin menghapus kandidat ini?');">
+                                    onsubmit="confirmDeleteAction(event, this, '{{ addslashes($confirmTitle) }}', '{{ addslashes($confirmMsg) }}', '{{ addslashes($confirmBtn) }}')">
                                     @csrf
                                     @method('DELETE')
-                                    <div class="flex flex-col items-center text-orange-500">
-                                        <button type="submit">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                fill="#F78D2E" viewBox="0 0 24 24">
-                                                <path
-                                                    d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1
-                                                                                                             1H5v2h14V4z" />
-                                            </svg>
-                                        </button>
-                                    </div>
+                                    <button type="submit"
+                                        class="px-2.5 py-1 text-xs font-semibold rounded-md transition flex items-center justify-center gap-1 mx-auto bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
+                                        title="{{ $actionLabel }}">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                                        </svg>
+                                        <span>{{ $actionLabel }}</span>
+                                    </button>
                                 </form>
                             </td>
                             <!-- Gaji -->
@@ -100,20 +129,40 @@
                             </td>
                             <td class="p-3 text-center">Rp. {{ number_format($pelamar->gaji_maksimal, 0, ',', '.') }}</td>
                             <!-- Status -->
-                            <td class="p-3 text-center text-green-500 font-medium">{{ $r->status }}</td>
-                            <td class="p-3 text-center text-green-500 font-medium">
-                                @if ($r->lowongan_perusahaan)
-                                    <span class="text-blue-600 font-semibold">Melamar Lowongan</span>
-                                @elseif ($r->lowonganPerusahaan)
-                                    <span class="text-purple-600 font-semibold">Pembelian Kandidat</span>
+                            <td class="p-3 text-center font-medium">
+                                @if (strtolower($r->status) === 'pending')
+                                    <span class="px-3 py-1 rounded-full bg-yellow-100 text-yellow-700 text-xs font-bold inline-block">
+                                        Pending (Menunggu)
+                                    </span>
+                                @elseif (strtolower($r->status) === 'diterima')
+                                    <span class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold inline-block">
+                                        Diterima
+                                    </span>
+                                @elseif (strtolower($r->status) === 'ditolak')
+                                    <span class="px-3 py-1 rounded-full bg-red-100 text-red-700 text-xs font-bold inline-block" title="Alasan: {{ $r->alasan_penolakan }}">
+                                        Ditolak
+                                    </span>
                                 @else
-                                    <span class="text-red-600 font-semibold">Sumber Tidak Diketahui</span>
+                                    <span class="px-3 py-1 rounded-full bg-gray-100 text-gray-700 text-xs font-bold inline-block">
+                                        {{ ucfirst($r->status) }}
+                                    </span>
+                                @endif
+                            </td>
+                            <td class="p-3 text-center font-medium">
+                                @if ($pelamar && in_array(strtolower($pelamar->kategori ?? ''), ['kandidat aktif', 'kandidat', 'calon_kandidat', 'calon kandidat']))
+                                    <span class="text-purple-600 font-semibold bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200 inline-block text-xs">
+                                        Pembelian Kandidat
+                                    </span>
+                                @else
+                                    <span class="text-blue-600 font-semibold bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 inline-block text-xs">
+                                        Melamar Lowongan
+                                    </span>
                                 @endif
                             </td>
                         </tr>
                     @empty
                         <tr class="border-b">
-                            <td colspan="6" class="p-3 text-center">Tidak ada kandidat</td>
+                            <td colspan="9" class="p-4 text-center text-gray-500 font-medium">Tidak ada kandidat</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -184,6 +233,29 @@
 
         function closeSuccessModal() {
             document.getElementById('successModal').classList.add('hidden');
+        }
+
+        // SweetAlert2 Konfirmasi Aksi (Batalkan Rekrutan / Tolak Lamaran / Hapus)
+        function confirmDeleteAction(e, form, title, text, confirmBtn) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: title || 'Konfirmasi Aksi',
+                text: text || 'Apakah Anda yakin?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: confirmBtn || 'Ya, Lanjutkan!',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'rounded-2xl shadow-xl'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
         }
     </script>
 @endsection

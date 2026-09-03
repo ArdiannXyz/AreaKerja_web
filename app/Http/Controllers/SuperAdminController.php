@@ -3,25 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\BrowserPath;
-use App\Models\Admin;
-use App\Models\AlamatPelamar;
-use App\Models\AlamatPerusahaan;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
-use App\Models\Divisi;
-use App\Models\Finance;
-use App\Models\Hargakoin;
-use App\Models\HargaPembayaran;
-use App\Models\Kecamatan;
-use App\Models\Kota;
 use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
-use App\Models\PembeliKandidat;
 use App\Models\Perusahaan;
-use App\Models\Provinsi;
-use App\Models\SuperAdmin;
 use App\Models\TalentHunter;
 use App\Models\User;
 use Carbon\Carbon;
@@ -51,82 +39,54 @@ class SuperAdminController extends Controller
         $startThreeMonthsAgo = $now->copy()->subMonths(3)->startOfMonth();
 
         // Akhir bulan lalu
+        $startLastMonth = $now->copy()->subMonth()->startOfMonth();
         $endLastMonth = $startThisMonth->copy()->subSecond();
-
 
         // ===========================
         // PELAMAR
         // ===========================
-        $currentPelamar = Pelamar::whereBetween('created_at', [
-            $startThisMonth,
-            $now
-        ])->count();
-
-        $lastPelamar = Pelamar::whereBetween('created_at', [
-            $startThreeMonthsAgo,
-            $endLastMonth
-        ])->count();
-
-        $growthPelamar = $this->calcGrowth($lastPelamar, $currentPelamar);
-
+        $totalPelamar = Pelamar::count();
+        $newPelamarThisMonth = Pelamar::where('created_at', '>=', $startThisMonth)->count();
+        $newPelamarLastMonth = Pelamar::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthPelamar = $this->calcGrowth($newPelamarLastMonth, $newPelamarThisMonth);
 
         // ===========================
         // PERUSAHAAN
         // ===========================
-        $currentPerusahaan = Perusahaan::whereBetween('created_at', [
-            $startThisMonth,
-            $now
-        ])->count();
-
-        $lastPerusahaan = Perusahaan::whereBetween('created_at', [
-            $startThreeMonthsAgo,
-            $endLastMonth
-        ])->count();
-
-        $growthPerusahaan = $this->calcGrowth($lastPerusahaan, $currentPerusahaan);
-
+        $totalPerusahaan = Perusahaan::count();
+        $newPerusahaanThisMonth = Perusahaan::where('created_at', '>=', $startThisMonth)->count();
+        $newPerusahaanLastMonth = Perusahaan::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthPerusahaan = $this->calcGrowth($newPerusahaanLastMonth, $newPerusahaanThisMonth);
 
         // ===========================
         // ADMIN
         // ===========================
-        $currentAdmin = User::where('role', 'admin')
-            ->whereBetween('created_at', [$startThisMonth, $now])
-            ->count();
-
-        $lastAdmin = User::where('role', 'admin')
-            ->whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])
-            ->count();
-
-        $growthAdmin = $this->calcGrowth($lastAdmin, $currentAdmin);
-
+        $totalAdmin = User::where('role', 'admin')->count();
+        $newAdminThisMonth = User::where('role', 'admin')->where('created_at', '>=', $startThisMonth)->count();
+        $newAdminLastMonth = User::where('role', 'admin')->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthAdmin = $this->calcGrowth($newAdminLastMonth, $newAdminThisMonth);
 
         // ===========================
         // SUPER ADMIN
         // ===========================
-        $currentSuperAdmin = User::where('role', 'super_admin')
-            ->whereBetween('created_at', [$startThisMonth, $now])
-            ->count();
-
-        $lastSuperAdmin = User::where('role', 'super_admin')
-            ->whereBetween('created_at', [$startThreeMonthsAgo, $endLastMonth])
-            ->count();
-
-        $growthSuperAdmin = $this->calcGrowth($lastSuperAdmin, $currentSuperAdmin);
-
+        $totalSuperAdmin = User::where('role', 'super_admin')->count();
+        $newSuperAdminThisMonth = User::where('role', 'super_admin')->where('created_at', '>=', $startThisMonth)->count();
+        $newSuperAdminLastMonth = User::where('role', 'super_admin')->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
+        $growthSuperAdmin = $this->calcGrowth($newSuperAdminLastMonth, $newSuperAdminThisMonth);
 
         return view('super_admin.dashboard', [
             "title" => "Dashboard",
 
-            'totalPelamar'       => $currentPelamar,
+            'totalPelamar'       => $totalPelamar,
             'growthPelamar'      => $growthPelamar,
 
-            'totalPerusahaan'    => $currentPerusahaan,
+            'totalPerusahaan'    => $totalPerusahaan,
             'growthPerusahaan'   => $growthPerusahaan,
 
-            'totalAdmin'         => $currentAdmin,
+            'totalAdmin'         => $totalAdmin,
             'growthAdmin'        => $growthAdmin,
 
-            'totalSuperAdmin'    => $currentSuperAdmin,
+            'totalSuperAdmin'    => $totalSuperAdmin,
             'growthSuperAdmin'   => $growthSuperAdmin,
         ]);
     }
@@ -138,8 +98,9 @@ class SuperAdminController extends Controller
     {
         if ($last == 0 && $current > 0) return 100;
         if ($last == 0 && $current == 0) return 0;
+        if ($last > 0 && $current == 0) return 0;
 
-        return round((($current - $last) / $last) * 100, 1);
+        return round((($current - $last) / max($last, 1)) * 100, 1);
     }
 
 
@@ -844,7 +805,6 @@ class SuperAdminController extends Controller
     public function role()
     {
         $usersAdminFinance = User::whereIn('role', ['admin', 'finance'])
-            ->with(['admin', 'finance'])
             ->get();
 
         $usersPerusahaanPelamar = User::whereIn('role', ['perusahaan', 'pelamar'])
@@ -1484,10 +1444,24 @@ class SuperAdminController extends Controller
             ]);
         }
 
+        $koinList = collect([
+            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
+            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
+            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
+            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
+            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
+        ]);
+
+        $pembayaranList = collect([
+            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
+            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
+            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
+        ]);
+
         return view('super_admin.finance.paket-harga', [
             'title'        => 'Paket Harga',
-            'koin'         => Hargakoin::all(),
-            'pembayaran'   => HargaPembayaran::all(),
+            'koin'         => $koinList,
+            'pembayaran'   => $pembayaranList,
             'cashTerbaru'  => $cashTerbaru,
             'koinTerbaru'  => $koinTerbaru,
             'cash'         => $cash,
@@ -1646,44 +1620,43 @@ class SuperAdminController extends Controller
     //HARGA KOIN
     public function edit_koin()
     {
+        $koin = collect([
+            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
+            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
+            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
+            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
+            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
+        ]);
+
         return view('super_admin.finance.edit-koin', [
             'title' => 'Edit Harga Koin',
-            'koin' => Hargakoin::all(),
+            'koin'  => $koin,
         ]);
     }
+
     public function update_koin(Request $request)
     {
-        foreach ($request->id as $i => $id) {
-            $koin = Hargakoin::find($id);
-            if ($koin) {
-                $koin->harga = $request->harga[$i];
-                $koin->save();
-            }
-        }
-
-        return redirect()->route('superadmin.paket-harga');
+        return redirect()->route('superadmin.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');
     }
-
 
     //HARGA PEMBAYARAN
     public function edit_pembayaran()
     {
+        $pembayaran = collect([
+            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
+            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
+            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
+        ]);
+
         return view('super_admin.finance.edit-harga', [
-            'title' => 'Edit Harga Pembayaran',
-            'pembayaran' => HargaPembayaran::all(),
+            'title'      => 'Edit Harga Pembayaran',
+            'pembayaran' => $pembayaran,
         ]);
     }
+
     public function update_pembayaran(Request $request)
     {
-        foreach ($request->id as $i => $id) {
-            $pembayaran = HargaPembayaran::find($id);
-            if ($pembayaran) {
-                $pembayaran->harga = $request->harga[$i];
-                $pembayaran->save();
-            }
-        }
-
-        return redirect()->route('superadmin.paket-harga');
+        return redirect()->route('superadmin.paket-harga')->with('success', 'Harga pembayaran berhasil diperbarui.');
     }
 
 

@@ -8,8 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class PasswordVerification extends Model
 {
     use HasFactory;
+
     protected $table = 'password_verifications';
-    protected $guarded = [];
+
+    protected $fillable = [
+        'user_id',
+        'email',
+        'otp',
+        'token',
+    ];
 
     public function user()
     {

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Schedules;
+
 use App\Http\Controllers\Controller;
 
 use App\Models\LowonganPerusahaan;
@@ -19,8 +20,6 @@ class CleanInactiveLowonganController extends Controller
                 ->orWhere('last_activity', '<', now()->subMonths(6));
         })
             ->whereDoesntHave('pelamar')
-            ->whereDoesntHave('pembelianKandidat')
-            ->whereDoesntHave('simpanLowongans')
             ->delete();
 
         return response()->json([

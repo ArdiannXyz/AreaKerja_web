@@ -8,36 +8,30 @@ use Illuminate\Database\Eloquent\Model;
 class AlamatPerusahaan extends Model
 {
     use HasFactory;
+
     protected $table = 'alamat_perusahaan';
-    protected $guarded = [];
+
+    protected $fillable = [
+        'perusahaan_id',
+        'label',
+        'provinsi',
+        'kota',
+        'kecamatan',
+        'provinsi_id',
+        'kota_id',
+        'kecamatan_id',
+        'desa',
+        'kode_pos',
+        'detail',
+        'utama',
+    ];
+
+    protected $casts = [
+        'utama' => 'boolean',
+    ];
 
     public function perusahaan()
     {
-        return $this->belongsTo(Perusahaan::class, 'perusahaan_id');
-    }
-
-
-    public function provinsi()
-    {
-        return $this->belongsTo(Provinsi::class);
-    }
-
-    public function kota()
-    {
-        return $this->belongsTo(Kota::class);
-    }
-
-    public function kecamatan()
-    {
-        return $this->belongsTo(Kecamatan::class);
-    }
-
-    public function setSebagaiUtama()
-    {
-        static::where('perusahaan_id', $this->perusahaan_id)
-            ->update(['utama' => 0]);
-
-        // Jadikan alamat ini utama
-        $this->update(['utama' => 1]);
+        return $this->belongsTo(Perusahaan::class, 'perusahaan_id', 'id');
     }
 }

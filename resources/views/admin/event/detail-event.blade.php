@@ -114,11 +114,11 @@
                 </p>
 
                 {{-- gambar --}}
-                @if ($event->image)
+                @if (!empty($event->image))
                     <img src="{{ asset('storage/' . $event->image) }}" alt="event image"
                         class="rounded-2xl mb-6 w-full max-w-full h-auto object-cover">
                 @else
-                    <img src="{{ asset('images/rang nulis.jpg') }}" alt="event image"
+                    <img src="{{ asset('images/woi.jpg') }}" alt="event image"
                         class="rounded-2xl mb-6 w-full max-w-full h-auto object-cover">
                 @endif
 

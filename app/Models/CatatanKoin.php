@@ -9,7 +9,15 @@ class CatatanKoin extends Model
 {
     use HasFactory;
     protected $table = 'catatan_koins';
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'no_referensi',
+        'pesanan',
+        'dari',
+        'sumber_dana',
+        'total',
+    ];
+
 
     public function user() {
         return $this->belongsTo(User::class, 'user_id');

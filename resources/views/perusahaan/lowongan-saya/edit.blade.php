@@ -21,9 +21,9 @@
                 <div>
                     <h2 class="font-bold text-xl">{{ Auth::user()->perusahaan->nama_perusahaan }}</h2>
                     <p class="text-gray-600 text-sm">{{ Auth::user()->perusahaan->jenis_perusahaan }}</p>
-                    <p class="text-gray-400 text-xs mt-1">{{ Auth::user()->perusahaan->alamatUtama->kota->nama }},
-                        {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama }},
-                        {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama }}</p>
+                    <p class="text-gray-400 text-xs mt-1">{{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }},
+                        {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }},
+                        {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}</p>
                 </div>
             </div>
 
@@ -127,28 +127,32 @@
 
 
             <div class="space-y-6 border-t-2 pt-6">
-                <h3 class="text-lg font-semibold text-orange-500">Syarat Pekerjaan</h3>
                 <div>
-                    <label class="block font-medium mb-1">Pendidikan</label>
-                    <div class="grid grid-cols-3 gap-2 mt-1">
-                        @foreach (['SD', 'SMP', 'SMA', 'SMK', 'S1', 'S2', 'S3'] as $edu)
-                            <label class="flex items-center space-x-2">
-                                <input type="radio" name="syarat_pekerjaan" value="{{ $edu }}"
-                                    class="w-5 h-5 border-2 border-orange-500 accent-orange-500"
-                                    {{ old('syarat_pekerjaan', $data->syarat_pekerjaan) == $edu ? 'checked' : '' }}>
-                                <span>{{ $edu }}</span>
-                            </label>
-                        @endforeach
+                    <label class="block font-medium mb-1">Syarat Pekerjaan <span class="text-red-500">*</span></label>
+                    <textarea class="w-full border-2 rounded-md px-3 py-2 focus:ring-orange-400 focus:border-orange-400"
+                        name="syarat_pekerjaan" rows="4" required
+                        placeholder="Contoh: Minimal D3/S1, menguasai Vue.js atau React, pengalaman minimal 1 tahun...">{{ old('syarat_pekerjaan', $data->syarat_pekerjaan) }}</textarea>
+                </div>
 
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block font-medium mb-1">Batas Waktu Lamaran (Deadline)</label>
+                        <input type="date" name="batas_lamaran" value="{{ old('batas_lamaran', $data->batas_lamaran ? \Carbon\Carbon::parse($data->batas_lamaran)->format('Y-m-d') : '') }}"
+                            class="w-full border-2 rounded-md px-3 py-2 focus:ring-orange-400 focus:border-orange-400">
+                    </div>
+
+                    <div>
+                        <label class="block font-medium mb-1">Status Pendaftaran</label>
+                        <select name="status" class="w-full border-2 rounded-md px-3 py-2 focus:ring-orange-400 focus:border-orange-400">
+                            <option value="buka" {{ old('status', $data->status ?? 'buka') == 'buka' ? 'selected' : '' }}>
+                                🟢 Buka Pendaftaran (Aktif)
+                            </option>
+                            <option value="tutup" {{ old('status', $data->status ?? 'buka') == 'tutup' ? 'selected' : '' }}>
+                                🔒 Tutup Pendaftaran (Kuota Full)
+                            </option>
+                        </select>
                     </div>
                 </div>
-
-                <div>
-                    <label class="block font-medium mb-1">Batas Waktu</label>
-                    <input type="date" name="batas_lamaran" value="{{ $data->batas_lamaran }}"
-                        class="w-60 border-2 rounded-md px-3 py-2 focus:ring-orange-400 focus:border-orange-400">
-                </div>
-
             </div>
 
             <div class="flex justify-center space-x-4 pt-6">

@@ -8,8 +8,23 @@ use Illuminate\Database\Eloquent\Model;
 class Event extends Model
 {
     use HasFactory;
+
     protected $table = 'events';
-    protected $guarded = [];
+
+    protected $fillable = [
+        'status',
+        'title',
+        'kuota',
+        'image',
+        'content',
+        'tgl_mulai',
+        'jam_mulai',
+        'tgl_akhir',
+        'jam_akhir',
+        'lokasi',
+        'link_form',
+        'penutupan_pendaftaran',
+    ];
 
     public function kegiatan()
     {

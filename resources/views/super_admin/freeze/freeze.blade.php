@@ -145,41 +145,21 @@
                                 <td class="px-6 py-4">
                                     @php
                                         $provinsi = '-';
-
                                         if ($d->role == 'pelamar') {
-                                            $alamat = $d
-                                                ->pelamar()
-                                                ->latest()
-                                                ->first()
-                                                ?->alamat_pelamar()
-                                                ->latest()
-                                                ->first();
-                                            $provinsi = is_object($alamat?->provinsi)
-                                                ? $alamat->provinsi->nama
-                                                : $alamat?->provinsi ?? '-';
+                                            $pelamarObj = $d->pelamar;
+                                            $provinsi = is_object($pelamarObj) ? ($pelamarObj->provinsi ?? $pelamarObj->alamat ?? '-') : '-';
                                         } elseif ($d->role == 'perusahaan') {
-                                            $alamat = $d
-                                                ->perusahaan()
-                                                ->latest()
-                                                ->first()
-                                                ?->alamat_perusahaan()
-                                                ->latest()
-                                                ->first();
-                                            $provinsi = is_object($alamat?->provinsi)
-                                                ? $alamat->provinsi->nama
-                                                : $alamat?->provinsi ?? '-';
+                                            $perusahaanObj = $d->perusahaan;
+                                            $provinsi = is_object($perusahaanObj) ? ($perusahaanObj->provinsi ?? $perusahaanObj->kota ?? '-') : '-';
                                         } elseif ($d->role == 'finance') {
-                                            $provinsi = is_object($d->finance?->provinsi)
-                                                ? $d->finance->provinsi->nama
-                                                : $d->finance?->provinsi ?? '-';
+                                            $finObj = $d->finance;
+                                            $provinsi = is_object($finObj) ? (is_object($finObj->provinsi ?? null) ? ($finObj->provinsi->nama ?? '-') : ($finObj->provinsi ?? '-')) : '-';
                                         } elseif ($d->role == 'admin') {
-                                            $provinsi = is_object($d->admin?->provinsi)
-                                                ? $d->admin->provinsi->nama
-                                                : $d->admin?->provinsi ?? '-';
+                                            $admObj = $d->admin;
+                                            $provinsi = is_object($admObj) ? (is_object($admObj->provinsi ?? null) ? ($admObj->provinsi->nama ?? '-') : ($admObj->provinsi ?? '-')) : '-';
                                         } elseif ($d->role == 'super_admin') {
-                                            $provinsi = is_object($d->super_admin?->provinsi)
-                                                ? $d->super_admin->provinsi->nama
-                                                : $d->super_admin?->provinsi ?? '-';
+                                            $saObj = $d->super_admin;
+                                            $provinsi = is_object($saObj) ? (is_object($saObj->provinsi ?? null) ? ($saObj->provinsi->nama ?? '-') : ($saObj->provinsi ?? '-')) : '-';
                                         }
                                     @endphp
 

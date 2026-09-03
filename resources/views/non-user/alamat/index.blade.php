@@ -7,57 +7,27 @@
         <div class="w-full max-w-6xl bg-white p-4 sm:p-6">
 
             <!-- Header Profil -->
-            <h2 class="text-lg font-semibold mb-4">Profil Akun</h2>
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg font-semibold">Profil Akun</h2>
+                <a href="{{ route('profile.index') }}"
+                    class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-md transition shadow-xs">
+                    ← Kembali
+                </a>
+            </div>
 
             <div
                 class="border border-orange-400 rounded-lg p-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
 
-                <!-- Foto + Upload -->
+                <!-- Foto Profile -->
                 <div class="flex items-center space-x-4 md:ml-5">
-                    <div class="relative">
-
-                        @if (Auth::user()->pelamar->img_profile)
-                            <img id="pp" class="w-24 h-24 object-cover rounded-full"
-                                src="{{ asset('storage/' . Auth::user()->pelamar->img_profile) }}" alt="Profile">
-                        @else
-                            <img id="pp" class="w-24 h-24 object-cover rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                                alt="Profile">
-                        @endif
-                        <button class="absolute bottom-11 right-14 bg-orange-500 text-white rounded-full p-1 text-xs">
-                            ✎
-                        </button>
-
-                        <!-- Select Box -->
-                        <div class="relative w-full mt-4">
-                            @php
-                                $status = '';
-
-                                if ($pelamar->kategori === 'pelamar') {
-                                    $status = 'Pelamar Aktif';
-                                } elseif (in_array($pelamar->kategori, ['calon kandidat', 'kandidat aktif'])) {
-                                    $status = 'Belum Bekerja';
-                                } elseif ($pelamar->kategori === 'kandidat nonaktif') {
-                                    $status = 'Bekerja';
-                                }
-                            @endphp
-
-                            <select id="statusSelect"
-                                class="w-full border border-orange-500 text-orange-500 font-semibold rounded-md px-2 py-1 text-xs bg-white cursor-pointer">
-                                <option value="Pelamar Aktif" {{ $status == 'Pelamar Aktif' ? 'selected' : '' }}>
-                                    Pelamar Aktif
-                                </option>
-                                <option value="Belum Bekerja" {{ $status == 'Belum Bekerja' ? 'selected' : '' }}>
-                                    Belum Bekerja
-                                </option>
-                                <option value="Bekerja" {{ $status == 'Bekerja' ? 'selected' : '' }}>
-                                    Bekerja
-                                </option>
-                            </select>
-
-                            <input type="hidden" id="kategoriPelamar" value="{{ $pelamar->kategori }}">
-                        </div>
-                    </div>
+                    @if (Auth::user()->pelamar?->img_profile)
+                        <img id="pp" class="w-24 h-24 object-cover rounded-full border-2 border-orange-400"
+                            src="{{ asset('storage/' . Auth::user()->pelamar->img_profile) }}" alt="Profile">
+                    @else
+                        <img id="pp" class="w-24 h-24 object-cover rounded-full border-2 border-orange-400"
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                            alt="Profile">
+                    @endif
                 </div>
 
                 <!-- Tombol kanan -->
@@ -70,19 +40,28 @@
             </div>
 
             {{-- content --}}
-            <div class="my-10">
-                <h2 class="text-lg font-bold text-gray-800 border-b-2 border-orange-500 pb-2 mb-4">Alamat</h2>
+            <div class="my-8">
+                <div class="flex items-center justify-between border-b border-orange-500 pb-2 mb-4">
+                    <h2 class="text-base font-bold text-gray-800">Alamat</h2>
+                    <span class="text-xs text-gray-500 font-semibold bg-gray-100 px-2.5 py-1 rounded-full border border-gray-200">
+                        {{ $alamatCount }} / 3 Alamat Terpakai
+                    </span>
+                </div>
 
                 <!-- Error & Success -->
                 @if (session('success'))
-                    <div class="p-3 mb-4 bg-green-100 text-green-700 rounded">{{ session('success') }}</div>
+                    <div class="p-3 mb-4 bg-green-100 border border-green-200 text-green-700 rounded-md text-xs font-medium">
+                        {{ session('success') }}
+                    </div>
                 @endif
                 @if (session('error'))
-                    <div class="p-3 mb-4 bg-red-100 text-red-700 rounded">{{ session('error') }}</div>
+                    <div class="p-3 mb-4 bg-red-100 border border-red-200 text-red-700 rounded-md text-xs font-medium">
+                        {{ session('error') }}
+                    </div>
                 @endif
                 @if ($errors->any())
-                    <div class="p-3 mb-4 bg-red-100 text-red-700 rounded">
-                        <ul>
+                    <div class="p-3 mb-4 bg-red-100 border border-red-200 text-red-700 rounded-md text-xs font-medium">
+                        <ul class="list-disc list-inside">
                             @foreach ($errors->all() as $err)
                                 <li>{{ $err }}</li>
                             @endforeach
@@ -90,51 +69,61 @@
                     </div>
                 @endif
 
-                <div class="block lg:flex md:flex justify-between items-start gap-4">
+                <!-- GRID Alamat Compact + Card Tambah Setara -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                    @foreach (Auth::user()->pelamar->alamat_pelamar as $almt)
+                        <div class="p-4 bg-orange-500 text-white rounded-lg shadow-sm flex flex-col justify-between min-h-[170px]">
+                            <div>
+                                <div class="flex items-center justify-between mb-2 pb-1.5 border-b border-orange-400">
+                                    <h3 class="text-sm font-bold text-white truncate max-w-[150px]">
+                                        {{ $almt->label ?: 'Alamat Utama' }}
+                                    </h3>
+                                    @if($loop->first)
+                                        <span class="bg-white text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider shadow-xs">
+                                            Utama
+                                        </span>
+                                    @endif
+                                </div>
 
-                    <!-- GRID Alamat -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
-
-                        @foreach (Auth::user()->pelamar->alamat_pelamar as $almt)
-                            <div class="w-full p-5 bg-orange-500 text-white rounded-lg">
-                                <h1 class="text-xl font-semibold">{{ $almt->label }}</h1>
-
-                                <p class="my-3 text-sm leading-relaxed">
-                                    {{ $almt->desa }} {{ $almt->kecamatan }} {{ $almt->kota }}
-                                    {{ $almt->provinsi }} {{ $almt->kode_pos }}
+                                <p class="text-xs font-medium text-white leading-relaxed line-clamp-2">
+                                    {{ implode(' ', array_filter([$almt->desa, $almt->kecamatan, $almt->kota, $almt->provinsi, $almt->kode_pos])) }}
                                 </p>
 
-                                <p class="mb-8 text-sm">{{ $almt->detail }}</p>
+                                @if($almt->detail && $almt->detail !== $almt->desa)
+                                    <p class="text-[11px] text-orange-100 leading-tight font-normal mt-1 truncate">
+                                        {{ $almt->detail }}
+                                    </p>
+                                @endif
+                            </div>
 
-                                <a class="w-fit px-5 py-2 bg-white rounded-lg text-orange-500 font-semibold hover:bg-orange-100 transition"
+                            <div class="grid grid-cols-2 gap-2 mt-3 pt-2">
+                                <a class="py-1.5 bg-white hover:bg-orange-50 text-orange-600 font-bold text-center rounded text-xs shadow-xs transition"
                                     href="{{ route('alamat.edit', $almt->id) }}">
-                                    Edit Alamat
+                                    Edit
                                 </a>
 
                                 <form action="{{ route('alamat.destroy', $almt->id) }}" method="POST"
-                                    onsubmit="return confirm('Yakin hapus organisasi ini?')">
+                                    onsubmit="return confirm('Yakin ingin menghapus alamat ini?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button
-                                        class="w-fit px-5 py-2 bg-white rounded-lg text-orange-500 font-semibold mt-3 hover:bg-orange-100 transition">
-                                        Hapus Alamat
+                                    <button class="w-full py-1.5 bg-white/95 hover:bg-white text-orange-600 font-bold rounded text-xs shadow-xs transition">
+                                        Hapus
                                     </button>
                                 </form>
                             </div>
-                        @endforeach
+                        </div>
+                    @endforeach
 
-                    </div>
-
-                    <!-- Tombol Tambah Alamat -->
-                    <a href="{{ route('form_alamat') }}"
-                        @if ($alamatCount >= 4) style="pointer-events:none; opacity:0.5;" @endif
-                        class="mt-5 lg:mt-0 flex justify-center lg:justify-start">
-                        <span
-                            class="min-w-14 min-h-14 w-14 h-14 flex justify-center items-center rounded-lg bg-orange-500 text-white text-4xl">
-                            <i class="ph ph-plus"></i>
-                        </span>
-                    </a>
-
+                    <!-- Tombol Tambah Alamat (+ Card Setara Compact) -->
+                    @if ($alamatCount < 3)
+                        <a href="{{ route('form_alamat') }}"
+                            class="p-4 border-2 border-dashed border-orange-400 hover:border-orange-500 bg-orange-50/40 hover:bg-orange-100/50 rounded-lg shadow-xs flex flex-col items-center justify-center min-h-[170px] transition text-orange-500 group cursor-pointer">
+                            <span class="w-10 h-10 rounded-full bg-orange-500 text-white flex items-center justify-center text-2xl font-bold mb-2 group-hover:scale-110 transition-transform shadow-xs">
+                                +
+                            </span>
+                            <span class="font-bold text-xs text-orange-600">Tambah Alamat</span>
+                        </a>
+                    @endif
                 </div>
             </div>
 

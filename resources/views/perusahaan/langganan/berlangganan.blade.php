@@ -24,15 +24,8 @@
             </div>
         </div>
         <div class="flex justify-center md:justify-end w-full md:w-1/2">
-            @php
-                $header = \App\Models\SocialLink::where('nama', 'header_berlangganan')->first();
-            @endphp
-
-            <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/brolbaru.png') }}"
+            <img src="{{ asset('images/brolbaru.png') }}"
                 alt="berlangganan" class="w-[450px] md:w-[550px] lg:w-[650px] h-auto object-contain">
-
-            {{-- <img src="{{ asset('images/brolbaru.png') }}" alt="berlangganan"
-                class="w-[450px] md:w-[550px] lg:w-[650px] h-auto object-contain"> --}}
         </div>
     </div>
 
@@ -112,16 +105,8 @@
             </div>
             <!-- Image -->
             <div class="md:w-1/2 flex justify-center">
-                @php
-                    $header = \App\Models\SocialLink::where('nama', 'header_berlangganan')->first();
-                @endphp
-
-                <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/jempol.png') }}"
+                <img src="{{ asset('images/jempol.png') }}"
                     alt="ilustrasi berlangganan" class="w-[350px] md:w-[450px] lg:w-[300px] h-auto object-contain">
-
-                {{-- <img src="{{ asset('images/jempol.png') }}" alt="ilustrasi berlangganan"
-                    class="w-[350px] md:w-[450px] lg:w-[300px] h-auto object-contain">
-            </div> --}}
             </div>
         </div>
 

@@ -139,7 +139,7 @@
                 <tbody class="text-center">
                     @forelse ($perusahaans as $p)
                         @php
-                            $alamat = $p->alamat_perusahaan->first();
+                            $alamat = $p->alamat ?? $p->kota ?? '-';
                         @endphp
                         <tr class="border-b-[2px] border-gray-300">
                             <td class="px-2 sm:px-4 py-2 sm:py-3 whitespace-normal break-words max-w-[150px]">
@@ -155,16 +155,7 @@
                                 {{ $p->telepon_perusahaan }}
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3 text-left whitespace-normal break-words max-w-[250px]">
-                                @if ($alamat)
-                                    {{ $alamat->detail ?? '-' }},
-                                    {{ $alamat->desa ?? '-' }},
-                                    {{ $alamat->kecamatan->nama ?? '-' }},
-                                    {{ $alamat->kota->nama ?? '-' }},
-                                    {{ $alamat->provinsi->nama ?? '-' }},
-                                    {{ $alamat->kode_pos ?? '-' }}
-                                @else
-                                    -
-                                @endif
+                                {{ is_object($alamat) ? ($alamat->alamat ?? '-') : $alamat }}
                             </td>
                             <td class="px-2 sm:px-4 py-2 sm:py-3 text-center">
                                 <a href="{{ route('superadmin.panggilan.list', $p->id) }}"

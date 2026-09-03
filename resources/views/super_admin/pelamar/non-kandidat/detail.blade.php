@@ -106,13 +106,13 @@
 
                             <p class="font-semibold mb-3">Social Media</p>
                             <p class="m-1">Instagram <span class="ml-8"> :
-                                    {{ $data->sosmed->latest()->first()->instagram ?? 'tidak ada data' }}</span></p>
+                                    {{ $data->sosmed->instagram ?? 'tidak ada data' }}</span></p>
                             <p class="m-1">Linkedln <span class="ml-12"> :
-                                    {{ $data->sosmed->latest()->first()->linkedin ?? 'tidak ada data' }}</span></p>
+                                    {{ $data->sosmed->linkedin ?? 'tidak ada data' }}</span></p>
                             <p class="m-1">Website <span class="ml-12"> :
-                                    {{ $data->sosmed->latest()->first()->website ?? 'tidak ada data' }}</span></p>
+                                    {{ $data->sosmed->website ?? 'tidak ada data' }}</span></p>
                             <p class="m-1">Twitter <span class="ml-14"> :
-                                    {{ $data->sosmed->latest()->first()->twitter ?? 'tidak ada data' }}</span></p>
+                                    {{ $data->sosmed->twitter ?? 'tidak ada data' }}</span></p>
                         </div>
                     @else
                         <p class="text-gray-500">Data Belum Diisi</p>

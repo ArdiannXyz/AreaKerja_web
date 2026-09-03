@@ -13,16 +13,19 @@
                         <th class="p-2 md:p-3 text-center">Total</th>
                         <th class="p-2 md:p-3 text-center">Status</th>
                         <th class="p-2 md:p-3 text-center">Tanggal</th>
+                        <th class="p-2 md:p-3 text-center">Aksi</th>
                     </tr>
                 </thead>
 
                 <tbody>
                     @forelse ($transaksi as $t)
-                        <tr class="border-b text-xs md:text-sm">
-                            <td class="p-2 md:p-3 text-center">{{ $t->no_referensi }}</td>
+                        <tr class="border-b text-xs md:text-sm hover:bg-orange-50/50 transition cursor-pointer" onclick="window.location='{{ route('kandidat.transaksi', $t->id) }}'">
+                            <td class="p-2 md:p-3 text-center font-bold text-orange-600 hover:underline">
+                                <a href="{{ route('kandidat.transaksi', $t->id) }}">{{ $t->no_referensi }}</a>
+                            </td>
                             <td class="p-2 md:p-3 text-center">{{ $t->bank->nama_bank ?? '-' }}</td>
-                            <td class="p-2 md:p-3 text-center">{{ $t->pesanan ?? '-' }}</td>
-                            <td class="p-2 md:p-3 text-center">
+                            <td class="p-2 md:p-3 text-center font-medium">{{ $t->pesanan ?? '-' }}</td>
+                            <td class="p-2 md:p-3 text-center font-semibold">
                                 Rp {{ number_format($t->total, 0, ',', '.') }}
                             </td>
 
@@ -35,14 +38,21 @@
                                 {{ ucfirst($t->status) }}
                             </td>
 
-                            <td class="p-2 md:p-3 text-center">
+                            <td class="p-2 md:p-3 text-center text-gray-500">
                                 {{ $t->created_at->format('d M Y H:i') }}
+                            </td>
+
+                            <td class="p-2 md:p-3 text-center" onclick="event.stopPropagation()">
+                                <a href="{{ route('kandidat.transaksi', $t->id) }}"
+                                    class="px-4 py-1.5 bg-orange-500 hover:bg-orange-600 text-white text-xs font-bold rounded-lg shadow-sm transition inline-flex items-center gap-1.5">
+                                    <i class="ph ph-eye text-sm"></i> Detail
+                                </a>
                             </td>
                         </tr>
 
                     @empty
                         <tr>
-                            <td colspan="6">
+                            <td colspan="7">
 
                                 <div
                                     class="border-gray-200 py-20 md:py-32 max-w-md md:max-w-2xl mx-auto border rounded-3xl mt-6 mb-8 shadow text-center px-4">

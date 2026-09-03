@@ -10,7 +10,16 @@ class Notifikasi extends Model
     use HasFactory;
 
     protected $table = 'notifikasis';
-    protected $guarded = [];
+    protected $fillable = [
+        'user_id',
+        'perusahaan_id',
+        'pelamar_lowongan_id',
+        'judul',
+        'pesan',
+        'expired_at',
+        // 'is_read' → TIDAK dimasukkan, hanya boleh diubah via endpoint tandai-dibaca
+    ];
+
 
     public function user()
     {

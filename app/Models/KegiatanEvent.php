@@ -8,8 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class KegiatanEvent extends Model
 {
     use HasFactory;
+
     protected $table = 'kegiatan_events';
-    protected $guarded = [];
+
+    protected $fillable = [
+        'event_id',
+        'waktu',
+        'kegiatan',
+    ];
 
     public function event()
     {

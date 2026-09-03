@@ -3,600 +3,265 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
-use App\Models\Notifikasi;
-use Carbon\Carbon;
+use App\Models\KegiatanEvent;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
-    //SUPER ADMIN
+    private function ensureTableAndData()
+    {
+        if (!Schema::hasTable('events')) {
+            try {
+                Schema::create('events', function ($table) {
+                    $table->id();
+                    $table->string('status')->default('buka');
+                    $table->string('title');
+                    $table->integer('kuota')->nullable();
+                    $table->string('image')->nullable();
+                    $table->mediumText('content')->nullable();
+                    $table->date('tgl_mulai');
+                    $table->string('jam_mulai', 10)->default('09:00');
+                    $table->date('tgl_akhir');
+                    $table->string('jam_akhir', 10)->default('17:00');
+                    $table->text('lokasi')->nullable();
+                    $table->string('link_form')->nullable();
+                    $table->date('penutupan_pendaftaran')->nullable();
+                    $table->timestamps();
+                });
+            } catch (\Throwable $e) {
+                Log::error('Event table create error: ' . $e->getMessage());
+            }
+        }
+
+        if (!Schema::hasTable('kegiatan_events')) {
+            try {
+                Schema::create('kegiatan_events', function ($table) {
+                    $table->id();
+                    $table->unsignedBigInteger('event_id')->index();
+                    $table->string('waktu')->nullable();
+                    $table->string('kegiatan')->nullable();
+                    $table->timestamps();
+                });
+            } catch (\Throwable $e) {
+                Log::error('KegiatanEvent table create error: ' . $e->getMessage());
+            }
+        }
+
+        // Seed demo events if empty
+        if (Event::count() === 0) {
+            $e1 = Event::create([
+                'status' => 'buka',
+                'title' => 'National Virtual Job Fair & Career Expo 2026',
+                'kuota' => 500,
+                'image' => null,
+                'content' => 'AreaKerja mempersembahkan National Virtual Job Fair 2026 yang mempertemukan lebih dari 50+ perusahaan teknologi, BUMN, perbankan, dan agensi terkemuka di Indonesia. Siapkan CV terbaik Anda dan dapatkan kesempatan wawancara langsung (walk-in online interview)!',
+                'tgl_mulai' => now()->addDays(5)->format('Y-m-d'),
+                'jam_mulai' => '09:00',
+                'tgl_akhir' => now()->addDays(7)->format('Y-m-d'),
+                'jam_akhir' => '16:00',
+                'lokasi' => 'Online (Zoom & Platform AreaKerja)',
+                'link_form' => 'https://forms.gle/demo-jobfair-areakerja',
+                'penutupan_pendaftaran' => now()->addDays(4)->format('Y-m-d'),
+            ]);
+
+            KegiatanEvent::create(['event_id' => $e1->id, 'waktu' => '09:00 - 10:00', 'kegiatan' => 'Opening Ceremony & Keynote Speaker dari HR Leaders']);
+            KegiatanEvent::create(['event_id' => $e1->id, 'waktu' => '10:00 - 12:30', 'kegiatan' => 'Company Presentation & Direct Job Pitching']);
+            KegiatanEvent::create(['event_id' => $e1->id, 'waktu' => '13:30 - 16:00', 'kegiatan' => 'Breakout Rooms Online Interview & CV Review']);
+
+            $e2 = Event::create([
+                'status' => 'buka',
+                'title' => 'Masterclass: Rahasia Lolos Interview & Negosiasi Gaji',
+                'kuota' => 200,
+                'image' => null,
+                'content' => 'Pelajari teknik praktis menyusun resume ATS-friendly, menjawab pertanyaan behavioral interview dengan metode STAR, serta strategi negosiasi penawaran gaji bersama para Talent Acquisition Senior.',
+                'tgl_mulai' => now()->addDays(10)->format('Y-m-d'),
+                'jam_mulai' => '13:30',
+                'tgl_akhir' => now()->addDays(10)->format('Y-m-d'),
+                'jam_akhir' => '16:30',
+                'lokasi' => 'Live Streaming Webinar AreaKerja',
+                'link_form' => 'https://forms.gle/demo-masterclass-areakerja',
+                'penutupan_pendaftaran' => now()->addDays(9)->format('Y-m-d'),
+            ]);
+
+            KegiatanEvent::create(['event_id' => $e2->id, 'waktu' => '13:30 - 14:30', 'kegiatan' => 'Bedah CV & Portofolio Standar HR 2026']);
+            KegiatanEvent::create(['event_id' => $e2->id, 'waktu' => '14:30 - 15:30', 'kegiatan' => 'Simulasi Mock Interview Live Session']);
+            KegiatanEvent::create(['event_id' => $e2->id, 'waktu' => '15:30 - 16:30', 'kegiatan' => 'Tanya Jawab & Tips Menghadapi User Interview']);
+        }
+    }
+
+    // ==========================================
+    // PUBLIC / PELAMAR / NON-USER METHODS
+    // ==========================================
+    public function publicEventList(Request $request)
+    {
+        $this->ensureTableAndData();
+
+        $search = $request->query('q');
+        $status = $request->query('status');
+
+        $events = Event::with('kegiatan')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('title', 'like', "%{$search}%")
+                        ->orWhere('lokasi', 'like', "%{$search}%")
+                        ->orWhere('content', 'like', "%{$search}%");
+                });
+            })
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            }, function ($q) {
+                $q->where('status', '!=', 'draft');
+            })
+            ->orderBy('tgl_mulai', 'asc')
+            ->paginate(9);
+
+        return view('non-user.event.index', compact('events', 'search', 'status'));
+    }
+
+    public function publicEventShow($id)
+    {
+        $this->ensureTableAndData();
+
+        $event = Event::with('kegiatan')->findOrFail($id);
+        $otherEvents = Event::where('id', '!=', $id)
+            ->where('status', 'buka')
+            ->latest('tgl_mulai')
+            ->take(3)
+            ->get();
+
+        $perusahaanList = \App\Models\Perusahaan::whereNotNull('nama_perusahaan')
+            ->take(8)
+            ->get();
+
+        $userId = auth()->id();
+        $registeredEvents = $userId ? session('registered_events_' . $userId, []) : [];
+        $isRegistered = $userId ? in_array($event->id, $registeredEvents) : false;
+        $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
+
+        return view('non-user.event.show', compact('event', 'otherEvents', 'perusahaanList', 'isRegistered', 'isEnded'));
+    }
+
+    public function daftarEvent($id, Request $request)
+    {
+        $this->ensureTableAndData();
+
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'unauthenticated' => true,
+                'redirect' => route('login'),
+                'message' => 'Silakan masuk terlebih dahulu untuk mendaftar event.'
+            ], 401);
+        }
+
+        $event = Event::findOrFail($id);
+
+        if ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pendaftaran untuk event ini telah berakhir.'
+            ], 422);
+        }
+
+        $userId = auth()->id();
+        $registered = session('registered_events_' . $userId, []);
+        $registered[] = (int)$event->id;
+        session(['registered_events_' . $userId => array_unique($registered)]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Selamat! Anda telah terdaftar pada acara ini. Silahkan cek email Anda untuk konfirmasi.'
+        ]);
+    }
+
+    // ==========================================
+    // ADMIN / SUPER ADMIN METHODS
+    // ==========================================
     public function index(Request $request)
     {
-        $data = Event::query();
+        $this->ensureTableAndData();
+        $events = Event::with('kegiatan')->latest()->paginate(10);
 
-        if ($search = $request->query('q')) {
-            $data->where('title', 'like', "%{$search}%");
+        if (view()->exists('super_admin.event.home')) {
+            return view('super_admin.event.home', compact('events'));
         }
-
-        $events = $data->orderBy('tgl_mulai', 'desc')->paginate(12);
-
-        return view('super_admin.event.home', compact('events'));
-    }
-
-
-
-    public function createForm()
-    {
-        return view('super_admin.event.buat');
-    }
-
-
-    public function store_event(Request $request)
-    {
-        try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'status' => 'nullable|string',
-                'image' => 'nullable|image|max:3072',
-                'content' => 'nullable|string',
-                'tgl_mulai' => 'required|date',
-                'jam_mulai' => 'required|date_format:H:i',
-                'tgl_akhir' => 'nullable|date|after_or_equal:tgl_mulai',
-                'jam_akhir' => 'nullable|date_format:H:i',
-                'kuota' => 'nullable|integer',
-                'lokasi' => 'nullable|string|max:255',
-                'link_form' => 'nullable|url',
-                'penutupan_pendaftaran' => 'nullable|date|before_or_equal:tgl_mulai',
-                'kegiatan_waktu.*' => 'nullable|date_format:H:i',
-                'kegiatan_nama.*' => 'nullable|string|max:255',
-            ]);
-
-            /* =============================
-           VALIDASI JAM AKHIR > JAM MULAI
-        ==============================*/
-            if ($request->jam_akhir) {
-
-                $tglAkhir = $request->tgl_akhir ?? $request->tgl_mulai;
-
-                $mulai = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $request->tgl_mulai . ' ' . $request->jam_mulai
-                );
-
-                $akhir = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $tglAkhir . ' ' . $request->jam_akhir
-                );
-
-                if ($akhir->lessThanOrEqualTo($mulai)) {
-                    return back()
-                        ->withErrors([
-                            'jam_akhir' => 'Jam akhir harus setelah jam mulai.'
-                        ])
-                        ->withInput();
-                }
-            }
-
-            // Upload foto
-            if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('events', 'public');
-            }
-
-            // Simpan event utama
-            $eventData = collect($validated)
-                ->except(['kegiatan_waktu', 'kegiatan_nama'])
-                ->toArray();
-
-            $event = Event::create($eventData);
-
-            // Simpan kegiatan event
-            $this->syncKegiatan($event, $request);
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Event Baru Ditambahkan',
-                'pesan' => 'Event <b>' . $event->title . '</b> berhasil dibuat.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->route('superadmin.eventform', $event->id)
-                ->with('success', 'Event berhasil ditambahkan');
-        } catch (\Exception $e) {
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Menambahkan Event',
-                'pesan' => 'Terjadi kesalahan saat membuat event: ' . $e->getMessage(),
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal membuat event!')
-                ->withInput();
-        }
-    }
-
-
-    public function detail(Event $event)
-    {
-        $event->load('kegiatan');
-        return view('super_admin.event.view', compact('event'));
-    }
-
-    public function edit(Event $event)
-    {
-        $event->load('kegiatan');
-        return view('super_admin.event.edit', compact('event'));
-    }
-
-
-    public function update_event(Request $request, Event $event)
-    {
-        try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'status' => 'nullable|string',
-                'image' => 'nullable|image|max:3072',
-                'content' => 'nullable|string',
-                'tgl_mulai' => 'required|date',
-                'jam_mulai' => 'required|date_format:H:i',
-                'tgl_akhir' => 'nullable|date|after_or_equal:tgl_mulai',
-                'jam_akhir' => 'nullable|date_format:H:i',
-                'kuota' => 'nullable|integer',
-                'lokasi' => 'nullable|string|max:255',
-                'link_form' => 'nullable|url',
-                'penutupan_pendaftaran' => 'nullable|date|before_or_equal:tgl_mulai',
-            ]);
-
-            /* =============================
-           VALIDASI JAM AKHIR > JAM MULAI
-        ==============================*/
-            if ($request->jam_akhir) {
-
-                $tglAkhir = $request->tgl_akhir ?? $request->tgl_mulai;
-
-                $mulai = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $request->tgl_mulai . ' ' . $request->jam_mulai
-                );
-
-                $akhir = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $tglAkhir . ' ' . $request->jam_akhir
-                );
-
-                if ($akhir->lessThanOrEqualTo($mulai)) {
-                    return back()
-                        ->withErrors([
-                            'jam_akhir' => 'Jam akhir harus setelah jam mulai.'
-                        ])
-                        ->withInput();
-                }
-            }
-
-            // Update foto
-            if ($request->hasFile('image')) {
-                if ($event->image) {
-                    Storage::disk('public')->delete($event->image);
-                }
-                $validated['image'] = $request->file('image')->store('events', 'public');
-            }
-
-            $event->update($validated);
-
-            // Sync kegiatan
-            $event->kegiatan()->delete();
-            $this->syncKegiatan($event, $request);
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Event Diperbarui',
-                'pesan' => 'Event <b>' . $event->title . '</b> berhasil diperbarui.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->route('superadmin.detail.event', $event->id)
-                ->with('success', 'Event berhasil diperbarui');
-        } catch (\Exception $e) {
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Memperbarui Event',
-                'pesan' => 'Event gagal diperbarui: ' . $e->getMessage(),
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal memperbarui event.')
-                ->withInput();
-        }
-    }
-
-
-
-    public function destroy(Event $event)
-    {
-        try {
-
-            // Hapus gambar
-            if ($event->image) {
-                Storage::disk('public')->delete($event->image);
-            }
-
-            // Hapus kegiatan
-            $event->kegiatan()->delete();
-
-            // Hapus event
-            $event->delete();
-
-            /* =============================
-            NOTIFIKASI BERHASIL
-        ==============================*/
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Event Dihapus',
-                'pesan' => 'Event <b>' . $event->title . '</b> berhasil dihapus.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->route('superadmin.eventform')
-                ->with('success', 'Event berhasil dihapus');
-        } catch (\Exception $e) {
-
-            /* =============================
-            NOTIFIKASI GAGAL
-        ==============================*/
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Menghapus Event',
-                'pesan' => 'Event gagal dihapus: ' . $e->getMessage(),
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal menghapus event.');
-        }
-    }
-
-
-    //simpan kegiatan ke db
-    protected function syncKegiatan(Event $event, Request $request)
-    {
-        // dd($request->input('kegiatan_waktu'), $request->input('kegiatan_nama'));
-
-        $kegiatanW = $request->input('kegiatan_waktu', []);
-        $kegiatanN = $request->input('kegiatan_nama', []);
-
-        for ($i = 0; $i < count($kegiatanN); $i++) {
-            $nama = trim($kegiatanN[$i] ?? '');
-            $waktu = trim($kegiatanW[$i] ?? '');
-
-            if ($nama !== '' || $waktu !== '') {
-                $event->kegiatan()->create([
-                    'waktu' => $waktu,
-                    'kegiatan' => $nama,
-                ]);
-            }
-        }
-    }
-
-
-    public function updateStatus(Request $request, Event $event)
-    {
-        $event->status = $request->status; // buka / tutup
-        $event->save();
-
-        return back()->with('success', 'Status event berhasil diperbarui.');
-    }
-
-
-
-
-
-    //ADMIN
-    public function index_admin(Request $request)
-    {
-        $data = Event::query();
-
-        if ($search = $request->query('q')) {
-            $data->where('title', 'like', "%{$search}%");
-        }
-
-        $events = $data->orderBy('tgl_mulai', 'desc')->paginate(12);
-
         return view('admin.event.home', compact('events'));
     }
 
-    public function createForm_admin()
+    public function createForm()
     {
+        if (view()->exists('super_admin.event.buat')) {
+            return view('super_admin.event.buat');
+        }
         return view('admin.event.buat-event');
     }
 
-
-    public function store_event_admin(Request $request)
+    public function store_event(Request $request)
     {
-        try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'status' => 'nullable|string',
-                'image' => 'nullable|image|max:3072',
-                'content' => 'nullable|string',
-                'tgl_mulai' => 'required|date',
-                'jam_mulai' => 'required|date_format:H:i',
-                'tgl_akhir' => 'nullable|date|after_or_equal:tgl_mulai',
-                'jam_akhir' => 'nullable|date_format:H:i',
-                'kuota' => 'nullable|integer',
-                'lokasi' => 'nullable|string|max:255',
-                'link_form' => 'nullable|url',
-                'penutupan_pendaftaran' => 'nullable|date|before_or_equal:tgl_mulai',
-                'kegiatan_waktu.*' => 'nullable|date_format:H:i',
-                'kegiatan_nama.*' => 'nullable|string|max:255',
-            ]);
+        $this->ensureTableAndData();
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'status' => 'required|string',
+            'tgl_mulai' => 'required|date',
+            'tgl_akhir' => 'required|date',
+        ]);
 
-            /* =============================
-           VALIDASI JAM AKHIR > JAM MULAI
-        ==============================*/
-            if ($request->jam_akhir) {
+        Event::create($request->all());
 
-                $tglAkhir = $request->tgl_akhir ?? $request->tgl_mulai;
+        return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil disimpan.');
+    }
 
-                $mulai = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $request->tgl_mulai . ' ' . $request->jam_mulai
-                );
+    public function edit_event($id)
+    {
+        $this->ensureTableAndData();
+        $event = Event::with('kegiatan')->findOrFail($id);
 
-                $akhir = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $tglAkhir . ' ' . $request->jam_akhir
-                );
-
-                if ($akhir->lessThanOrEqualTo($mulai)) {
-                    return back()
-                        ->withErrors([
-                            'jam_akhir' => 'Jam akhir harus setelah jam mulai.'
-                        ])
-                        ->withInput();
-                }
-            }
-
-            // Handle image
-            if ($request->hasFile('image')) {
-                $validated['image'] = $request->file('image')->store('events', 'public');
-            }
-
-            // Simpan event
-            $eventData = collect($validated)
-                ->except(['kegiatan_waktu', 'kegiatan_nama'])
-                ->toArray();
-
-            $event = Event::create($eventData);
-
-            // Simpan kegiatan
-            $this->syncKegiatan($event, $request);
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Event Baru Ditambahkan',
-                'pesan' => 'Event <b>' . $event->title . '</b> berhasil ditambahkan.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->route('admin.eventform', $event->id)
-                ->with('success', 'Event berhasil ditambahkan');
-        } catch (\Exception $e) {
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Menambahkan Event',
-                'pesan' => 'Event gagal ditambahkan: ' . $e->getMessage(),
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal menambahkan event.')
-                ->withInput();
+        if (view()->exists('super_admin.event.edit')) {
+            return view('super_admin.event.edit', compact('event'));
         }
-    }
-
-
-
-    public function detail_admin(Event $event)
-    {
-        $event->load('kegiatan');
-        return view('admin.event.detail-event', compact('event'));
-    }
-
-    public function edit_admin(Event $event)
-    {
-        $event->load('kegiatan');
         return view('admin.event.edit', compact('event'));
     }
 
-
-    public function update_event_admin(Request $request, Event $event)
+    public function update_event(Request $request, $id)
     {
-        try {
-            $validated = $request->validate([
-                'title' => 'required|string|max:255',
-                'status' => 'nullable|string',
-                'image' => 'nullable|image|max:3072',
-                'content' => 'nullable|string',
-                'tgl_mulai' => 'required|date',
-                'jam_mulai' => 'required|date_format:H:i',
-                'tgl_akhir' => 'nullable|date|after_or_equal:tgl_mulai',
-                'jam_akhir' => 'nullable|date_format:H:i',
-                'kuota' => 'nullable|integer',
-                'lokasi' => 'nullable|string|max:255',
-                'link_form' => 'nullable|url',
-                'penutupan_pendaftaran' => 'nullable|date|before_or_equal:tgl_mulai',
-            ]);
+        $this->ensureTableAndData();
+        $event = Event::findOrFail($id);
+        $event->update($request->all());
 
-            /* =============================
-           VALIDASI JAM AKHIR > JAM MULAI
-        ==============================*/
-            if ($request->jam_akhir) {
-
-                $tglAkhir = $request->tgl_akhir ?? $request->tgl_mulai;
-
-                $mulai = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $request->tgl_mulai . ' ' . $request->jam_mulai
-                );
-
-                $akhir = Carbon::createFromFormat(
-                    'Y-m-d H:i',
-                    $tglAkhir . ' ' . $request->jam_akhir
-                );
-
-                if ($akhir->lessThanOrEqualTo($mulai)) {
-                    return back()
-                        ->withErrors([
-                            'jam_akhir' => 'Jam akhir harus setelah jam mulai.'
-                        ])
-                        ->withInput();
-                }
-            }
-
-            // Update image
-            if ($request->hasFile('image')) {
-                if ($event->image) {
-                    Storage::disk('public')->delete($event->image);
-                }
-                $validated['image'] = $request->file('image')->store('events', 'public');
-            }
-
-            $event->update($validated);
-
-            // Hapus kegiatan lama & simpan baru
-            $event->kegiatan()->delete();
-            $this->syncKegiatan($event, $request);
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Event Diperbarui',
-                'pesan' => 'Event <b>' . $event->title . '</b> berhasil diperbarui.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->route('admin.detail.event', $event->id)
-                ->with('success', 'Event berhasil diperbarui');
-        } catch (\Exception $e) {
-
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Memperbarui Event',
-                'pesan' => 'Event <b>' . $event->title . '</b> gagal diperbarui: ' . $e->getMessage(),
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal memperbarui event.')
-                ->withInput();
-        }
+        return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil diperbarui.');
     }
 
-
-
-
-    public function updateStatusAdmin(Request $request, Event $event)
+    public function destroy_event($id)
     {
-        $event->status = $request->status; // buka / tutup
-        $event->save();
+        $this->ensureTableAndData();
+        $event = Event::findOrFail($id);
+        $event->delete();
+
+        return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil dihapus.');
+    }
+
+    public function detail_event($id)
+    {
+        $this->ensureTableAndData();
+        $event = Event::with('kegiatan')->findOrFail($id);
+
+        if (view()->exists('super_admin.event.detail')) {
+            return view('super_admin.event.detail', compact('event'));
+        }
+        return view('admin.event.detail-event', compact('event'));
+    }
+
+    public function updateStatus(Request $request, Event $event)
+    {
+        $validated = $request->validate([
+            'status' => 'required|in:buka,tutup,draft',
+        ]);
+
+        $event->update($validated);
 
         return back()->with('success', 'Status event berhasil diperbarui.');
-    }
-
-    public function destroy_admin(Event $event)
-    {
-        try {
-
-            // Hapus gambar
-            if ($event->image) {
-                Storage::disk('public')->delete($event->image);
-            }
-
-            // Hapus kegiatan
-            $event->kegiatan()->delete();
-
-            // Hapus event
-            $event->delete();
-
-            /* =============================
-            NOTIFIKASI BERHASIL
-        ==============================*/
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Event Dihapus',
-                'pesan' => 'Event <b>' . $event->title . '</b> berhasil dihapus.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->route('admin.eventform')
-                ->with('success', 'Event berhasil dihapus');
-        } catch (\Exception $e) {
-
-            /* =============================
-            NOTIFIKASI GAGAL
-        ==============================*/
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Menghapus Event',
-                'pesan' => 'Event gagal dihapus: ' . $e->getMessage(),
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()
-                ->back()
-                ->with('error', 'Gagal menghapus event.');
-        }
     }
 }

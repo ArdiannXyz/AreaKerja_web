@@ -2,21 +2,19 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Admin;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
-use App\Models\Kecamatan;
-use App\Models\Kota;
 use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
-use App\Models\PembeliKandidat;
 use App\Models\Perusahaan;
-use App\Models\Provinsi;
 use App\Models\TalentHunter;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -24,7 +22,12 @@ class AdminController extends Controller
 {
     public function index()
     {
-        return view('admin.dashboard');
+        return $this->beranda_admin();
+    }
+
+    public function beranda_admin()
+    {
+        return app(AuthController::class)->beranda_admin();
     }
 
     public function profile_admin()
@@ -32,117 +35,303 @@ class AdminController extends Controller
         return view('admin.profile.profile');
     }
 
-    public function edit_profile(Admin $admin)
+    public function edit_profile($id = null)
     {
-        $provinsis = Provinsi::all();
-        $admin->load(['kota', 'kecamatan', 'provinsi']);
-        return view(
-            'admin.profile.edit-profile',
-            [
-                "data" => $admin,
-                'provinsis' => $provinsis
-            ]
-        );
+        $user = Auth::user();
+        $provinsis = collect();
+
+        try {
+            if (Schema::hasTable('provinsis')) {
+                $provinsis = DB::table('provinsis')->get();
+            }
+        } catch (\Throwable $e) {
+            $provinsis = collect();
+        }
+
+        if ($provinsis->isEmpty() && file_exists(database_path('data/provinces.json'))) {
+            $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+            $provinsis = collect($json)->map(function ($item) {
+                return (object)[
+                    'id'   => (string)$item['id'],
+                    'nama' => ucwords(strtolower($item['name'])),
+                ];
+            });
+        }
+
+        return view('admin.profile.edit-profile', [
+            "data"      => $user->admin,
+            'provinsis' => $provinsis,
+        ]);
+    }
+
+    private function loadJsonFile($filepath)
+    {
+        if (!file_exists($filepath)) {
+            return [];
+        }
+        $content = file_get_contents($filepath);
+        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+        $content = trim($content);
+
+        $data = json_decode($content, true);
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            $content = iconv('UTF-8', 'UTF-8//IGNORE', $content);
+            $data = json_decode($content, true);
+        }
+
+        return $data ?? [];
     }
 
     public function getKota($provinsi_id)
     {
-        return response()->json(Kota::where('provinsi_id', $provinsi_id)->get());
+        $input = trim(urldecode((string)$provinsi_id));
+        if (empty($input)) {
+            return response()->json([]);
+        }
+
+        $regencies = $this->loadJsonFile(database_path('data/regencies.json'));
+        $provinces = $this->loadJsonFile(database_path('data/provinces.json'));
+
+        if (empty($regencies)) {
+            return response()->json([]);
+        }
+
+        // 1. Find matching province ID
+        $targetProvId = null;
+        foreach ($provinces as $p) {
+            $pId   = trim((string)($p['id'] ?? ''));
+            $pName = trim((string)($p['name'] ?? ''));
+            $pAlt  = trim((string)($p['alt_name'] ?? ''));
+
+            if ($pId === $input || 
+                (is_numeric($input) && (int)$pId === (int)$input) || 
+                strcasecmp($pName, $input) === 0 || 
+                ($pAlt && strcasecmp($pAlt, $input) === 0) ||
+                str_contains(strtolower($pName), strtolower($input))) {
+                $targetProvId = $pId;
+                break;
+            }
+        }
+
+        if (!$targetProvId) {
+            $targetProvId = $input;
+        }
+
+        // 2. Filter regencies
+        $kotas = collect($regencies)
+            ->filter(function ($item) use ($targetProvId, $input) {
+                $itemProvId = trim((string)($item['province_id'] ?? ''));
+                $itemName   = trim((string)($item['name'] ?? ''));
+                
+                return $itemProvId === (string)$targetProvId
+                    || (is_numeric($targetProvId) && (int)$itemProvId === (int)$targetProvId)
+                    || (is_numeric($input) && (int)$itemProvId === (int)$input)
+                    || strcasecmp($itemName, $input) === 0;
+            })
+            ->values()
+            ->map(function ($item) {
+                return [
+                    'id'          => (string)$item['id'],
+                    'provinsi_id' => (string)$item['province_id'],
+                    'nama'        => ucwords(strtolower($item['name'])),
+                ];
+            });
+
+        return response()->json($kotas);
     }
 
     public function getKecamatan($kota_id)
     {
-        return response()->json(Kecamatan::where('kota_id', $kota_id)->get());
+        $input = trim(urldecode((string)$kota_id));
+        if (empty($input)) {
+            return response()->json([]);
+        }
+
+        $districts = $this->loadJsonFile(database_path('data/districts.json'));
+        $regencies = $this->loadJsonFile(database_path('data/regencies.json'));
+
+        if (empty($districts)) {
+            return response()->json([]);
+        }
+
+        // 1. Find matching regency ID
+        $targetKotaId = null;
+        foreach ($regencies as $r) {
+            $rId   = trim((string)($r['id'] ?? ''));
+            $rName = trim((string)($r['name'] ?? ''));
+            $rAlt  = trim((string)($r['alt_name'] ?? ''));
+
+            if ($rId === $input || 
+                (is_numeric($input) && (int)$rId === (int)$input) || 
+                strcasecmp($rName, $input) === 0 || 
+                ($rAlt && strcasecmp($rAlt, $input) === 0) ||
+                str_contains(strtolower($rName), strtolower($input))) {
+                $targetKotaId = $rId;
+                break;
+            }
+        }
+
+        if (!$targetKotaId) {
+            $targetKotaId = $input;
+        }
+
+        // 2. Filter districts
+        $kecamatans = collect($districts)
+            ->filter(function ($item) use ($targetKotaId, $input) {
+                $itemRegId = trim((string)($item['regency_id'] ?? ''));
+                $itemName  = trim((string)($item['name'] ?? ''));
+
+                return $itemRegId === (string)$targetKotaId
+                    || (is_numeric($targetKotaId) && (int)$itemRegId === (int)$targetKotaId)
+                    || (is_numeric($input) && (int)$itemRegId === (int)$input)
+                    || strcasecmp($itemName, $input) === 0;
+            })
+            ->values()
+            ->map(function ($item) {
+                return [
+                    'id'      => (string)$item['id'],
+                    'kota_id' => (string)$item['regency_id'],
+                    'nama'    => ucwords(strtolower($item['name'])),
+                ];
+            });
+
+        return response()->json($kecamatans);
     }
 
-    public function update_profile_admin(Request $request, Admin $admin)
+    public function update_profile_admin(Request $request, $id = null)
     {
         try {
+            $user = Auth::user();
 
-            /* ============================================================
-           VALIDASI USER
-        ============================================================ */
             $validated = $request->validate([
-                'name'  => "nullable|string",
-                'email' => "nullable|email",
+                'username'     => 'required|string|unique:users,username,' . $user->id,
+                'nama_lengkap' => 'required|string',
+                'provinsi_id'  => 'required',
+                'kota_id'      => 'required',
+                'kecamatan_id' => 'required',
+            ], [
+                'username.required'     => 'Username wajib diisi.',
+                'username.unique'       => 'Username sudah digunakan oleh akun lain.',
+                'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+                'provinsi_id.required'  => 'Provinsi wajib dipilih pada dropdown alamat.',
+                'kota_id.required'      => 'Kota / Kabupaten wajib dipilih pada dropdown alamat.',
+                'kecamatan_id.required' => 'Kecamatan wajib dipilih pada dropdown alamat.',
             ]);
 
-            $user = User::where('id', $admin->user_id);
-            $user->update($validated);
-
-            /* ============================================================
-           VALIDASI ADMIN
-        ============================================================ */
-            $valid = $request->validate([
-                "nama_lengkap"  => 'nullable|string',
-                "img_profile"   => 'nullable|file|image|mimes:png,jpg,jpeg',
-                'provinsi_id'   => 'nullable|exists:provinsis,id',
-                'kota_id'       => 'nullable|exists:kotas,id',
-                'kecamatan_id'  => 'nullable|exists:kecamatans,id',
-                "desa"          => 'nullable|string',
-                "kode_pos"      => 'nullable',
-                "detail_alamat" => 'nullable|string'
-            ]);
-
-            /* ============================================================
-           UPDATE FOTO PROFIL
-        ============================================================ */
+            $imagePath = null;
             if ($request->hasFile('img_profile')) {
-
-                if ($admin->img_profile && Storage::exists('public/' . $admin->img_profile)) {
-                    Storage::delete('public/' . $admin->img_profile);
-                }
-
-                $valid['img_profile'] = $request->file('img_profile')->store('images', 'public');
+                $imagePath = $request->file('img_profile')->store('images', 'public');
+                $user->avatar = $imagePath;
             }
 
-            $valid['user_id'] = Auth::user()->id;
-            $admin->update($valid);
+            $user->username = $request->username;
+            $user->nama_lengkap = $request->nama_lengkap;
+            $user->save();
 
-            /* ============================================================
-           NOTIFIKASI BERHASIL UNTUK ADMIN (DIRI SENDIRI)
-        ============================================================ */
+            // Ensure related tables exist and have corresponding rows to avoid FK constraint errors
+            if (Schema::hasTable('provinsis') && $request->provinsi_id) {
+                $provName = null;
+                if (file_exists(database_path('data/provinces.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->provinsi_id);
+                    if ($found) $provName = ucwords(strtolower($found['name']));
+                }
+                DB::table('provinsis')->updateOrInsert(
+                    ['id' => $request->provinsi_id],
+                    ['nama' => $provName ?? 'Provinsi ' . $request->provinsi_id, 'updated_at' => now()]
+                );
+            }
+
+            if (Schema::hasTable('kotas') && $request->kota_id) {
+                $kotaName = null;
+                if (file_exists(database_path('data/regencies.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/regencies.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->kota_id);
+                    if ($found) $kotaName = ucwords(strtolower($found['name']));
+                }
+                DB::table('kotas')->updateOrInsert(
+                    ['id' => $request->kota_id],
+                    [
+                        'provinsi_id' => $request->provinsi_id,
+                        'nama' => $kotaName ?? 'Kota ' . $request->kota_id,
+                        'updated_at' => now()
+                    ]
+                );
+            }
+
+            if (Schema::hasTable('kecamatans') && $request->kecamatan_id) {
+                $kecName = null;
+                if (file_exists(database_path('data/districts.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/districts.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->kecamatan_id);
+                    if ($found) $kecName = ucwords(strtolower($found['name']));
+                }
+                DB::table('kecamatans')->updateOrInsert(
+                    ['id' => $request->kecamatan_id],
+                    [
+                        'kota_id' => $request->kota_id,
+                        'nama' => $kecName ?? 'Kecamatan ' . $request->kecamatan_id,
+                        'updated_at' => now()
+                    ]
+                );
+            }
+
+            if (Schema::hasTable('admins')) {
+                $adminUpdate = [
+                    'nama_lengkap'  => $request->nama_lengkap,
+                    'provinsi_id'   => $request->provinsi_id,
+                    'kota_id'       => $request->kota_id,
+                    'kecamatan_id'  => $request->kecamatan_id,
+                    'desa'          => $request->desa,
+                    'kode_pos'      => $request->kode_pos,
+                    'detail_alamat' => $request->detail_alamat,
+                    'updated_at'    => now(),
+                ];
+
+                if ($imagePath) {
+                    $adminUpdate['img_profile'] = $imagePath;
+                }
+
+                DB::table('admins')->updateOrInsert(
+                    ['user_id' => $user->id],
+                    $adminUpdate
+                );
+            }
+
             Notifikasi::create([
-                'user_id' => Auth::id(),
+                'user_id'       => Auth::id(),
                 'perusahaan_id' => null,
-                'judul' => 'Profil Berhasil Diperbarui',
-                'pesan' => 'Profil Anda berhasil diperbarui.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
+                'judul'         => 'Profil Berhasil Diperbarui',
+                'pesan'         => 'Profil Anda berhasil diperbarui.',
+                'is_read'       => 0,
+                'expired_at'    => now()->addDays(7),
             ]);
 
-            return redirect()->route('admin.profile')
-                ->with('success', 'Profil berhasil diperbarui.');
+            return redirect()->route('admin.profile')->with('success', 'Profil Admin berhasil diperbarui');
         } catch (\Exception $e) {
-
-            /* ============================================================
-           NOTIFIKASI GAGAL UNTUK ADMIN
-        ============================================================ */
-            Notifikasi::create([
-                'user_id' => Auth::id(),
-                'perusahaan_id' => null,
-                'judul' => 'Gagal Mengupdate Profil',
-                'pesan' => 'Terjadi kesalahan saat memperbarui profil Anda.',
-                'is_read' => 0,
-                'expired_at' => now()->addDays(7),
-                'pelamar_lowongan_id' => null,
-            ]);
-
-            return redirect()->route('admin.profile')
-                ->with('error', 'Terjadi kesalahan! Profil gagal diperbarui.');
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
     }
 
-
-    public function destroy_profile(Admin $admin)
+    public function destroy_profile($id = null)
     {
-        if ($admin->img_profile && Storage::exists('public/' . $admin->img_profile)) {
-            Storage::delete('public/' . $admin->img_profile);
+        $user = Auth::user();
+
+        if ($user->avatar && Storage::exists('public/' . $user->avatar)) {
+            Storage::delete('public/' . $user->avatar);
         }
 
-        $admin->img_profile = null;
-        $admin->save();
+        $user->avatar = null;
+        $user->save();
+
+        try {
+            if (Schema::hasTable('admins')) {
+                DB::table('admins')->where('user_id', $user->id)->update(['img_profile' => null]);
+            }
+        } catch (\Throwable $e) {
+            // Table admins fallback
+        }
+
         return redirect()->route('admin.edit.profile')->with('success', 'Profile berhasil dihapus');
     }
 
@@ -429,7 +618,7 @@ class AdminController extends Controller
 
     public function detail($id)
     {
-        $transaksi = CatatanCash::with(['user', 'hargaPembayaran', 'bank'])->findOrFail($id);
+        $transaksi = CatatanCash::with(['user', 'bank'])->findOrFail($id);
 
         return response()->json([
             'id' => $transaksi->id,
@@ -453,7 +642,7 @@ class AdminController extends Controller
 
     public function hal_detail()
     {
-        $transaksi = CatatanCash::with(['user', 'bank', 'hargaPembayaran'])->latest()->get();
+        $transaksi = CatatanCash::with(['user', 'bank'])->latest()->get();
         return view('admin.finance.detail', compact('transaksi'));
     }
 
