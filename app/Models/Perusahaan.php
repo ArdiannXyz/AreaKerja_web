@@ -133,24 +133,16 @@ class Perusahaan extends Model
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
+    /** Relasi utama ke lowongan perusahaan (canonical) */
     public function pasanglowongan()
     {
         return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
     }
 
+    /** Alias untuk backward compatibility — gunakan pasanglowongan() */
     public function lowonganPerusahaans()
     {
-        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
-    }
-
-    public function lowongans()
-    {
-        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
-    }
-
-    public function lowongan()
-    {
-        return $this->hasMany(LowonganPerusahaan::class, 'perusahaan_id', 'id');
+        return $this->pasanglowongan();
     }
 
     public function catatanKoins()

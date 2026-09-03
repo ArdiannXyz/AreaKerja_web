@@ -72,18 +72,18 @@
     /* ── Newsletter form ── */
     .ak-newsletter-form {
         display: flex;
-        gap: 0.5rem;
-        margin-top: 0.75rem;
+        gap: 0.375rem;
+        margin-top: 0.5rem;
     }
     .ak-newsletter-input {
         flex: 1;
         min-width: 0;
         background: rgba(255, 255, 255, 0.1);
         border: 1px solid rgba(255, 255, 255, 0.22);
-        border-radius: 10px;
-        padding: 0.55rem 0.9rem;
+        border-radius: 8px;
+        padding: 0.4rem 0.7rem;
         color: #fff;
-        font-size: 0.8125rem;
+        font-size: 0.75rem;
         font-family: 'Poppins', sans-serif;
         transition: border-color 0.18s ease, background 0.18s ease;
     }
@@ -100,9 +100,9 @@
         background: #fff;
         color: #00509d;
         border: none;
-        border-radius: 10px;
-        padding: 0.55rem 1.1rem;
-        font-size: 0.8125rem;
+        border-radius: 8px;
+        padding: 0.4rem 0.85rem;
+        font-size: 0.75rem;
         font-weight: 700;
         font-family: 'Poppins', sans-serif;
         cursor: pointer;
@@ -220,7 +220,7 @@
     <div class="max-w-7xl mx-auto px-6 md:px-10 lg:px-8 pt-12 pb-10">
 
         {{-- ── Desktop Grid (hidden on mobile) ── --}}
-        <div class="hidden lg:grid lg:grid-cols-5 xl:grid-cols-5 gap-8 xl:gap-10">
+        <div class="hidden lg:grid lg:grid-cols-6 xl:grid-cols-6 gap-8 xl:gap-10">
 
             {{-- COL 1: Brand --}}
             <div class="lg:col-span-2 xl:col-span-2 space-y-5 pr-4">
@@ -261,16 +261,16 @@
                         <a href="{{ route('beranda') }}" class="ak-footer-link">Beranda</a>
                     </li>
                     <li>
-                        <a href="{{ url('/search') }}" class="ak-footer-link">Cari Lowongan</a>
+                        <a href="{{ route('lowongan.search') }}" class="ak-footer-link">Cari Lowongan</a>
                     </li>
                     <li>
-                        <a href="{{ url('/pelamar/tips-kerja') }}" class="ak-footer-link">Tips Kerja</a>
+                        <a href="{{ route('pelamar.tips-kerja') }}" class="ak-footer-link">Tips Kerja</a>
                     </li>
                     <li>
                         <a href="{{ route('pelamar.daftar-kandidat') }}" class="ak-footer-link">Daftar Kandidat</a>
                     </li>
                     <li>
-                        <a href="{{ url('/talent-hunter') }}" class="ak-footer-link">Talent Hunter</a>
+                        <a href="{{ route('pelamar.talentHunter') }}" class="ak-footer-link">Talent Hunter</a>
                     </li>
                 </ul>
             </div>
@@ -299,7 +299,7 @@
                 <p class="ak-footer-heading">Bantuan</p>
                 <ul class="space-y-2.5">
                     <li>
-                        <a href="{{ url('/bantuan') }}" class="ak-footer-link">Pusat Bantuan</a>
+                        <a href="{{ route('pelamar.bantuan') }}" class="ak-footer-link">Pusat Bantuan</a>
                     </li>
                     <li>
                         <a href="{{ route('syarat.ketentuan') }}" class="ak-footer-link">Syarat &amp; Ketentuan</a>
@@ -333,21 +333,14 @@
                 </ul>
             </div>
 
-        </div>
-
-        {{-- ── Newsletter strip (Desktop, below grid) ── --}}
-        <div class="hidden lg:block mt-10 pt-8" style="border-top: 1px solid rgba(255,255,255,0.1);">
-            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-                {{-- Newsletter text --}}
-                <div class="max-w-xs">
-                    <p class="font-semibold text-sm text-white mb-1">Tetap Terhubung</p>
-                    <p class="text-white/65 text-xs leading-relaxed">
-                        Dapatkan informasi lowongan dan tips karier terbaru melalui email.
-                    </p>
-                </div>
-                {{-- Newsletter form --}}
+            {{-- COL 5: Newsletter (compact, desktop only) --}}
+            <div class="space-y-1">
+                <p class="ak-footer-heading">Newsletter</p>
+                <p class="text-white/60 text-xs leading-relaxed mb-3">
+                    Lowongan &amp; tips karier mingguan langsung ke inbox Anda.
+                </p>
                 <form action="{{ route('subscribe.email') }}" method="POST"
-                      class="ak-newsletter-form flex-shrink-0 w-full max-w-sm"
+                      class="ak-newsletter-form"
                       aria-label="Formulir berlangganan newsletter">
                     @csrf
                     <input type="email"
@@ -357,16 +350,28 @@
                            aria-label="Alamat email untuk berlangganan">
                     <button type="submit" class="ak-newsletter-btn">Daftar</button>
                 </form>
+                @error('email')
+                    <p class="text-red-300 mt-1.5 text-xs">{{ $message }}</p>
+                @enderror
+                @if (session('success'))
+                    <p class="text-green-300 mt-1.5 text-xs">{{ session('success') }}</p>
+                @endif
+                <p class="text-white/35 text-[11px] mt-2">Gratis. Tanpa spam.</p>
             </div>
-            {{-- Form feedback --}}
+
+        </div>
+
+        {{-- Newsletter feedback (desktop, below grid) --}}
+        @if ($errors->has('email') || session('success'))
+        <div class="hidden lg:block mt-4">
             @error('email')
-                <p class="text-red-300 mt-2 text-xs">{{ $message }}</p>
+                <p class="text-red-300 text-xs">{{ $message }}</p>
             @enderror
             @if (session('success'))
-                <p class="text-green-300 mt-2 text-xs">{{ session('success') }}</p>
+                <p class="text-green-300 text-xs">{{ session('success') }}</p>
             @endif
-            <p class="text-white/40 text-xs mt-2">Tidak ada spam. Hanya informasi yang relevan.</p>
         </div>
+        @endif
 
         {{-- ══════════════════════════════════════════════
             MOBILE / TABLET LAYOUT (< lg)
@@ -397,10 +402,10 @@
                     <div id="mobile-jelajahi" class="ak-mobile-section-content" :class="open && 'open'">
                         <ul class="pt-3 space-y-3 pb-1">
                             <li><a href="{{ route('beranda') }}" class="ak-footer-link">Beranda</a></li>
-                            <li><a href="{{ url('/search') }}" class="ak-footer-link">Cari Lowongan</a></li>
-                            <li><a href="{{ url('/pelamar/tips-kerja') }}" class="ak-footer-link">Tips Kerja</a></li>
+                            <li><a href="{{ route('lowongan.search') }}" class="ak-footer-link">Cari Lowongan</a></li>
+                            <li><a href="{{ route('pelamar.tips-kerja') }}" class="ak-footer-link">Tips Kerja</a></li>
                             <li><a href="{{ route('pelamar.daftar-kandidat') }}" class="ak-footer-link">Daftar Kandidat</a></li>
-                            <li><a href="{{ url('/talent-hunter') }}" class="ak-footer-link">Talent Hunter</a></li>
+                            <li><a href="{{ route('pelamar.talentHunter') }}" class="ak-footer-link">Talent Hunter</a></li>
                         </ul>
                     </div>
                 </div>
@@ -429,7 +434,7 @@
                     </button>
                     <div id="mobile-bantuan" class="ak-mobile-section-content" :class="open && 'open'">
                         <ul class="pt-3 space-y-3 pb-1">
-                            <li><a href="{{ url('/bantuan') }}" class="ak-footer-link">Pusat Bantuan</a></li>
+                            <li><a href="{{ route('pelamar.bantuan') }}" class="ak-footer-link">Pusat Bantuan</a></li>
                             <li><a href="{{ route('syarat.ketentuan') }}" class="ak-footer-link">Syarat &amp; Ketentuan</a></li>
                             @guest
                             <li><a href="{{ route('login') }}" class="ak-footer-link">Masuk</a></li>
@@ -452,9 +457,9 @@
 
             {{-- Newsletter (Mobile) --}}
             <div class="mt-6 pt-6 border-t border-white/10">
-                <p class="font-semibold text-sm text-white mb-1">Tetap Terhubung</p>
+                <p class="ak-footer-heading">Newsletter</p>
                 <p class="text-white/60 text-xs leading-relaxed mb-3">
-                    Dapatkan informasi lowongan dan tips karier terbaru melalui email.
+                    Lowongan &amp; tips karier mingguan langsung ke inbox Anda.
                 </p>
                 <form action="{{ route('subscribe.email') }}" method="POST"
                       class="ak-newsletter-form"
@@ -468,12 +473,12 @@
                     <button type="submit" class="ak-newsletter-btn">Daftar</button>
                 </form>
                 @error('email')
-                    <p class="text-red-300 mt-2 text-xs">{{ $message }}</p>
+                    <p class="text-red-300 mt-1.5 text-xs">{{ $message }}</p>
                 @enderror
                 @if (session('success'))
-                    <p class="text-green-300 mt-2 text-xs">{{ session('success') }}</p>
+                    <p class="text-green-300 mt-1.5 text-xs">{{ session('success') }}</p>
                 @endif
-                <p class="text-white/40 text-xs mt-2">Tidak ada spam. Hanya informasi yang relevan.</p>
+                <p class="text-white/35 text-[11px] mt-2">Gratis. Tanpa spam.</p>
             </div>
 
             {{-- Social Media (Mobile) --}}
@@ -511,7 +516,7 @@
             {{-- Legal links --}}
             <div class="flex items-center gap-4 sm:gap-5">
                 <a href="{{ route('syarat.ketentuan') }}" class="ak-bottom-link">Syarat &amp; Ketentuan</a>
-                <a href="{{ url('/bantuan') }}" class="ak-bottom-link">Bantuan</a>
+                <a href="{{ route('pelamar.bantuan') }}" class="ak-bottom-link">Bantuan</a>
             </div>
 
         </div>

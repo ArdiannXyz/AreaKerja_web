@@ -103,7 +103,10 @@ class LowonganPerusahaanController extends Controller
     {
         $perusahaan = Auth::user()->perusahaan;
         $categories = $this->getCategories();
-        $alamats = $perusahaan ? $perusahaan->alamatPerusahaan : collect();
+        $alamats = collect();
+        if ($perusahaan && \Illuminate\Support\Facades\Schema::hasTable('alamat_perusahaan')) {
+            $alamats = $perusahaan->alamatPerusahaan()->get();
+        }
 
         $pakets = PaketLowongan::whereIn('nama', ['Bronze', 'Silver', 'Gold'])
             ->orderByRaw("FIELD(nama, 'Bronze', 'Silver', 'Gold')")
@@ -211,10 +214,10 @@ class LowonganPerusahaanController extends Controller
         return view('perusahaan.lowongan-saya.detail-lowongan', [
             "data"           => $lowongan,
             "Data"           => LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
-                                    ->where('id', '!=', $lowongan->id)
-                                    ->latest()
-                                    ->take(5)
-                                    ->get(),
+                ->where('id', '!=', $lowongan->id)
+                ->latest()
+                ->take(5)
+                ->get(),
             "lowonganLainnya" => $lowonganLainnya,
             "isBoostActive"   => $isBoostActive,
             "boostedAt"       => $boostedAt,
@@ -297,8 +300,8 @@ class LowonganPerusahaanController extends Controller
         $newStatus = ($lowongan->status === 'tutup') ? 'buka' : 'tutup';
         $lowongan->update(['status' => $newStatus]);
 
-        $statusMsg = ($newStatus === 'tutup') 
-            ? "Lowongan '{$lowongan->nama}' berhasil DITUTUP (Kuota Terpenuhi)." 
+        $statusMsg = ($newStatus === 'tutup')
+            ? "Lowongan '{$lowongan->nama}' berhasil DITUTUP (Kuota Terpenuhi)."
             : "Lowongan '{$lowongan->nama}' berhasil DIBUKA KEMBALI.";
 
         return redirect()->back()->with('success', $statusMsg);
