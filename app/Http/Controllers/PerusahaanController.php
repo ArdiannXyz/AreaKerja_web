@@ -609,14 +609,14 @@ class PerusahaanController extends Controller
     // EVENT
     public function event()
     {
-        return view('perusahaan.event.event', [
-            'events' => collect(),
-        ]);
+        $events = \App\Models\Event::where('status', '!=', 'draft')->latest('tgl_mulai')->get();
+        return view('perusahaan.event.event', compact('events'));
     }
 
     public function detail($id)
     {
-        return redirect()->route('perusahaan.event');
+        $event = \App\Models\Event::with('kegiatan')->findOrFail($id);
+        return view('perusahaan.event.gabung-event', compact('event'));
     }
 
     // BERLANGGANAN

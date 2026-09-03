@@ -26,12 +26,12 @@
             </div>
         </section>
 
-        <!-- Benefit Section (Full bleed edge-to-edge, no round) -->
-        <section class="w-full bg-[#0066cc] text-white py-16">
-            <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 items-center px-6">
+        <!-- Benefit Section (Full bleed edge-to-edge, no round, image flush to bottom-right corner) -->
+        <section class="w-full bg-[#0066cc] text-white pt-12 md:pt-16 pb-0 overflow-hidden relative">
+            <div class="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-end px-6">
 
                 <!-- Left Content -->
-                <div>
+                <div class="pb-12 md:pb-16">
                     <h2 class="text-2xl sm:text-3xl font-bold mb-8 leading-snug">
                         Benefit Menjadi Kandidat <br> Areakerja.com
                     </h2>
@@ -56,10 +56,10 @@
                     </ul>
                 </div>
 
-                <!-- Right Man with Laptop Image -->
-                <div class="flex justify-center">
+                <!-- Right Man with Laptop Image (Flush to bottom right corner) -->
+                <div class="flex justify-end items-end self-end">
                     <img src="{{ asset('images/ntep.png') }}" alt="Kandidat"
-                        class="h-64 sm:h-80 md:h-[380px] object-contain drop-shadow-xl">
+                        class="h-64 sm:h-80 md:h-[400px] lg:h-[460px] object-contain object-bottom block">
                 </div>
 
             </div>
