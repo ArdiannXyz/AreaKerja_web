@@ -39,7 +39,7 @@
             @endif
 
             <!-- 1. HEADER CARD (TOP JOB BANNER CARD MATCHING FIGMA) -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-[#00509d] p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="flex items-start gap-4">
                     <div class="w-16 h-16 rounded-xl overflow-hidden border border-slate-100 bg-white p-1 shrink-0 flex items-center justify-center shadow-sm">
                         @if (!empty($data->perusahaan->img_profile))
@@ -56,8 +56,8 @@
                 </div>
 
                 <div class="flex flex-col items-start md:items-end gap-3 w-full md:w-auto">
-                    <!-- Salary Gray Pill Box -->
-                    <div class="bg-[#959595] text-white font-bold text-xs sm:text-sm px-5 py-2.5 rounded-lg shadow-sm whitespace-nowrap">
+                    <!-- Salary Plain Text -->
+                    <div class="text-slate-800 font-bold text-sm sm:text-base whitespace-nowrap">
                         Rp. {{ number_format($data->gaji_awal, 0, ',', '.') }} - {{ number_format($data->gaji_akhir, 0, ',', '.') }} / Bulan
                     </div>
 
@@ -135,7 +135,7 @@
             </div>
 
             <!-- 2. DESKRIPSI CARD -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 md:p-8">
+            <div class="bg-white rounded-2xl shadow-sm border border-[#00509d] p-6 md:p-8">
                 <h2 class="text-lg font-bold text-slate-900 mb-4">Deskripsi</h2>
                 <div class="text-sm text-slate-600 leading-relaxed space-y-3 prose max-w-none">
                     {!! $data->deskripsi ?? 'Tidak ada deskripsi pekerjaan.' !!}
@@ -143,7 +143,7 @@
             </div>
 
             <!-- 3. DETAIL LOWONGAN CARD -->
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200/80 p-6 md:p-8 space-y-6">
+            <div class="bg-white rounded-2xl shadow-sm border border-[#00509d] p-6 md:p-8 space-y-6">
                 <div>
                     <h2 class="text-lg font-bold text-slate-900">Detail Lowongan</h2>
                     <p class="text-xs text-slate-400 mt-0.5">Informasi terkait perusahaan yang anda tuju</p>
@@ -151,18 +151,18 @@
 
                 <!-- Jenis Lowongan -->
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 mb-2">Jenis Lowongan</h3>
-                    <span class="inline-block bg-[#959595] text-white text-xs font-bold px-5 py-2 rounded-lg shadow-xs">
+                    <h3 class="text-sm font-bold text-slate-800 mb-1">Jenis Lowongan</h3>
+                    <p class="text-sm text-slate-600 font-normal">
                         {{ $data->jenis ?? 'Full time' }}
-                    </span>
+                    </p>
                 </div>
 
                 <!-- Lokasi -->
                 <div>
-                    <h3 class="text-sm font-bold text-slate-800 mb-2">Lokasi</h3>
-                    <span class="inline-block bg-[#959595] text-white text-xs font-bold px-5 py-2 rounded-lg shadow-xs">
+                    <h3 class="text-sm font-bold text-slate-800 mb-1">Lokasi</h3>
+                    <p class="text-sm text-slate-600 font-normal">
                         {{ $data->alamat ?? 'Yogyakarta' }}
-                    </span>
+                    </p>
                 </div>
 
                 <!-- Requirement -->
@@ -223,7 +223,7 @@
             <!-- 4. LOWONGAN LAINNYA -->
             @php
                 $otherJobs = (isset($lowonganLain) && $lowonganLain->count() > 0)
-                    ? $lowonganLain
+                    ? $lowonganLain->take(3)
                     : (isset($Data) ? $Data->where('id', '!=', $data->id)->take(3) : collect());
             @endphp
 

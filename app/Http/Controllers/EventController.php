@@ -132,7 +132,49 @@ class EventController extends Controller
             ->take(3)
             ->get();
 
-        return view('non-user.event.show', compact('event', 'otherEvents'));
+        $perusahaanList = \App\Models\Perusahaan::whereNotNull('nama_perusahaan')
+            ->take(8)
+            ->get();
+
+        $userId = auth()->id();
+        $registeredEvents = $userId ? session('registered_events_' . $userId, []) : [];
+        $isRegistered = $userId ? in_array($event->id, $registeredEvents) : false;
+        $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
+
+        return view('non-user.event.show', compact('event', 'otherEvents', 'perusahaanList', 'isRegistered', 'isEnded'));
+    }
+
+    public function daftarEvent($id, Request $request)
+    {
+        $this->ensureTableAndData();
+
+        if (!auth()->check()) {
+            return response()->json([
+                'success' => false,
+                'unauthenticated' => true,
+                'redirect' => route('login'),
+                'message' => 'Silakan masuk terlebih dahulu untuk mendaftar event.'
+            ], 401);
+        }
+
+        $event = Event::findOrFail($id);
+
+        if ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pendaftaran untuk event ini telah berakhir.'
+            ], 422);
+        }
+
+        $userId = auth()->id();
+        $registered = session('registered_events_' . $userId, []);
+        $registered[] = (int)$event->id;
+        session(['registered_events_' . $userId => array_unique($registered)]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Selamat! Anda telah terdaftar pada acara ini. Silahkan cek email Anda untuk konfirmasi.'
+        ]);
     }
 
     // ==========================================

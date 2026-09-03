@@ -192,6 +192,7 @@ Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index
 Route::controller(EventController::class)->group(function () {
     Route::get('/event', 'publicEventList')->name('pelamar.event.index');
     Route::get('/event/{id}', 'publicEventShow')->name('pelamar.event.show');
+    Route::post('/event/{id}/daftar', 'daftarEvent')->name('pelamar.event.daftar');
 });
 
 /**---------------------------------------------- PELAMAR PREFIX ---------------------------------------------------------------*/
