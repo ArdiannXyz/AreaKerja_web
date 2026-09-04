@@ -23,7 +23,7 @@
                 <div>
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Skill</label>
                     <input type="text" name="skill" value="{{ old('skill', $DS->skill) }}"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2 text-sm focus:border-[#00509d] focus:ring-2 focus:ring-blue-100 focus:outline-none">
                 </div>
 
                 <!-- Experience -->
@@ -31,18 +31,18 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-1">Experience Level</label>
                     <input type="text" name="experience_level"
                         value="{{ old('experience_level', $DS->experience_level) }}"
-                        class="w-full border border-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 sm:px-4 sm:py-2 text-sm focus:border-[#00509d] focus:ring-2 focus:ring-blue-100 focus:outline-none">
                 </div>
 
                 <!-- Action Buttons -->
                 <div class="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 mt-4">
                     <button type="submit"
-                        class="px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 shadow text-sm sm:text-base text-center">
+                        class="px-6 py-2.5 bg-[#00509d] text-white font-bold rounded-xl hover:bg-[#003d7a] shadow-sm text-sm sm:text-base text-center transition">
                         Simpan
                     </button>
 
                     <a href="{{ route('profile.index') }}"
-                        class="px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 shadow text-sm sm:text-base text-center">
+                        class="px-6 py-2.5 bg-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-300 shadow-sm text-sm sm:text-base text-center transition">
                         Batal
                     </a>
                 </div>

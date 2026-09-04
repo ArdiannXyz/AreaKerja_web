@@ -27,14 +27,14 @@
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Organisasi <span class="text-red-500">*</span></label>
                         <input type="text" name="nama_organisasi" placeholder="Contoh: Himpunan Mahasiswa / OSIS"
-                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition"
                             required>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Jabatan <span class="text-red-500">*</span></label>
                         <input type="text" name="jabatan" placeholder="Contoh: Ketua / Anggota Divisi Humas"
-                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition"
                             required>
                     </div>
 
@@ -43,27 +43,27 @@
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Tahun Awal <span class="text-red-500">*</span></label>
                             <input type="number" name="tahun_awal" placeholder="2020"
-                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition"
                                 required>
                         </div>
 
                         <div>
                             <label class="block text-xs font-bold text-slate-700 mb-1.5">Tahun Akhir</label>
                             <input type="number" name="tahun_akhir" placeholder="2022 (Kosongkan jika aktif)"
-                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition">
+                                class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Deskripsi</label>
                         <textarea name="deskripsi" rows="3" placeholder="Tuliskan tugas atau pencapaian Anda selama di organisasi ini..."
-                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 focus:outline-none transition"></textarea>
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition"></textarea>
                     </div>
 
                     <!-- Tombol -->
                     <div class="flex justify-end pt-2">
                         <button type="submit"
-                            class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-6 py-2.5 rounded-xl shadow-sm transition text-sm">
+                            class="bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold px-6 py-2.5 rounded-xl shadow-sm transition text-sm">
                             Simpan
                         </button>
                     </div>
