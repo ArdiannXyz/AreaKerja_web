@@ -14,7 +14,7 @@
                         src="{{ asset('storage/' . $pelamar->img_profile) }}" alt="Profile">
                 @else
                     <img class="w-24 h-24 sm:w-28 sm:h-28 object-cover rounded-full shadow-md border-4 border-white"
-                        src="https://ui-avatars.com/api/?name={{ urlencode($pelamar->nama_pelamar) }}&background=random&color=fff&size=128"
+                        src="https://ui-avatars.com/api/?name={{ urlencode($pelamar->nama_pelamar) }}&background=00509d&color=fff&size=128"
                         alt="Profile">
                 @endif
 

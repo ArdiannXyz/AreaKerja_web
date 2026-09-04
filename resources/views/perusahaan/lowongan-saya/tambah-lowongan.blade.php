@@ -13,12 +13,12 @@
                             src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
                     @else
                         <img id="pu" class="w-20 h-20 rounded-full"
-                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                             alt="">
                     @endif
                 @else
                     <img class="w-10 h-10 rounded-full"
-                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                         alt="">
                 @endif
                 <div>
@@ -41,7 +41,7 @@
                             <label class="block text-sm font-medium">Judul Lowongan <span class="text-red-500">*</span></label>
                             <input type="text" name="nama" value="{{ old('nama') }}" required
                                 placeholder="Contoh: Backend Developer"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 @error('nama') border-red-500 @enderror">
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('nama') border-red-500 @enderror">
                             @error('nama')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -50,13 +50,13 @@
                         <div>
                             <div class="flex items-center justify-between">
                                 <label class="block text-sm font-medium">Alamat Penempatan <span class="text-red-500">*</span></label>
-                                <a href="{{ route('alamat.perusahaan') }}" class="text-xs text-[#FF7A00] hover:underline flex items-center gap-1 font-semibold">
+                                <a href="{{ route('alamat.perusahaan') }}" class="text-xs text-[#00509d] hover:underline flex items-center gap-1 font-semibold">
                                     <i class="ph ph-gear"></i> Kelola Alamat
                                 </a>
                             </div>
                             @if(isset($alamats) && $alamats->count() > 0)
                                 <select name="alamat" required
-                                    class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 @error('alamat') border-red-500 @enderror">
+                                    class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('alamat') border-red-500 @enderror">
                                     <option value="" disabled>Pilih Alamat Kantor / Penempatan</option>
                                     @foreach ($alamats as $alm)
                                         @php
@@ -70,7 +70,7 @@
                             @else
                                 <input type="text" name="alamat" value="{{ old('alamat', $perusahaan->alamat ?? '') }}" required
                                     placeholder="Contoh: Jakarta Selatan, DKI Jakarta"
-                                    class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 @error('alamat') border-red-500 @enderror">
+                                    class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('alamat') border-red-500 @enderror">
                             @endif
                             @error('alamat')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -86,7 +86,7 @@
                                 Jenis Lowongan <span class="text-red-500">*</span>
                             </label>
                             <select name="jenis" required
-                                class="border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 w-full @error('jenis') border-red-500 @enderror">
+                                class="border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] w-full @error('jenis') border-red-500 @enderror">
                                 <option value="" disabled {{ old('jenis') ? '' : 'selected' }}>Pilih Jenis Lowongan</option>
                                 <option value="Fulltime" {{ old('jenis') == 'Fulltime' ? 'selected' : '' }}>Full Time</option>
                                 <option value="Middletime" {{ old('jenis') == 'Middletime' ? 'selected' : '' }}>Middle Time</option>
@@ -101,7 +101,7 @@
                         <div class="flex flex-col">
                             <label class="text-sm font-medium">Kategori <span class="text-red-500">*</span></label>
                             <select name="kategori" required
-                                class="border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 w-full @error('kategori') border-red-500 @enderror">
+                                class="border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] w-full @error('kategori') border-red-500 @enderror">
                                 <option value="" disabled {{ old('kategori') ? '' : 'selected' }}>Pilih Kategori</option>
                                 @foreach ($categories as $cat)
                                     <option value="{{ $cat->nama }}"
@@ -120,7 +120,7 @@
                             <label class="text-sm font-medium">Benefit <span class="text-red-500">*</span></label>
                             <input type="text" name="benefit" value="{{ old('benefit') }}" required
                                 placeholder="Contoh: BPJS, THR, Bonus"
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 @error('benefit') border-red-500 @enderror" />
+                                class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('benefit') border-red-500 @enderror" />
                             @error('benefit')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
@@ -139,7 +139,7 @@
                                     <input type="number" name="gaji_awal" id="gaji_awal_input" value="{{ old('gaji_awal') }}" required min="0"
                                         oninput="autoGenerateLabelGaji()"
                                         placeholder="Gaji Minimal (cth: 5000000)"
-                                        class="w-full border border-gray-300 rounded-md pl-9 pr-3 py-2 outline-none focus:ring-1 focus:ring-orange-500 bg-white @error('gaji_awal') border-red-500 @enderror" />
+                                        class="w-full border border-gray-300 rounded-md pl-9 pr-3 py-2 outline-none focus:ring-1 focus:ring-[#00509d] bg-white @error('gaji_awal') border-red-500 @enderror" />
                                 </div>
                                 <span class="text-gray-400 font-bold">-</span>
                                 <div class="relative w-full sm:w-60">
@@ -147,7 +147,7 @@
                                     <input type="number" name="gaji_akhir" id="gaji_akhir_input" value="{{ old('gaji_akhir') }}" required min="0"
                                         oninput="autoGenerateLabelGaji()"
                                         placeholder="Gaji Maksimal (cth: 8000000)"
-                                        class="w-full border border-gray-300 rounded-md pl-9 pr-3 py-2 outline-none focus:ring-1 focus:ring-orange-500 bg-white @error('gaji_akhir') border-red-500 @enderror" />
+                                        class="w-full border border-gray-300 rounded-md pl-9 pr-3 py-2 outline-none focus:ring-1 focus:ring-[#00509d] bg-white @error('gaji_akhir') border-red-500 @enderror" />
                                 </div>
                             </div>
                             @error('gaji_awal')
@@ -174,7 +174,7 @@
                         <label class="block text-sm font-medium">Deskripsi <span class="text-red-500">*</span></label>
                         <textarea rows="3" name="deskripsi" required
                             placeholder="Jelaskan gambaran umum pekerjaan..."
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 @error('deskripsi') border-red-500 @enderror">{{ old('deskripsi') }}</textarea>
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('deskripsi') border-red-500 @enderror">{{ old('deskripsi') }}</textarea>
                         @error('deskripsi')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -185,7 +185,7 @@
                         <label class="block text-sm font-medium">Tanggung Jawab <span class="text-red-500">*</span></label>
                         <textarea rows="3" name="tanggung_jawab" required
                             placeholder="Jelaskan rincian tanggung jawab dan tugas pekerjaan..."
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 @error('tanggung_jawab') border-red-500 @enderror">{{ old('tanggung_jawab') }}</textarea>
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('tanggung_jawab') border-red-500 @enderror">{{ old('tanggung_jawab') }}</textarea>
                         @error('tanggung_jawab')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -196,7 +196,7 @@
                         <label class="block text-sm font-medium">Syarat Pekerjaan <span class="text-red-500">*</span></label>
                         <textarea rows="3" name="syarat_pekerjaan" required
                             placeholder="Contoh: Minimal D3/S1, menguasai Vue.js atau React, pengalaman minimal 1 tahun..."
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-orange-500 @error('syarat_pekerjaan') border-red-500 @enderror">{{ old('syarat_pekerjaan') }}</textarea>
+                            class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('syarat_pekerjaan') border-red-500 @enderror">{{ old('syarat_pekerjaan') }}</textarea>
                         @error('syarat_pekerjaan')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -207,7 +207,7 @@
                         <label class="text-sm font-medium">Batas Waktu Lamaran <span class="text-red-500">*</span></label>
                         <input type="date" name="batas_lamaran" value="{{ old('batas_lamaran') }}" required
                             min="{{ date('Y-m-d') }}"
-                            class="w-full sm:w-48 border border-gray-300 rounded-md px-3 py-2 mt-2 focus:ring-1 focus:ring-orange-500 @error('batas_lamaran') border-red-500 @enderror">
+                            class="w-full sm:w-48 border border-gray-300 rounded-md px-3 py-2 mt-2 focus:ring-1 focus:ring-[#00509d] @error('batas_lamaran') border-red-500 @enderror">
                         @error('batas_lamaran')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -218,13 +218,13 @@
                         <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
                             <div>
                                 <label class="block text-sm font-bold text-slate-800">
-                                    Pilih Paket Publikasi Lowongan <span class="text-orange-500">*</span>
+                                    Pilih Paket Publikasi Lowongan <span class="text-[#00509d]">*</span>
                                 </label>
                                 <p class="text-xs text-slate-500 mt-0.5">Pilih salah satu paket (Bronze, Silver, atau Gold) untuk lowongan ini.</p>
                             </div>
                             <div class="flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-xs font-bold">
                                 <i class="ph ph-coins text-base text-amber-500"></i>
-                                Saldo Koin Anda: <span class="text-orange-600 font-extrabold">{{ $perusahaan->koin_perusahaan ?? 0 }} Koin</span>
+                                Saldo Koin Anda: <span class="text-[#003d7a] font-extrabold">{{ $perusahaan->koin_perusahaan ?? 0 }} Koin</span>
                             </div>
                         </div>
 
@@ -239,10 +239,10 @@
 
                             @foreach ($pakets as $pkg)
                                 @php
-                                    $style = $pkgStyles[$pkg->nama] ?? ['badge' => 'bg-orange-500 text-white', 'border' => 'hover:border-orange-500'];
+                                    $style = $pkgStyles[$pkg->nama] ?? ['badge' => 'bg-[#00509d] text-white', 'border' => 'hover:border-[#00509d]'];
                                     $isSelected = old('paket_id') == $pkg->id || (!old('paket_id') && strtolower($pkg->nama) == 'bronze');
                                 @endphp
-                                <label class="relative flex flex-col justify-between border-2 rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 shadow-xs hover:shadow-md {{ $style['border'] }} bg-white has-[:checked]:border-orange-500 has-[:checked]:bg-orange-50/30 has-[:checked]:ring-2 has-[:checked]:ring-orange-400">
+                                <label class="relative flex flex-col justify-between border-2 rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 shadow-xs hover:shadow-md {{ $style['border'] }} bg-white has-[:checked]:border-[#00509d] has-[:checked]:bg-blue-50/30 has-[:checked]:ring-2 has-[:checked]:ring-[#00509d]">
                                     <input type="radio" name="paket_id" value="{{ $pkg->id }}" {{ $isSelected ? 'checked' : '' }} required class="sr-only">
 
                                     <div>
@@ -275,7 +275,7 @@
                                         </ul>
                                     </div>
 
-                                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-orange-600">
+                                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#003d7a]">
                                         <span>Pilih Paket {{ $pkg->nama }}</span>
                                         <i class="ph ph-arrow-right"></i>
                                     </div>
@@ -289,10 +289,10 @@
 
                     <div class="flex justify-center space-x-4 pt-8">
                         <a href="{{ route('lowongan.saya.perusahaan') }}"
-                            class="px-6 py-2.5 border-2 border-orange-500 rounded-xl text-orange-500 font-bold hover:bg-orange-50 transition text-sm">
+                            class="px-6 py-2.5 border-2 border-[#00509d] rounded-xl text-[#00509d] font-bold hover:bg-blue-50 transition text-sm">
                             Batal
                         </a>
-                        <button type="submit" class="px-8 py-2.5 bg-orange-500 text-white font-bold rounded-xl hover:bg-orange-600 transition shadow-md text-sm">
+                        <button type="submit" class="px-8 py-2.5 bg-[#00509d] text-white font-bold rounded-xl hover:bg-[#003d7a] transition shadow-md text-sm">
                             Simpan & Pasang Lowongan
                         </button>
                     </div>
@@ -305,7 +305,7 @@
     <div x-data="{ open: {{ session('koin_kurang') ? 'true' : 'false' }} }" x-show="open" x-cloak
         class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
         <div x-transition class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl max-w-sm w-full text-center">
-            <div class="w-12 h-12 rounded-full bg-orange-100 text-[#FF7A00] flex items-center justify-center mx-auto mb-3">
+            <div class="w-12 h-12 rounded-full bg-blue-100 text-[#00509d] flex items-center justify-center mx-auto mb-3">
                 <i class="ph ph-warning-circle text-2xl font-bold"></i>
             </div>
             <h2 class="text-lg font-bold text-slate-800 mb-2">Koin Tidak Mencukupi</h2>
@@ -317,7 +317,7 @@
                     Tutup
                 </button>
                 <a href="{{ route('perusahaan.dashboard') }}"
-                    class="px-5 py-2 bg-[#FF7A00] text-white rounded-xl text-xs font-bold hover:bg-orange-600 transition shadow-xs">
+                    class="px-5 py-2 bg-[#00509d] text-white rounded-xl text-xs font-bold hover:bg-[#003d7a] transition shadow-xs">
                     Top Up Sekarang
                 </a>
             </div>
@@ -432,3 +432,4 @@
 
     @include('layouts.footer')
 @endsection
+

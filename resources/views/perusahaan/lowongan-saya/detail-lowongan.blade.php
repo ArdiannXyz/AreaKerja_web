@@ -10,7 +10,7 @@
             @else
                 <img id="pp"
                     class="w-14 h-14 sm:w-20 sm:h-20 object-contain mt-0 sm:mt-[50px] flex-shrink-0"
-                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                     alt="">
             @endif
 
@@ -56,7 +56,7 @@
                             <!-- KANAN: Booster -->
                             @if ($isBoostActive)
                                 <div
-                                    class="flex items-center text-sm font-semibold text-orange-600 bg-orange-100 px-2 rounded-md whitespace-nowrap animate-pulse">
+                                    class="flex items-center text-sm font-semibold text-[#003d7a] bg-blue-100 px-2 rounded-md whitespace-nowrap animate-pulse">
                                     <i class="ph ph-rocket-launch text-lg mr-1"></i>
                                     Booster Aktif
                                 </div>
@@ -78,7 +78,7 @@
                         @method('delete')
 
                         <div
-                            class="flex items-center gap-2 hover:bg-orange-100 shadow bg-white px-4 py-2 rounded-md border border-orange-500 transition-colors duration-300">
+                            class="flex items-center gap-2 hover:bg-blue-100 shadow bg-white px-4 py-2 rounded-md border border-[#00509d] transition-colors duration-300">
                             <svg width="23" height="23" viewBox="0 0 23 23" fill="none"
                                 xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                                 <mask id="mask0_643_6018" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
@@ -98,12 +98,12 @@
                                 </defs>
                             </svg>
 
-                            <button type="submit" class="text-orange-600 text-md font-medium">Tutup Lowongan</button>
+                            <button type="submit" class="text-[#003d7a] text-md font-medium">Tutup Lowongan</button>
                         </div>
                     </form>
 
                     <div
-                        class="flex items-center gap-2 hover:bg-orange-100 shadow bg-white px-4 py-2 rounded-md border border-orange-500 transition-colors duration-300">
+                        class="flex items-center gap-2 hover:bg-blue-100 shadow bg-white px-4 py-2 rounded-md border border-[#00509d] transition-colors duration-300">
                         <svg width="24" height="23" viewBox="0 0 24 23" fill="none"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <mask id="mask0_643_6012" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
@@ -126,7 +126,7 @@
                             'perusahaan' => $data->perusahaan->slug,
                             'lowongan' => $data->slug,
                         ]) }}"
-                            class="text-orange-600 text-md font-medium">Edit Lowongan</a>
+                            class="text-[#003d7a] text-md font-medium">Edit Lowongan</a>
                     </div>
                 </div>
 
@@ -210,7 +210,7 @@
             <aside class="w-full lg:w-96 break-words">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="font-bold text-xl break-words">
-                        Lowongan <span class="text-orange-500">{{ $data->perusahaan->nama_perusahaan }}</span> Lainnya
+                        Lowongan <span class="text-[#00509d]">{{ $data->perusahaan->nama_perusahaan }}</span> Lainnya
                     </h3>
                 </div>
 
@@ -259,3 +259,4 @@
 
     @include('layouts.footer')
 @endsection
+

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AlamatPelamarController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatatanCashController;
 use App\Http\Controllers\CVController;
@@ -23,25 +22,21 @@ use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShareLowonganController;
 use App\Http\Controllers\SkillController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TalentHunterController;
 use App\Http\Controllers\TipsKerjaController;
-use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\VerifikasiPerusahaanController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 // OAUTH SOCIAL AUTHENTICATION (Google, Facebook, LinkedIn)
 Route::controller(SocialAuthController::class)->group(function () {
     Route::get('/auth/{provider}/redirect', 'redirect')->name('social.redirect');
     Route::get('/auth/{provider}/callback', 'callback')->name('social.callback');
 });
-
-use App\Http\Controllers\VerifikasiPerusahaanController;
-use GuzzleHttp\Middleware;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -673,7 +668,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::get('/event/{event}', 'detail_event')->name('superadmin.detail.event');
         Route::get('/event/{event}/edit', 'edit_event')->name('superadmin.edit.event');
         Route::delete('/delete/event/{event}', 'destroy_event')->name('superadmin.event.destroy');
-        Route::put('/events/status/{event}', 'updateStatus')->name('event.updateStatus');
+        Route::put('/events/status/{event}', 'updateStatus')->name('superadmin.event.updateStatus');
     });
 
 
@@ -762,7 +757,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::get('/manajemen/lowongan/bronze', 'bronze')->name('superadmin.manajemen.lowongan.bronze')->middleware('auth');
 
         Route::post('/manajemen/lowongan/gold/update', 'updateGold')->name('superadmin.manajemen.lowongan.gold.update')->middleware('auth');
-        Route::post('/manajemen/lowongan/silver/update', 'updatSilver')->name('superadmin.manajemen.lowongan.silver.update')->middleware('auth');
+        Route::post('/manajemen/lowongan/silver/update', 'updateSilver')->name('superadmin.manajemen.lowongan.silver.update')->middleware('auth');
         Route::post('/manajemen/lowongan/bronze/update', 'updateBronze')->name('superadmin.manajemen.lowongan.bronze.update')->middleware('auth');
     });
 

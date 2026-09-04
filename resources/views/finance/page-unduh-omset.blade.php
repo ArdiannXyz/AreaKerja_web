@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -16,14 +16,14 @@
             <p><span class="font-bold">Email :</span> Areakerja@gmail.com</p>
             <p><span class="font-bold">Telepon :</span> 081234567009</p>
         </div>
-        <div class="flex items-center justify-end gap-1 font-bold text-[#f97316] text-lg">
+        <div class="flex items-center justify-end gap-1 font-bold text-[#00509d] text-lg">
            <img src="{{ $logoBase64 }}" alt="Logo Areakerja" class="w-9 h-auto mb-1">
             <span>areakerja.com</span>
         </div>
     </div>
 
     <!-- Garis oranye -->
-    <div class="border-t-2 border-[#f97316] my-2"></div>
+    <div class="border-t-2 border-[#00509d] my-2"></div>
 
     <!-- Judul -->
     <h2 class="text-center font-bold mb-4">LAPORAN OMSET PERUSAHAAN</h2>
@@ -31,7 +31,7 @@
     <!-- Tabel -->
     <table class="w-full border border-black border-collapse text-[12px]">
         <thead>
-            <tr class="bg-[#f97316] text-white text-center font-bold">
+            <tr class="bg-[#00509d] text-white text-center font-bold">
                 <th class="border border-black py-1 px-2 w-[40px]">No.</th>
                 <th class="border border-black py-1 px-2">Bulan</th>
                 <th class="border border-black py-1 px-2">Nominal</th>
@@ -72,3 +72,4 @@
 </body>
 
 </html>
+

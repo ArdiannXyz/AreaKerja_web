@@ -49,12 +49,12 @@
                                     src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
                             @else
                                 <img id="pu" class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                     alt="">
                             @endif
                         @else
                             <img class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
 
@@ -113,7 +113,7 @@
                                         ? asset('storage/' . $pelamar->img_profile)
                                         : 'https://ui-avatars.com/api/?name=' .
                                             urlencode($pelamar->nama_pelamar ?? 'Pelamar') .
-                                            '&background=random&color=fff&size=128' }}"
+                                            '&background=00509d&color=fff&size=128' }}"
                                     alt="Preview Foto">
                             </div>
 
@@ -568,7 +568,7 @@
 
                 // Reset ke avatar default
                 img.setAttribute('src',
-                    'https://ui-avatars.com/api/?name=Pelamar&background=random&color=fff&size=128');
+                    'https://ui-avatars.com/api/?name=Pelamar&background=00509d&color=fff&size=128');
                 fileInput.value = ''; // Reset input file
             });
         </script>

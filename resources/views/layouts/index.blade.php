@@ -161,7 +161,7 @@
             margin-bottom: 1rem;
         }
 
-        /* LIST — supaya BULLET hitam muncul */
+        /* LIST â€” supaya BULLET hitam muncul */
         .tinymce-content ul,
         .tinymce-content ul li {
             list-style-type: disc !important;
@@ -401,12 +401,12 @@
                                         alt="Profile">
                                 @else
                                     <img id="pi" class="w-10 h-10 rounded-full"
-                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                         alt="">
                                 @endif
                             @else
                                 <img class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                     alt="">
                             @endif
                         </button>
@@ -505,7 +505,7 @@
                             </p>
 
                             <a href="{{ route('profile.index') }}"
-                                class="px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                                class="px-5 py-2 bg-[#00509d] text-white rounded-lg hover:bg-[#003d7a]">
                                 Pergi ke Profil
                             </a>
                         </div>
@@ -518,23 +518,23 @@
                 <!-- <div x-show="openMenu" x-transition
                     class="md:hidden absolute top-16 left-0 w-full bg-white shadow-lg z-50">
 
-                    <nav class="flex flex-col font-medium text-sm text-orange-500 gap-4 p-4">
+                    <nav class="flex flex-col font-medium text-sm text-[#00509d] gap-4 p-4">
 
                         <a href="{{ route('beranda') }}"
-                            class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                   {{ Route::is('beranda') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                   {{ Route::is('beranda') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                             Beranda
                         </a>
 
                         <a href="{{ url('/talent-hunter') }}"
-                            class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                    {{ request()->is('talent-hunter') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                    {{ request()->is('talent-hunter') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                             Talent Hunter
                         </a>
 
                         <a href="{{ url('/pelamar/tips-kerja') }}"
-                            class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                   {{ Route::is('pelamar.tips-kerja') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                   {{ Route::is('pelamar.tips-kerja') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                             Tips Kerja
                         </a>
 
@@ -542,34 +542,34 @@
                         @if (Auth::check() && Auth::user()->pelamar)
 @if (Auth::user()->pelamar->kategori === 'calon kandidat')
 <a href="{{ route('pelamar.calon-kandidat.pelatihan') }}"
-                                    class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                    {{ Route::is('pelamar.calon-kandidat.pelatihan') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                                    class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                    {{ Route::is('pelamar.calon-kandidat.pelatihan') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                                     Rekrut Saya
                                 </a>
 @elseif (Auth::user()->pelamar->kategori === 'kandidat aktif')
 <a href="{{ route('pelamar.tawaran') }}"
-                                    class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                    {{ Route::is('pelamar.tawaran') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                                    class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                    {{ Route::is('pelamar.tawaran') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                                     Rekrut Saya
                                 </a>
 @else
 <a href="{{ route('pelamar.daftar-kandidat') }}"
-                                    class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                    {{ Route::is('pelamar.daftar-kandidat') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                                    class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                    {{ Route::is('pelamar.daftar-kandidat') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                                     Daftar Kandidat
                                 </a>
 @endif
 @else
 <a href="{{ route('pelamar.daftar-kandidat') }}"
-                                class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                  {{ Route::is('pelamar.daftar-kandidat') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                                class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                  {{ Route::is('pelamar.daftar-kandidat') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                                 Daftar Kandidat
                             </a>
 @endif
 
                         <a href="{{ url('/lowongan') }}"
-                            class="hover:text-orange-500 hover:font-bold hover:scale-105 transition-all duration-300
-                   {{ request()->is('lowongan') ? 'font-bold text-orange-500 scale-105' : '' }}">
+                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                   {{ request()->is('lowongan') ? 'font-bold text-[#00509d] scale-105' : '' }}">
                             Pasang Lowongan
                         </a>
 
@@ -594,7 +594,7 @@
             <p class="text-sm">Silahkan lengkapi <span class="font-semibold">Profil</span> anda terlebih dahulu.</p>
             <div class="mt-3 text-right">
                 <button onclick="closeOnboarding()"
-                    class="px-3 py-1 bg-orange-500 text-white rounded-md hover:bg-orange-600 transition">
+                    class="px-3 py-1 bg-[#00509d] text-white rounded-md hover:bg-[#003d7a] transition">
                     OK
                 </button>
             </div>
@@ -693,15 +693,15 @@
                     Swal.fire({
                         title: `<div class="text-base font-bold text-gray-800">${judul || 'Detail Notifikasi'}</div>`,
                         html: `
-                            <div class="text-left text-sm text-gray-700 leading-relaxed bg-orange-50/50 p-4 rounded-xl border border-orange-100 mt-2 mb-3">
+                            <div class="text-left text-sm text-gray-700 leading-relaxed bg-blue-50/50 p-4 rounded-xl border border-blue-100 mt-2 mb-3">
                                 ${pesan}
                             </div>
                             <div class="text-xs text-gray-400 text-left flex items-center gap-1">
-                                ⏱️ ${createdAt}
+                                â±ï¸ ${createdAt}
                             </div>
                         `,
                         showCancelButton: true,
-                        confirmButtonColor: '#f97316',
+                        confirmButtonColor: '#00509d',
                         cancelButtonColor: '#ef4444',
                         confirmButtonText: 'Tutup',
                         cancelButtonText: 'Hapus Notifikasi Ini',
@@ -924,3 +924,4 @@
 </body>
 
 </html>
+

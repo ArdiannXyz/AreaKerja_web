@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -28,12 +28,12 @@
                 <!-- Logo + Judul -->
                 <div class="absolute top-6 left-6 gap-1 flex items-center">
                     <img src="{{ asset('images/logoarea.png') }}" alt="Logo" class="h-12 w-12">
-                    <span class="font-bold mb-1 text-orange-500">areakerja.com</span>
+                    <span class="font-bold mb-1 text-[#00509d]">areakerja.com</span>
                 </div>
 
 
                 <div class="pt-20">
-                    <h2 class="text-2xl font-semibold text-center text-orange-600 mb-6">Buat Akun</h2>
+                    <h2 class="text-2xl font-semibold text-center text-[#003d7a] mb-6">Buat Akun</h2>
                 </div>
 
                 <!-- Tombol Sosial -->
@@ -41,7 +41,7 @@
                 <div class="flex space-x-5 mb-6 justify-center">
                     <!-- Google -->
                     <a href="{{ route('social.redirect', ['provider' => 'google']) }}?role=perusahaan" title="Daftar Perusahaan dengan Google"
-                        class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-orange-500 hover:bg-orange-50 transition shadow-sm text-gray-800 font-bold">
+                        class="w-12 h-12 flex items-center justify-center border-2 border-gray-300 rounded-full hover:border-[#00509d] hover:bg-blue-50 transition shadow-sm text-gray-800 font-bold">
                         <span class="text-xl font-bold font-sans">G</span>
                     </a>
 
@@ -66,7 +66,7 @@
                             Pelamar
                         </button>
                         <!-- Tombol Tidak Aktif -->
-                        <button class="bg-orange-500 text-white  px-6 py-2 rounded-full text-sm font-semibold">
+                        <button class="bg-[#00509d] text-white  px-6 py-2 rounded-full text-sm font-semibold">
                             Perusahaan
                         </button>
                     </div>
@@ -78,28 +78,28 @@
                     <div>
                         <label for="username" class="block text-sm font-semibold text-gray-700 m-2">Nama Perusahaan</label>
                         <input type="text" name="username" id="username" placeholder="Nama Perusahaan"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-300 focus:outline-none">
                         <p class="text-red-500 text-sm mt-1 error-message" data-field="username"></p>
                     </div>
 
                     <div>
                         <label for="email" class="block text-sm font-semibold text-gray-700 m-2">Email</label>
                         <input type="email" name="email" id="email" placeholder="E-mail"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-300 focus:outline-none">
                         <p class="text-red-500 text-sm mt-1 error-message" data-field="email"></p>
                     </div>
 
                     <div>
                         <label for="phone" class="block text-sm font-semibold text-gray-700 m-2">No.Tlp Perusahaan</label>
                         <input type="text" name="telepon_perusahaan" id="phone" placeholder="08xxxxxxxx"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-300 focus:outline-none">
                         <p class="text-red-500 text-sm mt-1 error-message" data-field="telepon_perusahaan"></p>
                     </div>
 
                     <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700 m-2">Kata Sandi</label>
                         <input type="password" name="password" id="password" placeholder="Kata Sandi"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-300 focus:outline-none">
                         <p class="text-red-500 text-sm mt-1 error-message" data-field="password"></p>
                     </div>
 
@@ -107,14 +107,14 @@
 
                     <!-- Checkbox -->
                     <label class="flex items-center text-xs sm:text-sm font-medium gap-1 cursor-pointer">
-                        <input type="checkbox" id="agree_perusahaan_standalone" name="agree_perusahaan" required class="mr-2 rounded text-orange-500 focus:ring-orange-500">
-                        <span>Saya menyetujui <button type="button" onclick="openTermsModal()" class="text-orange-500 font-semibold hover:underline cursor-pointer">Syarat dan Ketentuan</button> yang berlaku</span>
+                        <input type="checkbox" id="agree_perusahaan_standalone" name="agree_perusahaan" required class="mr-2 rounded text-[#00509d] focus:ring-[#00509d]">
+                        <span>Saya menyetujui <button type="button" onclick="openTermsModal()" class="text-[#00509d] font-semibold hover:underline cursor-pointer">Syarat dan Ketentuan</button> yang berlaku</span>
                     </label>
                     <p class="text-red-500 text-xs mt-1 error-message" data-field="agree_perusahaan"></p>
 
                     <!-- Tombol Daftar -->
                     <button type="submit"
-                        class="w-full py-3 bg-orange-500 text-white rounded-lg font-semibold hover:bg-orange-600 mt-6 cursor-pointer transition shadow-sm">
+                        class="w-full py-3 bg-[#00509d] text-white rounded-lg font-semibold hover:bg-[#003d7a] mt-6 cursor-pointer transition shadow-sm">
                         Daftar
                     </button>
                 </form>
@@ -169,7 +169,7 @@
                 <button type="button" onclick="closeTermsModal()" class="px-4 py-2.5 rounded-xl border border-slate-300 text-slate-700 font-semibold text-xs sm:text-sm hover:bg-slate-100 transition cursor-pointer">
                     Tutup
                 </button>
-                <button type="button" onclick="acceptTermsModal()" class="px-5 py-2.5 rounded-xl bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs sm:text-sm transition shadow-sm cursor-pointer">
+                <button type="button" onclick="acceptTermsModal()" class="px-5 py-2.5 rounded-xl bg-[#00509d] hover:bg-[#003d7a] text-white font-bold text-xs sm:text-sm transition shadow-sm cursor-pointer">
                     Saya Paham &amp; Setuju
                 </button>
             </div>
@@ -208,3 +208,4 @@
 </body>
 
 </html>
+

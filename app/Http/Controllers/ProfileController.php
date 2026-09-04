@@ -31,6 +31,11 @@ class ProfileController extends Controller
 
     public function update_profile(Request $request, Pelamar $pelamar)
     {
+        // Pastikan pelamar yang diupdate adalah milik user yang sedang login
+        if ($pelamar->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki izin untuk mengedit profil ini.');
+        }
+
         try {
 
             $validated = $request->validate([
@@ -129,6 +134,10 @@ class ProfileController extends Controller
 
     public function destroy_profile(Pelamar $pelamar)
     {
+        // Pastikan hanya pemilik profil yang bisa menghapus foto
+        if ($pelamar->user_id !== Auth::id()) {
+            abort(403, 'Anda tidak memiliki izin untuk menghapus foto profil ini.');
+        }
 
         if ($pelamar->img_profile && Storage::exists('public/' . $pelamar->img_profile)) {
             Storage::delete('public/' . $pelamar->img_profile);

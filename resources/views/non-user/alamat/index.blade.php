@@ -25,7 +25,7 @@
                             src="{{ asset('storage/' . Auth::user()->pelamar->img_profile) }}" alt="Profile">
                     @else
                         <img id="pp" class="w-24 h-24 object-cover rounded-full border-2 border-orange-400"
-                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                             alt="Profile">
                     @endif
                 </div>

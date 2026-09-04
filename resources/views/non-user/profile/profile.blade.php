@@ -47,7 +47,7 @@
                                     :class="zoom ? 'scale-[2] z-50 relative' : 'scale-100'"
                                     src="{{ Auth::user()->pelamar->img_profile
                                         ? asset('storage/' . Auth::user()->pelamar->img_profile)
-                                        : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->username) . '&background=random&color=fff&size=128' }}"
+                                        : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->username) . '&background=00509d&color=fff&size=128' }}"
                                     alt="Profile">
                             </div>
 

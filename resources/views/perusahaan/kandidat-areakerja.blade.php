@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <section class="relative">
@@ -100,7 +100,7 @@
 
                     <!-- Button -->
                     <button type="submit"
-                        class="ml-auto bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md text-sm font-medium">
+                        class="ml-auto bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md text-sm font-medium">
                         Cari Kandidat
                     </button>
                 </div>
@@ -150,7 +150,7 @@
     <div class="max-w-6xl mx-auto mt-6 mb-10 overflow-x-auto rounded-lg border shadow-md">
         <table class="w-full border-collapse text-sm">
             <thead>
-                <tr class="bg-orange-500 text-white text-center">
+                <tr class="bg-[#00509d] text-white text-center">
                     <th class="py-3 px-4 font-medium">Nama</th>
                     <th class="py-3 px-4 font-medium">Skill</th>
                     <th class="py-3 px-4 font-medium">Umur</th>
@@ -176,7 +176,7 @@
                         <td class="py-3 px-4">{{ $p->gender_singkat ?? '-' }}</td>
                         <td class="py-3 px-4">
                             <button onclick="openConfirmModal({{ $p->id }})">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500"
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00509d]"
                                     fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M12 3v12l4-4h-3V3h-2v8H8l4 4zM4 19h16v2H4z" />
                                 </svg>
@@ -210,14 +210,14 @@
     <div id="confirmModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
         <div class="bg-white p-6 rounded-lg text-center max-w-sm w-full scale-[0.85] md:scale-100">
             <div class="flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500 mb-4" fill="currentColor"
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d] mb-4" fill="currentColor"
                     viewBox="0 0 24 24">
                     <path d="M12 16l4-5h-3V4h-2v7H8l4 5zM4 20h16v2H4z" />
                 </svg>
             </div>
             <p class="mb-4 font-medium">Yakin akan mengunduh CV pelamar?</p>
             <div class="flex justify-center gap-4">
-                <button onclick="downloadCV()" class="px-4 py-2 bg-orange-500 text-white rounded">Unduh</button>
+                <button onclick="downloadCV()" class="px-4 py-2 bg-[#00509d] text-white rounded">Unduh</button>
                 <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-300 text-black rounded">Batal</button>
             </div>
         </div>
@@ -227,15 +227,15 @@
     <div id="successModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
         <div class="bg-white p-6 rounded-lg text-center max-w-sm w-full scale-[0.85] md:scale-100">
             <div class="flex justify-center">
-                <div class="bg-orange-100 p-4 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500" fill="none"
+                <div class="bg-blue-100 p-4 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
             </div>
             <p class="mt-4 font-semibold">CV Berhasil diunduh</p>
-            <button onclick="closeSuccessModal()" class="mt-4 px-4 py-2 bg-orange-500 text-white rounded">Tutup</button>
+            <button onclick="closeSuccessModal()" class="mt-4 px-4 py-2 bg-[#00509d] text-white rounded">Tutup</button>
         </div>
     </div>
 
@@ -252,7 +252,7 @@
             </select>
             <div class="flex justify-center gap-4 mt-6">
                 <button id="btnLanjut"
-                    class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition-all">Lanjutkan</button>
+                    class="bg-[#00509d] hover:bg-[#003d7a] text-white px-5 py-2 rounded-md transition-all">Lanjutkan</button>
                 <button id="btnCancel1"
                     class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-5 py-2 rounded-md transition-all">Batal</button>
             </div>
@@ -265,7 +265,7 @@
         <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md text-center animate-fade-in">
             <h3 class="text-xl font-semibold mb-4 text-gray-800">Pilih Lowongan</h3>
             <select id="selectLowongan"
-                class="w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none">
+                class="w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-[#00509d] focus:outline-none">
                 <option value="">-- Pilih Lowongan --</option>
                 @foreach (auth()->user()->perusahaan->lowonganPerusahaans as $low)
                     <option value="{{ $low->id }}">{{ $low->nama }}</option>
@@ -273,7 +273,7 @@
             </select>
             <div class="flex justify-center gap-4 mt-6">
                 <button id="btnLanjut"
-                    class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-2 rounded-md transition-all">
+                    class="bg-[#00509d] hover:bg-[#003d7a] text-white px-5 py-2 rounded-md transition-all">
                     Lanjutkan
                 </button>
                 <button id="btnCancel1"
@@ -313,7 +313,7 @@
         </div>
     </div>
 
-    <!-- ✅ Modal Top Up -->
+    <!-- âœ… Modal Top Up -->
     <div id="modalTopUp"
         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 transition-all">
         <div
@@ -323,7 +323,7 @@
                 Koin anda kurang silahkan <br> Top Up terlebih dahulu.
             </p>
             <button onclick="toggleModal()"
-                class="bg-orange-500 hover:bg-orange-600 text-white font-medium px-8 py-2 rounded-full transition-all text-sm">
+                class="bg-[#00509d] hover:bg-[#003d7a] text-white font-medium px-8 py-2 rounded-full transition-all text-sm">
                 Top Up
             </button>
         </div>
@@ -369,7 +369,7 @@
         const modalTopUp = document.getElementById('modalTopUp');
         const selectLowongan = document.getElementById('selectLowongan');
 
-        // 🔸 Buka modal pilih lowongan
+        // ðŸ”¸ Buka modal pilih lowongan
         document.querySelectorAll('.btn-beli').forEach(btn => {
             btn.addEventListener('click', function() {
                 selectedPelamarId = this.dataset.id;
@@ -377,14 +377,14 @@
             });
         });
 
-        // 🔸 Tombol lanjut dari modal pilih lowongan
+        // ðŸ”¸ Tombol lanjut dari modal pilih lowongan
         document.getElementById('btnLanjut').addEventListener('click', () => {
             selectedLowonganId = selectLowongan.value;
             if (!selectedLowonganId) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Pilih Lowongan',
-                    text: '⚠️ Pilih lowongan terlebih dahulu!',
+                    text: 'âš ï¸ Pilih lowongan terlebih dahulu!',
                     confirmButtonColor: '#3085d6',
                 });
                 return;
@@ -394,12 +394,12 @@
             document.getElementById('hargaKoin').textContent = harga;
         });
 
-        // 🔸 Tombol batal di modal pilih lowongan
+        // ðŸ”¸ Tombol batal di modal pilih lowongan
         document.getElementById('btnCancel1').addEventListener('click', () => {
             modalPilih.classList.add('hidden');
         });
 
-        // 🔸 Tombol konfirmasi beli
+        // ðŸ”¸ Tombol konfirmasi beli
         document.getElementById('btnKonfirmasiBeli').addEventListener('click', async () => {
             modalKonfirmasi.classList.add('hidden');
 
@@ -483,19 +483,19 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Koneksi Bermasalah',
-                    text: '⚠️ Terjadi kesalahan koneksi, coba lagi nanti.',
+                    text: 'âš ï¸ Terjadi kesalahan koneksi, coba lagi nanti.',
                     confirmButtonColor: '#d33'
                 });
             }
         });
 
 
-        // 🔸 Tombol batal di modal konfirmasi
+        // ðŸ”¸ Tombol batal di modal konfirmasi
         document.getElementById('btnKonfirmasiBatal').addEventListener('click', () => {
             modalKonfirmasi.classList.add('hidden');
         });
 
-        // 🔸 Tutup modal Top Up jika klik di luar
+        // ðŸ”¸ Tutup modal Top Up jika klik di luar
         modalTopUp.addEventListener('click', e => {
             if (e.target === modalTopUp) {
                 modalTopUp.classList.add('hidden');
@@ -526,3 +526,4 @@
 
     @include('layouts.footer')
 @endsection
+

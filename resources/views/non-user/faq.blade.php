@@ -1,4 +1,4 @@
-@extends('layouts.index')
+﻿@extends('layouts.index')
 @section('content')
     <div class="bg-white text-gray-800 mt-16">
 
@@ -31,7 +31,7 @@
 
                 <!-- Tombol Cari -->
                 <button
-                    class="bg-orange-500 hover:bg-orange-600 text-white font-medium 
+                    class="bg-[#00509d] hover:bg-[#003d7a] text-white font-medium 
                px-6 py-2 rounded-md w-full sm:w-auto text-center">
                     Cari
                 </button>
@@ -47,7 +47,7 @@
                         <h3 class="font-semibold mb-1 text-base md:text-lg">Bagaimana Melamar Pekerjaan di Area Kerja?</h3>
                         <p class="text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            <span class="text-orange-500">Viverra faucibus lectus viverra id</span>.
+                            <span class="text-[#00509d]">Viverra faucibus lectus viverra id</span>.
                             Lectus habitant nisl, posuere at urna ut vitae hac ultricies.
                         </p>
                     </div>
@@ -56,7 +56,7 @@
                         <h3 class="font-semibold mb-1 text-base md:text-lg">Apa itu kandidat Area Kerja?</h3>
                         <p class="text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            <span class="text-orange-500">Viverra faucibus lectus viverra id</span>.
+                            <span class="text-[#00509d]">Viverra faucibus lectus viverra id</span>.
                             Commodo ridiculus augue condimentum molestie dolor.
                         </p>
                     </div>
@@ -65,7 +65,7 @@
                         <h3 class="font-semibold mb-1 text-base md:text-lg">Apa itu daftar kandidat?</h3>
                         <p class="text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            <span class="text-orange-500">Viverra faucibus lectus viverra id</span>.
+                            <span class="text-[#00509d]">Viverra faucibus lectus viverra id</span>.
                         </p>
                     </div>
 
@@ -84,7 +84,7 @@
                         <h3 class="font-semibold mb-1 text-base md:text-lg">Apa itu Area Kerja?</h3>
                         <p class="text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            <span class="text-orange-500">Viverra faucibus lectus viverra id</span>.
+                            <span class="text-[#00509d]">Viverra faucibus lectus viverra id</span>.
                         </p>
                     </div>
 
@@ -93,7 +93,7 @@
                             ?</h3>
                         <p class="text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            <span class="text-orange-500">Viverra faucibus lectus viverra id</span>.
+                            <span class="text-[#00509d]">Viverra faucibus lectus viverra id</span>.
                         </p>
                     </div>
 
@@ -101,7 +101,7 @@
                         <h3 class="font-semibold mb-1 text-base md:text-lg">Bagaimana cara mengganti sandi?</h3>
                         <p class="text-gray-600">
                             Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                            <span class="text-orange-500">Condimentum molestie dolor sit amet</span>.
+                            <span class="text-[#00509d]">Condimentum molestie dolor sit amet</span>.
                         </p>
                     </div>
                 </div>
@@ -110,8 +110,8 @@
 
             <!-- Tombol bawah -->
             <div class="flex justify-center mt-12">
-                <button class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md text-sm md:text-base">
-                    Lihat Semua FAQ →
+                <button class="bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md text-sm md:text-base">
+                    Lihat Semua FAQ â†’
                 </button>
             </div>
 
@@ -121,3 +121,4 @@
 
     @include('layouts.footer')
 @endsection
+

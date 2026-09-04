@@ -3,13 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\BrowserPath;
+use App\Models\Admin;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
+use App\Models\Divisi;
+use App\Models\Finance;
+use App\Models\Kecamatan;
+use App\Models\Kota;
 use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
 use App\Models\Perusahaan;
+use App\Models\Provinsi;
+use App\Models\SuperAdmin;
 use App\Models\TalentHunter;
 use App\Models\User;
 use Carbon\Carbon;
@@ -128,43 +135,52 @@ class SuperAdminController extends Controller
     }
     public function update_profile_superadmin(Request $request, SuperAdmin $superadmin)
     {
-
-        $validated = $request->validate([
-            'username'     => "nullable|string",
-            'email'    => "nullable|email",
-
+        // Gabungkan semua validasi dalam satu blok
+        $data = $request->validate([
+            'username'      => 'nullable|string',
+            'email'         => 'nullable|email',
+            'nama_lengkap'  => 'nullable|string',
+            'img_profile'   => 'nullable|file|image|mimes:png,jpg,jpeg',
+            'provinsi'      => 'nullable|string',
+            'kota'          => 'nullable|string',
+            'kecamatan'     => 'nullable|string',
+            'desa'          => 'nullable|string',
+            'kode_pos'      => 'nullable',
+            'detail_alamat' => 'nullable|string',
         ]);
 
-        $valid = $request->validate([
-            "nama_lengkap"  => 'nullable|string',
-            "img_profile"   => 'nullable|file|image|mimes:png,jpg,jpeg',
-            "provinsi"      => 'nullable|string',
-            "kota"          => 'nullable|string',
-            "kecamatan"     => 'nullable|string',
-            "desa"          => 'nullable|string',
-            "kode_pos"      => 'nullable',
-            "detail_alamat" => 'nullable|string'
-        ]);
-
-        $user = User::where('id', Auth::user()->id);
+        // Update user (username, email) — gunakan ->first() agar dapat Model instance,
+        // bukan QueryBuilder, supaya Eloquent events (updating/updated) terpicu
+        $user = User::where('id', Auth::user()->id)->first();
         if ($user) {
-            $user->update($validated);
+            $user->update([
+                'username' => $data['username'] ?? $user->username,
+                'email'    => $data['email'] ?? $user->email,
+            ]);
         }
 
-        $superadmin = SuperAdmin::where('id', Auth::user()->id)->first();
+        // Cari SuperAdmin berdasarkan user_id (bukan id primary key)
+        $superadminRecord = SuperAdmin::where('user_id', Auth::user()->id)->first();
 
         if ($request->hasFile('img_profile')) {
             // Hapus foto lama jika ada
-            if ($superadmin->img_profile && Storage::exists('public/' . $superadmin->img_profile)) {
-                Storage::delete('public/' . $superadmin->img_profile);
+            if ($superadminRecord && $superadminRecord->img_profile && Storage::exists('public/' . $superadminRecord->img_profile)) {
+                Storage::delete('public/' . $superadminRecord->img_profile);
             }
-
-            // Simpan foto baru ke storage/app/public/images
-            $valid['img_profile'] = $request->file('img_profile')->store('images', 'public');
+            $data['img_profile'] = $request->file('img_profile')->store('images', 'public');
         }
 
-        if ($superadmin) {
-            $superadmin->update($valid);
+        if ($superadminRecord) {
+            $superadminRecord->update([
+                'nama_lengkap'  => $data['nama_lengkap'] ?? $superadminRecord->nama_lengkap,
+                'img_profile'   => $data['img_profile'] ?? $superadminRecord->img_profile,
+                'provinsi'      => $data['provinsi'] ?? $superadminRecord->provinsi,
+                'kota'          => $data['kota'] ?? $superadminRecord->kota,
+                'kecamatan'     => $data['kecamatan'] ?? $superadminRecord->kecamatan,
+                'desa'          => $data['desa'] ?? $superadminRecord->desa,
+                'kode_pos'      => $data['kode_pos'] ?? $superadminRecord->kode_pos,
+                'detail_alamat' => $data['detail_alamat'] ?? $superadminRecord->detail_alamat,
+            ]);
         }
 
         return redirect()->route('superadmin.profile')->with('success', 'Profile updated successfully.');
@@ -221,7 +237,7 @@ class SuperAdminController extends Controller
 
     public function delete_akun(User $user)
     {
-        $user->delete($user->id);
+        $user->delete();
         return redirect()->route('superadmin.freeze')->with('success', 'Akun berhasil dihapus');
     }
 

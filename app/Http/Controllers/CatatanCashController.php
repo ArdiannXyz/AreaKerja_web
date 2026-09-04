@@ -97,4 +97,18 @@ class CatatanCashController extends Controller
         return redirect()->route('catatan_cash.show', $transaksi->id)
             ->with('success', 'Bukti transfer berhasil diupload.');
     }
+
+    // update status transaksi (dipakai dari panel Finance)
+    public function updateStatus(Request $request, $id)
+    {
+        $transaksi = CatatanCash::findOrFail($id);
+
+        $request->validate([
+            'status' => 'required|in:pending,menunggu_verifikasi,diterima,ditolak,expired',
+        ]);
+
+        $transaksi->update(['status' => $request->status]);
+
+        return redirect()->back()->with('success', 'Status transaksi berhasil diperbarui.');
+    }
 }

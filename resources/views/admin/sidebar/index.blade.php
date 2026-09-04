@@ -90,7 +90,7 @@
         margin-bottom: 1rem;
     }
 
-    /* LIST — supaya BULLET hitam muncul */
+    /* LIST â€” supaya BULLET hitam muncul */
     .tinymce-content ul,
     .tinymce-content ul li {
         list-style-type: disc !important;
@@ -150,7 +150,7 @@
 
     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
         type="button"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:text-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 transition duration-300">
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-white rounded-lg sm:hidden hover:bg-[#003d7a] focus:outline-none focus:ring-2 focus:ring-[#00509d] transition duration-300">
         <span class="sr-only">Open sidebar</span>
         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg">
@@ -163,7 +163,7 @@
     <aside id="logo-sidebar"
         class="fixed top-0 left-0 z-40 w-64 h-screen overflow-y-auto transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
-        <div class="min-h-screen px-3 py-4 bg-gray-800 overflow-y-auto">
+        <div class="min-h-screen px-3 py-4 bg-[#00509d] overflow-y-auto">
             <a href="{{ route('admin.dashboard') }}" class="flex items-center mb-5">
 
                 <!-- Logo responsif -->
@@ -184,9 +184,9 @@
                     <span class="ms-3 mt-3">Umum</span>
                 </p>
                 </li>
-                <li class="{{ request()->is('admin/dashboard') ? 'bg-white text-gray-500' : 'text-white' }} rounded-md">
+                <li class="{{ request()->is('admin/dashboard') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                     <a href="{{ url('/admin/dashboard') }}"
-                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-gray-500 rounded-md px-3 py-2 transition duration-300">
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                         <svg width="15" height="17" viewBox="0 0 15 17" fill="none"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -202,9 +202,9 @@
                         <span class="ms-3 mt-4">Finance</span>
                     </p>
                 </li>
-                <li class="{{ request()->is('admin/profile') ? 'bg-white text-gray-500' : 'text-white' }} rounded-md">
+                <li class="{{ request()->is('admin/profile') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                     <a href="{{ url('/admin/profile') }}"
-                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-gray-500 rounded-md px-3 py-2 transition duration-300">
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <rect width="20" height="20" fill="url(#pattern0_690_13045)" />
@@ -223,9 +223,9 @@
                 </li>
 
                 <li
-                    class="{{ request()->is('admin/pelamar') || request()->is('admin/non/kandidat') || request()->is('admin/kandidat') || request()->is('admin/calon/kandidat') ? 'bg-white text-gray-500' : 'text-white' }} rounded-md">
+                    class="{{ request()->is('admin/pelamar') || request()->is('admin/non/kandidat') || request()->is('admin/kandidat') || request()->is('admin/calon/kandidat') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                     <a href="{{ route('admin.calon-kandidat') }}"
-                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-gray-500 rounded-md px-3 py-2 transition duration-300">
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                         <svg width="20" height="21" viewBox="0 0 20 21" fill="none"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <rect y="0.5" width="20" height="20" fill="url(#pattern0_690_13060)" />
@@ -243,9 +243,9 @@
                     </a>
                 </li>
                 <li
-                    class="{{ request()->is('admin/perusahaan') || request()->is('admin/recruitment') || request()->is('admin/talenthunter') ? 'bg-white text-gray-500' : 'text-white' }} rounded-md">
+                    class="{{ request()->is('admin/perusahaan') || request()->is('admin/recruitment') || request()->is('admin/talenthunter') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                     <a href="{{ route('admin.perusahaan') }}"
-                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-gray-500 rounded-md px-3 py-2 transition duration-300">
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                         <svg width="20" height="21" viewBox="0 0 20 21" fill="none"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <rect y="0.5" width="20" height="20" fill="url(#pattern0_690_13052)" />
@@ -264,9 +264,9 @@
                     </a>
                 </li>
                 <li
-                    class="{{ request()->is('admin/finance') || request()->is('admin/finance/tunai') ? 'bg-white text-gray-500' : 'text-white' }} rounded-md">
+                    class="{{ request()->is('admin/finance') || request()->is('admin/finance/tunai') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                     <a href="{{ url('/admin/finance') }}"
-                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-gray-500 rounded-md px-3 py-2 transition duration-300">
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                         <svg width="20" height="21" viewBox="0 0 20 21" fill="none"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <rect y="0.5" width="20" height="20" fill="url(#pattern0_690_13053)" />
@@ -285,9 +285,9 @@
                     </a>
                 </li>
                 <li
-                    class="{{ request()->is('admin/tips/kerja') ? 'bg-white text-gray-500' : 'text-white' }} rounded-md">
+                    class="{{ request()->is('admin/tips/kerja') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                     <a href="{{ url('/admin/tips/kerja') }}"
-                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-gray-500 rounded-md px-3 py-2 transition duration-300">
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                         <svg width="20" height="21" viewBox="0 0 20 21" fill="none"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <rect y="0.5" width="20" height="20" fill="url(#pattern0_690_13054)" />
@@ -305,9 +305,9 @@
                         Tips Kerja
                     </a>
                 </li>
-                <li class="{{ request()->is('admin/event') ? 'bg-white text-gray-500' : 'text-white' }} rounded-md">
+                <li class="{{ request()->is('admin/event') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                     <a href="{{ route('admin.eventform') }}"
-                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-gray-500 rounded-md px-3 py-2 transition duration-300">
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                         <svg width="20" height="21" viewBox="0 0 20 21" fill="none"
                             xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                             <rect width="20" height="20" transform="matrix(-1 0 0 1 20 0.5)"
@@ -364,7 +364,7 @@
                 <form action="{{ route('logout_admin') }}" method="POST">
                     @csrf
                     <button id="goLogin"
-                        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md font-medium">
+                        class="bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md font-medium">
                         Keluar
                     </button>
                 </form>
@@ -418,14 +418,14 @@
             modal.classList.add("flex");
         });
 
-        // Tombol batal → tutup modal
+        // Tombol batal â†’ tutup modal
         function closeModal() {
             let modal = document.getElementById("successModal");
             modal.classList.remove("flex");
             modal.classList.add("hidden");
         }
 
-        // Tombol "Keluar" di modal → submit form logout
+        // Tombol "Keluar" di modal â†’ submit form logout
         document.getElementById("goLogin").addEventListener("click", function() {
             document.getElementById("logout_admin").submit();
         });
@@ -435,3 +435,4 @@
 </body>
 
 </html>
+

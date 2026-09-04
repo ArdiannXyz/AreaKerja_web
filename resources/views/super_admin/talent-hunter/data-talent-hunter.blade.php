@@ -37,7 +37,7 @@
                                     ? asset('storage/' . Auth::user()->superadmin->img_profile)
                                     : 'https://ui-avatars.com/api/?name=' .
                                         urlencode(Auth::user()->username) .
-                                        '&background=random&color=fff&size=128';
+                                        '&background=00509d&color=fff&size=128';
                         @endphp
                         <img class="w-10 h-10 object-cover rounded-full" src="{{ $profileImage }}" alt="Profile">
                     </a>

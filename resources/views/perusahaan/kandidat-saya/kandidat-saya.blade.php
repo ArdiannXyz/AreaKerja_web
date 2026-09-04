@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <div class="max-w-6xl mt-24 mx-auto p-4 sm:p-7 rounded-lg">
         <h2 class="text-lg font-semibold mb-4">Kandidat Saya</h2>
@@ -24,7 +24,7 @@
                         @endforeach
                     </select>
 
-                    <button type="submit" class="bg-orange-500 text-white px-8 py-2 rounded-lg hover:bg-orange-600 shadow-lg">
+                    <button type="submit" class="bg-[#00509d] text-white px-8 py-2 rounded-lg hover:bg-[#003d7a] shadow-lg">
                         Cari
                     </button>
                 </form>
@@ -97,7 +97,7 @@
                             <td class="p-3 text-center">{{ $skillUtama }}</td>
                             <!-- CV -->
                             <td class="p-3">
-                                <div class="flex flex-col items-center text-orange-500">
+                                <div class="flex flex-col items-center text-[#00509d]">
                                     <button onclick="openConfirmModal({{ $pelamar->id }})">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                                             viewBox="0 0 24 24" fill="#fb923c">
@@ -176,14 +176,14 @@
     <div id="confirmModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
         <div class="bg-white p-6 scale-[0.85] md:scale-100 rounded-lg text-center max-w-sm w-full">
             <div class="flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500 mb-4" fill="currentColor"
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d] mb-4" fill="currentColor"
                     viewBox="0 0 24 24">
                     <path d="M12 16l4-5h-3V4h-2v7H8l4 5zM4 20h16v2H4z" />
                 </svg>
             </div>
             <p class="mb-4 font-medium">Yakin akan mengunduh CV pelamar?</p>
             <div class="flex justify-center gap-4">
-                <button onclick="downloadCV()" class="px-4 py-2 bg-orange-500 text-white rounded">Unduh</button>
+                <button onclick="downloadCV()" class="px-4 py-2 bg-[#00509d] text-white rounded">Unduh</button>
                 <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-300 text-black rounded">Batal</button>
             </div>
         </div>
@@ -193,15 +193,15 @@
     <div id="successModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
         <div class="bg-white p-6 rounded-lg text-center max-w-sm w-full">
             <div class="flex justify-center">
-                <div class="bg-orange-100 p-4 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500" fill="none"
+                <div class="bg-blue-100 p-4 rounded-full">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
                         viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
                 </div>
             </div>
             <p class="mt-4 font-semibold">CV Berhasil diunduh</p>
-            <button onclick="closeSuccessModal()" class="mt-4 px-4 py-2 bg-orange-500 text-white rounded">Tutup</button>
+            <button onclick="closeSuccessModal()" class="mt-4 px-4 py-2 bg-[#00509d] text-white rounded">Tutup</button>
         </div>
     </div>
 
@@ -259,3 +259,4 @@
         }
     </script>
 @endsection
+

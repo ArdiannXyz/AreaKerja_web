@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <section class="relative mt-20 w-full overflow-hidden min-h-[340px] md:min-h-[400px] flex items-center bg-gray-900 shadow-md">
@@ -16,7 +16,7 @@
                 Dapatkan karyawan berkualitas untuk perusahaan anda
             </p>
             <a href="{{ route('lowongan.create.form') }}"
-                class="inline-flex items-center justify-center bg-[#FF7A00] hover:bg-orange-600 text-white font-semibold text-sm sm:text-base px-8 py-2.5 rounded-xl shadow-md transition-all duration-200 hover:scale-105 active:scale-95">
+                class="inline-flex items-center justify-center bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-sm sm:text-base px-8 py-2.5 rounded-xl shadow-md transition-all duration-200 hover:scale-105 active:scale-95">
                 Tambah
             </a>
         </div>
@@ -43,7 +43,7 @@
                     <div class="bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1">
                         
                         <!-- Header Paket -->
-                        <div class="py-3.5 text-center {{ $warnaHeader[$paket->nama] ?? 'bg-[#FF7A00]' }}">
+                        <div class="py-3.5 text-center {{ $warnaHeader[$paket->nama] ?? 'bg-[#00509d]' }}">
                             <h3 class="text-xl font-bold text-white uppercase tracking-wider">
                                 {{ $paket->nama }}
                             </h3>
@@ -111,7 +111,7 @@
                             <!-- Button Pasang Lowongan -->
                             <button type="button"
                                 onclick="openModal({{ $paket->id }}, '{{ $paket->nama }}', {{ $paket->harga }})"
-                                class="{{ $warnaBtn[$paket->nama] ?? 'bg-[#FF7A00] hover:bg-orange-600' }} text-white font-semibold py-2.5 rounded-lg w-full transition duration-200 shadow-sm text-sm">
+                                class="{{ $warnaBtn[$paket->nama] ?? 'bg-[#00509d] hover:bg-[#003d7a]' }} text-white font-semibold py-2.5 rounded-lg w-full transition duration-200 shadow-sm text-sm">
                                 Pasang Lowongan
                             </button>
                         </div>
@@ -124,8 +124,8 @@
     <!-- Steps Section (Langkah - Langkah) -->
     <section class="py-14 bg-white">
         <div class="max-w-5xl mx-auto px-4 text-center">
-            <h2 class="text-2xl sm:text-3xl font-bold text-[#FF7A00]">Langkah - Langkah</h2>
-            <div class="w-32 h-1 bg-[#FF7A00] mx-auto mt-2 mb-9 rounded-full"></div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-[#00509d]">Langkah - Langkah</h2>
+            <div class="w-32 h-1 bg-[#00509d] mx-auto mt-2 mb-9 rounded-full"></div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-left overflow-hidden rounded-xl shadow-sm">
                 <!-- Step 1 -->
@@ -165,10 +165,10 @@
 
     <!-- Why Choose Us (Kenapa Harus Area Kerja ?) -->
     <section class="py-14 bg-white max-w-6xl mx-auto px-4 sm:px-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-[#FF7A00] text-center mb-2">
+        <h2 class="text-2xl sm:text-3xl font-bold text-[#00509d] text-center mb-2">
             Kenapa Harus Area Kerja ?
         </h2>
-        <div class="w-32 h-1 bg-[#FF7A00] mx-auto mb-10 rounded-full"></div>
+        <div class="w-32 h-1 bg-[#00509d] mx-auto mb-10 rounded-full"></div>
 
         <div class="grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
             <!-- Left Image -->
@@ -180,21 +180,21 @@
             <div class="space-y-6">
                 <div class="flex items-center gap-4">
                     <img src="{{ asset('images/2.png') }}" alt="Website Icon" class="w-16 h-16 shrink-0 object-contain">
-                    <p class="text-xs sm:text-sm font-medium text-[#FF7A00] leading-relaxed">
+                    <p class="text-xs sm:text-sm font-medium text-[#00509d] leading-relaxed">
                         Website kami menjangkau ratusan perusahaan yang siap menerima ribuan pencari kerja.
                     </p>
                 </div>
 
                 <div class="flex items-center gap-4">
                     <img src="{{ asset('images/3.png') }}" alt="Social Media Icon" class="w-16 h-16 shrink-0 object-contain">
-                    <p class="text-xs sm:text-sm font-medium text-[#FF7A00] leading-relaxed">
+                    <p class="text-xs sm:text-sm font-medium text-[#00509d] leading-relaxed">
                         Akun media social kami diikuti ratusan ribu pencari kerja serta memiliki jaringan social media yang lengkap
                     </p>
                 </div>
 
                 <div class="flex items-center gap-4">
                     <img src="{{ asset('images/1.png') }}" alt="Harga Icon" class="w-16 h-16 shrink-0 object-contain">
-                    <p class="text-xs sm:text-sm font-medium text-[#FF7A00] leading-relaxed">
+                    <p class="text-xs sm:text-sm font-medium text-[#00509d] leading-relaxed">
                         Harga yang ramah bagi para pencari kerja tetapi dengan keuntungan peluang yang besar
                     </p>
                 </div>
@@ -204,7 +204,7 @@
 
     <!-- Floating Back to Top Button -->
     <a href="#top"
-        class="fixed bottom-6 right-6 bg-[#FF7A00] text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-orange-600 transition hover:scale-110 active:scale-95 z-30">
+        class="fixed bottom-6 right-6 bg-[#00509d] text-white w-12 h-12 rounded-full shadow-lg flex items-center justify-center hover:bg-[#003d7a] transition hover:scale-110 active:scale-95 z-30">
         <i class="ph ph-caret-up text-2xl font-bold"></i>
     </a>
 
@@ -215,7 +215,7 @@
             <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
                 <h2 class="text-lg font-bold text-gray-800">Konfirmasi Pembelian Paket</h2>
                 <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition text-lg font-bold">
-                    ✕
+                    âœ•
                 </button>
             </div>
 
@@ -224,14 +224,14 @@
                 <input type="hidden" name="paket_id" id="modal_paket_id">
 
                 <!-- Detail Paket Info -->
-                <div class="space-y-2 bg-orange-50/50 p-4 rounded-xl border border-orange-100 mb-4">
+                <div class="space-y-2 bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-4">
                     <p class="text-xs text-gray-600 flex justify-between">
                         <span>Paket Dipilih:</span>
                         <span id="modal_paket_name" class="font-bold text-gray-900"></span>
                     </p>
                     <p class="text-xs text-gray-600 flex justify-between">
                         <span>Biaya:</span>
-                        <span class="font-bold text-[#FF7A00]"><span id="modal_paket_price"></span> Koin</span>
+                        <span class="font-bold text-[#00509d]"><span id="modal_paket_price"></span> Koin</span>
                     </p>
                     <p class="text-xs text-gray-600 flex justify-between">
                         <span>Saldo Koin Anda:</span>
@@ -244,20 +244,20 @@
                     <div class="flex items-center justify-between mb-1.5">
                         <label class="text-xs font-bold text-gray-700">Pilih Lowongan yang Dipasang</label>
                         <a href="{{ route('lowongan.create.form') }}"
-                            class="text-xs text-[#FF7A00] hover:underline font-semibold">
+                            class="text-xs text-[#00509d] hover:underline font-semibold">
                             + Buat Baru
                         </a>
                     </div>
                     <select name="lowongan_id" id="modal_lowongan_select" required
-                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition">
+                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] transition">
                         <option value="">-- Pilih Draft Lowongan --</option>
                         @if (!empty($perusahaan->pasanglowongan))
                             @foreach ($perusahaan->pasanglowongan as $lowongan)
                                 <option value="{{ $lowongan->id }}">{{ $lowongan->nama }}</option>
                             @endforeach
                         @endif
-                        <option value="__create_new__" class="text-orange-600 font-semibold bg-orange-50">
-                            ➕ [Buat Lowongan Baru]
+                        <option value="__create_new__" class="text-[#003d7a] font-semibold bg-blue-50">
+                            âž• [Buat Lowongan Baru]
                         </option>
                     </select>
                 </div>
@@ -269,7 +269,7 @@
                         Batal
                     </button>
                     <button type="submit"
-                        class="px-5 py-2 bg-[#FF7A00] hover:bg-orange-600 text-white rounded-xl text-xs font-bold shadow-xs transition">
+                        class="px-5 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-xl text-xs font-bold shadow-xs transition">
                         Konfirmasi Pembelian
                     </button>
                 </div>
@@ -281,7 +281,7 @@
     <div x-data="{ open: {{ session('koin_kurang') ? 'true' : 'false' }} }" x-show="open" x-cloak
         class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
         <div x-transition class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl max-w-sm w-full text-center">
-            <div class="w-12 h-12 rounded-full bg-orange-100 text-[#FF7A00] flex items-center justify-center mx-auto mb-3">
+            <div class="w-12 h-12 rounded-full bg-blue-100 text-[#00509d] flex items-center justify-center mx-auto mb-3">
                 <i class="ph ph-warning-circle text-2xl font-bold"></i>
             </div>
             <h2 class="text-lg font-bold text-slate-800 mb-2">Koin Tidak Mencukupi</h2>
@@ -293,7 +293,7 @@
                     Tutup
                 </button>
                 <a href="{{ route('perusahaan.dashboard') }}"
-                    class="px-5 py-2 bg-[#FF7A00] text-white rounded-xl text-xs font-bold hover:bg-orange-600 transition shadow-xs">
+                    class="px-5 py-2 bg-[#00509d] text-white rounded-xl text-xs font-bold hover:bg-[#003d7a] transition shadow-xs">
                     Top Up Sekarang
                 </a>
             </div>
@@ -325,4 +325,6 @@
     </script>
     @include('layouts.footer')
 @endsection
+
+
 

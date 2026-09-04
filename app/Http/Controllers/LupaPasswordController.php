@@ -175,6 +175,12 @@ class LupaPasswordController extends Controller
 
     public function resetPassword(Request $request)
     {
+        // Pastikan user sudah melewati verifikasi OTP terlebih dahulu
+        if (!session('otp_verified')) {
+            return redirect()->route('verifikasi_pelamar')
+                ->withErrors(['otp' => 'Silakan verifikasi OTP terlebih dahulu.']);
+        }
+
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|exists:users,email',
             'password' => 'required|string',
@@ -267,7 +273,12 @@ class LupaPasswordController extends Controller
             'email' => 'required|email',
         ]);
 
+        // Cek apakah email terdaftar sebelum lanjut
         $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Email tidak ditemukan dalam sistem.']);
+        }
+
         $otp = rand(100000, 999999);
         $token = Str::random(64);
 
