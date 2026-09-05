@@ -37,7 +37,7 @@ class ManajemenLowonganController extends Controller
         return back()->with('success', 'Paket Gold berhasil diperbarui.');
     }
 
-    public function updatSilver(Request $request)
+    public function updateSilver(Request $request)
     {
         $paket = PaketLowongan::where('nama', 'Silver')->firstOrFail();
 

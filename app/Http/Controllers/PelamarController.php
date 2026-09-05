@@ -363,7 +363,7 @@ class PelamarController extends Controller
 
     public function editpendidikan(RiwayatPendidikan $riwayatpendidikan)
     {
-        return view('non-user.  .pendidikan.edit', ['DT' => $riwayatpendidikan]);
+        return view('non-user.profile.pendidikan.edit', ['DT' => $riwayatpendidikan]);
     }
 
     public function destroypendidikan(RiwayatPendidikan $riwayatpendidikan)

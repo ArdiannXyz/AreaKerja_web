@@ -36,12 +36,12 @@
                                     src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
                             @else
                                 <img id="pu" class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                     alt="">
                             @endif
                         @else
                             <img class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     </a>

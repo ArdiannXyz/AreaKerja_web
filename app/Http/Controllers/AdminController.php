@@ -8,6 +8,7 @@ use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\Perusahaan;
+use App\Models\Provinsi;
 use App\Models\TalentHunter;
 use App\Models\User;
 use Carbon\Carbon;

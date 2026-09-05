@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use App\Helpers\BrowserPath;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Pelamar;
+use App\Models\Perusahaan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -23,9 +24,11 @@ class FinanceController extends Controller
     public function verifikasi($id, Request $request)
     {
         $transaksi = CatatanCash::findOrFail($id);
-        $perusahaan = $transaksi->user->perusahaan;
-        $paket = $transaksi->hargaPembayaran;
-        $pelamar = $transaksi->user->pelamar;
+
+        // Null check agar tidak crash jika user sudah dihapus
+        $perusahaan = $transaksi->user?->perusahaan ?? null;
+        $paket      = $transaksi->hargaPembayaran ?? null;
+        $pelamar    = $transaksi->user?->pelamar ?? null;
 
         if ($request->action == 'terima' && $transaksi->status !== 'diterima') {
             $transaksi->status = 'diterima';
@@ -170,8 +173,7 @@ class FinanceController extends Controller
                     'total' => $total,
                 ];
             })
-            ->sortByDesc('tahun')
-            ->sortByDesc('bulan')
+            ->sortByDesc(fn($item) => $item['tahun'] . '-' . str_pad($item['bulan'], 2, '0', STR_PAD_LEFT))
             ->values();
 
         $totalOmset = $omsetPerBulan->sum('total');

@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-white mt-16">
 
@@ -30,7 +30,7 @@
 
             <!-- Card 1 -->
             <div
-                class="bg-orange-500 rounded-lg p-8 text-center text-white w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl">
+                class="bg-[#00509d] rounded-lg p-8 text-center text-white w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl">
                 <div class="flex justify-center mb-4">
                     <!-- Icon -->
                     <svg width="88" height="88" viewBox="0 0 88 88" fill="none"
@@ -44,14 +44,14 @@
                     List Pekerja Bermasalah
                 </h3>
                 <a href="{{ route('perusahaan.data.pekerja-bermasalah') }}"
-                    class="bg-white text-orange-500 hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-lg">
+                    class="bg-white text-[#00509d] hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-lg">
                     lebih Detail
                 </a>
             </div>
 
             <!-- Card 2 -->
             <div
-                class="bg-orange-500 rounded-lg p-8 text-center text-white w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl">
+                class="bg-[#00509d] rounded-lg p-8 text-center text-white w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl">
                 <div class="flex justify-center mb-4">
                     <!-- Icon -->
                     <svg width="82" height="84" viewBox="0 0 82 84" fill="none"
@@ -71,14 +71,14 @@
                     Cari Nama<br>Pekerja
                 </h3>
                 <a href="{{ route('perusahaan.cari.nama.pekerja') }}"
-                    class="bg-white text-orange-500 hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-lg">
+                    class="bg-white text-[#00509d] hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-lg">
                     lebih Detail
                 </a>
             </div>
 
             <!-- Card 3 -->
             <div
-                class="bg-orange-500 rounded-lg p-8 text-center text-white w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl">
+                class="bg-[#00509d] rounded-lg p-8 text-center text-white w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl">
                 <div class="flex justify-center">
                     <!-- Icon -->
                     <svg width="103" height="100" viewBox="0 0 103 100" fill="none"
@@ -102,7 +102,7 @@
                     Laporan Harian <br>Pekerja
                 </h3>
                 <a href="{{ route('perusahaan.laporan.harian') }}"
-                    class="bg-white text-orange-500 hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-lg">
+                    class="bg-white text-[#00509d] hover:bg-gray-200 text-sm font-medium px-4 py-2 rounded-lg">
                     lebih Detail
                 </a>
             </div>
@@ -112,3 +112,4 @@
 
     @include('layouts.footer')
 @endsection
+

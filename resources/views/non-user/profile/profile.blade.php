@@ -38,7 +38,7 @@
             <div class="border-2 border-[#00509d] rounded-2xl p-6 md:p-8 mb-8 bg-blue-50/20">
                 <div class="flex flex-col md:flex-row items-center md:justify-between gap-6">
 
-                    <!-- Kiri: Foto Profil & Status -->
+                <!-- Kiri: Foto Profil & Status -->
                     <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full md:w-auto">
                         <div class="flex flex-col items-center w-full md:w-auto">
                             <div class="relative inline-flex items-center gap-3">

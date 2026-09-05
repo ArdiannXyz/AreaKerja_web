@@ -38,12 +38,12 @@
                                         alt="Profile">
                                 @else
                                     <img id="pu" class="w-10 h-10 rounded-full"
-                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                         alt="">
                                 @endif
                             @else
                                 <img class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                     alt="">
                             @endif
                         </a>
@@ -75,7 +75,7 @@
                                 src="{{ asset('storage/' . $data->pelamar->img_profile) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover"
-                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     @elseif ($data->perusahaan) 
@@ -84,7 +84,7 @@
                                 src="{{ asset('storage/' . $data->perusahaan->img_profile) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover"
-                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     @elseif ($data->finance)
@@ -93,7 +93,7 @@
                                 src="{{ asset('storage/' . $data->finance->img_profile) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover"
-                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     @elseif ($data->admin)
@@ -102,7 +102,7 @@
                                 src="{{ asset('storage/' . $data->admin->img_profile) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover"
-                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     @elseif ($data->superadmin)
@@ -111,7 +111,7 @@
                                 src="{{ asset('storage/' . $data->superadmin->img_profile) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover"
-                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode($data->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     @endif

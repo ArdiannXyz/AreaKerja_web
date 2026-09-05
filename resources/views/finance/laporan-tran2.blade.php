@@ -41,7 +41,7 @@
                     <div x-show="open" x-transition.opacity.duration.200ms @click.outside="open = false"
                         class="absolute left-2 mt-2 w-52 md:w-72 bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden z-[9999]">
 
-                        <div class="p-2 md:p-3 border-b bg-orange-50">
+                        <div class="p-2 md:p-3 border-b bg-blue-50">
                             <p class="font-semibold text-gray-700 text-xs md:text-sm">Notifikasi Finance</p>
                         </div>
 
@@ -49,7 +49,7 @@
                             @forelse ($notifikasiCash as $notif)
                                 <div class="p-2 md:p-3 border-b hover:bg-gray-50">
                                     <p class="text-xs md:text-sm text-gray-800 font-medium">
-                                        Transaksi dari <span class="text-orange-600">
+                                        Transaksi dari <span class="text-[#003d7a]">
                                             {{ $notif->dari ?? 'Tidak diketahui' }}
                                         </span>
                                     </p>
@@ -66,7 +66,7 @@
 
                         <div class="p-2 text-center bg-gray-100">
                             <a href="{{ route('finance.catatan') }}"
-                                class="text-orange-600 text-xs md:text-sm hover:underline font-semibold">
+                                class="text-[#003d7a] text-xs md:text-sm hover:underline font-semibold">
                                 Lihat Lebih Detail
                             </a>
                         </div>
@@ -75,7 +75,7 @@
 
                 <!-- Profile Box -->
                 <div
-                    class="flex items-center md:w-60 sm:w-auto justify-between bg-white border border-orange-500 shadow-md rounded-xl px-3 py-2">
+                    class="flex items-center md:w-60 sm:w-auto justify-between bg-white border border-[#00509d] shadow-md rounded-xl px-3 py-2">
                     <div class="flex items-center gap-2">
                         <a href="#">
                             @if (Auth::user()?->avatar)
@@ -83,7 +83,7 @@
                                     src="{{ asset('storage/' . Auth::user()->avatar) }}">
                             @else
                                 <img class="w-9 h-9 md:w-10 md:h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Finance') }}&background=random&color=fff&size=128">
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Finance') }}&background=00509d&color=fff&size=128">
                             @endif
                         </a>
 
@@ -108,7 +108,7 @@
                 <div class="font-semibold w-full sm:w-auto">
                     <div class="flex items-center space-x-2">
                         <img src="{{ asset('images/logoarea.png') }}" class="w-10 h-10 sm:w-12 sm:h-12" alt="">
-                        <span class="text-orange-500 font-bold text-lg sm:text-xl">areakerja.com</span>
+                        <span class="text-[#00509d] font-bold text-lg sm:text-xl">areakerja.com</span>
                     </div>
                     <p class="text-xs sm:text-sm text-gray-600 mt-1 leading-snug">
                         Jl. Laksda Adisucipto No.80, Ambarrukmo, Caturtunggal, Kec.<br>
@@ -120,7 +120,7 @@
                 <div class="text-xs sm:text-sm text-gray-700 text-right font-semibold w-full sm:w-auto">
 
                     {{-- download icon --}}
-                    <div class="flex justify-end space-x-2 sm:space-x-3 mt-2 text-orange-500 text-lg">
+                    <div class="flex justify-end space-x-2 sm:space-x-3 mt-2 text-[#00509d] text-lg">
                         <a href="{{ route('finance.laporan.unduh', ['tanggal' => $tanggal]) }}">
                             <span><svg width="28" height="28" viewBox="0 0 28 28" fill="none"
                                     xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
@@ -130,7 +130,7 @@
                                             fill="url(#pattern0_680_18811)" />
                                     </mask>
                                     <g mask="url(#mask0_680_18811)">
-                                        <rect x="-6.92188" y="-4.0957" width="39.4965" height="34.0278" fill="#FA6601" />
+                                        <rect x="-6.92188" y="-4.0957" width="39.4965" height="34.0278" fill="#00509d" />
                                     </g>
                                     <defs>
                                         <pattern id="pattern0_680_18811" patternContentUnits="objectBoundingBox"
@@ -174,7 +174,7 @@
                 <div class="overflow-x-auto border border-gray-200 rounded-xl">
                     <table class="w-full text-xs sm:text-sm border-collapse min-w-[700px]">
                         <thead>
-                            <tr class="bg-orange-500 text-white text-left">
+                            <tr class="bg-[#00509d] text-white text-left">
                                 <th class="py-2 px-2 sm:px-3">Transaksi</th>
                                 <th class="py-2 px-2 sm:px-3">Dari</th>
                                 <th class="py-2 px-2 sm:px-3">Jenis Transaksi</th>
@@ -226,3 +226,4 @@
 
     </div>
 @endsection
+

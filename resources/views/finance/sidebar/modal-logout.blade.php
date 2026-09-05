@@ -19,7 +19,7 @@
         <!-- Tombol aksi -->
         <div class="flex justify-center gap-6">
             <button onclick="finance_logoutFinance_logout()"
-                class="px-6 py-2 bg-green-500 text-white rounded-full font-medium shadow hover:bg-green-600">
+                class="px-6 py-2 bg-[#00509d] text-white rounded-full font-medium shadow hover:bg-[#003d7a]">
                 Keluar
             </button>
             <button onclick="closeModal()"

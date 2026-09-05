@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -15,7 +15,7 @@
         <div class="w-full max-w-md p-8 bg-white rounded-2xl shadow-xl border border-gray-200 scale-[0.85] md:scale-100">
             {{-- Judul --}}
             <div class="flex flex-col items-center justify-center mb-6 gap-y-3">
-                <div class="bg-orange-100 text-orange-500 p-3 rounded-full shadow">
+                <div class="bg-blue-100 text-[#00509d] p-3 rounded-full shadow">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2
@@ -29,7 +29,7 @@
             @if (session('success'))
                 <div
                     class="mb-4 flex items-center gap-2 p-3 text-green-800 rounded-lg bg-green-100 border border-green-300 text-sm">
-                    ✅ {{ session('success') }}
+                    âœ… {{ session('success') }}
                 </div>
             @endif
 
@@ -37,7 +37,7 @@
             @if ($errors->any())
                 <div
                     class="mb-4 flex items-center gap-2 p-3 text-red-800 rounded-lg bg-red-100 border border-red-300 text-sm">
-                    ⚠️ {{ $errors->first() }}
+                    âš ï¸ {{ $errors->first() }}
                 </div>
             @endif
 
@@ -65,7 +65,7 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg shadow-md transition transform hover:scale-[1.02]">
+                    class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold py-2.5 rounded-lg shadow-md transition transform hover:scale-[1.02]">
                     Kirim Link Verifikasi
                 </button>
             </form>
@@ -74,3 +74,4 @@
 </body>
 
 </html>
+

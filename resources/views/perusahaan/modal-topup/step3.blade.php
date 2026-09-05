@@ -1,12 +1,12 @@
-<!-- ================= MODAL STEP 3 ================= -->
+﻿<!-- ================= MODAL STEP 3 ================= -->
 <div id="modalStep3" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
     <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl relative p-8">
-        <button onclick="closeAllModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">✕</button>
+        <button onclick="closeAllModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">âœ•</button>
 
         <h2 class="text-xl font-bold">Detail Pembayaran</h2>
-        <div class="h-1 w-32 bg-orange-500 mb-6"></div>
+        <div class="h-1 w-32 bg-[#00509d] mb-6"></div>
 
-        <div class="border border-orange-400 rounded-lg p-6 space-y-3 text-sm">
+        <div class="border border-[#00509d] rounded-lg p-6 space-y-3 text-sm">
             {{-- <div class="flex justify-between"> --}}
                 {{-- <span>No. Transaksi</span>
                     <span id="detailTransaksi">-</span> --}}
@@ -21,7 +21,7 @@
             </div>
             <div class="flex justify-between">
                 <span>Metode Pembayaran</span>
-                <span class="bg-orange-500 text-white text-xs font-medium px-3 py-1 rounded-full"
+                <span class="bg-[#00509d] text-white text-xs font-medium px-3 py-1 rounded-full"
                     id="detailBank">-</span>
             </div>
             <div class="flex justify-between">
@@ -45,9 +45,10 @@
 
         <div class="flex justify-center mt-8">
             <button type="button" id="btnKonfirmasi"
-                class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full">
+                class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold rounded-full">
                 Konfirmasi
             </button>
         </div>
     </div>
 </div>
+

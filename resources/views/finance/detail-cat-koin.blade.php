@@ -1,4 +1,4 @@
-@extends('finance.sidebar.index')
+﻿@extends('finance.sidebar.index')
 @section('sidebar')
     <div class="p-4 sm:ml-64" x-data="{ openCashModal: false, openKoinModal: false, detailCash: {}, detailKoin: {} }" x-cloak>
 
@@ -15,7 +15,7 @@
                 <div class="rounded-2xl overflow-hidden border overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm min-w-[800px]">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-[#00509d] text-white">
                                 <th class="px-4 py-2 text-left">No</th>
                                 <th class="px-4 py-2 text-left">No. Referensi</th>
                                 <th class="px-4 py-2 text-left">User</th>
@@ -72,7 +72,7 @@
                 <div class="rounded-2xl overflow-hidden border overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm min-w-[900px]">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-[#00509d] text-white">
                                 <th class="px-4 py-2 text-left">No</th>
                                 <th class="px-4 py-2 text-left">No. Referensi</th>
                                 <th class="px-4 py-2 text-left">User</th>
@@ -139,8 +139,8 @@
                     <h2 class="text-xl font-semibold text-center mb-6">Transaksi Koin</h2>
 
                     <div class="flex justify-center mb-6">
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-orange-100 flex items-center justify-center">
-                            <svg class="w-7 h-7 sm:w-8 sm:h-8 text-orange-500" fill="none" stroke="currentColor"
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                            <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#00509d]" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
@@ -199,8 +199,8 @@
                     <div class="flex justify-center mb-6">
                         <template x-if="detailCash.status == 'Diterima'">
                             <div
-                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-orange-100 flex items-center justify-center">
-                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-orange-500" fill="none" stroke="currentColor"
+                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#00509d]" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
@@ -254,7 +254,7 @@
                         <div class="flex justify-between items-center">
                             <span class="font-semibold">Status</span>
                             <span
-                                :class="detailCash.status == 'Diterima' ? 'bg-orange-500' :
+                                :class="detailCash.status == 'Diterima' ? 'bg-[#00509d]' :
                                     (detailCash.status == 'Ditolak' ? 'bg-red-500' : 'bg-gray-500')"
                                 class="text-white text-xs px-3 py-1 rounded-full" x-text="detailCash.status"></span>
                         </div>
@@ -315,3 +315,4 @@
 
     <script src="//unpkg.com/alpinejs" defer></script>
 @endsection
+

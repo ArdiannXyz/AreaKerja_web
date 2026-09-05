@@ -44,11 +44,11 @@
                                     src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
                             @else
                                 <img id="pu" class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128">
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128">
                             @endif
                         @else
                             <img class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128">
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128">
                         @endif
                     </a>
 
@@ -85,7 +85,7 @@
                         <label for="fileinputrole" class="cursor-pointer block">
                             <img id="pa"
                                 class="w-32 h-32 sm:w-40 sm:h-40 object-cover rounded-full shadow-md border border-gray-300"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                 alt="Profile">
                         </label>
 
@@ -598,7 +598,7 @@
 
                 if (fileInput.files.length === 0) {
                     profileImg.src = roleImages[selectedRole] ||
-                        "https://ui-avatars.com/api/?name=Default&background=random&color=fff&size=128";
+                        "https://ui-avatars.com/api/?name=Default&background=00509d&color=fff&size=128";
                 }
             });
 

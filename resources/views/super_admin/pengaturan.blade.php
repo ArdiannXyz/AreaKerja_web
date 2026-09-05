@@ -38,7 +38,7 @@
                                 src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'SuperAdmin') }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'SuperAdmin') }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     </a>
@@ -89,7 +89,7 @@
 
                 <!-- Tombol Ganti Password -->
                 <button onclick="document.getElementById('passwordFormSuper').classList.toggle('hidden')"
-                    class="w-full bg-orange-500 transition duration-300 hover:bg-orange-600 
+                    class="w-full bg-[#00509d] transition duration-300 hover:bg-[#003d7a] 
                    text-white font-medium py-3 rounded-lg text-left pl-4
                    break-words">
                     Ganti Password
@@ -123,7 +123,7 @@
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-orange-600 hover:bg-orange-700 
+                        class="w-full bg-[#003d7a] hover:bg-[#003d7a] 
                        text-white py-2 rounded-lg font-medium text-sm sm:text-base">
                         Simpan Password
                     </button>
@@ -131,7 +131,7 @@
 
                 <!-- Ganti Email -->
                 <a href="{{ route('email.ubah') }}"
-                    class="block w-full bg-orange-500 transition duration-300 hover:bg-orange-600 
+                    class="block w-full bg-[#00509d] transition duration-300 hover:bg-[#003d7a] 
                    text-white py-3 rounded-lg text-left pl-5 break-words text-sm sm:text-base">
                     Ganti Email
                 </a>
@@ -142,3 +142,4 @@
         @include('super_admin.notif.modal_semua')
     </main>
 @endsection
+

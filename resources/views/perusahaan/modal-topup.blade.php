@@ -1,7 +1,7 @@
- <!-- ================= MODAL STEP 1 ================= -->
+﻿ <!-- ================= MODAL STEP 1 ================= -->
     <div id="modalStep1" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative p-6 max-h-[80vh] overflow-y-auto">
-            <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">✕</button>
+            <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
             <h2 class="text-lg font-semibold mb-4">Top Up Koin</h2>
             <div class="grid grid-cols-3 gap-4">
                 @foreach ($hargaPembayarans as $paket)
@@ -23,7 +23,7 @@
                         </div>
 
                         <!-- Bagian harga -->
-                        <div class="w-full bg-orange-500 text-white text-center py-2 font-semibold">
+                        <div class="w-full bg-[#00509d] text-white text-center py-2 font-semibold">
                             Rp. {{ number_format($paket->harga, 0, ',', '.') }}
                         </div>
                     </label>
@@ -31,7 +31,7 @@
             </div>
 
             <div class="flex justify-center mt-6">
-                <button onclick="goToStep(2)" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md">
+                <button onclick="goToStep(2)" class="px-6 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-md">
                     Konfirmasi
                 </button>
             </div>
@@ -41,7 +41,7 @@
     <!-- ================= MODAL STEP 2 ================= -->
     <div id="modalStep2" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative p-6">
-            <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">✕</button>
+            <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
 
             <h2 class="text-lg font-semibold mb-4">Metode Pembayaran</h2>
 
@@ -49,7 +49,7 @@
             <details class="border rounded-xl overflow-hidden">
                 <summary class="flex items-center justify-between px-4 py-3 cursor-pointer">
                     <span class="flex items-center gap-2 font-medium">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none"
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00509d]" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2z" />
@@ -73,7 +73,7 @@
                                 <input type="radio" name="bank" value="{{ $bank->id }}"
                                     data-bank="{{ $bank->nama_bank }}" class="hidden peer metodePembayaran">
                                 <span
-                                    class="w-5 h-5 border-2 border-orange-500 rounded-full flex items-center justify-center peer-checked:bg-orange-500">
+                                    class="w-5 h-5 border-2 border-[#00509d] rounded-full flex items-center justify-center peer-checked:bg-[#00509d]">
                                     <span class="hidden peer-checked:block w-2.5 h-2.5 bg-white rounded-full"></span>
                                 </span>
                             </label>
@@ -94,7 +94,7 @@
                         <input type="radio" name="bank" value="{{ $bank->id }}"
                             data-bank="{{ $bank->nama_bank }}" class="hidden peer metodePembayaran">
                         <span
-                            class="w-5 h-5 border-2 border-orange-500 rounded-full flex items-center justify-center peer-checked:bg-orange-500">
+                            class="w-5 h-5 border-2 border-[#00509d] rounded-full flex items-center justify-center peer-checked:bg-[#00509d]">
                             <span class="hidden peer-checked:block w-2.5 h-2.5 bg-white rounded-full"></span>
                         </span>
                     </label>
@@ -104,8 +104,8 @@
 
             <!-- Tombol navigasi -->
             <div class="flex justify-between mt-6">
-                <button onclick="goToStep(1)" class="text-orange-500">Kembali</button>
-                <button onclick="goToStep(3)" class="text-orange-500 font-semibold">Selanjutnya</button>
+                <button onclick="goToStep(1)" class="text-[#00509d]">Kembali</button>
+                <button onclick="goToStep(3)" class="text-[#00509d] font-semibold">Selanjutnya</button>
             </div>
         </div>
     </div>
@@ -116,12 +116,12 @@
     <div id="modalStep3" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white w-full max-w-lg rounded-2xl shadow-xl relative p-8">
             <button onclick="closeAllModal()"
-                class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">✕</button>
+                class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">âœ•</button>
 
             <h2 class="text-xl font-bold">Detail Pembayaran</h2>
-            <div class="h-1 w-32 bg-orange-500 mb-6"></div>
+            <div class="h-1 w-32 bg-[#00509d] mb-6"></div>
 
-            <div class="border border-orange-400 rounded-lg p-6 space-y-3 text-sm">
+            <div class="border border-[#00509d] rounded-lg p-6 space-y-3 text-sm">
                 <div class="flex justify-between">
                     <span>No. Transaksi</span>
                     <span id="detailTransaksi">-</span>
@@ -136,7 +136,7 @@
                 </div>
                 <div class="flex justify-between">
                     <span>Metode Pembayaran</span>
-                    <span class="bg-orange-500 text-white text-xs font-medium px-3 py-1 rounded-full"
+                    <span class="bg-[#00509d] text-white text-xs font-medium px-3 py-1 rounded-full"
                         id="detailBank">-</span>
                 </div>
                 <div class="flex justify-between">
@@ -160,7 +160,7 @@
 
             <div class="flex justify-center mt-8">
                 <button type="button" id="btnKonfirmasi"
-                    class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full">
+                    class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold rounded-full">
                     Konfirmasi
                 </button>
             </div>
@@ -226,13 +226,13 @@
         }
 
         function goToStep(step) {
-            // ✅ Validasi sebelum pindah step
+            // âœ… Validasi sebelum pindah step
             if (step === 2 && !selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih paket koin terlebih dahulu!',
-                    confirmButtonColor: '#f97316' // warna tombol orange
+                    confirmButtonColor: '#00509d' // warna tombol orange
                 });
                 return;
             }
@@ -241,7 +241,7 @@
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                    confirmButtonColor: '#f97316'
+                    confirmButtonColor: '#00509d'
                 });
                 return;
             }
@@ -258,7 +258,7 @@
                 const biayaAdmin = 2000;
                 const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
 
-                // 🔑 Buat No Transaksi random unik
+                // ðŸ”‘ Buat No Transaksi random unik
                 const randomPart = Math.floor(Math.random() * 1000000);
                 const noTransaksi = "TRX" + Date.now() + randomPart;
 
@@ -272,7 +272,7 @@
         }
 
 
-        // 🔑 Update status tombol (disable/enable)
+        // ðŸ”‘ Update status tombol (disable/enable)
         function updateButtons() {
             // Step 1: tombol konfirmasi paket
             const btnStep1 = document.querySelector('#modalStep1 button');
@@ -300,9 +300,9 @@
 
                     // Highlight kartu terpilih
                     document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });
@@ -315,9 +315,9 @@
 
                     // Highlight bank terpilih
                     document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });

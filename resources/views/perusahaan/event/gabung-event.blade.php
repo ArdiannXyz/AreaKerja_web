@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-white text-gray-900 mt-20">
         <div class="max-w-3xl mx-auto p-6">
@@ -40,7 +40,7 @@
             <hr class="my-4">
 
             <!-- Detail acara -->
-            <h3 class="text-base font-semibold text-orange-600 mb-3">Detail Acara</h3>
+            <h3 class="text-base font-semibold text-[#003d7a] mb-3">Detail Acara</h3>
 
             <div class="flex flex-col sm:flex-row sm:flex-wrap gap-6 mb-6">
 
@@ -48,7 +48,7 @@
                 <div class="flex flex-col space-y-4 w-full sm:w-auto">
 
                     <div class="flex items-start">
-                        <span class="mr-4 mt-[2px]">🕒</span>
+                        <span class="mr-4 mt-[2px]">ðŸ•’</span>
                         <div class="break-words">
                             <p class="font-semibold">Waktu :</p>
                             <p class="break-words">
@@ -59,7 +59,7 @@
                     </div>
 
                     <div class="flex items-start">
-                        <span class="mr-6 mt-[2px]">📍</span>
+                        <span class="mr-6 mt-[2px]">ðŸ“</span>
                         <div class="break-words">
                             <p class="font-semibold">Lokasi :</p>
                             <p class="break-words">
@@ -90,21 +90,21 @@
             <h3 class="text-base font-semibold mb-2">Daftar Kegiatan:</h3>
 
             @if ($event->kegiatan->count() > 0)
-                <div class="border-2 border-orange-500 rounded-xl overflow-x-auto">
-                    <table class="w-full border-orange-500 text-sm min-w-[400px]">
+                <div class="border-2 border-[#00509d] rounded-xl overflow-x-auto">
+                    <table class="w-full border-[#00509d] text-sm min-w-[400px]">
                         <thead>
                             <tr>
-                                <th class="border border-orange-500 px-4 py-2 w-[20%] text-center">Waktu</th>
-                                <th class="border border-orange-500 px-4 py-2 text-center">Acara</th>
+                                <th class="border border-[#00509d] px-4 py-2 w-[20%] text-center">Waktu</th>
+                                <th class="border border-[#00509d] px-4 py-2 text-center">Acara</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($event->kegiatan as $kegiatan)
                                 <tr>
-                                    <td class="border border-orange-500 px-4 py-2 text-center break-words">
+                                    <td class="border border-[#00509d] px-4 py-2 text-center break-words">
                                         {{ $kegiatan->waktu }}
                                     </td>
-                                    <td class="border border-orange-500 px-4 py-2 text-center break-words">
+                                    <td class="border border-[#00509d] px-4 py-2 text-center break-words">
                                         {{ $kegiatan->kegiatan }}
                                     </td>
                                 </tr>
@@ -121,3 +121,4 @@
         @include('layouts.footer')
     </div>
 @endsection
+

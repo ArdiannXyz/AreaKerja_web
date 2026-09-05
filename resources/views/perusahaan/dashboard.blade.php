@@ -1,21 +1,21 @@
-    @extends('layouts.index-perusahaan')
+﻿    @extends('layouts.index-perusahaan')
     @section('content')
         <div class="w-full mx-auto bg-white min-h-screen p-6 mt-20">
             <!-- Header -->
-            <h2 class="text-lg text-orange-500 font-semibold">Dashboard</h2>
+            <h2 class="text-lg text-[#00509d] font-semibold">Dashboard</h2>
             <h1 class="text-2xl font-semibold mt-1 mb-4">Selamat Datang di Area Kerja <br>
-                <span class="text-orange-500 font-bold">{{ $perusahaan->nama_perusahaan }}</span>
+                <span class="text-[#00509d] font-bold">{{ $perusahaan->nama_perusahaan }}</span>
             </h1>
 
             <!-- Grid utama -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
 
                 <!-- === Lowongan Saya === -->
-                <div class="bg-orange-500 text-white p-7 rounded-xl shadow lg:col-span-2">
+                <div class="bg-[#00509d] text-white p-7 rounded-xl shadow lg:col-span-2">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="text-xl font-semibold">Lowongan Saya</h3>
                         <a href="{{ route('lowongan.saya.perusahaan') }}"
-                            class="border-2 border-white bg-orange-500 text-white px-4 py-1 rounded-md text-lg font-semibold hover:bg-white/20 transition duration-300">
+                            class="border-2 border-white bg-[#00509d] text-white px-4 py-1 rounded-md text-lg font-semibold hover:bg-white/20 transition duration-300">
                             Kelola Lowongan
                         </a>
 
@@ -32,7 +32,7 @@
 
                             <span class="text-black font-semibold">Lowongan Belum Terpasang</span>
                             <a href="{{ route('lowongan.saya.perusahaan') }}"
-                                class="border border-orange-500 text-orange-500 px-3 py-1 rounded-md text-sm font-medium hover:bg-orange-50 transition">
+                                class="border border-[#00509d] text-[#00509d] px-3 py-1 rounded-md text-sm font-medium hover:bg-blue-50 transition">
                                 Tambah Lowongan
                             </a>
                         </div>
@@ -88,7 +88,7 @@
                         <div class="bg-white rounded-lg flex justify-between items-center px-4 py-3">
                             <span class="text-black font-semibold">Lowongan masih draft / belum publish</span>
                             <a href="{{ route('lowongan.saya.perusahaan') }}"
-                                class="border border-orange-500 text-orange-500 px-3 py-1 rounded-md text-sm font-medium hover:bg-orange-50 transition">
+                                class="border border-[#00509d] text-[#00509d] px-3 py-1 rounded-md text-sm font-medium hover:bg-blue-50 transition">
                                 Kelola Lowongan
                             </a>
                         </div>
@@ -157,7 +157,7 @@
                                                 <p class="text-gray-500 text-sm mb-2">{{ $lowongan->alamat }}</p>
                                                 <p
                                                     class="text-gray-700 text-sm bg-gray-300 px-2 py-1 inline-block rounded">
-                                                    Rp. {{ number_format($lowongan->gaji_awal, 0, ',', '.') }} –
+                                                    Rp. {{ number_format($lowongan->gaji_awal, 0, ',', '.') }} â€“
                                                     Rp. {{ number_format($lowongan->gaji_akhir, 0, ',', '.') }} per bulan
                                                 </p>
                                                 <p class="text-xs text-gray-400 mt-2">
@@ -182,7 +182,7 @@
                                             </span>
 
                                             <a href="{{ route('perusahaan.pelamar', $lowongan->slug) }}"
-                                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md text-sm font-medium transition">
+                                                class="bg-[#00509d] hover:bg-[#003d7a] text-white px-4 py-2 rounded-md text-sm font-medium transition">
                                                 Lihat Pelamar
                                             </a>
                                         </div>
@@ -194,7 +194,7 @@
                         {{-- <!-- Tombol cari kandidat -->
                         <div class="text-center mt-6">
                             <a href="#"
-                                class="bg-white text-orange-500 border border-orange-500 px-5 py-2 rounded-md font-medium hover:bg-orange-50 transition">
+                                class="bg-white text-[#00509d] border border-[#00509d] px-5 py-2 rounded-md font-medium hover:bg-blue-50 transition">
                                 Cari Kandidat
                             </a>
                         </div> --}}
@@ -203,7 +203,7 @@
                 </div>
 
                 <!-- === Kandidat Saya === -->
-                <div class="bg-orange-500 rounded-2xl p-8 flex flex-col w-full">
+                <div class="bg-[#00509d] rounded-2xl p-8 flex flex-col w-full">
 
                     <div>
                         @if ($publish->isNotEmpty())
@@ -233,7 +233,7 @@
                         @endif
                     </div>
 
-                    <div class="border-t border-orange-400 my-2"></div>
+                    <div class="border-t border-[#00509d] my-2"></div>
 
                     <div class="flex flex-col">
                         <h2 class="text-xl font-semibold text-white mb-4 mt-5">Kandidat Saya</h2>
@@ -254,7 +254,7 @@
 
             </div>
 
-            <h1 class="text-center text-3xl text-orange-500 font-bold mt-8">Tentang Area Kerja</h1>
+            <h1 class="text-center text-3xl text-[#00509d] font-bold mt-8">Tentang Area Kerja</h1>
             <!-- === Bagian Bawah === -->
             <div class="grid md:grid-cols-2 gap-8 mb-4 items-center">
                 <!-- Gambar -->
@@ -265,7 +265,7 @@
                 <div class="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
                     <!-- Card 1 -->
                     <div
-                        class="bg-orange-500 text-white p-6 max-h-44 mt-28 rounded-lg flex flex-col justify-center shadow">
+                        class="bg-[#00509d] text-white p-6 max-h-44 mt-28 rounded-lg flex flex-col justify-center shadow">
                         <div class="flex items-center space-x-3 mb-3">
                             <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-10 h-10">
                             <div>
@@ -280,7 +280,7 @@
 
                     <!-- Card 2 & 3 -->
                     <div class="flex flex-col gap-6">
-                        <div class="border-2 border-orange-500 rounded-lg p-6 text-orange-500 shadow-sm">
+                        <div class="border-2 border-[#00509d] rounded-lg p-6 text-[#00509d] shadow-sm">
                             <div class="flex items-center space-x-3 mb-3">
                                 <img src="{{ asset('images/logoarea.png') }}" alt="logo" class="w-10 h-10">
                                 <div>
@@ -293,7 +293,7 @@
                             </p>
                         </div>
 
-                        <div class="border-2 border-orange-500 rounded-lg p-6 text-orange-500 shadow-sm">
+                        <div class="border-2 border-[#00509d] rounded-lg p-6 text-[#00509d] shadow-sm">
                             <div class="flex items-center space-x-3 mb-3">
                                 <img src="{{ asset('images/logoarea.png') }}" alt="logo" class="w-10 h-10">
                                 <div>
@@ -317,7 +317,7 @@
             <div
                 class="bg-white w-80 sm:w-full sm:max-w-md rounded-2xl shadow-xl relative p-6 max-h-[80vh] overflow-y-auto">
 
-                <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">✕</button>
+                <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
                 <h2 class="text-lg font-semibold mb-4">Top Up Koin</h2>
                 <div class="grid grid-cols-3 gap-4">
                     @foreach ($hargaPembayarans as $paket)
@@ -339,7 +339,7 @@
                             </div>
 
                             <!-- Bagian harga -->
-                            <div class="w-full bg-orange-500 text-white text-center py-2 font-semibold">
+                            <div class="w-full bg-[#00509d] text-white text-center py-2 font-semibold">
                                 Rp. {{ number_format($paket->harga, 0, ',', '.') }}
                             </div>
                         </label>
@@ -348,7 +348,7 @@
 
                 <div class="flex justify-center mt-6">
                     <button onclick="goToStep(2)"
-                        class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md">
+                        class="px-6 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-md">
                         Konfirmasi
                     </button>
                 </div>
@@ -359,7 +359,7 @@
         <div id="modalStep2" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
             <div class="bg-white w-80 sm:w-full sm:max-w-md rounded-2xl shadow-xl relative p-6">
 
-                <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">✕</button>
+                <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
 
                 <h2 class="text-lg font-semibold mb-4">Metode Pembayaran</h2>
 
@@ -367,7 +367,7 @@
                 <details class="border rounded-xl overflow-hidden">
                     <summary class="flex items-center justify-between px-4 py-3 cursor-pointer">
                         <span class="flex items-center gap-2 font-medium">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-orange-500" fill="none"
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00509d]" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2z" />
@@ -391,7 +391,7 @@
                                     <input type="radio" name="bank" value="{{ $bank->id }}"
                                         data-bank="{{ $bank->nama_bank }}" class="hidden peer metodePembayaran">
                                     <span
-                                        class="w-5 h-5 border-2 border-orange-500 rounded-full flex items-center justify-center peer-checked:bg-orange-500">
+                                        class="w-5 h-5 border-2 border-[#00509d] rounded-full flex items-center justify-center peer-checked:bg-[#00509d]">
                                         <span class="hidden peer-checked:block w-2.5 h-2.5 bg-white rounded-full"></span>
                                     </span>
                                 </label>
@@ -412,7 +412,7 @@
                             <input type="radio" name="bank" value="{{ $bank->id }}"
                                 data-bank="{{ $bank->nama_bank }}" class="hidden peer metodePembayaran">
                             <span
-                                class="w-5 h-5 border-2 border-orange-500 rounded-full flex items-center justify-center peer-checked:bg-orange-500">
+                                class="w-5 h-5 border-2 border-[#00509d] rounded-full flex items-center justify-center peer-checked:bg-[#00509d]">
                                 <span class="hidden peer-checked:block w-2.5 h-2.5 bg-white rounded-full"></span>
                             </span>
                         </label>
@@ -422,8 +422,8 @@
 
                 <!-- Tombol navigasi -->
                 <div class="flex justify-between mt-6">
-                    <button onclick="goToStep(1)" class="text-orange-500">Kembali</button>
-                    <button onclick="goToStep(3)" class="text-orange-500 font-semibold">Selanjutnya</button>
+                    <button onclick="goToStep(1)" class="text-[#00509d]">Kembali</button>
+                    <button onclick="goToStep(3)" class="text-[#00509d] font-semibold">Selanjutnya</button>
                 </div>
             </div>
         </div>
@@ -435,12 +435,12 @@
             <div class="bg-white w-80 sm:w-full sm:max-w-lg rounded-2xl shadow-xl relative p-8">
 
                 <button onclick="closeAllModal()"
-                    class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">✕</button>
+                    class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">âœ•</button>
 
                 <h2 class="text-xl font-bold">Detail Pembayaran</h2>
-                <div class="h-1 w-32 bg-orange-500 mb-6"></div>
+                <div class="h-1 w-32 bg-[#00509d] mb-6"></div>
 
-                <div class="border border-orange-400 rounded-lg p-6 space-y-3 text-sm">
+                <div class="border border-[#00509d] rounded-lg p-6 space-y-3 text-sm">
                     {{-- <div class="flex justify-between">
                         <span>No. Transaksi</span>
                         <span id="detailTransaksi">-</span>
@@ -455,7 +455,7 @@
                     </div>
                     <div class="flex justify-between">
                         <span>Metode Pembayaran</span>
-                        <span class="bg-orange-500 text-white text-xs font-medium px-3 py-1 rounded-full"
+                        <span class="bg-[#00509d] text-white text-xs font-medium px-3 py-1 rounded-full"
                             id="detailBank">-</span>
                     </div>
                     <div class="flex justify-between">
@@ -479,7 +479,7 @@
 
                 <div class="flex justify-center mt-8">
                     <button type="button" id="btnKonfirmasi"
-                        class="w-full py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-full">
+                        class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold rounded-full">
                         Konfirmasi
                     </button>
                 </div>
@@ -572,13 +572,13 @@
             }
 
             function goToStep(step) {
-                // ✅ Validasi sebelum pindah step
+                // âœ… Validasi sebelum pindah step
                 if (step === 2 && !selectedKoin) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops...',
                         text: 'Silakan pilih paket koin terlebih dahulu!',
-                        confirmButtonColor: '#f97316' // warna tombol orange
+                        confirmButtonColor: '#00509d' // warna tombol orange
                     });
                     return;
                 }
@@ -587,7 +587,7 @@
                         icon: 'warning',
                         title: 'Oops...',
                         text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                        confirmButtonColor: '#f97316'
+                        confirmButtonColor: '#00509d'
                     });
                     return;
                 }
@@ -604,7 +604,7 @@
                     const biayaAdmin = 2000;
                     const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
 
-                    // // 🔑 Buat No Transaksi random unik
+                    // // ðŸ”‘ Buat No Transaksi random unik
                     // const randomPart = Math.floor(Math.random() * 1000000);
                     // const noTransaksi = "TRX" + Date.now() + randomPart;
 
@@ -618,7 +618,7 @@
             }
 
 
-            // 🔑 Update status tombol (disable/enable)
+            // ðŸ”‘ Update status tombol (disable/enable)
             function updateButtons() {
                 // Step 1: tombol konfirmasi paket
                 const btnStep1 = document.querySelector('#modalStep1 button');
@@ -646,9 +646,9 @@
 
                         // Highlight kartu terpilih
                         document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-orange-500');
+                            w.classList.remove('ring-2', 'ring-[#00509d]');
                         });
-                        this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-orange-500');
+                        this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                         updateButtons();
                     });
@@ -661,9 +661,9 @@
 
                         // Highlight bank terpilih
                         document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-orange-500');
+                            w.classList.remove('ring-2', 'ring-[#00509d]');
                         });
-                        this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-orange-500');
+                        this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                         updateButtons();
                     });
@@ -672,3 +672,4 @@
         </script>
         @include('layouts.footer')
     @endsection
+

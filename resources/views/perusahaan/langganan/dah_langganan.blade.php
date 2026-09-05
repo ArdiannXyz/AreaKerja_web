@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <section class="relative">
@@ -41,7 +41,7 @@
         <div class="max-w-6xl mx-auto space-y-12 mt-12">
             <div class="flex flex-col md:flex-row w-full justify-center items-center">
                 <div
-                    class="bg-white border border-gray-100 rounded-lg p-8 text-center text-orange-500 w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl mb-6">
+                    class="bg-white border border-gray-100 rounded-lg p-8 text-center text-[#00509d] w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl mb-6">
                     <div class="flex justify-center mb-4">
                         <!-- Icon -->
                         <svg width="82" height="84" viewBox="0 0 82 84" fill="none"
@@ -61,13 +61,13 @@
                         Cari Nama<br>Pekerja
                     </h3>
                     <a href="{{ route('perusahaan.cari.nama.pekerja') }}"
-                        class="bg-orange-500 text-white hover:bg-orange-600 text-sm font-medium px-4 py-2 rounded-lg transition duration-300">
+                        class="bg-[#00509d] text-white hover:bg-[#003d7a] text-sm font-medium px-4 py-2 rounded-lg transition duration-300">
                         Lebih Detail
                     </a>
                 </div>
 
                 <div
-                    class="bg-white border border-gray-100 rounded-lg p-8 text-center text-orange-500 w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl mb-6">
+                    class="bg-white border border-gray-100 rounded-lg p-8 text-center text-[#00509d] w-full max-w-xs mx-auto shadow-lg hover:scale-105 transition duration-500 hover:shadow-xl mb-6">
                     <div class="flex justify-center">
                         <!-- Icon -->
                         <svg width="103" height="100" viewBox="0 0 103 100" fill="none"
@@ -91,7 +91,7 @@
                         Laporan Harian <br>Pekerja
                     </h3>
                     <a href="{{ route('perusahaan.laporan.harian') }}"
-                        class="bg-orange-500 text-white hover:bg-orange-600 text-sm font-medium px-4 py-2 rounded-lg transition duration-300">
+                        class="bg-[#00509d] text-white hover:bg-[#003d7a] text-sm font-medium px-4 py-2 rounded-lg transition duration-300">
                         Lebih Detail
                     </a>
                 </div>
@@ -110,16 +110,16 @@
                         berbagai manfaat tambahan dan informasi terbaru setiap saat.
                     </p>
                     <div>
-                        <ul class="list-disc list-inside text-orange-600 font-medium text-sm leading-relaxed mb-4">
-                            <span>✔ Diskon khusus untuk pasang lowongan sebagai bagian dari manfaat berlangganan.</span>
+                        <ul class="list-disc list-inside text-[#003d7a] font-medium text-sm leading-relaxed mb-4">
+                            <span>âœ” Diskon khusus untuk pasang lowongan sebagai bagian dari manfaat berlangganan.</span>
                             <br>
-                            <span>✔ Potongan harga untuk beli kandidat yang hanya tersedia bagi pelanggan
+                            <span>âœ” Potongan harga untuk beli kandidat yang hanya tersedia bagi pelanggan
                                 berlangganan.</span> <br>
-                            <span>✔ Diskon eksklusif untuk layanan talent hunter sebagai benefit tambahan
+                            <span>âœ” Diskon eksklusif untuk layanan talent hunter sebagai benefit tambahan
                                 berlangganan.</span> <br>
                         </ul>
                     </div>
-                    <button id="btnDiskon" class="text-orange-500 text-sm font-semibold hover:underline"> Lebih Detail >
+                    <button id="btnDiskon" class="text-[#00509d] text-sm font-semibold hover:underline"> Lebih Detail >
                     </button>
                 </div>
                 <!-- Image -->
@@ -160,3 +160,4 @@
     </script>
     @include('layouts.footer')
 @endsection
+

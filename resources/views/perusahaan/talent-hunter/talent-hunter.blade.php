@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <div class="mt-16">
@@ -14,7 +14,7 @@
                 <p class="text-sm mt-4">Daftarkan perusahaan anda dan biar kami</p>
                 <p class="text-sm"> yang mencarikan kandidat yang cocok untuk anda</p><br>
                 <button id="btnDaftarTH">
-                    <span class="bg-orange-500 hover:bg-orange-600 text-sm px-8 py-2 rounded-lg">Daftar</span>
+                    <span class="bg-[#00509d] hover:bg-[#003d7a] text-sm px-8 py-2 rounded-lg">Daftar</span>
                 </button>
             </div>
         </section>
@@ -89,7 +89,7 @@
                         <h2 class="text-xl font-bold text-gray-800 text-center mb-2">Konfirmasi Pembelian</h2>
                         <p class="text-gray-600 text-center mb-6">Harga paket Talent Hunter:</p>
 
-                        <div class="text-3xl font-bold text-orange-500 text-center mb-6">
+                        <div class="text-3xl font-bold text-[#00509d] text-center mb-6">
                             <span id="hargaTH"></span> <span class="text-lg text-gray-500">koin</span>
                         </div>
 
@@ -122,7 +122,7 @@
                         <!-- Close -->
                         <button onclick="document.getElementById('modalFormTH').classList.add('hidden')"
                             class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition text-xl">
-                            ✕
+                            âœ•
                         </button>
 
                         <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Form Talent Hunter</h2>
@@ -193,7 +193,7 @@
 
                             <!-- Button -->
                             <button type="submit"
-                                class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-400 transition font-semibold shadow">
+                                class="w-full bg-[#003d7a] text-white py-2 rounded-lg hover:bg-[#00509d] transition font-semibold shadow">
                                 Simpan
                             </button>
                         </form>
@@ -212,10 +212,10 @@
                         <div class="mb-6">
                             <p class="text-gray-700 text-sm mb-1">Koin saya :</p>
                             <div
-                                class="flex items-center justify-between bg-orange-50 border border-orange-200 rounded-lg px-4 py-2">
+                                class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
                                 <div class="flex items-center gap-2">
                                     <img src="/images/coin.png" alt="coin" class="w-6 h-6">
-                                    <p class="font-bold text-orange-500 text-lg">
+                                    <p class="font-bold text-[#00509d] text-lg">
                                         {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }}</p>
                                 </div>
                                 <button onclick="toggleModal()"
@@ -244,24 +244,24 @@
     <section class="bg-white py-12">
         <div class="text-center py-10">
             <!-- Judul -->
-            <h2 class="text-2xl font-bold text-orange-600">Benefit Talent Hunter</h2>
-            <div class="w-20 h-1 bg-orange-500 mx-auto my-2"></div>
+            <h2 class="text-2xl font-bold text-[#003d7a]">Benefit Talent Hunter</h2>
+            <div class="w-20 h-1 bg-[#00509d] mx-auto my-2"></div>
 
             <!-- Atas: 2 item -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 max-w-3xl mx-auto">
                 <!-- Kandidat -->
                 <div class="flex flex-col items-center">
                     <img src="{{ asset('images/jam.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-orange-500">Kandidat</h3>
-                    <p class="text-sm text-orange-500">Mendapatkan kandidat sesuai kebutuhan perusahaan dan posisi yang
+                    <h3 class="font-bold text-[#00509d]">Kandidat</h3>
+                    <p class="text-sm text-[#00509d]">Mendapatkan kandidat sesuai kebutuhan perusahaan dan posisi yang
                         ditujukan.</p>
                 </div>
 
                 <!-- Siap Kerja -->
                 <div class="flex flex-col items-center">
                     <img src="{{ asset('images/komputer.jpg') }}" class="w-12 h-12 mb-2" />
-                    <h3 class="font-bold text-orange-500">Siap Kerja</h3>
-                    <p class="text-sm text-orange-500">Kandidat yang didapatkan dipastikan siap kerja dengan perusahaan
+                    <h3 class="font-bold text-[#00509d]">Siap Kerja</h3>
+                    <p class="text-sm text-[#00509d]">Kandidat yang didapatkan dipastikan siap kerja dengan perusahaan
                         yang
                         direkomendasikan.</p>
                 </div>
@@ -272,15 +272,15 @@
                 <!-- Memudahkan -->
                 <div class="flex flex-col items-center">
                     <img src="{{ asset('images/roket.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-orange-500">Memudahkan</h3>
-                    <p class="text-sm text-orange-500">Mempermudah perusahaan dalam penyaringan kandidat.</p>
+                    <h3 class="font-bold text-[#00509d]">Memudahkan</h3>
+                    <p class="text-sm text-[#00509d]">Mempermudah perusahaan dalam penyaringan kandidat.</p>
                 </div>
 
                 <!-- Jaminan -->
                 <div class="flex flex-col items-center">
                     <img src="{{ asset('images/roket.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-orange-500">Jaminan</h3>
-                    <p class="text-sm text-orange-500">Jaminan ganti kandidat baru jika tidak cocok dengan spesifikasi
+                    <h3 class="font-bold text-[#00509d]">Jaminan</h3>
+                    <p class="text-sm text-[#00509d]">Jaminan ganti kandidat baru jika tidak cocok dengan spesifikasi
                         perusahaan.</p>
                 </div>
             </div>
@@ -314,12 +314,12 @@
     <script>
         let formDataTH = null; // GLOBAL (dipakai submit & beli)
 
-        // 1️⃣ Klik Daftar Talent Hunter → buka form
+        // 1ï¸âƒ£ Klik Daftar Talent Hunter â†’ buka form
         document.getElementById('btnDaftarTH').addEventListener('click', function() {
             openModal('modalFormTH');
         });
 
-        // 2️⃣ Submit Form TH → JANGAN SIMPAN KE DB
+        // 2ï¸âƒ£ Submit Form TH â†’ JANGAN SIMPAN KE DB
         document.getElementById('formTalentHunter').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -336,7 +336,7 @@
                 });
         });
 
-        // 3️⃣ Klik KONFIRMASI BELI → BARU PROSES DB
+        // 3ï¸âƒ£ Klik KONFIRMASI BELI â†’ BARU PROSES DB
         document.getElementById('btnConfirmBeli').addEventListener('click', async function() {
 
             if (!formDataTH) {
@@ -449,13 +449,13 @@
         }
 
         function goToStep(step) {
-            // ✅ Validasi sebelum pindah step
+            // âœ… Validasi sebelum pindah step
             if (step === 2 && !selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih paket koin terlebih dahulu!',
-                    confirmButtonColor: '#f97316' // warna tombol orange
+                    confirmButtonColor: '#00509d' // warna tombol orange
                 });
                 return;
             }
@@ -464,7 +464,7 @@
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                    confirmButtonColor: '#f97316'
+                    confirmButtonColor: '#00509d'
                 });
                 return;
             }
@@ -481,7 +481,7 @@
                 const biayaAdmin = 2000;
                 const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
 
-                // 🔑 Buat No Transaksi random unik
+                // ðŸ”‘ Buat No Transaksi random unik
                 const randomPart = Math.floor(Math.random() * 1000000);
                 const noTransaksi = "TRX" + Date.now() + randomPart;
 
@@ -495,7 +495,7 @@
         }
 
 
-        // 🔑 Update status tombol (disable/enable)
+        // ðŸ”‘ Update status tombol (disable/enable)
         function updateButtons() {
             // Step 1: tombol konfirmasi paket
             const btnStep1 = document.querySelector('#modalStep1 button');
@@ -523,9 +523,9 @@
 
                     // Highlight kartu terpilih
                     document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });
@@ -538,9 +538,9 @@
 
                     // Highlight bank terpilih
                     document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });
@@ -549,3 +549,4 @@
     </script>
     @include('layouts.footer')
 @endsection
+
