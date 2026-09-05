@@ -37,10 +37,8 @@
                             </div>
 
                             <div class="flex items-center gap-2 shrink-0">
-                                <a href="{{ route('kerja.edit', $kerja->id) }}" class="p-2 bg-orange-100 hover:bg-orange-200 text-orange-600 rounded-lg transition" title="Edit">
-                                    <svg width="14" height="14" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <path d="M9.83752 2.24357C10.0542 2.02693 10.0542 1.66587 9.83752 1.46034L8.5377 0.160524C8.33218 -0.0561123 7.97112 -0.0561123 7.75448 0.160524L6.7324 1.17705L8.81544 3.26009M0 7.915V9.99805H2.08304L8.22664 3.8489L6.14359 1.76586L0 7.915Z" fill="#FA6601" />
-                                    </svg>
+                                <a href="{{ route('kerja.edit', $kerja->id) }}" class="p-2 bg-blue-50 hover:bg-blue-100 text-[#00509d] rounded-lg transition" title="Edit">
+                                    <i class="ph ph-pencil-simple font-bold text-base"></i>
                                 </a>
 
                                 <form action="{{ route('kerja.destroy', $kerja->id) }}" method="POST"
@@ -61,7 +59,7 @@
                 <div class="flex justify-end pt-2">
                     <button data-modal-target="create_kerjamodal" data-modal-toggle="create_kerjamodal"
                         data-modal-hide="show-kerja" type="button"
-                        class="flex items-center justify-center w-10 h-10 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl shadow-sm transition">
+                        class="flex items-center justify-center w-10 h-10 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-xl shadow-sm transition">
                         <span class="text-xl font-bold">+</span>
                     </button>
                 </div>

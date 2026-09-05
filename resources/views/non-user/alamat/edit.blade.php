@@ -1,37 +1,40 @@
 @extends('layouts.index')
 @section('content')
-    <div class="flex justify-center py-8">
-        <div class="w-full max-w-6xl bg-white p-6">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-28 pb-16">
+        <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200/80 shadow-sm">
 
             <!-- Header Profil -->
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold">Profil Akun</h2>
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-xl font-bold text-slate-800">Edit Alamat</h2>
                 <a href="{{ route('alamat') }}"
-                    class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-semibold rounded-md transition shadow-xs">
+                    class="inline-flex items-center gap-1.5 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl transition shadow-xs">
                     ← Kembali
                 </a>
             </div>
 
             <div
-                class="border border-orange-400 rounded-lg p-4 
-                    flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                class="border-2 border-[#00509d] rounded-2xl p-6 mb-8 bg-blue-50/20 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
 
                 <!-- Foto Profile -->
-                <div class="flex items-center gap-4 md:ml-10 ml-0">
+                <div class="flex items-center gap-4">
                     @if (Auth::user()->pelamar?->img_profile)
-                        <img id="pp" class="w-24 h-24 object-cover rounded-full border-2 border-orange-400"
+                        <img id="pp" class="w-20 h-20 object-cover rounded-full border-2 border-[#00509d] shadow-sm"
                             src="{{ asset('storage/' . Auth::user()->pelamar->img_profile) }}" alt="Profile">
                     @else
-                        <img id="pp" class="w-24 h-24 object-cover rounded-full border-2 border-orange-400"
+                        <img id="pp" class="w-20 h-20 object-cover rounded-full border-2 border-[#00509d] shadow-sm"
                             src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                             alt="Profile">
                     @endif
+                    <div>
+                        <h3 class="font-bold text-slate-900 text-base">{{ Auth::user()->pelamar->nama_pelamar ?? Auth::user()->username }}</h3>
+                        <p class="text-xs text-slate-500 font-medium">{{ Auth::user()->email }}</p>
+                    </div>
                 </div>
 
                 <!-- Tombol Kanan -->
                 <div class="flex justify-center md:justify-end w-full md:w-auto">
                     <a href="{{ route('cv.download', Auth::user()->pelamar->id) }}"
-                        class="bg-orange-500 text-white text-sm font-semibold px-4 py-2 rounded hover:bg-orange-600">
+                        class="bg-[#00509d] text-white text-sm font-bold px-6 py-2.5 rounded-xl hover:bg-[#003d7a] w-full sm:w-auto text-center transition shadow-sm">
                         Unduh CV
                     </a>
                 </div>
@@ -39,23 +42,23 @@
             </div>
 
             <!-- Form Alamat -->
-            <div class="mt-8">
-                <h3 class="text-base font-semibold border-b border-orange-500 pb-2 mb-4">Alamat</h3>
+            <div class="mt-6">
+                <h3 class="text-base font-bold text-slate-900 border-b-2 border-[#00509d] pb-3 mb-6">Edit Formulir Alamat</h3>
 
                 <form action="{{ route('alamat.update', $data->id) }}" method="POST" class="space-y-4">
                     @csrf
                     @method('PUT')
 
                     <div>
-                        <label class="block text-sm mb-1">Label Alamat</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Label Alamat</label>
                         <input type="text" name="label" value="{{ old('label', $data->label) }}"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                     </div>
 
                     <div>
-                        <label class="block text-sm mb-1 font-semibold">Provinsi <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Provinsi <span class="text-red-500">*</span></label>
                         <select name="provinsi" id="provinsiSelect" required
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                             <option value="">Pilih Provinsi</option>
                             @foreach ($provinsis as $p)
                                 <option value="{{ $p->nama }}" data-id="{{ $p->id }}" {{ strcasecmp(old('provinsi', $data->provinsi ?? ''), $p->nama) === 0 ? 'selected' : '' }}>
@@ -66,9 +69,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm mb-1 font-semibold">Kota / Kabupaten <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kota / Kabupaten <span class="text-red-500">*</span></label>
                         <select name="kota" id="kotaSelect" required
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                             <option value="">Pilih Kota / Kabupaten</option>
                             @if(isset($kotas) && $kotas->count() > 0)
                                 @foreach($kotas as $k)
@@ -83,9 +86,9 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm mb-1 font-semibold">Kecamatan <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kecamatan <span class="text-red-500">*</span></label>
                         <select name="kecamatan" id="kecamatanSelect" required
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-orange-500">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                             <option value="">Pilih Kecamatan</option>
                             @if(isset($kecamatans) && $kecamatans->count() > 0)
                                 @foreach($kecamatans as $kc)
@@ -100,25 +103,25 @@
                     </div>
 
                     <div>
-                        <label class="block text-sm mb-1 font-semibold">Alamat Lengkap (Desa / Jalan)</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Alamat Lengkap (Desa / Jalan)</label>
                         <input type="text" name="desa" value="{{ old('desa', $data->desa) }}"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                     </div>
 
                     <div>
-                        <label class="block text-sm mb-1 font-semibold">Detail Alamat</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Detail Alamat</label>
                         <input type="text" name="detail" value="{{ old('detail', $data->detail) }}"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                     </div>
 
                     <div>
-                        <label class="block text-sm mb-1 font-semibold">Kode Pos</label>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kode Pos</label>
                         <input type="text" name="kode_pos" value="{{ old('kode_pos', $data->kode_pos) }}"
-                            class="w-full border border-gray-300 rounded-md px-3 py-2 text-sm">
+                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition">
                     </div>
 
                     <div class="flex justify-center pt-4">
-                        <button class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-md font-semibold">Simpan Perubahan</button>
+                        <button class="bg-[#00509d] hover:bg-[#003d7a] text-white font-bold px-8 py-2.5 rounded-xl shadow-sm transition">Simpan Perubahan</button>
                     </div>
                 </form>
             </div>
