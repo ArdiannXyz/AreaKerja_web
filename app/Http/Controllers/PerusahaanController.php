@@ -534,7 +534,7 @@ class PerusahaanController extends Controller
         $lowongan->load('pelamar');
         return view('perusahaan.pelamar.pelamar', [
             "data" => $lowongan,
-            "woi"  => PelamarLowongan::all(),
+            "woi"  => PelamarLowongan::where('lowongan_id', $lowongan->id)->with('pelamar')->get(),
             "exp"  => PelamarLowongan::where('lowongan_id', $lowongan->id)->get(),
         ]);
     }

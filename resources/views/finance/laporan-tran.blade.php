@@ -1,4 +1,4 @@
-@extends('finance.sidebar.index')
+﻿@extends('finance.sidebar.index')
 @section('sidebar')
     <div class="p-4 sm:ml-64">
 
@@ -21,11 +21,11 @@
             <div class="flex justify-end mb-3 pr-2 sm:pr-0">
                 <div x-data="{ open: false }" class="relative inline-block text-left">
                     <button @click="open = !open"
-                        class="bg-orange-500 text-white font-semibold px-3 py-1.5 rounded-t-md w-36 sm:w-40 flex items-center justify-between text-sm sm:text-base">
+                        class="bg-[#00509d] text-white font-semibold px-3 py-1.5 rounded-t-md w-36 sm:w-40 flex items-center justify-between text-sm sm:text-base">
                         <span>{{ $bulanList[$bulan] ?? 'Periode' }}</span>
                         <span>
-                            <template x-if="!open">▼</template>
-                            <template x-if="open">▲</template>
+                            <template x-if="!open">â–¼</template>
+                            <template x-if="open">â–²</template>
                         </span>
                     </button>
 
@@ -35,8 +35,8 @@
 
                         @foreach ($bulanList as $key => $nama)
                             <a href="{{ route('finance.laporan', ['bulan' => $key]) }}"
-                                class="block px-3 py-1.5 sm:px-4 sm:py-2 text-gray-900 hover:bg-orange-500 hover:text-white
-            {{ $bulan == $key ? 'bg-orange-500 text-white' : '' }}">
+                                class="block px-3 py-1.5 sm:px-4 sm:py-2 text-gray-900 hover:bg-[#00509d] hover:text-white
+            {{ $bulan == $key ? 'bg-[#00509d] text-white' : '' }}">
                                 {{ $nama }}
                             </a>
                         @endforeach
@@ -53,7 +53,7 @@
                 <div class="overflow-x-auto w-full">
                     <table class="w-full text-sm min-w-[600px]">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-[#00509d] text-white">
                                 <th class="px-4 py-2 text-center font-semibold">Tanggal</th>
                                 <th class="px-4 py-2 text-center font-semibold">Penghasilan</th>
                                 <th class="px-4 py-2 text-center font-semibold">Koin</th>
@@ -72,7 +72,7 @@
                                     <td class="px-4 py-2 whitespace-nowrap">{{ $l->total_transaksi }}</td>
                                     <td class="px-4 py-2">
                                         <a href="{{ route('finance.laporan.detail', ['tanggal' => $l->tanggal]) }}"
-                                            class="text-orange-500 hover:underline">
+                                            class="text-[#00509d] hover:underline">
                                             <i class="ph ph-file text-2xl sm:text-3xl"></i>
                                         </a>
                                     </td>
@@ -93,3 +93,4 @@
 
     </div>
 @endsection
+

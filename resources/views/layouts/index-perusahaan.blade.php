@@ -145,7 +145,7 @@
             margin-bottom: 1rem;
         }
 
-        /* LIST — supaya BULLET hitam muncul */
+        /* LIST â€” supaya BULLET hitam muncul */
         .tinymce-content ul,
         .tinymce-content ul li {
             list-style-type: disc !important;
@@ -211,7 +211,7 @@
             <!-- Logo & Hamburger (Kiri) -->
             <div class="flex items-center gap-3 shrink-0">
                 <!-- Hamburger Button (HANYA HP < 768px) -->
-                <button @click="openMenu = !openMenu" type="button" class="flex md:hidden p-1.5 rounded-lg text-[#ff7a00] hover:bg-orange-50 focus:outline-none focus:ring-2 focus:ring-orange-400" aria-label="Toggle Menu">
+                <button @click="openMenu = !openMenu" type="button" class="flex md:hidden p-1.5 rounded-lg text-[#00509d] hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-[#00509d]" aria-label="Toggle Menu">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" class="w-7 h-7">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -221,35 +221,35 @@
 
                 <!-- Logo -->
                 <a href="{{ route('perusahaan.dashboard') }}" class="flex items-center gap-2 sm:gap-2.5">
-                    <img src="{{ asset('images/logoarea.png') }}" alt="Areakerja Logo" class="h-7 sm:h-8 lg:h-9 object-contain">
-                    <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#ff7a00] tracking-tight">areakerja.com</span>
+                    <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Areakerja Logo" class="h-7 sm:h-8 lg:h-9 object-contain">
+                    <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#00509d] tracking-tight">areakerja.com</span>
                 </a>
             </div>
 
             <!-- Menu Desktop & Laptop (Tengah) - Tampil di layar >= 768px -->
-            <nav class="hidden md:flex items-center font-semibold text-xs sm:text-sm lg:text-[15px] text-[#ff7a00] gap-4 sm:gap-6 lg:gap-7 xl:gap-10 ml-6 sm:ml-8 lg:ml-12 xl:ml-16 mr-auto">
+            <nav class="hidden md:flex items-center font-semibold text-xs sm:text-sm lg:text-[15px] text-[#00509d] gap-4 sm:gap-6 lg:gap-7 xl:gap-10 ml-6 sm:ml-8 lg:ml-12 xl:ml-16 mr-auto">
                 <a href="{{ route('perusahaan.dashboard') }}"
-                    class="hover:text-orange-600 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.dashboard') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.dashboard') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
                     Beranda
                 </a>
                 <a href="{{ route('perusahaan.berlangganan') }}"
-                    class="hover:text-orange-600 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.berlangganan*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.berlangganan*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
                     Berlangganan
                 </a>
                 <a href="{{ route('talent-hunter.index') }}"
-                    class="hover:text-orange-600 transition-colors whitespace-nowrap {{ request()->routeIs('talent-hunter.index*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('talent-hunter.index*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
                     Talent Hunter
                 </a>
                 <a href="{{ route('perusahaan.kandidat.ak') }}"
-                    class="hover:text-orange-600 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
                     Kandidat
                 </a>
                 <a href="{{ route('paket.form') }}"
-                    class="hover:text-orange-600 transition-colors whitespace-nowrap {{ request()->routeIs('paket.form*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('paket.form*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
                     Pasang Lowongan
                 </a>
                 <a href="{{ route('perusahaan.event.index') }}"
-                    class="hover:text-orange-600 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.event.index*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.event.index*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
                     Event
                 </a>
             </nav>
@@ -257,13 +257,13 @@
             <!-- Aksi (Kanan) -->
             <div class="flex items-center gap-3 sm:gap-4">
                 {{-- Notifikasi --}}
-                <button @click="openNotif = true" class="relative p-2 rounded-full hover:bg-orange-50 transition text-[#ff7a00]">
+                <button @click="openNotif = true" class="relative p-2 rounded-full hover:bg-blue-50 transition text-[#00509d]">
                     <!-- Icon Lonceng -->
                     <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M23.4955 17.1131C23.3918 17.006 23.29 16.8989 23.1901 16.7955C21.8162 15.3699 20.9851 14.5096 20.9851 10.474C20.9851 8.38475 20.4024 6.67047 19.254 5.38475C18.4072 4.43493 17.2626 3.7144 15.7539 3.1819C15.7344 3.17263 15.7171 3.16048 15.7027 3.146C15.16 1.58708 13.675 0.542969 12.0002 0.542969C10.3253 0.542969 8.84094 1.58708 8.29828 3.1444C8.28379 3.15834 8.2667 3.17011 8.24769 3.17922C4.72691 4.42261 3.01586 6.80815 3.01586 10.4724C3.01586 14.5096 2.18593 15.3699 0.810843 16.7939C0.710927 16.8973 0.609138 17.0023 0.505476 17.1115C0.237702 17.3886 0.0680456 17.7256 0.0165842 18.0828C-0.0348772 18.4399 0.0340108 18.8023 0.215096 19.1269C0.600396 19.8233 1.42158 20.2556 2.35891 20.2556H21.6483C22.5812 20.2556 23.3968 19.8239 23.7833 19.1306C23.9652 18.8059 24.0347 18.4433 23.9837 18.0857C23.9327 17.7282 23.7633 17.3906 23.4955 17.1131ZM12.0002 24.543C12.9025 24.5423 13.7879 24.3322 14.5623 23.9349C15.3368 23.5375 15.9714 22.9677 16.3989 22.286C16.4191 22.2533 16.429 22.2167 16.4278 22.1798C16.4266 22.1429 16.4143 22.1068 16.392 22.0752C16.3698 22.0435 16.3384 22.0173 16.3008 21.9992C16.2633 21.981 16.221 21.9715 16.1779 21.9715H7.82368C7.78054 21.9714 7.7381 21.9809 7.70049 21.999C7.66288 22.0171 7.63138 22.0433 7.60906 22.0749C7.58674 22.1066 7.57435 22.1427 7.57311 22.1797C7.57188 22.2167 7.58182 22.2533 7.60199 22.286C8.02946 22.9677 8.664 23.5374 9.43832 23.9347C10.2126 24.3321 11.0979 24.5422 12.0002 24.543Z"
-                            fill="#FA6601" />
+                            fill="#00509d" />
                     </svg>
 
                     <!-- Badge angka merah -->
@@ -277,7 +277,7 @@
 
                 @guest
                     <a href="{{ route('login') }}"
-                        class="bg-[#ff7a00] text-white hover:bg-orange-600 font-semibold px-6 sm:px-8 lg:px-10 py-2 sm:py-2.5 lg:py-3 rounded-2xl transition-all text-sm sm:text-base text-center shadow-sm hover:shadow whitespace-nowrap">
+                        class="bg-[#00509d] text-white hover:bg-[#003d7a] font-semibold px-6 sm:px-8 lg:px-10 py-2 sm:py-2.5 lg:py-3 rounded-2xl transition-all text-sm sm:text-base text-center shadow-sm hover:shadow whitespace-nowrap">
                         Masuk
                     </a>
                 @endguest
@@ -285,17 +285,17 @@
                 {{-- Jika sudah login tampilkan dropdown (Foto Profil) --}}
                 @auth
                     <div class="flex items-center">
-                        <button id="ntap" type="button" class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-orange-400 transition transform hover:scale-105"
+                        <button id="ntap" type="button" class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-[#00509d] transition transform hover:scale-105"
                             id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
                             data-dropdown-placement="bottom">
                             <span class="sr-only">Open user menu</span>
                             @if (Auth::user()->role == 'perusahaan' && Auth::user()->perusahaan?->img_profile)
-                                <img id="pu" class="w-10 h-10 sm:w-11 sm:h-11 object-cover rounded-full border-2 border-orange-400 shadow-sm profile-img"
+                                <img id="pu" class="w-10 h-10 sm:w-11 sm:h-11 object-cover rounded-full border-2 border-[#00509d] shadow-sm profile-img"
                                     src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}"
                                     alt="{{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}">
                             @else
-                                <img id="pu" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 border-orange-400 shadow-sm"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->role == 'perusahaan' ? (Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username) : Auth::user()->username) }}&background=FF7A00&color=fff&size=128"
+                                <img id="pu" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 border-[#00509d] shadow-sm"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->role == 'perusahaan' ? (Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username) : Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                     alt="{{ Auth::user()->username }}">
                             @endif
                         </button>
@@ -313,12 +313,12 @@
                                                 alt="Profile">
                                         @else
                                             <img id="pu" class="w-10 h-10 rounded-full"
-                                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                                 alt="">
                                         @endif
                                     @else
                                         <img class="w-10 h-10 rounded-full"
-                                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                                 alt="">
                                     @endif
                                     <div>
@@ -333,7 +333,7 @@
                                  <!-- Menu -->
                                 <div class="flex flex-col mt-4">
                                     <a href="{{ route('profile.perusahaan') }}"
-                                        class="flex items-center gap-3 px-5 py-3 hover:bg-orange-50 hover:text-orange-500 text-gray-700 font-medium"
+                                        class="flex items-center gap-3 px-5 py-3 hover:bg-blue-50 hover:text-[#00509d] text-gray-700 font-medium"
                                         id="profile-lank">
                                         <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
@@ -350,7 +350,7 @@
 
                                     @if ($perusahaan->is_berlangganan == 1)
                                         <a href="{{ url('/perusahaan/dashboard?show=dashboard') }}"
-                                            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-500">
+                                            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
                                             <svg width="20" height="19" viewBox="0 0 15 16" fill="none"
                                                 xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -364,7 +364,7 @@
                                     @endif
 
                                     <button onclick="toggleModal()"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-500">
+                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
                                         <svg width="20" height="22" viewBox="0 0 20 19" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -376,7 +376,7 @@
                                     </button>
 
                                     <a href="{{ route('perusahaan.kandidat.saya') }}"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-500">
+                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
                                         <svg width="20" height="19" viewBox="0 0 22 22" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -392,7 +392,7 @@
                                     </a>
 
                                     <a href="{{ route('syarat.ketentuan') }}"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-500">
+                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
@@ -405,7 +405,7 @@
                                     </a>
 
                                     <a href="{{ route('verifikasi_pelamar') }}"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-orange-50 hover:text-orange-500">
+                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
                                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
                                             xmlns="http://www.w3.org/2000/svg">
                                             <path
@@ -451,34 +451,34 @@
                     class="flex flex-col absolute top-full left-0 w-full bg-white text-slate-800 border-t border-slate-100 py-4 shadow-xl z-40 md:hidden">
 
                     <a href="{{ route('perusahaan.dashboard') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition duration-300 font-medium {{ request()->routeIs('perusahaan.dashboard') ? 'bg-orange-50 text-orange-600 font-bold' : '' }}">
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.dashboard') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Beranda
                     </a>
                     <a href="{{ route('perusahaan.berlangganan') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition duration-300 font-medium {{ request()->routeIs('perusahaan.berlangganan*') ? 'bg-orange-50 text-orange-600 font-bold' : '' }}">
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.berlangganan*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Berlangganan
                     </a>
                     <a href="{{ route('talent-hunter.index') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition duration-300 font-medium {{ request()->routeIs('talent-hunter.index*') ? 'bg-orange-50 text-orange-600 font-bold' : '' }}">
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('talent-hunter.index*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Talent Hunter
                     </a>
                     <a href="{{ route('perusahaan.kandidat.ak') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition duration-300 font-medium {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'bg-orange-50 text-orange-600 font-bold' : '' }}">
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Kandidat
                     </a>
                     <a href="{{ route('paket.form') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition duration-300 font-medium {{ request()->routeIs('paket.form*') ? 'bg-orange-50 text-orange-600 font-bold' : '' }}">
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('paket.form*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Pasang Lowongan
                     </a>
                     <a href="{{ route('perusahaan.event.index') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-orange-50 hover:text-orange-600 transition duration-300 font-medium {{ request()->routeIs('perusahaan.event.index*') ? 'bg-orange-50 text-orange-600 font-bold' : '' }}">
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.event.index*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Event
                     </a>
 
                     @guest
                         <div class="px-6 pt-3">
                             <a href="{{ route('login') }}"
-                                class="block w-full text-center bg-[#ff7a00] text-white hover:bg-orange-600 py-3 rounded-2xl font-semibold transition">
+                                class="block w-full text-center bg-[#00509d] text-white hover:bg-[#003d7a] py-3 rounded-2xl font-semibold transition">
                                 Masuk
                             </a>
                         </div>
@@ -591,15 +591,15 @@
                     Swal.fire({
                         title: `<div class="text-base font-bold text-gray-800">${judul || 'Detail Notifikasi'}</div>`,
                         html: `
-                            <div class="text-left text-sm text-gray-700 leading-relaxed bg-orange-50/50 p-4 rounded-xl border border-orange-100 mt-2 mb-3">
+                            <div class="text-left text-sm text-gray-700 leading-relaxed bg-blue-50/50 p-4 rounded-xl border border-blue-100 mt-2 mb-3">
                                 ${pesan}
                             </div>
                             <div class="text-xs text-gray-400 text-left flex items-center gap-1">
-                                ⏱️ ${createdAt}
+                                â±ï¸ ${createdAt}
                             </div>
                         `,
                         showCancelButton: true,
-                        confirmButtonColor: '#f97316',
+                        confirmButtonColor: '#00509d',
                         cancelButtonColor: '#ef4444',
                         confirmButtonText: 'Tutup',
                         cancelButtonText: 'Hapus Notifikasi Ini',
@@ -850,13 +850,13 @@
         }
 
         function goToStep(step) {
-            // ✅ Validasi sebelum pindah step
+            // âœ… Validasi sebelum pindah step
             if (step === 2 && !selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih paket koin terlebih dahulu!',
-                    confirmButtonColor: '#f97316' // warna tombol orange
+                    confirmButtonColor: '#00509d' // warna tombol orange
                 });
                 return;
             }
@@ -865,7 +865,7 @@
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                    confirmButtonColor: '#f97316'
+                    confirmButtonColor: '#00509d'
                 });
                 return;
             }
@@ -882,7 +882,7 @@
                 const biayaAdmin = 2000;
                 const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
 
-                // // 🔑 Buat No Transaksi random unik
+                // // ðŸ”‘ Buat No Transaksi random unik
                 // const randomPart = Math.floor(Math.random() * 1000000);
                 // const noTransaksi = "TRX" + Date.now() + randomPart;
 
@@ -896,7 +896,7 @@
         }
 
 
-        // 🔑 Update status tombol (disable/enable)
+        // ðŸ”‘ Update status tombol (disable/enable)
         function updateButtons() {
             // Step 1: tombol konfirmasi paket
             const btnStep1 = document.getElementById('btnConfirmStep1');
@@ -941,9 +941,9 @@
 
                     // Highlight kartu terpilih
                     document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });
@@ -956,9 +956,9 @@
 
                     // Highlight bank terpilih
                     document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });
@@ -973,3 +973,4 @@
 </body>
 
 </html>
+

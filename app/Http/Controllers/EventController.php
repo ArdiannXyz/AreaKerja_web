@@ -203,13 +203,25 @@ class EventController extends Controller
     {
         $this->ensureTableAndData();
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'status' => 'required|string',
-            'tgl_mulai' => 'required|date',
-            'tgl_akhir' => 'required|date',
+            'title'                  => 'required|string|max:255',
+            'status'                 => 'required|string|in:buka,tutup,draft',
+            'tgl_mulai'              => 'required|date',
+            'tgl_akhir'              => 'required|date|after_or_equal:tgl_mulai',
+            'kuota'                  => 'nullable|integer|min:1',
+            'image'                  => 'nullable|image|mimes:png,jpg,jpeg,webp|max:5120',
+            'content'                => 'nullable|string',
+            'jam_mulai'              => 'nullable|string|max:10',
+            'jam_akhir'              => 'nullable|string|max:10',
+            'lokasi'                 => 'nullable|string',
+            'link_form'              => 'nullable|url',
+            'penutupan_pendaftaran'  => 'nullable|date',
         ]);
 
-        Event::create($request->all());
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
+
+        Event::create($validated);
 
         return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil disimpan.');
     }
@@ -229,7 +241,27 @@ class EventController extends Controller
     {
         $this->ensureTableAndData();
         $event = Event::findOrFail($id);
-        $event->update($request->all());
+
+        $validated = $request->validate([
+            'title'                  => 'required|string|max:255',
+            'status'                 => 'required|string|in:buka,tutup,draft',
+            'tgl_mulai'              => 'required|date',
+            'tgl_akhir'              => 'required|date|after_or_equal:tgl_mulai',
+            'kuota'                  => 'nullable|integer|min:1',
+            'image'                  => 'nullable|image|mimes:png,jpg,jpeg,webp|max:5120',
+            'content'                => 'nullable|string',
+            'jam_mulai'              => 'nullable|string|max:10',
+            'jam_akhir'              => 'nullable|string|max:10',
+            'lokasi'                 => 'nullable|string',
+            'link_form'              => 'nullable|url',
+            'penutupan_pendaftaran'  => 'nullable|date',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
+
+        $event->update($validated);
 
         return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil diperbarui.');
     }

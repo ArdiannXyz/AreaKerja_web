@@ -41,7 +41,7 @@
                     <div x-show="open" x-transition.opacity.duration.200ms @click.outside="open = false"
                         class="absolute left-2 mt-2 w-52 md:w-72 bg-white shadow-lg rounded-lg border border-gray-200 overflow-hidden z-[9999]">
 
-                        <div class="p-2 md:p-3 border-b bg-orange-50">
+                        <div class="p-2 md:p-3 border-b bg-blue-50">
                             <p class="font-semibold text-gray-700 text-xs md:text-sm">Notifikasi Finance</p>
                         </div>
 
@@ -49,7 +49,7 @@
                             @forelse ($notifikasiCash as $notif)
                                 <div class="p-2 md:p-3 border-b hover:bg-gray-50">
                                     <p class="text-xs md:text-sm text-gray-800 font-medium">
-                                        Transaksi dari <span class="text-orange-600">
+                                        Transaksi dari <span class="text-[#003d7a]">
                                             {{ $notif->dari ?? 'Tidak diketahui' }}
                                         </span>
                                     </p>
@@ -66,7 +66,7 @@
 
                         <div class="p-2 text-center bg-gray-100">
                             <a href="{{ route('finance.catatan') }}"
-                                class="text-orange-600 text-xs md:text-sm hover:underline font-semibold">
+                                class="text-[#003d7a] text-xs md:text-sm hover:underline font-semibold">
                                 Lihat Lebih Detail
                             </a>
                         </div>
@@ -75,7 +75,7 @@
 
                 <!-- Profile Box -->
                 <div
-                    class="flex items-center md:w-60 sm:w-auto justify-between bg-white border border-orange-500 shadow-md rounded-xl px-3 py-2">
+                    class="flex items-center md:w-60 sm:w-auto justify-between bg-white border border-[#00509d] shadow-md rounded-xl px-3 py-2">
                     <div class="flex items-center gap-2">
                         <a href="#">
                             @if (Auth::user()?->avatar)
@@ -83,7 +83,7 @@
                                     src="{{ asset('storage/' . Auth::user()->avatar) }}">
                             @else
                                 <img class="w-9 h-9 md:w-10 md:h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Finance') }}&background=random&color=fff&size=128">
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Finance') }}&background=00509d&color=fff&size=128">
                             @endif
                         </a>
 
@@ -110,7 +110,7 @@
                 <div class="rounded-2xl overflow-hidden border shadow-md overflow-x-auto">
                     <table class="w-full min-w-max text-xs md:text-sm">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-[#00509d] text-white">
                                 <th class="px-3 py-2 text-left">No</th>
                                 <th class="px-3 py-2 text-left">No. Referensi</th>
                                 <th class="px-3 py-2 text-left">Jenis</th>
@@ -143,7 +143,7 @@
 
                                     <td class="px-3 py-2 text-center">
                                         @if ($item->bukti)
-                                            <button class="text-orange-600 hover:underline"
+                                            <button class="text-[#003d7a] hover:underline"
                                                 @click="detail = { bukti: '{{ asset('storage/' . $item->bukti) }}', id: {{ $item->id }} }; openBukti = true;">
                                                 <i class="ph ph-images-square text-3xl md:text-4xl"></i>
                                             </button>
@@ -154,7 +154,7 @@
 
                                     <td class="px-3 py-2 text-center">
                                         <a href="{{ route('finance.detail.catatan.koin') }}"
-                                            class="text-orange-600 hover:underline">
+                                            class="text-[#003d7a] hover:underline">
                                             <i class="ph ph-file-arrow-up text-3xl md:text-4xl"></i>
                                         </a>
                                     </td>
@@ -187,7 +187,7 @@
                 <div class="rounded-2xl overflow-hidden border shadow-md overflow-x-auto">
                     <table class="w-full min-w-max text-xs md:text-sm">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-[#00509d] text-white">
                                 <th class="px-3 py-2 text-left">No</th>
                                 <th class="px-3 py-2 text-left">No. Referensi</th>
                                 <th class="px-3 py-2 text-left">Pesanan</th>
@@ -213,7 +213,7 @@
 
                                     <td class="px-3 py-2 text-center">
                                         <a href="{{ route('finance.detail.catatan.koin') }}"
-                                            class="text-orange-600 hover:underline">
+                                            class="text-[#003d7a] hover:underline">
                                             <i class="ph ph-file-arrow-up text-3xl md:text-4xl"></i>
                                         </a>
                                     </td>
@@ -275,3 +275,4 @@
 
     <script src="//unpkg.com/alpinejs" defer></script>
 @endsection
+

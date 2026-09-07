@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <div class="flex flex-col gap-6 items-center justify-center min-h-screen p-4 sm:p-6 mt-16">
         @foreach ($events as $event)
@@ -29,7 +29,7 @@
 
 
                         <a href="{{ route('perusahaan.event.show', $event->id) }}"
-                            class="bg-orange-500 hover:bg-orange-600 text-white text-sm font-medium px-4 py-2 rounded">
+                            class="bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-medium px-4 py-2 rounded">
                             Lihat Lebih Detail
                         </a>
                     </div>
@@ -60,3 +60,4 @@
 
     @include('layouts.footer')
 @endsection
+

@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <div class="max-w-4xl mx-auto my-12 mt-16 px-4">
         <div class="bg-white border border-gray-200 rounded-xl p-6 shadow-sm space-y-6">
@@ -35,7 +35,7 @@
                 <div class="border border-dashed border-gray-300 rounded-xl p-8 text-center">
                     <i class="ph ph-user-minus text-4xl text-gray-400 mb-2"></i>
                     <p class="text-sm font-medium text-gray-600">Belum ada catatan pekerja bermasalah yang terdaftar di akun Anda.</p>
-                    <a href="{{ route('perusahaan.data.pekerja') }}" class="inline-block mt-3 bg-orange-500 hover:bg-orange-600 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+                    <a href="{{ route('perusahaan.data.pekerja') }}" class="inline-block mt-3 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
                         + Buat Laporan Pekerja
                     </a>
                 </div>
@@ -63,3 +63,4 @@
 
     @include('layouts.footer')
 @endsection
+

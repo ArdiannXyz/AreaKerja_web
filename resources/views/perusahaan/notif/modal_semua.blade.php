@@ -1,4 +1,4 @@
-<!-- Modal Semua Notifikasi -->
+﻿<!-- Modal Semua Notifikasi -->
 <div x-data="notifHandler()" x-cloak x-show="openAllNotif"
     class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" @click.self="openAllNotif = false">
 
@@ -7,7 +7,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between px-5 py-3.5 border-b bg-gray-50">
             <h2 class="font-bold text-gray-800 text-base flex items-center gap-2">
-                <i class="ph ph-bell text-orange-500 text-lg"></i>
+                <i class="ph ph-bell text-[#00509d] text-lg"></i>
                 Semua Notifikasi
             </h2>
             <button @click="openAllNotif=false" class="text-gray-400 hover:text-gray-600 font-bold text-lg">&times;</button>
@@ -18,7 +18,7 @@
             @forelse (\App\Models\Notifikasi::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get() as $notif)
                 <div data-id="{{ $notif->id }}"
                     @click="viewDetail({{ $notif->id }}, '{{ addslashes($notif->judul ?? 'Detail Notifikasi') }}', '{{ addslashes(str_replace(["\r", "\n"], ' ', $notif->pesan)) }}', '{{ $notif->created_at->diffForHumans() }}', '{{ route('notifikasi.baca', $notif->id) }}', $el)"
-                    class="notif-item cursor-pointer flex items-start gap-3 p-4 hover:bg-orange-50/60 transition {{ $notif->is_read ? 'bg-gray-50/70 text-gray-600' : 'bg-white font-medium text-gray-900' }}">
+                    class="notif-item cursor-pointer flex items-start gap-3 p-4 hover:bg-blue-50/60 transition {{ $notif->is_read ? 'bg-gray-50/70 text-gray-600' : 'bg-white font-medium text-gray-900' }}">
 
                     <div class="flex-1 min-w-0">
                         @if(!empty($notif->judul))
@@ -63,3 +63,4 @@
         <iframe name="hiddenFrameAll" style="display:none;"></iframe>
     </div>
 </div>
+

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -58,7 +58,7 @@
         <!-- Kanan -->
         <div class="flex w-full md:w-4/5 bg-white items-center justify-center">
             <div class="w-full max-w-md p-8">
-                <h2 class="text-2xl font-bold text-center text-orange-600 mb-6">Masuk</h2>
+                <h2 class="text-2xl font-bold text-center text-[#003d7a] mb-6">Masuk</h2>
 
                 <!-- Login Sosial -->
                 <div class="flex justify-center space-x-3 mb-5">
@@ -110,27 +110,27 @@
                     <div>
                         <label for="email" class="block text-sm font-semibold text-gray-700">Email Perusahaan</label>
                         <input type="email" id="email" name="email" value="{{ old('email') }}" required placeholder="perusahaan@contoh.com"
-                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
+                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-[#00509d] focus:border-[#00509d]" />
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-semibold text-gray-700">Kata Sandi</label>
                         <input type="password" id="password" name="password" required placeholder="Kata Sandi"
-                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
+                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-[#00509d] focus:border-[#00509d]" />
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <label class="flex items-center">
                             <input type="checkbox" name="remember" class="mr-2 border rounded-sm"> Ingat saya
                         </label>
-                        <a href="{{ route('verifikasi_perusahaan') }}" class="text-orange-500 hover:underline">Lupa kata sandi?</a>
+                        <a href="{{ route('verifikasi_perusahaan') }}" class="text-[#00509d] hover:underline">Lupa kata sandi?</a>
                     </div>
                     <div class="flex justify-center">
                         <button type="submit"
-                            class="w-52 h-14 bg-orange-500 text-white py-2.5 rounded-full font-small text-sm hover:bg-orange-600 transition">
+                            class="w-52 h-14 bg-[#00509d] text-white py-2.5 rounded-full font-small text-sm hover:bg-[#003d7a] transition">
                             MASUK
                         </button>
                     </div>
                     <p class="text-center text-sm mt-4">Tidak Memiliki Akun? <a href="#"
-                            class="text-orange-500 font-medium"> Daftar
+                            class="text-[#00509d] font-medium"> Daftar
                             Sekarang</a></p>
                 </form>
 
@@ -145,9 +145,9 @@
 
                     <!-- Filter Tabs -->
                     <div class="flex items-center gap-1 overflow-x-auto pb-2 mb-3 text-[11px] font-bold no-scrollbar">
-                        <button type="button" @click="tab = 'all'" :class="tab === 'all' ? 'bg-orange-500 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-2.5 py-1 rounded-lg transition shrink-0">Semua</button>
+                        <button type="button" @click="tab = 'all'" :class="tab === 'all' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-2.5 py-1 rounded-lg transition shrink-0">Semua</button>
                         <button type="button" @click="tab = 'admin'" :class="tab === 'admin' ? 'bg-purple-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-2.5 py-1 rounded-lg transition shrink-0">Admin/Staff (3)</button>
-                        <button type="button" @click="tab = 'perusahaan'" :class="tab === 'perusahaan' ? 'bg-orange-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-2.5 py-1 rounded-lg transition shrink-0">Perusahaan (6)</button>
+                        <button type="button" @click="tab = 'perusahaan'" :class="tab === 'perusahaan' ? 'bg-[#003d7a] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-2.5 py-1 rounded-lg transition shrink-0">Perusahaan (6)</button>
                         <button type="button" @click="tab = 'pelamar'" :class="tab === 'pelamar' ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-2.5 py-1 rounded-lg transition shrink-0">Pelamar (6)</button>
                         <button type="button" @click="tab = 'kandidat'" :class="tab === 'kandidat' ? 'bg-rose-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'" class="px-2.5 py-1 rounded-lg transition shrink-0">Kandidat (6)</button>
                     </div>
@@ -195,74 +195,74 @@
                         <!-- ================= PERUSAHAAN (1-6) ================= -->
                         <!-- Perusahaan 1 -->
                         <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan1@areakerja.test', 'password123', 'PT AreaKerja Tech')"
-                            class="flex items-center justify-between p-2 rounded-xl border border-orange-200 bg-orange-50/50 hover:bg-orange-100/80 hover:border-orange-300 transition text-left group cursor-pointer shadow-2xs">
+                            class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-blue-50/50 hover:bg-blue-100/80 hover:border-blue-300 transition text-left group cursor-pointer shadow-2xs">
                             <div class="truncate mr-2">
                                 <div class="font-bold text-orange-900 flex items-center gap-1 text-xs">
-                                    <i class="ph ph-buildings text-orange-600"></i> Perusahaan 1 (Tech)
+                                    <i class="ph ph-buildings text-[#003d7a]"></i> Perusahaan 1 (Tech)
                                 </div>
-                                <div class="text-[10px] text-orange-700 font-mono truncate">perusahaan1@areakerja.test</div>
+                                <div class="text-[10px] text-[#003d7a] font-mono truncate">perusahaan1@areakerja.test</div>
                             </div>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
                         </button>
 
                         <!-- Perusahaan 2 -->
                         <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan2@areakerja.test', 'password123', 'PT Nusantara Digital')"
-                            class="flex items-center justify-between p-2 rounded-xl border border-orange-200 bg-orange-50/50 hover:bg-orange-100/80 hover:border-orange-300 transition text-left group cursor-pointer shadow-2xs">
+                            class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-blue-50/50 hover:bg-blue-100/80 hover:border-blue-300 transition text-left group cursor-pointer shadow-2xs">
                             <div class="truncate mr-2">
                                 <div class="font-bold text-orange-900 flex items-center gap-1 text-xs">
-                                    <i class="ph ph-buildings text-orange-600"></i> Perusahaan 2 (Agency)
+                                    <i class="ph ph-buildings text-[#003d7a]"></i> Perusahaan 2 (Agency)
                                 </div>
-                                <div class="text-[10px] text-orange-700 font-mono truncate">perusahaan2@areakerja.test</div>
+                                <div class="text-[10px] text-[#003d7a] font-mono truncate">perusahaan2@areakerja.test</div>
                             </div>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
                         </button>
 
                         <!-- Perusahaan 3 -->
                         <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan3@areakerja.test', 'password123', 'PT Inovasi Karya Media')"
-                            class="flex items-center justify-between p-2 rounded-xl border border-orange-200 bg-orange-50/50 hover:bg-orange-100/80 hover:border-orange-300 transition text-left group cursor-pointer shadow-2xs">
+                            class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-blue-50/50 hover:bg-blue-100/80 hover:border-blue-300 transition text-left group cursor-pointer shadow-2xs">
                             <div class="truncate mr-2">
                                 <div class="font-bold text-orange-900 flex items-center gap-1 text-xs">
-                                    <i class="ph ph-buildings text-orange-600"></i> Perusahaan 3 (Desain)
+                                    <i class="ph ph-buildings text-[#003d7a]"></i> Perusahaan 3 (Desain)
                                 </div>
-                                <div class="text-[10px] text-orange-700 font-mono truncate">perusahaan3@areakerja.test</div>
+                                <div class="text-[10px] text-[#003d7a] font-mono truncate">perusahaan3@areakerja.test</div>
                             </div>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
                         </button>
 
                         <!-- Perusahaan 4 -->
                         <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan4@areakerja.test', 'password123', 'PT Mitra Sejahtera Abadi')"
-                            class="flex items-center justify-between p-2 rounded-xl border border-orange-200 bg-orange-50/50 hover:bg-orange-100/80 hover:border-orange-300 transition text-left group cursor-pointer shadow-2xs">
+                            class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-blue-50/50 hover:bg-blue-100/80 hover:border-blue-300 transition text-left group cursor-pointer shadow-2xs">
                             <div class="truncate mr-2">
                                 <div class="font-bold text-orange-900 flex items-center gap-1 text-xs">
-                                    <i class="ph ph-buildings text-orange-600"></i> Perusahaan 4 (Finance)
+                                    <i class="ph ph-buildings text-[#003d7a]"></i> Perusahaan 4 (Finance)
                                 </div>
-                                <div class="text-[10px] text-orange-700 font-mono truncate">perusahaan4@areakerja.test</div>
+                                <div class="text-[10px] text-[#003d7a] font-mono truncate">perusahaan4@areakerja.test</div>
                             </div>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
                         </button>
 
                         <!-- Perusahaan 5 -->
                         <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan5@areakerja.test', 'password123', 'PT Techindo Cloud')"
-                            class="flex items-center justify-between p-2 rounded-xl border border-orange-200 bg-orange-50/50 hover:bg-orange-100/80 hover:border-orange-300 transition text-left group cursor-pointer shadow-2xs">
+                            class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-blue-50/50 hover:bg-blue-100/80 hover:border-blue-300 transition text-left group cursor-pointer shadow-2xs">
                             <div class="truncate mr-2">
                                 <div class="font-bold text-orange-900 flex items-center gap-1 text-xs">
-                                    <i class="ph ph-buildings text-orange-600"></i> Perusahaan 5 (DevOps)
+                                    <i class="ph ph-buildings text-[#003d7a]"></i> Perusahaan 5 (DevOps)
                                 </div>
-                                <div class="text-[10px] text-orange-700 font-mono truncate">perusahaan5@areakerja.test</div>
+                                <div class="text-[10px] text-[#003d7a] font-mono truncate">perusahaan5@areakerja.test</div>
                             </div>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
                         </button>
 
                         <!-- Perusahaan 6 -->
                         <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan6@areakerja.test', 'password123', 'PT Sukses Gemilang')"
-                            class="flex items-center justify-between p-2 rounded-xl border border-orange-200 bg-orange-50/50 hover:bg-orange-100/80 hover:border-orange-300 transition text-left group cursor-pointer shadow-2xs">
+                            class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-blue-50/50 hover:bg-blue-100/80 hover:border-blue-300 transition text-left group cursor-pointer shadow-2xs">
                             <div class="truncate mr-2">
                                 <div class="font-bold text-orange-900 flex items-center gap-1 text-xs">
-                                    <i class="ph ph-buildings text-orange-600"></i> Perusahaan 6 (Logistik)
+                                    <i class="ph ph-buildings text-[#003d7a]"></i> Perusahaan 6 (Logistik)
                                 </div>
-                                <div class="text-[10px] text-orange-700 font-mono truncate">perusahaan6@areakerja.test</div>
+                                <div class="text-[10px] text-[#003d7a] font-mono truncate">perusahaan6@areakerja.test</div>
                             </div>
-                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-orange-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
+                            <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-200 text-orange-800 font-bold group-hover:scale-105 transition shrink-0">pwd123</span>
                         </button>
 
                         <!-- ================= PELAMAR (1-6) ================= -->
@@ -428,12 +428,12 @@
                 passwordInput.value = password;
 
                 // Visual flash effect
-                emailInput.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50');
-                passwordInput.classList.add('ring-2', 'ring-orange-500', 'bg-orange-50');
+                emailInput.classList.add('ring-2', 'ring-[#00509d]', 'bg-blue-50');
+                passwordInput.classList.add('ring-2', 'ring-[#00509d]', 'bg-blue-50');
 
                 setTimeout(() => {
-                    emailInput.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50');
-                    passwordInput.classList.remove('ring-2', 'ring-orange-500', 'bg-orange-50');
+                    emailInput.classList.remove('ring-2', 'ring-[#00509d]', 'bg-blue-50');
+                    passwordInput.classList.remove('ring-2', 'ring-[#00509d]', 'bg-blue-50');
                 }, 800);
             }
         }
@@ -441,3 +441,4 @@
 </body>
 
 </html>
+

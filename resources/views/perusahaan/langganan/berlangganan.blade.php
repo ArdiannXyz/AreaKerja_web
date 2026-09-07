@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Section Atas -->
     <div class="bg-white p-10 flex flex-wrap justify-between items-center overflow-hidden  mt-16">
@@ -17,7 +17,7 @@
                     </p>
                 @else
                     <button onclick="openModal()"
-                        class="bg-orange-500 text-white px-6 py-3 rounded-xl shadow text-sm font-medium">
+                        class="bg-[#00509d] text-white px-6 py-3 rounded-xl shadow text-sm font-medium">
                         Berlangganan
                     </button>
                 @endif
@@ -30,7 +30,7 @@
     </div>
 
     <!-- Section Benefit -->
-    <div class="bg-orange-500 py-16 px-6 text-white">
+    <div class="bg-[#00509d] py-16 px-6 text-white">
         <div class="max-w-6xl mx-auto text-center">
             <h2 class="text-xl md:text-2xl font-bold mb-12">
                 Benefit Berlangganan Di AreaKerja
@@ -79,7 +79,7 @@
     <!-- Section Harga & Ajak Berlangganan -->
     <div>
         <div
-            class="max-w-6xl mx-auto border-4 border-orange-500 rounded-2xl p-10 py-2 flex flex-col md:flex-row justify-between items-center gap-8 mb-24 mt-24 scale-[0.85] md:scale-100">
+            class="max-w-6xl mx-auto border-4 border-[#00509d] rounded-2xl p-10 py-2 flex flex-col md:flex-row justify-between items-center gap-8 mb-24 mt-24 scale-[0.85] md:scale-100">
             <!-- Text -->
             <div class="md:w-1/2">
                 <h3 class="text-xl font-bold text-blue-900 mb-4">Berlangganan Bersama Kami</h3>
@@ -87,7 +87,7 @@
                     Dan Anda akan mendapatkan benefit yang sangat <br> bermanfaat untuk perusahaan anda
                 </p>
                 <p class="text-sm font-medium text-blue-900 mb-6">
-                    Hanya Dengan <span class="text-orange-500 font-bold">
+                    Hanya Dengan <span class="text-[#00509d] font-bold">
                         <img src="{{ asset('images/coin.png') }}" alt="" class="inline w-4 h-4">
                         {{ $hargaLangganan }}</span> Per Tahun
                 </p>
@@ -98,7 +98,7 @@
                     </p>
                 @else
                     <button onclick="openModal()"
-                        class="bg-orange-500 text-white px-6 py-3 rounded-xl shadow text-sm font-medium">
+                        class="bg-[#00509d] text-white px-6 py-3 rounded-xl shadow text-sm font-medium">
                         Berlangganan
                     </button>
                 @endif
@@ -121,11 +121,11 @@
                 <h2 class="text-lg font-semibold text-gray-900 mb-5">Pembayaran</h2>
 
                 <!-- Kotak Berlangganan -->
-                <div class="border-2 border-orange-400 rounded-xl px-5 py-4 mb-3">
+                <div class="border-2 border-[#00509d] rounded-xl px-5 py-4 mb-3">
                     <p class="text-sm font-medium text-gray-700 mb-2">Berlangganan</p>
                     <div class="flex items-center gap-2">
                         <img src="/images/coin.png" alt="coin" class="w-8 h-8">
-                        <p class="text-2xl font-bold text-orange-500">{{ $hargaLangganan }}</p>
+                        <p class="text-2xl font-bold text-[#00509d]">{{ $hargaLangganan }}</p>
                     </div>
                 </div>
 
@@ -139,10 +139,10 @@
                 <div class="mb-6">
                     <p class="text-gray-700 text-sm mb-1">Koin saya :</p>
                     <div
-                        class="flex items-center justify-between bg-orange-50 border border-orange-200 rounded-lg px-4 py-2">
+                        class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
                         <div class="flex items-center gap-2">
                             <img src="/images/coin.png" alt="coin" class="w-6 h-6">
-                            <p class="font-bold text-orange-500 text-lg">
+                            <p class="font-bold text-[#00509d] text-lg">
                                 {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }}</p>
                         </div>
                         <button onclick="toggleModal()"
@@ -159,7 +159,7 @@
 
                 <!-- Tombol Bayar -->
                 <button id="btnBayar"
-                    class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2.5 rounded-lg transition">
+                    class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold py-2.5 rounded-lg transition">
                     Bayar
                 </button>
             </div>
@@ -169,13 +169,13 @@
         <!-- Modal Sukses -->
         <div id="modalSukses" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
             <div class="bg-white rounded-2xl p-6 w-[400px] relative text-center">
-                <div class="bg-orange-500 text-white py-3 rounded-t-2xl -mt-6 mb-4">
+                <div class="bg-[#00509d] text-white py-3 rounded-t-2xl -mt-6 mb-4">
                     <h2 class="font-semibold">Pembayaran Sukses</h2>
                 </div>
 
                 <div class="flex justify-center mb-3">
-                    <div class="bg-orange-100 rounded-full p-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500" fill="none"
+                    <div class="bg-blue-100 rounded-full p-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -183,7 +183,7 @@
                 </div>
 
                 <p class="font-semibold text-gray-700 mb-1">
-                    Pembayaran dengan <span class="text-orange-500 font-bold">areakerja.com</span> sukses
+                    Pembayaran dengan <span class="text-[#00509d] font-bold">areakerja.com</span> sukses
                 </p>
 
                 <div class="mt-4 bg-gray-50 rounded-lg p-3 flex justify-between items-center">
@@ -195,13 +195,13 @@
                     <label class="inline-flex items-center cursor-pointer">
                         <input type="checkbox" id="sendEmailToggle" checked class="sr-only peer">
                         <div
-                            class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-orange-500 relative after:absolute after:content-[''] after:w-4 after:h-4 after:bg-white after:rounded-full after:top-0.5 after:left-0.5 after:transition-all peer-checked:after:translate-x-5">
+                            class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-[#00509d] relative after:absolute after:content-[''] after:w-4 after:h-4 after:bg-white after:rounded-full after:top-0.5 after:left-0.5 after:transition-all peer-checked:after:translate-x-5">
                         </div>
                     </label>
                 </div>
 
                 <button onclick="closeSukses()"
-                    class="mt-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-full">
+                    class="mt-6 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold px-6 py-2 rounded-full">
                     Selesai
                 </button>
             </div>
@@ -210,13 +210,13 @@
         <!-- Modal Permintaan Panggilan -->
         <div id="modalPanggilan" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
             <div class="bg-white rounded-2xl w-[420px] text-center overflow-hidden">
-                <div class="bg-orange-500 text-white py-3 flex items-center justify-center">
+                <div class="bg-[#00509d] text-white py-3 flex items-center justify-center">
                     <img src="/images/logo_area_kerja_putih.png" alt="logo" class="h-5 mr-2">
                     <span class="font-semibold">areakerja.com</span>
                 </div>
                 <div class="p-6 flex flex-col items-center">
-                    <div class="bg-orange-100 rounded-full p-3 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500" fill="none"
+                    <div class="bg-blue-100 rounded-full p-3 mb-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -228,7 +228,7 @@
                         Mohon tunggu 1/24 Jam untuk kami hubungi
                     </p>
                     <button onclick="closePanggilan()"
-                        class="mt-6 bg-orange-500 hover:bg-orange-600 text-white font-semibold px-6 py-2 rounded-full">
+                        class="mt-6 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold px-6 py-2 rounded-full">
                         Selesai
                     </button>
                 </div>
@@ -277,7 +277,7 @@
                     .then(async res => {
                         let data = {};
 
-                        // ⛑️ paksa baca JSON kalau ada
+                        // â›‘ï¸ paksa baca JSON kalau ada
                         try {
                             data = await res.json();
                         } catch (e) {}
@@ -339,13 +339,13 @@
             }
 
             function goToStep(step) {
-                // ✅ Validasi sebelum pindah step
+                // âœ… Validasi sebelum pindah step
                 if (step === 2 && !selectedKoin) {
                     Swal.fire({
                         icon: 'warning',
                         title: 'Oops...',
                         text: 'Silakan pilih paket koin terlebih dahulu!',
-                        confirmButtonColor: '#f97316' // warna tombol orange
+                        confirmButtonColor: '#00509d' // warna tombol orange
                     });
                     return;
                 }
@@ -354,7 +354,7 @@
                         icon: 'warning',
                         title: 'Oops...',
                         text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                        confirmButtonColor: '#f97316'
+                        confirmButtonColor: '#00509d'
                     });
                     return;
                 }
@@ -371,7 +371,7 @@
                     const biayaAdmin = 2000;
                     const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
 
-                    // // 🔑 Buat No Transaksi random unik
+                    // // ðŸ”‘ Buat No Transaksi random unik
                     // const randomPart = Math.floor(Math.random() * 1000000);
                     // const noTransaksi = "TRX" + Date.now() + randomPart;
 
@@ -385,7 +385,7 @@
             }
 
 
-            // 🔑 Update status tombol (disable/enable)
+            // ðŸ”‘ Update status tombol (disable/enable)
             function updateButtons() {
                 // Step 1: tombol konfirmasi paket
                 const btnStep1 = document.querySelector('#modalStep1 button');
@@ -413,9 +413,9 @@
 
                         // Highlight kartu terpilih
                         document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-orange-500');
+                            w.classList.remove('ring-2', 'ring-[#00509d]');
                         });
-                        this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-orange-500');
+                        this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                         updateButtons();
                     });
@@ -428,9 +428,9 @@
 
                         // Highlight bank terpilih
                         document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-orange-500');
+                            w.classList.remove('ring-2', 'ring-[#00509d]');
                         });
-                        this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-orange-500');
+                        this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                         updateButtons();
                     });
@@ -489,7 +489,7 @@
                                 return; //STOP SEMUA PROSES
                             }
 
-                            // Jika koin tidak cukup → Tampilkan modal error
+                            // Jika koin tidak cukup â†’ Tampilkan modal error
                             if (data.error === "koin_kurang") {
                                 closeModal();
                                 showErrorKoin();
@@ -542,3 +542,4 @@
 
         @include('layouts.footer')
     @endsection
+

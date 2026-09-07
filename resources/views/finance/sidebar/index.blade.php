@@ -35,7 +35,7 @@
 
     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
         type="button"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 hover:text-white rounded-lg sm:hidden hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:text-gray-500 dark:hover:bg-orange-500 dark:focus:ring-orange-500 transition duration-300">
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 hover:text-white rounded-lg sm:hidden hover:bg-[#00509d] focus:outline-none focus:ring-2 focus:ring-[#00509d] dark:text-gray-500 dark:hover:bg-[#00509d] dark:focus:ring-[#00509d] transition duration-300">
         <span class="sr-only">Open sidebar</span>
         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg">
@@ -48,9 +48,9 @@
     <aside id="logo-sidebar"
         class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
         aria-label="Sidebar">
-        <div class="h-full px-3 py-4 overflow-y-auto bg-orange-600">
+        <div class="h-full px-3 py-4 overflow-y-auto bg-[#00509d]">
             <div class="px-4 py-2">
-                <div class="inline-flex items-center -ml-2 gap-1 border-b-2 border-orange-300 pb-2">
+                <div class="inline-flex items-center -ml-2 gap-1 border-b-2 border-blue-300 pb-2">
                     <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-14 h-14">
                     <p class="text-xl text-white font-semibold">areakerja.com</p>
                 </div>
@@ -64,9 +64,9 @@
                 </li>
                 <li>
                     <div
-                        class="{{ request()->is('finance/dashboard') ? 'bg-white text-orange-500' : 'text-white' }} rounded-md">
+                        class="{{ request()->is('finance/dashboard') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                         <a href="{{ route('finance.dashboard') }}"
-                            class="flex font-semibold items-center mb-4 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-4 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="15" height="16" viewBox="0 0 15 16" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -84,9 +84,9 @@
                 </li>
                 <li>
                     <div
-                        class="{{ request()->is('finance/paket/harga') ? 'bg-white text-orange-500' : 'text-white' }} rounded-md">
+                        class="{{ request()->is('finance/paket/harga') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                         <a href="{{ route('finance.paket-harga') }}"
-                            class="flex font-semibold items-center gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="21" viewBox="0 0 24 24"
                                 fill="currentColor" class="-ml-1 transition-colors duration-300">
                                 <path
@@ -98,9 +98,9 @@
                 </li>
                 <li>
                     <div
-                        class="{{ request()->is('finance/omset') ? 'bg-white text-orange-500' : 'text-white' }} rounded-md">
+                        class="{{ request()->is('finance/omset') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                         <a href="{{ route('finance.omset') }}"
-                            class="flex  font-semibold items-center gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex  font-semibold items-center gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor" class="-ml-1"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path fill-rule="evenodd" clip-rule="evenodd"
@@ -117,9 +117,9 @@
                 </li>
                 <li>
                     <div
-                        class="{{ request()->is('finance/laporan/transaksi') ? 'bg-white text-orange-500' : 'text-white' }} rounded-md">
+                        class="{{ request()->is('finance/laporan/transaksi') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                         <a href="{{ route('finance.catatan') }}"
-                            class="flex font-semibold items-center gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor" class="-ml-1"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -139,9 +139,9 @@
                 </li>
                 <li>
                     <div
-                        class="{{ request()->is('finance/laporan') ? 'bg-white text-orange-500' : 'text-white' }} rounded-md">
+                        class="{{ request()->is('finance/laporan') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
                         <a href="{{ route('finance.laporan') }}"
-                            class="flex font-semibold items-center gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="23" viewBox="0 0 20 23" fill="none" class="-ml-1"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -194,7 +194,7 @@
                 <form action="{{ route('logout_finance') }}" method="POST">
                     @csrf
                     <button id="goLogin"
-                        class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md font-medium">
+                        class="bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md font-medium">
                         Keluar
                     </button>
                 </form>

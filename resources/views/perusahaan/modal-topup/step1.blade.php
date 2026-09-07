@@ -1,7 +1,7 @@
- <!-- ================= MODAL STEP 1 ================= -->
+﻿ <!-- ================= MODAL STEP 1 ================= -->
     <div id="modalStep1" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative p-6 max-h-[80vh] overflow-y-auto">
-            <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">✕</button>
+            <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
             <h2 class="text-lg font-semibold mb-4">Top Up Koin</h2>
             <div class="grid grid-cols-3 gap-4">
                 @foreach ($hargaPembayarans as $paket)
@@ -23,7 +23,7 @@
                         </div>
 
                         <!-- Bagian harga -->
-                        <div class="w-full bg-orange-500 text-white text-center py-2 font-semibold">
+                        <div class="w-full bg-[#00509d] text-white text-center py-2 font-semibold">
                             Rp. {{ number_format($paket->harga, 0, ',', '.') }}
                         </div>
                     </label>
@@ -31,9 +31,10 @@
             </div>
 
             <div class="flex justify-center mt-6">
-                <button id="btnConfirmStep1" onclick="goToStep(2)" class="px-6 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-md transition">
+                <button id="btnConfirmStep1" onclick="goToStep(2)" class="px-6 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-md transition">
                     Konfirmasi
                 </button>
             </div>
         </div>
     </div>
+

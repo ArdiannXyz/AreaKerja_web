@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 
 @section('content')
     <!-- Judul di luar border -->
@@ -65,16 +65,16 @@
             <!-- Footer Logo -->
             <div class="flex flex-col items-center mt-10">
                 <img src="{{ asset('images/logoarea.png') }}" alt="logoarea" class="w-16 mb-1" />
-                <p class="text-xs text-gray-500">Copyright©2024 areakerja.com</p>
+                <p class="text-xs text-gray-500">CopyrightÂ©2024 areakerja.com</p>
             </div>
 
             <!-- Tombol -->
             <div class="flex justify-center gap-2 mt-6 sm:flex-col sm:w-full sm:gap-3 sm:items-center">
                 <a href="{{ route('pelamar.konfirmasi', $data->id) }}"
-                    class="px-7 py-1 bg-orange-500 text-white rounded-lg hover:bg-orange-600">Kembali</a>
+                    class="px-7 py-1 bg-[#00509d] text-white rounded-lg hover:bg-[#003d7a]">Kembali</a>
                 <form action="{{ route('pelamar.konfirmasi.kirim', $data->id) }}" method="POST">
                     @csrf
-                    <button type="submit" class="px-7 py-1 bg-orange-500 text-white rounded-lg hover:bg-orange-600">
+                    <button type="submit" class="px-7 py-1 bg-[#00509d] text-white rounded-lg hover:bg-[#003d7a]">
                         Kirim
                     </button>
                 </form>
@@ -85,3 +85,4 @@
 
     @include('layouts.footer')
 @endsection
+

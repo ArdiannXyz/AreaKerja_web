@@ -44,7 +44,7 @@
             margin-bottom: 1rem;
         }
 
-        /* LIST — supaya BULLET hitam muncul */
+        /* LIST â€” supaya BULLET hitam muncul */
         .tinymce-content ul,
         .tinymce-content ul li {
             list-style-type: disc !important;
@@ -103,7 +103,7 @@
 <body>
     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
         type="button"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 hover:text-white rounded-lg md:hidden hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:text-gray-400 dark:hover:bg-orange-500 dark:focus:ring-orange-400 transition duration-300">
+        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 hover:text-white rounded-lg md:hidden hover:bg-[#00509d] focus:outline-none focus:ring-2 focus:ring-[#00509d] dark:text-gray-400 dark:hover:bg-[#00509d] dark:focus:ring-[#00509d] transition duration-300">
         <span class="sr-only">Open sidebar</span>
         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg">
@@ -118,10 +118,10 @@
         <aside id="logo-sidebar"
             class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"
             aria-label="Sidebar">
-            <div class="min-h-screen w-64 bg-orange-600 text-white overflow-y-auto">
+            <div class="min-h-screen w-64 bg-[#00509d] text-white overflow-y-auto">
                 <!-- Logo -->
                 <div class="px-4 py-2">
-                    <div class="inline-flex items-center gap-1 border-b-2 border-orange-300">
+                    <div class="inline-flex items-center gap-1 border-b-2 border-blue-300">
                         <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-14 h-14">
                         <p class="text-xl font-semibold">areakerja.com</p>
                     </div>
@@ -131,9 +131,9 @@
                 <nav class="flex-1 px-4 text-sm">
                     <div class="font-bold mb-3 ml-3">Umum</div>
                     <div
-                        class="{{ request()->is('super_admin/dashboard') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/dashboard') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.dashboard') }}"
-                            class="flex font-semibold items-center mb-4 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-4 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="15" height="16" viewBox="0 0 15 16" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -146,9 +146,9 @@
 
                     <div class="font-bold ml-3 mb-3">Super Admin</div>
                     <div
-                        class="{{ request()->is('super_admin/pelamar') || request()->is('super_admin/pelamar/tambah/kandidat') || request()->is('super_admin/kandidat/1') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/pelamar') || request()->is('super_admin/pelamar/tambah/kandidat') || request()->is('super_admin/kandidat/1') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.pelamar') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -162,9 +162,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/perusahaan') || request()->is('super_admin/tambah/perusahaan') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/perusahaan') || request()->is('super_admin/tambah/perusahaan') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href={{ route('superadmin.perusahaan') }}
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -181,9 +181,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/paket/harga') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/paket/harga') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.paket-harga') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" fill="none"
                                 viewBox="0 0 20 21" stroke="currentColor" stroke-width="2" class="text-inherit">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -193,9 +193,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/freeze') || request()->is('super_admin/detail/freeze') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/freeze') || request()->is('super_admin/detail/freeze') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.freeze') }}"
-                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="14" height="17" viewBox="0 0 14 17" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -206,9 +206,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/tips/kerja') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/tips/kerja') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="/super_admin/tips/kerja"
-                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -219,9 +219,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/event') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/event') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="/super_admin/event"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -233,18 +233,18 @@
                     </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Lowongan</div>
                     <div
-                        class="{{ request()->is('super_admin/manajemen/lowongan/gold') ||  request()->is('super_admin/manajemen/lowongan/silver') ||  request()->is('super_admin/manajemen/lowongan/bronze') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/manajemen/lowongan/gold') ||  request()->is('super_admin/manajemen/lowongan/silver') ||  request()->is('super_admin/manajemen/lowongan/bronze') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.manajemen.lowongan.gold') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-1 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-1 transition duration-300">
                             <i class="ph ph-wrench text-2xl"></i>
                             Setting Lowongan
                         </a>
                     </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Akun</div>
                     <div
-                        class="{{ request()->is('super_admin/add/user') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/add/user') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.add.user') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -255,17 +255,17 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/email-subs') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/email-subs') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.email-subs.index') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <i class="ph ph-envelope"></i>
                             Email
                         </a>
                     </div>
                     <div
-                        class=" {{ request()->is('super_admin/social-links') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class=" {{ request()->is('super_admin/social-links') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.social.index') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -276,9 +276,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/pengaturan') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/pengaturan') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="/super_admin/pengaturan"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -326,7 +326,7 @@
                     <form action="{{ route('logout_superadmin') }}" method="POST">
                         @csrf
                         <button id="goLogin"
-                            class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md font-medium">
+                            class="bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md font-medium">
                             Keluar
                         </button>
                     </form>
@@ -380,14 +380,14 @@
                 modal.classList.add("flex");
             });
 
-            // Tombol batal → tutup modal
+            // Tombol batal â†’ tutup modal
             function closeModal() {
                 let modal = document.getElementById("successModal");
                 modal.classList.remove("flex");
                 modal.classList.add("hidden");
             }
 
-            // Tombol "Keluar" di modal → submit form logout
+            // Tombol "Keluar" di modal â†’ submit form logout
             document.getElementById("goLogin").addEventListener("click", function() {
                 document.getElementById("logout_admin").submit();
             });
@@ -400,3 +400,4 @@
 </body>
 
 </html>
+

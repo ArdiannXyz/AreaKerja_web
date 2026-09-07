@@ -1,4 +1,4 @@
-@extends('layouts.index')
+﻿@extends('layouts.index')
 @section('content')
     <!-- Hero Section -->
     <div class="relative">
@@ -45,7 +45,7 @@
                             </p>
                             <span
                                 class="inline-block mt-2 mr-2 bg-gray-200 text-gray-800 text-sm px-3 py-1 rounded-full font-medium">
-                                Rp. {{ number_format($t->lowonganPerusahaan->gaji_awal, 0, ',', '.') }} –
+                                Rp. {{ number_format($t->lowonganPerusahaan->gaji_awal, 0, ',', '.') }} â€“
                                 Rp. {{ number_format($t->lowonganPerusahaan->gaji_akhir, 0, ',', '.') }} / bulan
                             </span>
                         </div>
@@ -65,10 +65,11 @@
 
     <!-- Button at the Bottom -->
     <div class="flex justify-center my-8">
-        <button class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-md">
+        <button class="bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold py-2 px-6 rounded-md">
             Memuat
         </button>
     </div>
 
     @include('layouts.footer')
 @endsection
+

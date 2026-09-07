@@ -24,7 +24,7 @@
                     @if ($img)
                         <img src="{{ asset('storage/' . $img) }}" class="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover">
                     @else
-                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->username) }}&background=random&color=fff&size=128"
+                        <img src="https://ui-avatars.com/api/?name={{ urlencode($user->username) }}&background=00509d&color=fff&size=128"
                             class="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover">
                     @endif
                 </div>

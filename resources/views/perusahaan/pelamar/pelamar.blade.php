@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <section class="relative">
         @php
@@ -64,7 +64,7 @@
                 </div>
 
 
-                <!-- TABEL PELAMAR — dibungkus agar responsif -->
+                <!-- TABEL PELAMAR â€” dibungkus agar responsif -->
                 <div class="bg-white rounded-xl shadow overflow-hidden border w-full">
 
                     <div class="overflow-x-auto w-full">
@@ -94,7 +94,7 @@
                                                 <div class="flex justify-center items-center">
                                                     <button onclick="openConfirmModal({{ $p->pelamar->id }})" title="Unduh CV">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
-                                                            class="w-6 h-6 text-orange-500 hover:text-orange-600 transition" fill="currentColor"
+                                                            class="w-6 h-6 text-[#00509d] hover:text-[#003d7a] transition" fill="currentColor"
                                                             viewBox="0 0 24 24">
                                                             <path d="M12 3v12l4-4h-3V3h-2v8H8l4 4zM4 19h16v2H4z" />
                                                         </svg>
@@ -105,11 +105,11 @@
                                             <td class="px-4 py-4 whitespace-nowrap">
                                                 @if ($p->status === 'diterima')
                                                     <span class="px-3 py-1 bg-emerald-100 text-emerald-700 font-extrabold text-xs rounded-full border border-emerald-200">
-                                                        ✓ Diterima
+                                                        âœ“ Diterima
                                                     </span>
                                                 @elseif ($p->status === 'ditolak')
                                                     <span class="px-3 py-1 bg-rose-100 text-rose-700 font-extrabold text-xs rounded-full border border-rose-200">
-                                                        ✕ Ditolak
+                                                        âœ• Ditolak
                                                     </span>
                                                 @else
                                                     <a href="{{ route('pelamar.konfirmasi', $p->id) }}"
@@ -141,7 +141,7 @@
 
                 <!-- Icon -->
                 <div class="flex justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500 mb-4" fill="currentColor"
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d] mb-4" fill="currentColor"
                         viewBox="0 0 24 24">
                         <path d="M12 16l4-5h-3V4h-2v7H8l4 5zM4 20h16v2H4z" />
                     </svg>
@@ -154,7 +154,7 @@
 
                 <!-- Tombol -->
                 <div class="flex flex-col sm:flex-row justify-center gap-3">
-                    <button onclick="downloadCV()" class="px-4 py-2 bg-orange-500 text-white rounded w-full sm:w-auto">
+                    <button onclick="downloadCV()" class="px-4 py-2 bg-[#00509d] text-white rounded w-full sm:w-auto">
                         Unduh
                     </button>
 
@@ -173,8 +173,8 @@
             <div class="bg-white p-5 md:p-6 rounded-lg text-center w-full max-w-sm break-words">
 
                 <div class="flex justify-center">
-                    <div class="bg-orange-100 p-4 rounded-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-orange-500" fill="none"
+                    <div class="bg-blue-100 p-4 rounded-full">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -187,7 +187,7 @@
 
                 <div class="mt-4">
                     <button onclick="closeSuccessModal()"
-                        class="px-4 py-2 bg-orange-500 text-white rounded w-full sm:w-auto">
+                        class="px-4 py-2 bg-[#00509d] text-white rounded w-full sm:w-auto">
                         Tutup
                     </button>
                 </div>
@@ -273,3 +273,4 @@
         </script>
         @include('layouts.footer')
     @endsection
+

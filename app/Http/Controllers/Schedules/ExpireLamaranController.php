@@ -28,6 +28,9 @@ class ExpireLamaranController extends Controller
             $pid    = $lam->id;
             $userId = $lam->pelamar->user_id ?? null;
 
+            // Update status lamaran menjadi 'expired' agar UI mencerminkan kondisi sebenarnya
+            $lam->update(['status' => 'expired']);
+
             Notifikasi::where('pelamar_lowongan_id', $pid)
                 ->whereRaw('LOWER(judul) LIKE ?', ['%diterima%'])
                 ->delete();

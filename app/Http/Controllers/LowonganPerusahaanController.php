@@ -180,9 +180,12 @@ class LowonganPerusahaanController extends Controller
 
                 try {
                     CatatanKoin::create([
-                        'user_id'       => Auth::id(),
-                        'koin_terpakai' => $biayaKoin,
-                        'keterangan'    => 'Pembelian Paket ' . $paket->nama . ' untuk lowongan: ' . $valid['nama'],
+                        'user_id'    => Auth::id(),
+                        'no_referensi' => 'KN-' . strtoupper(uniqid()),
+                        'pesanan'    => 'Pembelian Paket ' . $paket->nama . ' untuk lowongan: ' . $valid['nama'],
+                        'dari'       => 'Perusahaan',
+                        'sumber_dana' => 'Koin Perusahaan',
+                        'total'      => -$biayaKoin,
                     ]);
                 } catch (\Throwable $e) {
                     // ignore

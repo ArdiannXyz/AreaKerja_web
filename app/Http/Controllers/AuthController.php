@@ -17,6 +17,12 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * @deprecated Method ini tidak dipakai oleh route manapun.
+     * Route login yang aktif adalah POST /loginproses → loginproses().
+     * Method ini tidak memiliki session regenerate, status check, maupun remember-me.
+     * Tidak dihapus untuk menghindari breaking change jika ada view lama yang masih merujuk ke sini.
+     */
     public function masuk(Request $request)
     {
         $valid = $request->validate([

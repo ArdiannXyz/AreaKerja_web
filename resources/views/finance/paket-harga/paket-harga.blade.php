@@ -83,7 +83,7 @@
                                     src="{{ asset('storage/' . Auth::user()->avatar) }}">
                             @else
                                 <img class="w-9 h-9 md:w-10 md:h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Finance') }}&background=random&color=fff&size=128">
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Finance') }}&background=00509d&color=fff&size=128">
                             @endif
                         </a>
 

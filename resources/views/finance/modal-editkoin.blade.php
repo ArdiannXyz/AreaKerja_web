@@ -1,4 +1,4 @@
-<!-- Modal -->
+﻿<!-- Modal -->
 <div id="koinModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50">
     <!-- Konten Modal -->
     <div class="relative bg-white rounded-2xl shadow-lg w-[90%] max-w-md p-8 text-center animate-fadeIn">
@@ -19,7 +19,7 @@
 
         <div class="border border-gray-300 rounded-2xl overflow-hidden w[500px] mb-4">
             {{-- header --}}
-            <div class="flex justify-between items-center bg-orange-500 text-white px-4 py-2">
+            <div class="flex justify-between items-center bg-[#00509d] text-white px-4 py-2">
                 <div class="flex-1 font-semibold">Nama</div>
                 <div class="font-semibold">Harga</div>
             </div>
@@ -42,7 +42,7 @@
 
         <!-- Tombol aksi -->
         <div class="flex justify-center gap-6">
-            <button type="submit" onclick="tutupModal()" class="text-white bg-orange-500 w-24 rounded-md font-medium">Selesai</button>
+            <button type="submit" onclick="tutupModal()" class="text-white bg-[#00509d] w-24 rounded-md font-medium">Selesai</button>
         </div>
     </div>
 </div>
@@ -78,3 +78,4 @@
         animation: fadeIn 0.3s ease-out;
     }
 </style>
+

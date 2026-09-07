@@ -1,4 +1,4 @@
-<!-- Modal Notifikasi -->
+﻿<!-- Modal Notifikasi -->
 <div x-data="notifHandler()" x-cloak x-show="openNotif" class="fixed inset-0 z-50 flex items-start justify-end p-4"
     @click.self="openNotif = false">
 
@@ -7,10 +7,10 @@
         <!-- Header -->
         <div class="flex items-center justify-between px-4 py-3 border-b bg-gray-50">
             <h2 class="font-semibold text-gray-800 text-base flex items-center gap-2">
-                <i class="ph ph-bell text-orange-500 text-lg"></i>
+                <i class="ph ph-bell text-[#00509d] text-lg"></i>
                 Notifikasi
             </h2>
-            <button @click="openNotif=false; openAllNotif=true" class="text-xs font-semibold text-orange-500 hover:text-orange-600 transition">
+            <button @click="openNotif=false; openAllNotif=true" class="text-xs font-semibold text-[#00509d] hover:text-[#003d7a] transition">
                 Lihat semua &rarr;
             </button>
         </div>
@@ -20,7 +20,7 @@
             @forelse($global_notifikasis as $notif)
                 <div data-id="{{ $notif->id }}"
                     @click="viewDetail({{ $notif->id }}, '{{ addslashes($notif->judul ?? 'Detail Notifikasi') }}', '{{ addslashes(str_replace(["\r", "\n"], ' ', $notif->pesan)) }}', '{{ $notif->created_at->diffForHumans() }}', '{{ route('notifikasi.baca', $notif->id) }}', $el)"
-                    class="notif-item cursor-pointer flex items-start gap-3 p-3.5 hover:bg-orange-50/60 transition {{ $notif->is_read ? 'bg-gray-50/70 text-gray-600' : 'bg-white font-medium text-gray-900' }}">
+                    class="notif-item cursor-pointer flex items-start gap-3 p-3.5 hover:bg-blue-50/60 transition {{ $notif->is_read ? 'bg-gray-50/70 text-gray-600' : 'bg-white font-medium text-gray-900' }}">
 
                     <!-- Pesan & Judul -->
                     <div class="flex-1 min-w-0">
@@ -66,3 +66,4 @@
         </div>
     </div>
 </div>
+

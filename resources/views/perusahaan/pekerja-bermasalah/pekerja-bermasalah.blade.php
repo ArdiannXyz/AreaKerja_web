@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <!DOCTYPE html>
     <html lang="en">
@@ -15,14 +15,14 @@
         <!-- Header Buttons -->
         <div class="flex justify-between items-center px-8 py-4 mt-16">
             <!-- <a href="{{ route('perusahaan.data.pekerja') }}"
-                class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg text-sm">
+                class="flex items-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-lg text-sm">
                 <svg width="8" height="15" viewBox="0 0 8 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M6.92187 13.3327L1.08854 7.49935L6.92188 1.66602" stroke="white" stroke-width="2"
                         stroke-linecap="round" stroke-linejoin="round" />
                 </svg>
                 Kembali
             </a> -->
-            <span class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-3 rounded-xl text-sm font-semibold mx-auto">
+            <span class="bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-3 rounded-xl text-sm font-semibold mx-auto">
                 List Pekerja Bermasalah
             </span>
             
@@ -69,7 +69,7 @@
         <!-- Footer Button -->
         <div class="flex justify-end items-center px-6 py-5">
             <button id="BtnList"
-                class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-lg text-sm font-medium mr-4">
+                class="bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-2 rounded-lg text-sm font-medium mr-4">
                 Kirim Permintaan
             </button>
         </div><br>
@@ -109,3 +109,4 @@
     </script>
     @include('layouts.footer')
 @endsection
+

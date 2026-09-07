@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+﻿    <!DOCTYPE html>
     <html lang="id">
 
     <head>
@@ -8,7 +8,7 @@
 
     <body style="font-family: Arial, sans-serif; background:#f7f7f7; padding:20px;">
         <div style="max-width:600px;margin:auto;background:#fff;border-radius:8px;padding:20px;">
-            <h2 style="color:#f97316;">Langganan Baru Dikonfirmasi ✅</h2>
+            <h2 style="color:#00509d;">Langganan Baru Dikonfirmasi âœ…</h2>
             <p>Halo Admin,</p>
             <p>Ada perusahaan yang baru saja berlangganan di <strong>Areakerja.com</strong>.</p>
 
@@ -43,3 +43,4 @@
     </body>
 
     </html>
+

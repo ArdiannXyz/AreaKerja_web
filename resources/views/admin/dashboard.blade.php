@@ -1,4 +1,4 @@
-@extends('admin.sidebar.index')
+﻿@extends('admin.sidebar.index')
 @section('sidebaradmin')
     <div class="p-4 sm:p-6 sm:ml-64 bg-slate-50 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
@@ -6,14 +6,14 @@
         <header class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
             <div>
                 <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                    <i class="ph ph-squares-four text-orange-500 text-2xl"></i> Dashboard Overview
+                    <i class="ph ph-squares-four text-[#00509d] text-2xl"></i> Dashboard Overview
                 </h1>
-                <p class="text-xs font-semibold text-slate-500 mt-1">Selamat datang kembali, <span class="text-orange-600 font-bold">{{ Auth::user()->username }}</span>! Berikut ringkasan aktivitas sistem hari ini.</p>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Selamat datang kembali, <span class="text-[#003d7a] font-bold">{{ Auth::user()->username }}</span>! Berikut ringkasan aktivitas sistem hari ini.</p>
             </div>
 
             <div class="flex items-center gap-4 w-full md:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
-                <button @click="openNotif = true" class="relative p-2.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 rounded-xl text-slate-600 transition shadow-xs">
+                <button @click="openNotif = true" class="relative p-2.5 bg-slate-100 hover:bg-blue-50 hover:text-[#003d7a] rounded-xl text-slate-600 transition shadow-xs">
                     <i class="ph ph-bell text-xl"></i>
                     @if (isset($global_notifikasi_unread) && $global_notifikasi_unread > 0)
                         <span id="notif-badge" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white">
@@ -35,7 +35,7 @@
                     <div class="text-left">
                         <div class="flex items-center gap-1.5">
                             <span class="font-extrabold text-slate-800 text-xs leading-tight">{{ Auth::user()->username }}</span>
-                            <span class="bg-orange-100 text-orange-700 text-[10px] font-extrabold px-1.5 py-0.2 rounded-md">Admin</span>
+                            <span class="bg-blue-100 text-[#003d7a] text-[10px] font-extrabold px-1.5 py-0.2 rounded-md">Admin</span>
                         </div>
                         <p class="text-slate-500 text-[11px] leading-tight mt-0.5">{{ Auth::user()->email }}</p>
                     </div>
@@ -104,7 +104,7 @@
                         <h3 class="text-base font-extrabold text-slate-900">Lowongan Terbaru Terbit</h3>
                         <p class="text-xs text-slate-500 font-medium">Data lowongan kerja yang baru saja terpasang</p>
                     </div>
-                    <a href="{{ route('admin.perusahaan') }}" class="text-xs font-bold text-orange-600 hover:text-orange-700 flex items-center gap-1">
+                    <a href="{{ route('admin.perusahaan') }}" class="text-xs font-bold text-[#003d7a] hover:text-[#003d7a] flex items-center gap-1">
                         Lihat Semua <i class="ph ph-arrow-right"></i>
                     </a>
                 </div>
@@ -136,11 +136,11 @@
                                     <td class="px-4 py-3">
                                         @if (($lowongan->status ?? 'buka') === 'tutup')
                                             <span class="px-2.5 py-0.5 bg-rose-100 text-rose-700 font-bold rounded-full text-[10px]">
-                                                🔒 Ditutup
+                                                ðŸ”’ Ditutup
                                             </span>
                                         @else
                                             <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded-full text-[10px]">
-                                                🟢 Aktif
+                                                ðŸŸ¢ Aktif
                                             </span>
                                         @endif
                                     </td>
@@ -193,3 +193,4 @@
 
     </div>
 @endsection
+

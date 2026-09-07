@@ -12,10 +12,12 @@ export default {
                 poppins: ['Poppins', 'sans-serif'],
             },
             colors: {
-                orange: {
-                    500: '#FF6600',
-                    600: '#E65C00',
-                }
+                brand: {
+                    DEFAULT: '#00509d',
+                    hover: '#003d7a',
+                    bg: '#0054a6',
+                    light: '#e8f1fb',
+                },
             }
         },
     },

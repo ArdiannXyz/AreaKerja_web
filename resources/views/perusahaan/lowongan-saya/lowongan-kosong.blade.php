@@ -13,12 +13,12 @@
                                     src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
                             @else
                                 <img id="pu" class="w-20 h-20 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                     alt="">
                             @endif
                         @else
                             <img class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                         <div>
@@ -42,14 +42,14 @@
             <div class="flex items-center gap-2.5 flex-wrap">
                 <!-- Tombol Tambah Lowongan -->
                 <a href="{{ route('lowongan.create.form') }}"
-                    class="h-10 bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap text-sm">
+                    class="h-10 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold px-4 rounded-xl transition shadow-xs flex items-center justify-center gap-1.5 whitespace-nowrap text-sm">
                     <i class="ph ph-plus text-base font-bold"></i> Tambah Lowongan
                 </a>
 
                 <!-- Trigger Boost -->
                 <div class="relative group">
                     <button id="openBoostBtn"
-                        class="h-10 bg-orange-500 hover:bg-orange-600 text-white px-4 rounded-xl text-sm font-bold shadow-xs flex items-center gap-1.5 transition">
+                        class="h-10 bg-[#00509d] hover:bg-[#003d7a] text-white px-4 rounded-xl text-sm font-bold shadow-xs flex items-center gap-1.5 transition">
                         <i class="ph ph-rocket-launch text-base"></i> Boost Lowongan
                     </button>
 
@@ -64,7 +64,7 @@
             <!-- Form Filter -->
             <form method="GET" class="flex items-center gap-2.5 flex-wrap">
                 <select name="paket"
-                    class="h-10 bg-white border border-slate-300 rounded-xl text-sm px-3 text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400">
+                    class="h-10 bg-white border border-slate-300 rounded-xl text-sm px-3 text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Jenis Paket</option>
                     @foreach ($pakets as $paket)
                         <option value="{{ $paket->id }}" {{ request('paket') == $paket->id ? 'selected' : '' }}>
@@ -74,7 +74,7 @@
                 </select>
 
                 <select name="jenis"
-                    class="h-10 bg-white border border-slate-300 rounded-xl text-sm px-3 text-slate-700 focus:outline-none focus:ring-1 focus:ring-orange-400">
+                    class="h-10 bg-white border border-slate-300 rounded-xl text-sm px-3 text-slate-700 focus:outline-none focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Jenis Lowongan</option>
                     @foreach ($jenisLowongan as $jenis)
                         <option value="{{ $jenis }}" {{ request('jenis') == $jenis ? 'selected' : '' }}>
@@ -83,7 +83,7 @@
                     @endforeach
                 </select>
 
-                <button type="submit" class="h-10 bg-orange-500 hover:bg-orange-600 text-white px-4 text-sm font-bold rounded-xl shadow-xs transition flex items-center gap-1">
+                <button type="submit" class="h-10 bg-[#00509d] hover:bg-[#003d7a] text-white px-4 text-sm font-bold rounded-xl shadow-xs transition flex items-center gap-1">
                     <i class="ph ph-funnel text-base"></i> Filter
                 </button>
 
@@ -98,11 +98,11 @@
         <div id="boostModal"
             class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-                <button id="closeBoostBtn" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">✕</button>
+                <button id="closeBoostBtn" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">âœ•</button>
                 <h2 class="text-xl font-bold mb-4 text-slate-800">Boost Lowongan</h2>
 
                 <label class="block font-semibold mb-2 text-sm text-slate-700">Pilih Lowongan</label>
-                <select id="lowonganSelect" class="w-full border border-slate-300 p-2.5 rounded-xl text-sm focus:ring-1 focus:ring-orange-400 outline-none">
+                <select id="lowonganSelect" class="w-full border border-slate-300 p-2.5 rounded-xl text-sm focus:ring-1 focus:ring-[#00509d] outline-none">
                     @foreach ($lowongans as $l)
                         @if ($l->published_at)
                             <option value="{{ $l->id }}">{{ $l->nama }}</option>
@@ -111,7 +111,7 @@
                 </select>
 
                 <button onclick="showConfirmBoost()"
-                    class="bg-orange-500 hover:bg-orange-600 text-white font-bold px-4 py-2.5 rounded-xl mt-5 w-full shadow-xs transition">
+                    class="bg-[#00509d] hover:bg-[#003d7a] text-white font-bold px-4 py-2.5 rounded-xl mt-5 w-full shadow-xs transition">
                     Boost Sekarang
                 </button>
             </div>
@@ -135,18 +135,18 @@
                                         <p class="text-xs font-semibold text-slate-500">{{ Auth::user()->perusahaan->nama_perusahaan }}</p>
                                         @if ($d->status === 'tutup')
                                             <span class="px-2.5 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200">
-                                                🔒 Pendaftaran Ditutup (Kuota Terpenuhi)
+                                                ðŸ”’ Pendaftaran Ditutup (Kuota Terpenuhi)
                                             </span>
                                         @else
                                             <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
-                                                🟢 Aktif (Menerima Pelamar)
+                                                ðŸŸ¢ Aktif (Menerima Pelamar)
                                             </span>
                                         @endif
                                     </div>
-                                    <a href="{{ route('lowongan.detail', ['perusahaan' => $d->perusahaan->slug, 'lowongan' => $d->slug]) }}" class="hover:text-orange-600 transition">
+                                    <a href="{{ route('lowongan.detail', ['perusahaan' => $d->perusahaan->slug, 'lowongan' => $d->slug]) }}" class="hover:text-[#003d7a] transition">
                                         <h1 class="font-extrabold text-lg text-slate-900 leading-snug">{{ $d->nama }} - <span class="text-slate-600 text-base font-medium">{{ $d->jenis }}</span></h1>
                                     </a>
-                                    <p class="text-xs text-slate-400 mt-0.5"><i class="ph ph-map-pin text-orange-500"></i> {{ $d->alamat ?? 'Yogyakarta' }}</p>
+                                    <p class="text-xs text-slate-400 mt-0.5"><i class="ph ph-map-pin text-[#00509d]"></i> {{ $d->alamat ?? 'Yogyakarta' }}</p>
                                 </div>
                             </div>
 
@@ -190,7 +190,7 @@
                         </div>
                     </div>
 
-                    <!-- 🔹 Script Countdown per Lowongan -->
+                    <!-- ðŸ”¹ Script Countdown per Lowongan -->
                     <script>
                         document.addEventListener('DOMContentLoaded', function() {
                             const countdownEl = document.getElementById('countdown-{{ $d->id }}');
@@ -219,7 +219,7 @@
                     @if ($d->expired_at && $d->expired_at < now())
                         <!-- Tombol Publish Ulang -->
                         <button type="button"
-                            class="block mt-3 pl-0 lg:pl-10 md:pl-10 bg-orange-500 px-10 py-2 text-center rounded-md text-white hover:bg-orange-600 transition"
+                            class="block mt-3 pl-0 lg:pl-10 md:pl-10 bg-[#00509d] px-10 py-2 text-center rounded-md text-white hover:bg-[#003d7a] transition"
                             data-modal-target="modal-expired-{{ $d->id }}"
                             data-modal-toggle="modal-expired-{{ $d->id }}">
                             Publish Ulang
@@ -238,7 +238,7 @@
                                 <div class="flex justify-center gap-4">
                                     <!-- Tombol ke Halaman Pembelian Paket -->
                                     <a href="{{ route('paket.form') }}"
-                                        class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md transition">
+                                        class="bg-[#00509d] hover:bg-[#003d7a] text-white px-4 py-2 rounded-md transition">
                                         Beli Paket Baru
                                     </a>
 
@@ -254,7 +254,7 @@
                 @else
                     <!-- Card Draft / Non Publish -->
                     <div class="flex justify-between items-end text-center gap-3 my-5">
-                        <h3 class="font-semibold text-lg text-center text-orange-500">Lowongan Draft</h3>
+                        <h3 class="font-semibold text-lg text-center text-[#00509d]">Lowongan Draft</h3>
                     </div>
                     <div
                         class="flex shadow-md p-4 border rounded-md mb-2 hover:shadow-lg hover:scale-105 transition-all duration-500">
@@ -282,7 +282,7 @@
                                 </div>
                             </a>
                             <button type="button"
-                                class="publish-btn block mt-5 bg-orange-500 px-10 py-2 rounded-md text-white hover:bg-orange-600 transition"
+                                class="publish-btn block mt-5 bg-[#00509d] px-10 py-2 rounded-md text-white hover:bg-[#003d7a] transition"
                                 data-id="{{ $d->id }}">
                                 Publish
                             </button>
@@ -316,7 +316,7 @@
             @endforelse
         </div>
         <div class="flex justify-center mt-8">
-            {{-- <button class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-lg shadow">
+            {{-- <button class="bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-2 rounded-lg shadow">
                 Memuat
             </button> --}}
         </div>
@@ -334,12 +334,12 @@
                                 src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-20 h-20 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     @else
                         <img class="w-10 h-10 rounded-full"
-                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                             alt="">
                     @endif
                     <div>
@@ -355,7 +355,7 @@
                 <!-- Tombol tambah -->
                 <div class="hidden md:block">
                     <a href="{{ route('lowongan.create.form') }}"
-                        class="absolute h-16 w-16 border border-orange-500 rounded-md flex items-center justify-center text-orange-500 hover:bg-orange-50">
+                        class="absolute h-16 w-16 border border-[#00509d] rounded-md flex items-center justify-center text-[#00509d] hover:bg-blue-50">
                         <i class="ph ph-plus text-md"></i>
                     </a>
                 </div>
@@ -379,7 +379,7 @@
         <div class="border rounded-xl p-6 min-h-[400px] flex flex-col items-center justify-center relative">
             <!-- Tombol Tambah -->
             <a href="{{ route('lowongan.create.form') }}"
-                class="absolute top-4 left-4 w-10 h-10 flex items-center justify-center border-2 border-orange-500 rounded-md text-orange-500 text-2xl">
+                class="absolute top-4 left-4 w-10 h-10 flex items-center justify-center border-2 border-[#00509d] rounded-md text-[#00509d] text-2xl">
                 +
             </a>
 
@@ -420,7 +420,7 @@
                 @csrf
                 <div class="mt-4 flex justify-end gap-3">
                     <button type="button" id="closeModal" class="px-4 py-2 border rounded-md">Batal</button>
-                    <button type="submit" class="px-4 py-2 bg-orange-500 text-white rounded-md">Ya, Publish</button>
+                    <button type="submit" class="px-4 py-2 bg-[#00509d] text-white rounded-md">Ya, Publish</button>
                 </div>
             </form>
         </div>
@@ -439,7 +439,7 @@
 
             <p class="text-gray-600 mb-5">
                 Anda akan menggunakan
-                <span class="font-bold text-orange-500">
+                <span class="font-bold text-[#00509d]">
                     {{ number_format($hargaBoost) }} koin
                 </span>
                 untuk melakukan boost lowongan ini
@@ -452,7 +452,7 @@
                 </button>
 
                 <button onclick="processBoost()"
-                    class="px-4 py-2 rounded-lg bg-orange-500 text-white hover:bg-orange-600 w-full sm:w-auto">
+                    class="px-4 py-2 rounded-lg bg-[#00509d] text-white hover:bg-[#003d7a] w-full sm:w-auto">
                     Ya, Boost Sekarang
                 </button>
             </div>
@@ -481,7 +481,7 @@
                     Tutup
                 </button>
 
-                {{-- <button onclick="goToTopup()" class="px-4 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">
+                {{-- <button onclick="goToTopup()" class="px-4 py-2 bg-[#00509d] text-white rounded-md hover:bg-[#003d7a]">
                     Top Up Sekarang
                 </button> --}}
             </div>
@@ -709,7 +709,7 @@
                     // re-expose to global name in case it was shadowed
                     window.closeModal = window.closeModal;
                 } else {
-                    console.warn('[guardNamingCollisions] window.closeModal missing — modal helpers may not work');
+                    console.warn('[guardNamingCollisions] window.closeModal missing â€” modal helpers may not work');
                 }
             }
         })();
@@ -738,3 +738,4 @@
 
 
 @endsection
+

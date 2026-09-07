@@ -138,7 +138,7 @@ class PembeliKandidatController extends Controller
         $lowonganModel = $lowonganModel->with('perusahaan')->first();
 
         if (!$lowonganModel) {
-            $lowonganModel = LowonganPerusahaan::with('perusahaan')->first();
+            abort(404, 'Lowongan tidak ditemukan.');
         }
 
         $tawaran = null;

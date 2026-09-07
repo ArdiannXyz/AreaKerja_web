@@ -22,7 +22,7 @@
                                     src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
                             @else
                                 <img id="pu" class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=random&color=fff&size=128">
+                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=00509d&color=fff&size=128">
                             @endif
                         </a>
 

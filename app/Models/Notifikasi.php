@@ -14,10 +14,11 @@ class Notifikasi extends Model
         'user_id',
         'perusahaan_id',
         'pelamar_lowongan_id',
+        'lowongan_id',
         'judul',
         'pesan',
+        'is_read',
         'expired_at',
-        // 'is_read' → TIDAK dimasukkan, hanya boleh diubah via endpoint tandai-dibaca
     ];
 
 

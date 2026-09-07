@@ -40,7 +40,7 @@
                                 src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
                         @else
                             <img id="pu" class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'SuperAdmin') }}&background=random&color=fff&size=128"
+                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'SuperAdmin') }}&background=00509d&color=fff&size=128"
                                 alt="">
                         @endif
                     </a>
@@ -106,7 +106,7 @@
                 <!-- Header -->
                 <div class="flex items-center justify-between px-3 sm:px-4 py-3 border-b">
                     <h2 class="font-semibold text-sm sm:text-lg">Notifikasi</h2>
-                    <button @click="openNotif=false; openAllNotif=true" class="text-xs sm:text-sm text-orange-500">
+                    <button @click="openNotif=false; openAllNotif=true" class="text-xs sm:text-sm text-[#00509d]">
                         Lihat semua
                     </button>
                 </div>
@@ -206,7 +206,7 @@
                 <!-- Footer -->
                 <div class="p-3 border-t flex justify-between items-center">
 
-                    <button @click="hapusSemuaBaca()" class="text-xs sm:text-sm text-orange-600 hover:underline">
+                    <button @click="hapusSemuaBaca()" class="text-xs sm:text-sm text-[#003d7a] hover:underline">
                         Hapus Semua Dibaca
                     </button>
 
@@ -344,3 +344,4 @@
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
 @endsection
+

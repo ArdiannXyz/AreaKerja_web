@@ -26,6 +26,11 @@ class NotifyExpiredLowonganController extends Controller
 
         foreach ($lowongans as $l) {
 
+            // Lewati jika perusahaan tidak ditemukan (data corrupt)
+            if (!$l->perusahaan) {
+                continue;
+            }
+
             $notifExpiredAt = now()->addDays(3);
 
             $notif = Notifikasi::firstOrCreate(

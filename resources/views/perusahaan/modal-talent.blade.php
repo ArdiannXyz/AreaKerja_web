@@ -1,4 +1,4 @@
-<!-- Modal -->
+﻿<!-- Modal -->
 <div id="talentModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50">
     <!-- Konten Modal -->
     <div class="relative bg-white rounded-2xl shadow-lg w-[90%] max-w-md p-8 text-center animate-fadeIn">
@@ -19,7 +19,7 @@
         <!-- Tombol aksi -->
         <div class="flex justify-center gap-6">
             <a href="{{ url('/modal-topup') }}" onclick="toggleModal()"
-                class="text-orange-500 font-medium">Top Up</a>
+                class="text-[#00509d] font-medium">Top Up</a>
         </div>
     </div>
 </div>
@@ -55,3 +55,4 @@
         animation: fadeIn 0.3s ease-out;
     }
 </style>
+

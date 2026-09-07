@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-slate-50 min-h-screen text-slate-800 pt-28 pb-16" x-data="{ tab: '{{ request('tab', 'profil') }}' }">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
@@ -34,7 +34,7 @@
             <!-- 1. TOP HEADER BANNER CARD -->
             <div class="bg-white rounded-3xl shadow-sm border border-slate-200/90 p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="flex items-center gap-5">
-                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-orange-500/20 bg-slate-50 p-1 shrink-0 flex items-center justify-center shadow-sm relative group">
+                    <div class="w-20 h-20 rounded-2xl overflow-hidden border-2 border-[#00509d]/20 bg-slate-50 p-1 shrink-0 flex items-center justify-center shadow-sm relative group">
                         @if (Auth::user()->perusahaan->img_profile)
                             <img src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Logo" class="w-full h-full object-cover rounded-xl">
                         @else
@@ -47,14 +47,14 @@
                                 {{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}
                             </h1>
                             <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
-                                ✓ Terverifikasi
+                                âœ“ Terverifikasi
                             </span>
                         </div>
                         <p class="text-sm font-semibold text-slate-500 mt-1">
                             {{ Auth::user()->perusahaan->jenis_perusahaan ?? 'Sektor Usaha Belum Diatur' }}
                         </p>
                         <p class="text-xs text-slate-400 mt-1 flex items-center gap-1">
-                            <i class="ph ph-map-pin text-orange-500"></i>
+                            <i class="ph ph-map-pin text-[#00509d]"></i>
                             {{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? 'Lokasi Utama' }},
                             {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? 'Indonesia' }}
                         </p>
@@ -62,7 +62,7 @@
                 </div>
 
                 <div class="flex items-center gap-3 shrink-0">
-                    <a href="{{ route('profile.edit.perusahaan') }}" class="px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-extrabold rounded-xl shadow-sm transition text-sm flex items-center gap-2">
+                    <a href="{{ route('profile.edit.perusahaan') }}" class="px-5 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold rounded-xl shadow-sm transition text-sm flex items-center gap-2">
                         <i class="ph ph-pencil-simple text-base"></i> Edit Profil
                     </a>
                 </div>
@@ -73,19 +73,19 @@
                 <!-- Tab Headers -->
                 <div class="flex border-b border-slate-200 bg-slate-50/50 px-4 md:px-8 gap-2 md:gap-6 overflow-x-auto">
                     <button @click="tab = 'profil'"
-                        :class="tab === 'profil' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        :class="tab === 'profil' ? 'border-[#00509d] text-[#003d7a] font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
                         class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
                         <i class="ph ph-buildings text-lg"></i> Profil Perusahaan
                     </button>
 
                     <button @click="tab = 'alamat'"
-                        :class="tab === 'alamat' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        :class="tab === 'alamat' ? 'border-[#00509d] text-[#003d7a] font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
                         class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
                         <i class="ph ph-map-pin text-lg"></i> Alamat & Lokasi
                     </button>
 
                     <button @click="tab = 'keamanan'"
-                        :class="tab === 'keamanan' ? 'border-orange-500 text-orange-600 font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
+                        :class="tab === 'keamanan' ? 'border-[#00509d] text-[#003d7a] font-extrabold border-b-2' : 'border-transparent text-slate-500 hover:text-slate-800 font-bold'"
                         class="py-4 px-3 text-sm flex items-center gap-2 whitespace-nowrap transition">
                         <i class="ph ph-shield-check text-lg"></i> Keamanan & Akun
                     </button>
@@ -153,7 +153,7 @@
                                 <h3 class="text-base font-extrabold text-slate-900 mb-1">Daftar Alamat Perusahaan</h3>
                                 <p class="text-xs text-slate-500">Kelola lokasi kantor utama dan cabang perusahaan Anda.</p>
                             </div>
-                            <a href="{{ route('alamat.perusahaan') }}" class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition shadow-xs">
+                            <a href="{{ route('alamat.perusahaan') }}" class="px-4 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-xl text-xs transition shadow-xs">
                                 Kelola Alamat Lengkap
                             </a>
                         </div>
@@ -165,7 +165,7 @@
                         @if ($almtUtama && !empty($almtUtama->alamat_lengkap))
                             <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3">
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2.5 py-0.5 bg-orange-100 text-orange-700 text-xs font-extrabold rounded-full">
+                                    <span class="px-2.5 py-0.5 bg-blue-100 text-[#003d7a] text-xs font-extrabold rounded-full">
                                         Alamat Utama
                                     </span>
                                 </div>
@@ -180,14 +180,14 @@
                             </div>
                         @else
                             <div class="bg-slate-50 border border-dashed border-slate-300 rounded-2xl p-6 text-center space-y-3">
-                                <div class="w-12 h-12 mx-auto bg-orange-100 text-orange-600 rounded-full flex items-center justify-center">
+                                <div class="w-12 h-12 mx-auto bg-blue-100 text-[#003d7a] rounded-full flex items-center justify-center">
                                     <i class="ph ph-map-pin text-2xl"></i>
                                 </div>
                                 <div>
                                     <h4 class="text-sm font-bold text-slate-800">Alamat Utama Belum Diatur</h4>
                                     <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Silakan atur salah satu alamat kantor perusahaan Anda sebagai alamat utama agar dapat ditampilkan pada profil dan lowongan kerja.</p>
                                 </div>
-                                <a href="{{ route('alamat.perusahaan') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white font-bold rounded-xl text-xs transition shadow-xs mt-2">
+                                <a href="{{ route('alamat.perusahaan') }}" class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-xl text-xs transition shadow-xs mt-2">
                                     <i class="ph ph-plus-circle"></i>
                                     Atur Alamat Utama
                                 </a>
@@ -216,7 +216,7 @@
                         <!-- Ganti Password dengan OTP -->
                         <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <div class="flex items-start gap-3.5">
-                                <div class="w-11 h-11 rounded-xl bg-orange-100 text-orange-600 flex items-center justify-center shrink-0">
+                                <div class="w-11 h-11 rounded-xl bg-blue-100 text-[#003d7a] flex items-center justify-center shrink-0">
                                     <i class="ph ph-key text-2xl font-bold"></i>
                                 </div>
                                 <div>
@@ -226,7 +226,7 @@
                                     </p>
                                 </div>
                             </div>
-                            <a href="{{ route('verifikasi_pelamar') }}" class="inline-flex items-center justify-center gap-2 bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-xs shrink-0">
+                            <a href="{{ route('verifikasi_pelamar') }}" class="inline-flex items-center justify-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-xs shrink-0">
                                 <i class="ph ph-shield-check text-base"></i>
                                 Ganti Password via OTP
                             </a>
@@ -241,3 +241,4 @@
     </div>
     @include('layouts.footer')
 @endsection
+
