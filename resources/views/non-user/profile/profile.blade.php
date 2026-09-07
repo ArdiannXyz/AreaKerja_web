@@ -2,7 +2,7 @@
 @section('content')
 
 @guest
-    <div class="bg-white min-h-screen text-slate-800 pt-20 pb-20">
+    <div class="bg-white min-h-screen text-slate-800 pt-24 sm:pt-28 md:pt-32 pb-20">
         {{-- Top Title Bar --}}
         <div class="border-b-2 border-[#00509d] bg-white py-4 mb-8">
             <h1 class="text-center font-bold text-[#00509d] text-lg md:text-xl">

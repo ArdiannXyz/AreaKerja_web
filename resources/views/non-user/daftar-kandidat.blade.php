@@ -106,28 +106,34 @@
 
         <!-- ================= MODAL STEP 1 (PILIH DIVISI) ================= -->
         <div id="modalStep1" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-            <div class="bg-white w-full sm:max-w-md rounded-2xl shadow-xl relative p-6 max-h-[90vh] overflow-y-auto">
+            <div class="bg-white w-full sm:max-w-lg rounded-2xl shadow-2xl relative p-6 sm:p-7 overflow-visible">
                 <button onclick="closeAllModal()"
-                    class="absolute top-4 right-4 text-slate-400 hover:text-black text-xl">✕</button>
+                    class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 text-xl font-bold transition">✕</button>
 
-                <h2 class="text-xl font-bold text-slate-800 mb-2">Daftar Kandidat</h2>
-                <div class="h-1 w-24 bg-[#00509d] mb-4 rounded-full"></div>
+                <h2 class="text-xl font-bold text-slate-800 mb-1">Daftar Kandidat</h2>
+                <p class="text-xs text-slate-500 mb-3">Pilih divisi atau bidang pekerjaan yang Anda minati</p>
+                <div class="h-1 w-20 bg-[#00509d] mb-5 rounded-full"></div>
 
-                <label for="divisiSelect" class="block text-sm font-medium text-slate-700 mb-2">
-                    Bidang yang diminati
-                </label>
+                <div class="mb-6">
+                    <label for="divisiSelect" class="block text-sm font-semibold text-slate-700 mb-2">
+                        Bidang yang diminati
+                    </label>
 
-                <select id="divisiSelect" name="divisi[]" multiple
-                    class="w-full border rounded-lg focus:ring-[#00509d] focus:border-[#00509d]">
-                    @foreach ($divisis as $divisi)
-                        <option value="{{ $divisi->id }}">{{ $divisi->divisi }}</option>
-                    @endforeach
-                </select>
+                    <select id="divisiSelect" name="divisi[]" multiple
+                        class="w-full border rounded-xl focus:ring-[#00509d] focus:border-[#00509d]">
+                        @foreach ($divisis as $divisi)
+                            <option value="{{ $divisi->id }}">{{ $divisi->divisi }}</option>
+                        @endforeach
+                    </select>
+                    <p class="text-[11px] text-slate-400 mt-2 flex items-center gap-1">
+                        <i class="ph ph-info"></i> Anda dapat memilih lebih dari satu bidang (maks. 5 bidang)
+                    </p>
+                </div>
 
-                <div class="flex justify-between mt-6 gap-3">
-                    <button onclick="closeAllModal()" class="text-slate-500 hover:text-slate-700 font-medium text-sm">Kembali</button>
-                    <button onclick="saveDivisiAndNext()"
-                        class="bg-[#00509d] hover:bg-[#003d7a] text-white font-bold px-6 py-2 rounded-xl transition text-sm">Selanjutnya</button>
+                <div class="flex justify-between items-center pt-3 border-t border-slate-100 gap-3">
+                    <button type="button" onclick="closeAllModal()" class="text-slate-500 hover:text-slate-700 font-medium text-sm px-4 py-2">Batal</button>
+                    <button type="button" onclick="saveDivisiAndNext()"
+                        class="bg-[#00509d] hover:bg-[#003d7a] text-white font-bold px-6 py-2.5 rounded-xl transition text-sm shadow hover:shadow-md">Selanjutnya</button>
                 </div>
             </div>
         </div>
@@ -311,9 +317,16 @@
                 if (document.getElementById('divisiSelect')) {
                     new TomSelect('#divisiSelect', {
                         plugins: ['remove_button'],
-                        placeholder: "Pilih divisi",
+                        placeholder: "Pilih divisi yang diminati...",
                         create: false,
                         maxItems: 5,
+                        hidePlaceholder: true,
+                        closeAfterSelect: false,
+                        render: {
+                            no_results: function(data, escape) {
+                                return '<div class="no-results p-2.5 text-xs text-slate-400 text-center">Tidak ada divisi ditemukan</div>';
+                            }
+                        }
                     });
                 }
             });
@@ -337,6 +350,82 @@
                 goToStep(2);
             }
         </script>
+
+        <style>
+            /* TomSelect Modern Styling */
+            .ts-wrapper {
+                width: 100% !important;
+            }
+            .ts-control {
+                border-radius: 0.75rem !important;
+                border: 1.5px solid #cbd5e1 !important;
+                padding: 0.5rem 0.75rem !important;
+                min-height: 48px !important;
+                font-size: 0.875rem !important;
+                box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+                transition: all 0.2s ease !important;
+                display: flex !important;
+                flex-wrap: wrap !important;
+                gap: 0.375rem !important;
+                align-items: center !important;
+                background-color: #f8fafc !important;
+            }
+            .ts-control.focus {
+                border-color: #00509d !important;
+                background-color: #ffffff !important;
+                box-shadow: 0 0 0 3px rgba(0, 80, 157, 0.15) !important;
+            }
+            .ts-control .item {
+                background: #e0f2fe !important;
+                color: #0369a1 !important;
+                border: 1px solid #bae6fd !important;
+                border-radius: 0.5rem !important;
+                padding: 0.25rem 0.625rem !important;
+                font-weight: 600 !important;
+                font-size: 0.8125rem !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                margin: 0 !important;
+            }
+            .ts-control .item .remove {
+                border-left: 1px solid #bae6fd !important;
+                margin-left: 0.375rem !important;
+                padding-left: 0.375rem !important;
+                color: #0369a1 !important;
+                font-size: 1rem !important;
+                line-height: 1 !important;
+            }
+            .ts-control .item .remove:hover {
+                background: transparent !important;
+                color: #e11d48 !important;
+            }
+            .ts-dropdown {
+                border-radius: 0.75rem !important;
+                border: 1px solid #e2e8f0 !important;
+                box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+                padding: 0.375rem !important;
+                z-index: 60 !important;
+                margin-top: 6px !important;
+                background: #ffffff !important;
+            }
+            .ts-dropdown .option {
+                border-radius: 0.5rem !important;
+                padding: 0.5rem 0.75rem !important;
+                font-size: 0.875rem !important;
+                color: #334155 !important;
+                transition: background-color 0.15s ease !important;
+            }
+            .ts-dropdown .option:hover,
+            .ts-dropdown .option.active {
+                background-color: #f0f7ff !important;
+                color: #00509d !important;
+                font-weight: 600 !important;
+            }
+            .ts-dropdown .option.selected {
+                background-color: #00509d !important;
+                color: #ffffff !important;
+            }
+        </style>
 
     </div>
 

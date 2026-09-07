@@ -176,6 +176,7 @@ Route::controller(PelamarController::class)->middleware('CheckUserStatus')->grou
     Route::get('/pelamar/daftar-kandidat', 'daftar_kandidat')->name('pelamar.daftar-kandidat');
     Route::get('/lowongan-tersimpan', 'lowongansimpanform')->name('lowongan.tersimpan');
     Route::get('/lamaran-kerja', 'lamaranKerja')->name('pelamar.lamaran-kerja');
+    Route::get('/bantuan', 'bantuan')->name('pelamar.bantuan');
 });
 
 Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index')->middleware('CheckUserStatus');
@@ -221,6 +222,9 @@ Route::prefix('pelamar')->middleware('auth', 'role:pelamar', 'CheckUserStatus')-
 
         //Transaksi 
         Route::get('/transaksi', 'transaksiPendaftaranKandidat')->name('transaksi.pendaftaran');
+
+        // Respon Lamaran (Terima / Tolak Tawaran)
+        Route::post('/lamaran-kerja/{id}/respon', 'responLamaran')->name('pelamar.lamaran-kerja.respon');
     });
 
     Route::controller(PelamarLowonganController::class)->group(function () {
@@ -311,9 +315,6 @@ Route::controller(PelamarController::class)->group(function () {
 
     //talent hunter
     Route::get('/talent-hunter', 'talentHunter')->name('pelamar.talentHunter');
-
-    //bantuan
-    Route::get('/bantuan', 'bantuan')->name('pelamar.bantuan');
 
     //syarat dan ketentuan
     Route::get('/syarat/ketentuan', 'syaratKetentuan')->name('pelamar.syaratKetentuan');

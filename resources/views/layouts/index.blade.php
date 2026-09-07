@@ -46,6 +46,91 @@
         .bg-black\/50 {
             background-color: rgba(15, 23, 42, 0.25) !important;
         }
+
+        /* Modern Compact SweetAlert2 (Modal Dialog) */
+        div:where(.swal2-container) .swal2-popup:not(.swal2-toast) {
+            width: 24rem !important;
+            max-width: 90vw !important;
+            padding: 1.5rem !important;
+            border-radius: 1.25rem !important;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
+            border: 1px solid #f1f5f9 !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+        div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-icon {
+            transform: scale(0.75);
+            margin: 0 auto 0.5rem !important;
+        }
+        div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-title {
+            font-size: 1.125rem !important;
+            font-weight: 700 !important;
+            color: #0f172a !important;
+            padding: 0 0 0.5rem 0 !important;
+            line-height: 1.35 !important;
+        }
+        div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-html-container {
+            font-size: 0.8125rem !important;
+            color: #64748b !important;
+            line-height: 1.5 !important;
+            margin: 0 0 1.25rem 0 !important;
+            padding: 0 !important;
+        }
+        div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-actions {
+            margin: 0 !important;
+            gap: 0.5rem !important;
+            width: 100% !important;
+            justify-content: center !important;
+        }
+        div:where(.swal2-container) .swal2-popup:not(.swal2-toast) .swal2-styled {
+            font-size: 0.8125rem !important;
+            font-weight: 700 !important;
+            padding: 0.625rem 1.25rem !important;
+            border-radius: 0.75rem !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+            transition: all 0.2s ease-in-out !important;
+        }
+
+        /* Modern SweetAlert2 Toast (e.g. Lowongan disimpan) */
+        div:where(.swal2-container) .swal2-popup.swal2-toast {
+            width: auto !important;
+            max-width: 24rem !important;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 10px 25px -5px rgb(0 0 0 / 0.12), 0 8px 10px -6px rgb(0 0 0 / 0.08) !important;
+            border: 1px solid #e2e8f0 !important;
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            font-family: 'Poppins', sans-serif !important;
+            background: #ffffff !important;
+        }
+        div:where(.swal2-container) .swal2-popup.swal2-toast .swal2-icon {
+            width: 1.75rem !important;
+            height: 1.75rem !important;
+            min-width: 1.75rem !important;
+            margin: 0 !important;
+            border-width: 2px !important;
+        }
+        div:where(.swal2-container) .swal2-popup.swal2-toast .swal2-icon .swal2-icon-content {
+            font-size: 1rem !important;
+        }
+        div:where(.swal2-container) .swal2-popup.swal2-toast .swal2-title {
+            font-size: 0.875rem !important;
+            font-weight: 600 !important;
+            color: #1e293b !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            line-height: 1.4 !important;
+            text-align: left !important;
+        }
+        div:where(.swal2-container) .swal2-popup.swal2-toast .swal2-html-container {
+            font-size: 0.75rem !important;
+            color: #64748b !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
     </style>
     <style>
         body {
@@ -242,23 +327,23 @@
 
             <!-- Menu Desktop & Laptop (Tengah) - Tampil di layar >= 768px -->
             <nav class="hidden md:flex items-center justify-center font-medium text-xs sm:text-sm lg:text-[15px] {{ $isBeranda ? 'text-white' : 'text-[#00509d]' }} gap-4 lg:gap-6 xl:gap-8 flex-1 px-4">
-                <a href="{{ route('beranda') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                <a href="{{ route('beranda') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap {{ request()->routeIs('beranda') || request()->is('/') || request()->is('pelamar/home') ? 'font-bold underline underline-offset-8' : '' }}">
                     Beranda
                 </a>
-                <a href="{{ url('/talent-hunter') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
-                    Talent Hunter
-                </a>
-                <a href="{{ route('pelamar.event.index') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                <a href="{{ route('pelamar.event.index') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap {{ request()->routeIs('pelamar.event.*') || request()->is('event*') ? 'font-bold underline underline-offset-8' : '' }}">
                     Event
                 </a>
-                <a href="{{ url('/pelamar/tips-kerja') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                <a href="{{ url('/pelamar/tips-kerja') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap {{ request()->is('*tips-kerja*') ? 'font-bold underline underline-offset-8' : '' }}">
                     Tips Kerja
                 </a>
-                <a href="{{ route('pelamar.daftar-kandidat') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                <a href="{{ route('pelamar.daftar-kandidat') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap {{ request()->routeIs('pelamar.daftar-kandidat*') || request()->is('*kandidat*') ? 'font-bold underline underline-offset-8' : '' }}">
                     Daftar Kandidat
                 </a>
-                <a href="{{ url('/lowongan') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
-                    Pasang Lowongan
+                <a href="{{ route('lowongan.tersimpan') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap {{ request()->routeIs('lowongan.tersimpan') || request()->is('lowongan-tersimpan*') ? 'font-bold underline underline-offset-8' : '' }}">
+                    Lowongan Tersimpan
+                </a>
+                <a href="{{ route('pelamar.lamaran-kerja') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap {{ request()->routeIs('pelamar.lamaran-kerja') || request()->is('lamaran-kerja*') ? 'font-bold underline underline-offset-8' : '' }}">
+                    Lamaran Kerja
                 </a>
             </nav>
 
@@ -318,28 +403,28 @@
                     <!-- Navigation Links -->
                     <nav class="py-4 space-y-2 text-[#00509d] font-bold text-base">
                         <a href="{{ route('beranda') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
+                            class="block py-2 hover:translate-x-1.5 transition duration-200 {{ request()->routeIs('beranda') || request()->is('/') || request()->is('pelamar/home') ? 'text-[#003d7a] font-extrabold' : '' }}">
                             Beranda
                         </a>
-                        <a href="{{ url('/talent-hunter') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Talent Hunter
-                        </a>
                         <a href="{{ route('pelamar.event.index') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
+                            class="block py-2 hover:translate-x-1.5 transition duration-200 {{ request()->routeIs('pelamar.event.*') || request()->is('event*') ? 'text-[#003d7a] font-extrabold' : '' }}">
                             Event
                         </a>
                         <a href="{{ url('/pelamar/tips-kerja') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Tips kerja
+                            class="block py-2 hover:translate-x-1.5 transition duration-200 {{ request()->is('*tips-kerja*') ? 'text-[#003d7a] font-extrabold' : '' }}">
+                            Tips Kerja
                         </a>
                         <a href="{{ route('pelamar.daftar-kandidat') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
+                            class="block py-2 hover:translate-x-1.5 transition duration-200 {{ request()->routeIs('pelamar.daftar-kandidat*') || request()->is('*kandidat*') ? 'text-[#003d7a] font-extrabold' : '' }}">
                             Daftar Kandidat
                         </a>
-                        <a href="{{ url('/lowongan') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Pasang Lowongan
+                        <a href="{{ route('lowongan.tersimpan') }}" @click="openMenu = false"
+                            class="block py-2 hover:translate-x-1.5 transition duration-200 {{ request()->routeIs('lowongan.tersimpan') || request()->is('lowongan-tersimpan*') ? 'text-[#003d7a] font-extrabold' : '' }}">
+                            Lowongan Tersimpan
+                        </a>
+                        <a href="{{ route('pelamar.lamaran-kerja') }}" @click="openMenu = false"
+                            class="block py-2 hover:translate-x-1.5 transition duration-200 {{ request()->routeIs('pelamar.lamaran-kerja') || request()->is('lamaran-kerja*') ? 'text-[#003d7a] font-extrabold' : '' }}">
+                            Lamaran Kerja
                         </a>
                     </nav>
 
@@ -458,14 +543,6 @@
                                 @endif
 
                                 <li>
-                                    <a href="{{ $dashboardRoute ?? route('lowongan.tersimpan') }}"
-                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
-                                        <i class="ph ph-bookmark-simple mr-2 text-[#00509d] text-lg"></i>
-                                        Lowongan Tersimpan
-                                    </a>
-                                </li>
-
-                                <li>
                                     <a href="{{ $dashboardRoute ?? route('transaksi.pendaftaran') }}"
                                         class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
                                         <i class="ph ph-receipt mr-2 text-[#00509d] text-lg"></i>
@@ -474,10 +551,26 @@
                                 </li>
 
                                 <li>
-                                    <a href="/bantuan"
+                                    <a href="{{ route('pelamar.bantuan') }}"
                                         class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
                                         <i class="ph ph-question mr-2 text-[#00509d] text-lg"></i>
                                         Bantuan
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ route('syarat.ketentuan') }}"
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-file-text mr-2 text-[#00509d] text-lg"></i>
+                                        Syarat dan Ketentuan
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ route('verifikasi_pelamar') }}"
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-lock-key mr-2 text-[#00509d] text-lg"></i>
+                                        Ganti Password
                                     </a>
                                 </li>
                                 <li class="px-4 pt-2 pb-1">
@@ -660,8 +753,8 @@
                 if (data.success) {
 
                     // Ubah warna bg
-                    el.classList.remove("bg-white");
-                    el.classList.add("bg-gray-200");
+                    el.classList.remove("bg-blue-50/60", "hover:bg-blue-100/50", "bg-gray-200");
+                    el.classList.add("bg-white", "hover:bg-slate-50");
 
                     // Kurangi badge
                     const badge = document.getElementById("notif-badge");
@@ -848,6 +941,31 @@
                             }
                         }
                     });
+                },
+
+                // Tandai semua dibaca secara async
+                async bacaSemua() {
+                    try {
+                        let res = await fetch("{{ route('notifikasi.bacaSemua') }}", {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+                                "Accept": "application/json"
+                            }
+                        });
+
+                        let data = await res.json();
+                        if (data.success) {
+                            document.querySelectorAll('.notif-item').forEach(item => {
+                                item.classList.remove('bg-blue-50/60', 'hover:bg-blue-100/50', 'bg-gray-200');
+                                item.classList.add('bg-white', 'hover:bg-slate-50');
+                            });
+                            const badge = document.getElementById('notif-badge') || document.querySelector('.absolute .bg-red-500');
+                            if (badge) badge.remove();
+                        }
+                    } catch (err) {
+                        console.error("bacaSemua error:", err);
+                    }
                 }
 
             }));
@@ -856,14 +974,17 @@
 
 
     <script>
-        document.querySelector('form[target="hiddenFrame"]').addEventListener('submit', () => {
-            document.querySelectorAll('.notif-item').forEach(item => {
-                item.classList.remove('bg-white');
-                item.classList.add('bg-gray-200');
+        const hiddenForm = document.querySelector('form[target="hiddenFrame"]');
+        if (hiddenForm) {
+            hiddenForm.addEventListener('submit', () => {
+                document.querySelectorAll('.notif-item').forEach(item => {
+                    item.classList.remove('bg-blue-50/60', 'hover:bg-blue-100/50', 'bg-gray-200');
+                    item.classList.add('bg-white', 'hover:bg-slate-50');
+                });
+                const badge = document.getElementById('notif-badge') || document.querySelector('.absolute .bg-red-500');
+                if (badge) badge.remove();
             });
-            const badge = document.querySelector('.absolute .bg-red-500');
-            if (badge) badge.remove();
-        });
+        }
     </script>
 
 

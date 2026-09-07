@@ -14,7 +14,14 @@ class PelamarLowongan extends Model
         'pelamar_id',
         'lowongan_id',
         'status',
+        'gmaps_url',
+        'jadwal',
+        'lokasi',
+        'catatan',
+        'respon_pelamar',
+        'expired_at',
         'alasan_penolakan',
+        'is_read',
     ];
 
     /** Relasi utama ke lowongan perusahaan (canonical) */

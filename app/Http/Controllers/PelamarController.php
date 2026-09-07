@@ -232,25 +232,25 @@ class PelamarController extends Controller
 
         $pelamar = Auth::user()->pelamar;
 
+        // Cek apakah sudah ada di daftar simpan (HANYA cek status 'saved')
         $cek = PelamarLowongan::where('pelamar_id', $pelamar->id)
             ->where('lowongan_id', $request->lowongan_id)
+            ->where('status', 'saved')
             ->first();
 
         if ($cek) {
-            if ($cek->status === 'saved') {
-                if ($request->wantsJson() || $request->ajax()) {
-                    return response()->json(['success' => true, 'message' => 'Lowongan sudah ada di daftar simpan.']);
-                }
-                return back()->with('error', 'Lowongan sudah ada di daftar simpan.');
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => true, 'message' => 'Lowongan sudah ada di daftar simpan.']);
             }
-            $cek->update(['status' => 'saved']);
-        } else {
-            PelamarLowongan::create([
-                'pelamar_id'  => $pelamar->id,
-                'lowongan_id' => $request->lowongan_id,
-                'status'      => 'saved',
-            ]);
+            return back()->with('error', 'Lowongan sudah ada di daftar simpan.');
         }
+
+        // Buat record baru untuk simpan/bookmark tanpa menimpa data lamaran yang sudah ada
+        PelamarLowongan::create([
+            'pelamar_id'  => $pelamar->id,
+            'lowongan_id' => $request->lowongan_id,
+            'status'      => 'saved',
+        ]);
 
         if ($request->wantsJson() || $request->ajax()) {
             return response()->json(['success' => true, 'message' => 'Lowongan berhasil disimpan.']);
@@ -325,6 +325,97 @@ class PelamarController extends Controller
         }
 
         return view('non-user.lamaran-kerja', compact('lamaranList'));
+    }
+
+    public function responLamaran(Request $request, $id)
+    {
+        $user = Auth::user();
+        $pelamar = $user?->pelamar;
+
+        if (!$pelamar) {
+            if ($request->wantsJson() || $request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            }
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
+        }
+
+        $pelamarlowongan = PelamarLowongan::with(['lowongan_perusahaan.perusahaan', 'pelamar.user'])
+            ->where('id', $id)
+            ->where('pelamar_id', $pelamar->id)
+            ->firstOrFail();
+
+        $request->validate([
+            'respon' => 'required|in:bersedia,menolak',
+            'alasan' => 'nullable|string|max:500',
+        ]);
+
+        $respon = $request->input('respon');
+        $alasan = $request->input('alasan');
+
+        $pelamarlowongan->update([
+            'respon_pelamar'   => $respon,
+            'alasan_penolakan' => $respon === 'menolak' ? $alasan : null,
+        ]);
+
+        $namaPerusahaan = $pelamarlowongan->lowongan_perusahaan->perusahaan->nama_perusahaan ?? 'Perusahaan';
+        $posisi = $pelamarlowongan->lowongan_perusahaan->nama ?? 'Posisi Lowongan';
+
+        if ($respon === 'bersedia') {
+            // Jika kandidat aktif, update statusnya menjadi kandidat nonaktif (Bekerja)
+            if ($pelamar->kategori === 'kandidat aktif') {
+                $pelamar->update(['kategori' => 'kandidat nonaktif']);
+            }
+
+            // Notifikasi untuk pelamar
+            Notifikasi::create([
+                'user_id'             => $user->id,
+                'perusahaan_id'       => $pelamarlowongan->lowongan_perusahaan->perusahaan_id,
+                'pelamar_lowongan_id' => $pelamarlowongan->id,
+                'judul'               => 'Konfirmasi Penerimaan Kerja Berhasil',
+                'pesan'               => "Selamat! Anda telah mengonfirmasi kesediaan bergabung di <b>{$namaPerusahaan}</b> sebagai <b>{$posisi}</b>. Status profil kandidat Anda kini diperbarui menjadi <b>Bekerja</b>.",
+                'expired_at'          => now()->addDays(30),
+            ]);
+
+            // Notifikasi untuk perusahaan
+            $perusahaanUser = $pelamarlowongan->lowongan_perusahaan->perusahaan->user ?? null;
+            if ($perusahaanUser) {
+                Notifikasi::create([
+                    'user_id'             => $perusahaanUser->id,
+                    'perusahaan_id'       => $pelamarlowongan->lowongan_perusahaan->perusahaan_id,
+                    'pelamar_lowongan_id' => $pelamarlowongan->id,
+                    'judul'               => 'Kandidat Telah Mengonfirmasi Kesediaan Kerja',
+                    'pesan'               => "Kabar baik! Pelamar <b>{$pelamar->nama_pelamar}</b> telah <b>MENERIMA</b> tawaran dan bersedia bergabung untuk posisi <b>{$posisi}</b>.",
+                    'expired_at'          => now()->addDays(30),
+                ]);
+            }
+
+            $message = 'Selamat! Anda telah berhasil mengonfirmasi penerimaan tawaran kerja.';
+        } else {
+            // Notifikasi untuk perusahaan bahwa pelamar menolak
+            $perusahaanUser = $pelamarlowongan->lowongan_perusahaan->perusahaan->user ?? null;
+            if ($perusahaanUser) {
+                Notifikasi::create([
+                    'user_id'             => $perusahaanUser->id,
+                    'perusahaan_id'       => $pelamarlowongan->lowongan_perusahaan->perusahaan_id,
+                    'pelamar_lowongan_id' => $pelamarlowongan->id,
+                    'judul'               => 'Kandidat Menolak Tawaran Kerja',
+                    'pesan'               => "Pelamar <b>{$pelamar->nama_pelamar}</b> telah menolak tawaran kerja untuk posisi <b>{$posisi}</b>." . ($alasan ? " Alasan: <i>{$alasan}</i>" : ""),
+                    'expired_at'          => now()->addDays(30),
+                ]);
+            }
+
+            $message = 'Anda telah menolak tawaran pekerjaan ini.';
+        }
+
+        if ($request->wantsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'respon'  => $respon,
+            ]);
+        }
+
+        return redirect()->route('pelamar.lamaran-kerja')->with('success', $message);
     }
 
 
@@ -584,10 +675,20 @@ class PelamarController extends Controller
 
         $expiredAt = now()->addDays(30);
 
-        // Update status + expired_at
+        $jadwal = null;
+        if (!empty($konfirmasi['tanggal'])) {
+            $jadwal = $konfirmasi['tanggal'] . (!empty($konfirmasi['waktu']) ? ' ' . $konfirmasi['waktu'] : '');
+        }
+
+        // Update status + detail penerimaan + expired_at
         $pelamarlowongan->update([
-            "status"      => "diterima",
-            "expired_at"  => $expiredAt,
+            "status"          => "diterima",
+            "jadwal"          => $jadwal,
+            "lokasi"          => $konfirmasi['tempat'] ?? null,
+            "catatan"         => $konfirmasi['catatan'] ?? null,
+            "gmaps_url"       => $konfirmasi['gmaps_url'] ?? $pelamarlowongan->gmaps_url,
+            "respon_pelamar"  => "menunggu_konfirmasi",
+            "expired_at"      => $expiredAt,
         ]);
 
         try {
@@ -687,11 +788,17 @@ class PelamarController extends Controller
     {
         $userId = auth()->id();
 
-        $updated = Notifikasi::where('user_id', $userId)
-            ->where('is_read', 0)
-            ->update(['is_read' => 1]);
+        if ($userId) {
+            Notifikasi::where('user_id', $userId)
+                ->where('is_read', 0)
+                ->update(['is_read' => 1]);
+        }
 
-        dd($userId, $updated, Notifikasi::where('user_id', $userId)->get());
+        if (request()->wantsJson() || request()->ajax()) {
+            return response()->json(['success' => true]);
+        }
+
+        return back()->with('success', 'Semua notifikasi telah ditandai dibaca.');
     }
 
 
@@ -820,6 +927,12 @@ class PelamarController extends Controller
     public function transaksi($id)
     {
         $transaksi = CatatanCash::with(['bank'])->findOrFail($id);
+
+        // Auto expire jika waktu pembayaran telah habis
+        if ($transaksi->status === 'pending' && $transaksi->expired_at && now()->greaterThan($transaksi->expired_at)) {
+            $transaksi->update(['status' => 'expired']);
+        }
+
         return view('kandidat.transaksi-tf-bank', [
             "transaksi" => $transaksi,
             'daftarBank' => DaftarBank::all(),
@@ -830,6 +943,31 @@ class PelamarController extends Controller
     {
         $transaksi = CatatanCash::findOrFail($id);
 
+        // Cek jika transaksi sudah expired
+        if ($transaksi->status === 'pending' && $transaksi->expired_at && now()->greaterThan($transaksi->expired_at)) {
+            $transaksi->update(['status' => 'expired']);
+            return redirect()->route('kandidat.transaksi', $transaksi->id)
+                ->with('error', 'Waktu pembayaran telah kadaluarsa / expired.');
+        }
+
+        $request->validate([
+            'bukti' => [
+                'required',
+                'file',
+                'image',
+                'mimes:jpeg,png,jpg,webp',
+                'min:20',    // Minimal 20 KB
+                'max:2048',  // Maksimal 2 MB (2048 KB)
+            ],
+        ], [
+            'bukti.required' => 'Wajib mengunggah bukti pembayaran.',
+            'bukti.file'     => 'Bukti pembayaran harus berupa berkas file yang valid.',
+            'bukti.image'    => 'Bukti pembayaran harus berupa gambar.',
+            'bukti.mimes'    => 'Format gambar harus berupa JPG, JPEG, PNG, atau WEBP.',
+            'bukti.min'      => 'Ukuran file gambar terlalu kecil (minimal 20 KB).',
+            'bukti.max'      => 'Ukuran file gambar terlalu besar (maksimal 2 MB).',
+        ]);
+
         if ($request->hasFile('bukti')) {
             $path = $request->file('bukti')->store('bukti-transfer', 'public');
             $transaksi->update([
@@ -839,7 +977,7 @@ class PelamarController extends Controller
         }
 
         return redirect()->route('kandidat.transaksi', $transaksi->id)
-            ->with('success', 'Bukti transfer berhasil diupload.');
+            ->with('success', 'Bukti transfer berhasil diupload. Menunggu verifikasi admin.');
     }
 
     public function storePendaftaran(Request $request)

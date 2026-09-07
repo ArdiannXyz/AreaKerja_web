@@ -1,84 +1,97 @@
-<!-- Main modal -->
+<!-- Main modal Ganti Password -->
 <div id="gantipwmodal" tabindex="-1" aria-hidden="true"
-    class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto flex justify-center items-center z-50">
+    class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm overflow-y-auto overflow-x-hidden flex justify-center items-center z-[100] p-4">
 
-    <div class="relative w-full max-w-xs md:max-w-sm p-2 md:p-4">
+    <div class="relative w-full max-w-md">
         <!-- Modal content -->
-        <div class="relative bg-white rounded-lg shadow-lg">
+        <div class="relative bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden">
 
             <!-- Modal header -->
-            <div class="flex items-center justify-between p-2 md:p-4 border-b border-gray-200">
-                <h3 class="text-sm md:text-base font-semibold">Ganti Password</h3>
+            <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-gray-50/50">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center font-bold">
+                        <i class="ph ph-lock-key text-xl"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-gray-800">Ganti Kata Sandi</h3>
+                </div>
 
                 <button type="button"
-                    class="text-gray-400 hover:bg-gray-200 hover:text-gray-900 rounded-lg w-7 h-7 flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    class="text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-lg w-8 h-8 flex justify-center items-center transition"
+                    data-modal-hide="gantipwmodal"
                     data-modal-toggle="gantipwmodal">
-                    <svg class="w-3 h-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
-                    </svg>
+                    <i class="ph ph-x text-lg"></i>
                 </button>
             </div>
 
-            
             <!-- Pesan sukses / error -->
-            @if (session('success'))
-                <div class="p-3 mb-4 bg-green-100 text-green-600 rounded">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <div class="px-6 pt-4">
+                @if (session('success'))
+                    <div class="p-3 mb-2 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-xl text-sm flex items-center gap-2">
+                        <i class="ph ph-check-circle text-lg flex-shrink-0"></i>
+                        <span>{{ session('success') }}</span>
+                    </div>
+                @endif
 
-            @if (session('error'))
-                <div class="p-3 mb-4 bg-red-100 text-red-600 rounded">
-                    {{ session('error') }}
-                </div>
-            @endif
+                @if (session('error'))
+                    <div class="p-3 mb-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm flex items-center gap-2">
+                        <i class="ph ph-warning-circle text-lg flex-shrink-0"></i>
+                        <span>{{ session('error') }}</span>
+                    </div>
+                @endif
 
-            @if ($errors->any())
-                <div class="p-3 mb-4 bg-red-100 text-red-600 rounded">
-                    <ul>
-                        @foreach ($errors->all() as $err)
-                            <li>{{ $err }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+                @if ($errors->any())
+                    <div class="p-3 mb-2 bg-red-50 text-red-600 border border-red-200 rounded-xl text-sm">
+                        <ul class="list-disc pl-4 space-y-1">
+                            @foreach ($errors->all() as $err)
+                                <li>{{ $err }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+            </div>
 
             <!-- Modal body -->
-            <div class="p-3 md:p-5">
+            <div class="p-6 pt-2">
+                <form id="passwordForm" action="{{ route('pelamar.password.update') }}" method="POST" class="space-y-4">
+                    @csrf
 
-                <div class="mt-2 space-y-8">
-
-                    <!-- Form Ganti Password LANGSUNG MUNCUL -->
-                    <form id="passwordForm" action="{{ route('pelamar.password.update') }}" method="POST"
-                        class="mt-4 space-y-4 bg-gray-50 p-6 border-2 border-gray-400 rounded-lg shadow">
-                        @csrf
-
-                        <div>
-                            <label class="block text-sm font-medium">Kata Sandi Lama</label>
-                            <input type="password" name="old_password" required
-                                class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-orange-500">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Kata Sandi Lama</label>
+                        <div class="relative">
+                            <input type="password" name="old_password" required placeholder="Masukkan kata sandi lama"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition">
                         </div>
+                    </div>
 
-                        <div>
-                            <label class="block text-sm font-medium">Kata Sandi Baru</label>
-                            <input type="password" name="new_password" required
-                                class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-orange-500">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Kata Sandi Baru</label>
+                        <div class="relative">
+                            <input type="password" name="new_password" required minlength="3" placeholder="Minimal 3 karakter"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition">
                         </div>
+                    </div>
 
-                        <div>
-                            <label class="block text-sm font-medium">Konfirmasi Kata Sandi Baru</label>
-                            <input type="password" name="new_password_confirmation" required
-                                class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-orange-500">
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wider">Konfirmasi Kata Sandi Baru</label>
+                        <div class="relative">
+                            <input type="password" name="new_password_confirmation" required placeholder="Ulangi kata sandi baru"
+                                class="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-800 placeholder-gray-400 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition">
                         </div>
+                    </div>
 
-                        <button type="submit"
-                            class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg font-medium">
-                            Simpan Password
+                    <div class="pt-2 flex items-center gap-3">
+                        <button type="button"
+                            class="flex-1 py-2.5 px-4 bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold rounded-xl text-sm transition"
+                            data-modal-hide="gantipwmodal"
+                            data-modal-toggle="gantipwmodal">
+                            Batal
                         </button>
-                    </form>
-
-                </div>
+                        <button type="submit"
+                            class="flex-1 py-2.5 px-4 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-xl text-sm shadow-sm transition">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
             </div>
 
         </div>

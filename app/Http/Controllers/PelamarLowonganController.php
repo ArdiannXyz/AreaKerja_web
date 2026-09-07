@@ -58,9 +58,10 @@ class PelamarLowonganController extends Controller
             ], 422);
         }
 
-        // cek duplikat lamaran
+        // cek duplikat lamaran (abaikan bookmark status 'saved')
         $existingLamaran = PelamarLowongan::where('pelamar_id', $pelamar->id)
             ->where('lowongan_id', $lowongan->id)
+            ->where('status', '!=', 'saved')
             ->latest()
             ->first();
 
