@@ -1,4 +1,4 @@
-<!-- Modal Notifikasi -->
+﻿<!-- Modal Notifikasi -->
 <div x-data="notifHandler()" x-cloak x-show="openNotif" class="fixed inset-0 z-50 flex items-start justify-end p-2 sm:p-4"
     @click.self="openNotif = false">
 
@@ -7,7 +7,7 @@
         <!-- Header -->
         <div class="flex items-center justify-between px-3 sm:px-4 py-3 border-b">
             <h2 class="font-semibold text-sm sm:text-lg">Notifikasi</h2>
-            <button @click="openNotif=false; openAllNotif=true" class="text-xs sm:text-sm text-orange-500">
+            <button @click="openNotif=false; openAllNotif=true" class="text-xs sm:text-sm text-blue-700">
                 Lihat semua
             </button>
         </div>

@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     {{-- <div class="p-4 sm:ml-64"> --}}
     <div class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto" x-data="{ openModal: false }">
@@ -76,7 +76,7 @@
                             <div class="relative w-full sm:w-32 min-w-0">
                                 <input type="time" name="jam_mulai" id="jam_mulai"
                                     class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-                           focus:border-orange-500 focus:ring-0 break-words"
+                           focus:border-blue-700 focus:ring-0 break-words"
                                     value="{{ old('jam_mulai', $event->jam_mulai) }}">
 
                                 <!-- Fake Placeholder -->
@@ -92,7 +92,7 @@
                             <div class="relative w-full sm:w-32 min-w-0">
                                 <input type="time" name="jam_akhir" id="jam_akhir"
                                     class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-                           focus:border-orange-500 focus:ring-0 break-words"
+                           focus:border-blue-700 focus:ring-0 break-words"
                                     value="{{ old('jam_akhir', $event->jam_akhir) }}">
 
                                 <!-- Fake Placeholder -->

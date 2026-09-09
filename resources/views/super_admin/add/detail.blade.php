@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 
 @section('sidebarsuperadmin')
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-white overflow-y-auto">
@@ -124,11 +124,11 @@
                     {{-- Tombol --}}
                     <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 pt-4">
                         <a href="{{ route('superadmin.edit.user', $user->id) }}"
-                            class="bg-orange-500 hover:bg-orange-700 text-white px-8 py-2 rounded-full text-center">
+                            class="bg-blue-700 hover:bg-blue-900 text-white px-8 py-2 rounded-full text-center">
                             Edit
                         </a>
                         <a href="{{ route('superadmin.add.user') }}"
-                            class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-full text-center">
+                            class="bg-blue-700 hover:bg-blue-800 text-white px-8 py-2 rounded-full text-center">
                             Kembali
                         </a>
                     </div>

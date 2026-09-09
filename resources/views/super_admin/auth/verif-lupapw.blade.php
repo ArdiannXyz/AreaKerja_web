@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -62,16 +62,16 @@
                 <div class=" flex items-center justify-center bg-white">
                     <div class="max-w-md w-full">
                         <h2 class="text-2xl font-bold text-gray-800 mb-4">Lupa Kata Sandi</h2>
-                        <p class="text-orange-500 text-sm font-medium mb-10">Masukan kata sandi anda.<br>kata sandi harus mengandung.
+                        <p class="text-blue-700 text-sm font-medium mb-10">Masukan kata sandi anda.<br>kata sandi harus mengandung.
                         </p>
 
                         <!-- Verifikasi Syarat Password -->
                         <div class="grid grid-cols-5 gap-4 text-center mb-6">
-                            <div><span class="font-bold">8+</span><br><span class="text-xs  text-orange-500 font-medium">Karakter</span></div>
-                            <div><span class="font-bold">AA</span><br><span class="text-xs  text-orange-500 font-medium">Huruf Besar</span></div>
-                            <div><span class="font-bold">aa</span><br><span class="text-xs  text-orange-500 font-medium">Huruf Kecil</span></div>
-                            <div><span class="font-bold">123</span><br><span class="text-xs text-orange-500 font-medium">Angka</span></div>
-                            <div><span class="font-bold">@$#</span><br><span class="text-xs text-orange-500 font-medium">Simbol</span></div>
+                            <div><span class="font-bold">8+</span><br><span class="text-xs  text-blue-700 font-medium">Karakter</span></div>
+                            <div><span class="font-bold">AA</span><br><span class="text-xs  text-blue-700 font-medium">Huruf Besar</span></div>
+                            <div><span class="font-bold">aa</span><br><span class="text-xs  text-blue-700 font-medium">Huruf Kecil</span></div>
+                            <div><span class="font-bold">123</span><br><span class="text-xs text-blue-700 font-medium">Angka</span></div>
+                            <div><span class="font-bold">@$#</span><br><span class="text-xs text-blue-700 font-medium">Simbol</span></div>
                         </div>
 
                         <!-- Form -->
@@ -81,7 +81,7 @@
                                 <label class="block text-sm font-semibold m-2">Kata Sandi Baru</label>
                                 <div class="relative">
                                     <input type="password" name="password" placeholder="Kata Sandi"
-                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500">
+                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-700">
                                     <span class="absolute right-3 top-2.5 text-gray-500 cursor-pointer">👁</span>
                                 </div>
                             </div>
@@ -90,19 +90,19 @@
                                 <label class="block text-sm font-semibold m-2">Konfirmasi Kata Sandi</label>
                                 <div class="relative">
                                     <input type="password" name="password_confirmation" placeholder="Kata Sandi"
-                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500">
+                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-blue-700">
                                     <span class="absolute right-3 top-2.5 text-gray-500 cursor-pointer">👁</span>
                                 </div>
                             </div>
 
                             <button type="submit"
-                                class="w-full bg-orange-500 text-white py-3 rounded-md hover:bg-orange-600 transition">
+                                class="w-full bg-blue-700 text-white py-3 rounded-md hover:bg-blue-800 transition">
                                 Ulang Kata Sandi
                             </button>
                         </form>
 
                         <div class="text-center mt-4">
-                            <a href="#" class="text-orange-600 font-medium hover:underline">Kembali</a>
+                            <a href="#" class="text-blue-800 font-medium hover:underline">Kembali</a>
                         </div>
                     </div>
                 </div>

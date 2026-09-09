@@ -19,6 +19,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
     <script src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         body {
@@ -121,9 +122,9 @@
             <div class="min-h-screen w-64 bg-[#00509d] text-white overflow-y-auto">
                 <!-- Logo -->
                 <div class="px-4 py-2">
-                    <div class="inline-flex items-center gap-1 border-b-2 border-blue-300">
-                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-14 h-14">
-                        <p class="text-xl font-semibold">areakerja.com</p>
+                    <div class="inline-flex items-center gap-2 border-b-2 border-blue-300 pb-2">
+                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-8 h-8 object-contain">
+                        <p class="text-base font-semibold">areakerja.com</p>
                     </div>
                 </div>
 
@@ -275,34 +276,6 @@
                             Link & Header
                         </a>
                     </div>
-                    <div
-                        class="{{ request()->is('super_admin/pengaturan') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
-                        <a href="/super_admin/pengaturan"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
-                            <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M14.9094 9.28404C14.9423 9.02804 14.967 8.77204 14.967 8.50004C14.967 8.22804 14.9423 7.97204 14.9094 7.71604L16.6448 6.39604C16.8011 6.27604 16.8422 6.06004 16.7435 5.88404L15.0986 3.11604C15.0501 3.0335 14.973 2.97045 14.8811 2.9382C14.7891 2.90595 14.6884 2.9066 14.5969 2.94004L12.549 3.74004C12.1214 3.42004 11.6608 3.15604 11.1591 2.95604L10.8466 0.836037C10.833 0.741911 10.7845 0.655846 10.7103 0.593986C10.6361 0.532127 10.5413 0.498722 10.4436 0.500037H7.15381C6.9482 0.500037 6.77548 0.644038 6.75081 0.836037L6.43828 2.95604C5.93659 3.15604 5.47602 3.42804 5.04835 3.74004L3.00047 2.94004C2.95278 2.9243 2.90279 2.9162 2.85243 2.91604C2.71262 2.91604 2.5728 2.98804 2.49878 3.11604L0.853896 5.88404C0.746979 6.06004 0.796325 6.27604 0.952589 6.39604L2.68794 7.71604C2.65505 7.97204 2.63037 8.23604 2.63037 8.50004C2.63037 8.76404 2.65505 9.02804 2.68794 9.28404L0.952589 10.604C0.796325 10.724 0.755203 10.94 0.853896 11.116L2.49878 13.884C2.54727 13.9666 2.62438 14.0296 2.71632 14.0619C2.80825 14.0941 2.90899 14.0935 3.00047 14.06L5.04835 13.26C5.47602 13.58 5.93659 13.844 6.43828 14.044L6.75081 16.164C6.77548 16.356 6.9482 16.5 7.15381 16.5H10.4436C10.6492 16.5 10.8219 16.356 10.8466 16.164L11.1591 14.044C11.6608 13.844 12.1214 13.572 12.549 13.26L14.5969 14.06C14.6463 14.076 14.6956 14.084 14.745 14.084C14.8848 14.084 15.0246 14.012 15.0986 13.884L16.7435 11.116C16.8422 10.94 16.8011 10.724 16.6448 10.604L14.9094 9.28404ZM13.281 7.91604C13.3139 8.16404 13.3221 8.33204 13.3221 8.50004C13.3221 8.66804 13.3057 8.84404 13.281 9.08404L13.1659 9.98804L13.8978 10.548L14.7861 11.22L14.2104 12.188L13.1659 11.78L12.3105 11.444L11.5703 11.988C11.2167 12.244 10.8795 12.436 10.5423 12.572L9.67048 12.916L9.53889 13.82L9.3744 14.9H8.22298L8.06672 13.82L7.93513 12.916L7.06334 12.572C6.70969 12.428 6.38071 12.244 6.05173 12.004L5.30331 11.444L4.43152 11.788L3.38702 12.196L2.81131 11.228L3.69955 10.556L4.43152 9.99604L4.31638 9.09204C4.29171 8.84404 4.27526 8.66004 4.27526 8.50004C4.27526 8.34004 4.29171 8.15604 4.31638 7.91604L4.43152 7.01204L3.69955 6.45204L2.81131 5.78004L3.38702 4.81204L4.43152 5.22004L5.28686 5.55604L6.02706 5.01204C6.38071 4.75604 6.71791 4.56404 7.05511 4.42804L7.9269 4.08404L8.05849 3.18004L8.22298 2.10004H9.36618L9.52244 3.18004L9.65403 4.08404L10.5258 4.42804C10.8795 4.57204 11.2084 4.75604 11.5374 4.99604L12.2858 5.55604L13.1576 5.21204L14.2021 4.80404L14.7778 5.77204L13.8978 6.45204L13.1659 7.01204L13.281 7.91604ZM8.79869 5.30004C6.98109 5.30004 5.50892 6.73204 5.50892 8.50004C5.50892 10.268 6.98109 11.7 8.79869 11.7C10.6163 11.7 12.0885 10.268 12.0885 8.50004C12.0885 6.73204 10.6163 5.30004 8.79869 5.30004ZM8.79869 10.1C7.894 10.1 7.15381 9.38004 7.15381 8.50004C7.15381 7.62004 7.894 6.90004 8.79869 6.90004C9.70338 6.90004 10.4436 7.62004 10.4436 8.50004C10.4436 9.38004 9.70338 10.1 8.79869 10.1Z"
-                                    fill="currentColor" />
-                            </svg>
-                            Pengaturan
-                        </a>
-                    </div>
-                    <div>
-                        <form id="logout" action="" method="POST">
-                            @csrf
-                            <button onclick="openModal()"
-                                class="flex font-semibold text-white items-center gap-2 mb-4 rounded-md px-3 py-2 transition duration-300">
-                                <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M14 5.1709L12.59 6.5809L14.17 8.1709H6V10.1709H14.17L12.59 11.7509L14 13.1709L18 9.1709L14 5.1709ZM2 2.1709H9V0.170898H2C0.9 0.170898 0 1.0709 0 2.1709V16.1709C0 17.2709 0.9 18.1709 2 18.1709H9V16.1709H2V2.1709Z"
-                                        fill="currentColor" />
-                                </svg>
-                                Keluar
-                            </button>
-                        </form>
-                    </div>
                 </nav>
             </div>
         </aside>
@@ -350,47 +323,42 @@
         <script src="{{ asset('js/super_admin.js') }}"></script>
         @include('finance.sidebar.modal-logout')
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-        {{-- Preview gambar --}}
         <script>
-            document.getElementById('fileinputsuperadmin').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    let reader = new FileReader();
-                    reader.onload = function(event) {
-                        // update foto besar (pasti ada)
-                        document.getElementById('pa').setAttribute('src', event.target.result);
-
-                        // update foto kecil (navbar) kalau memang ada
-                        const puImg = document.getElementById('pu');
-                        if (puImg) {
-                            puImg.setAttribute('src', event.target.result);
+            const _fileInput = document.getElementById('fileinputsuperadmin');
+            if (_fileInput) {
+                _fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        let reader = new FileReader();
+                        reader.onload = function(event) {
+                            const paImg = document.getElementById('pa');
+                            if (paImg) paImg.setAttribute('src', event.target.result);
+                            const puImg = document.getElementById('pu');
+                            if (puImg) puImg.setAttribute('src', event.target.result);
                         }
+                        reader.readAsDataURL(file);
                     }
-                    reader.readAsDataURL(file);
-                }
-            });
+                });
+            }
         </script>
 
         <script>
-            // Buka modal saat klik tombol "Keluar"
-            document.querySelector('#logout button').addEventListener('click', function(e) {
-                e.preventDefault(); // jangan langsung submit
+            // Fungsi global untuk modal konfirmasi keluar
+            function openModal() {
                 let modal = document.getElementById("successModal");
-                modal.classList.remove("hidden");
-                modal.classList.add("flex");
-            });
-
-            // Tombol batal â†’ tutup modal
-            function closeModal() {
-                let modal = document.getElementById("successModal");
-                modal.classList.remove("flex");
-                modal.classList.add("hidden");
+                if (modal) {
+                    modal.classList.remove("hidden");
+                    modal.classList.add("flex");
+                }
             }
 
-            // Tombol "Keluar" di modal â†’ submit form logout
-            document.getElementById("goLogin").addEventListener("click", function() {
-                document.getElementById("logout_admin").submit();
-            });
+            function closeModal() {
+                let modal = document.getElementById("successModal");
+                if (modal) {
+                    modal.classList.remove("flex");
+                    modal.classList.add("hidden");
+                }
+            }
         </script>
 
         <script src="//unpkg.com/alpinejs" defer></script>

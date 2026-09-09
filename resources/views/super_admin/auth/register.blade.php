@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -28,7 +28,7 @@
                 <!-- Logo + Judul -->
                 <div class="absolute top-6 left-6 gap-1 flex items-center">
                     <img src="{{ asset('images/logoarea.png') }}" alt="Logo" class="h-12 w-12">
-                    <span class="font-bold mb-1 text-orange-500">areakerja.com</span>
+                    <span class="font-bold mb-1 text-blue-700">areakerja.com</span>
                 </div>
 
 
@@ -53,25 +53,25 @@
                     <div>
                         <label for="username" class="block text-sm font-medium text-gray-700 m-2">Nama Pengguna</label>
                         <input type="text" id="username" placeholder="Nama Pengguna" name="username"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none">
                     </div>
 
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700 m-2">Email</label>
                         <input type="email" id="email" placeholder="E-mail" name="email"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none">
                     </div>
                     {{-- 
                     <div>
                         <label for="phone" class="block text-sm font-medium text-gray-700 m-2">No.Tlp</label>
                         <input type="text" id="phone" placeholder="No. Tlp"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none">
                     </div> --}}
 
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700 m-2">Kata Sandi</label>
                         <input type="password" id="password" placeholder="Kata Sandi" name="password"
-                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-orange-300 focus:outline-none">
+                            class="w-full px-4 py-3 border border-gray-700 rounded-lg focus:ring focus:ring-blue-500 focus:outline-none">
                     </div>
 
                       <input id="role" hidden class="pl-2 w-full outline-none border-none"
@@ -80,14 +80,14 @@
                     <!-- Checkbox -->
                     <label class="flex items-center text-sm font-medium gap-1">
                         <input type="checkbox" class="mr-2">
-                        Saya menyetujui <a href="{{ url('syarat/ketentuan') }}" class="text-orange-500"> Syarat dan
+                        Saya menyetujui <a href="{{ url('syarat/ketentuan') }}" class="text-blue-700"> Syarat dan
                             Ketentuan </a> yang
                         berlaku
                     </label>
 
                     <!-- Tombol Daftar -->
                     <button type="submit" 
-                        class="w-60 ml-24 bg-orange-500 text-white rounded-full font-semibold hover:bg-orange-400 py-2 mt-4">
+                        class="w-60 ml-24 bg-blue-700 text-white rounded-full font-semibold hover:bg-blue-600 py-2 mt-4">
                         Daftar
                     </button>
                 </form>
@@ -120,7 +120,7 @@
                     <!-- Tombol aksi -->
                     <div class="flex justify-center gap-6">
                         <button id="goLogin"
-                            class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg">
+                            class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-lg">
                             Masuk
                         </button>
 

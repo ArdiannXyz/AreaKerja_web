@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 
 @section('sidebarsuperadmin')
     <div class="p-6 w-full sm:ml-64 max-h-6xl">
@@ -15,10 +15,10 @@
                 <form method="GET" action="{{ route('superadmin.panggilan.list', $perusahaan->id) }}"
                     class="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                     <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari nama pelamar..."
-                        class="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-72 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all" />
+                        class="border border-gray-300 rounded-lg px-4 py-2 w-full sm:w-72 text-sm focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 transition-all" />
 
                     <button type="submit"
-                        class="bg-orange-500 hover:bg-orange-600 text-white font-medium px-6 py-2 rounded-lg text-sm transition-all w-full sm:w-auto">
+                        class="bg-blue-700 hover:bg-blue-800 text-white font-medium px-6 py-2 rounded-lg text-sm transition-all w-full sm:w-auto">
                         Cari
                     </button>
                 </form>
@@ -27,7 +27,7 @@
             {{-- TABEL --}}
             <div class="overflow-x-auto bg-white rounded-lg shadow">
                 <table class="min-w-full border border-gray-200">
-                    <thead class="bg-orange-500">
+                    <thead class="bg-blue-700">
                         <tr class="text-left text-white text-sm font-semibold">
                             <th class="px-2 sm:px-4 py-2 border-b">No</th>
                             <th class="px-2 sm:px-4 py-2 border-b">Nama Pelamar</th>

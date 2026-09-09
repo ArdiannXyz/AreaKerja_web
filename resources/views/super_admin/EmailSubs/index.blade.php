@@ -1,182 +1,418 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <div class="flex-1 p-6 sm:ml-64 bg-gray-50 overflow-y-auto min-h-screen" x-data="{ openNotif: false }">
-        <!-- Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4 md:gap-0">
-            <h1 class="text-2xl font-semibold text-gray-800 break-words">Email Subscribers</h1>
+    <main class="flex-1 p-6 sm:ml-64 bg-gray-50 overflow-y-auto min-h-screen" x-data="{ 
+        openNotif: false,
+        openDeleteModal: false,
+        search: '',
+        filterSource: 'all',
+        selectedCount: 0,
+        updateCount() {
+            this.selectedCount = document.querySelectorAll('.itemCheckbox:checked').length;
+        },
+        openDeleteConfirm() {
+            if (this.selectedCount === 0) return;
+            this.openDeleteModal = true;
+        },
+        submitDelete() {
+            document.getElementById('subscriberForm').submit();
+        },
+        toggleAll(checked) {
+            document.querySelectorAll('.itemCheckbox').forEach(cb => {
+                const tr = cb.closest('tr');
+                if (tr && tr.style.display !== 'none') {
+                    cb.checked = checked;
+                }
+            });
+            this.updateCount();
+        },
+        filterRows() {
+            const q = this.search.toLowerCase().trim();
+            const source = this.filterSource;
+            const rows = document.querySelectorAll('.subscriber-row');
+            let visibleCount = 0;
 
-            <div class="flex items-center gap-3 flex-wrap">
+            rows.forEach(row => {
+                const email = row.dataset.email.toLowerCase();
+                const nama = row.dataset.nama.toLowerCase();
+                const rowSource = row.dataset.source;
 
+                const matchesSearch = !q || email.includes(q) || nama.includes(q);
+                const matchesSource = (source === 'all') || (rowSource === source);
+
+                if (matchesSearch && matchesSource) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                    const cb = row.querySelector('.itemCheckbox');
+                    if (cb) cb.checked = false;
+                }
+            });
+
+            this.updateCount();
+            const emptyEl = document.getElementById('searchEmptyState');
+            if (emptyEl) {
+                emptyEl.style.display = (visibleCount === 0 && rows.length > 0) ? '' : 'none';
+            }
+        }
+    }">
+        <!-- Topbar Header -->
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Email Subscribers</h1>
+                <p class="text-sm text-gray-500 mt-1">Kelola daftar email newsletter dan pelanggan berita lowongan AreaKerja</p>
+            </div>
+
+            <div class="flex items-center gap-3 self-end md:self-auto">
                 {{-- Tombol Notifikasi --}}
-                <button @click="openNotif = true" class="relative shrink-0">
-                    <svg width="31" height="32" viewBox="0 0 31 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_722_7956)">
-                            <path
-                                d="M23.076 14.9431L22.6747 12.7383L21.1101 13.0055L21.5756 15.5633C21.6168 15.7894 21.7387 15.9922 21.9146 16.127L24.4524 18.0732L24.6985 19.4255L7.4876 22.3654L7.24147 21.0131L8.93911 18.3434C9.05673 18.1585 9.09972 17.9276 9.05861 17.7015L8.43786 14.2911C8.21777 13.0934 8.29153 11.8668 8.65169 10.7352C9.01186 9.60353 9.64569 8.60691 10.4892 7.84595C11.3326 7.08499 12.3559 6.58665 13.4555 6.40126C14.5552 6.21586 15.6924 6.34997 16.7522 6.79004L16.4051 4.88278C15.595 4.65063 14.7612 4.55689 13.9346 4.605L13.6165 2.85717L12.0518 3.12444L12.37 4.87227C10.4802 5.41568 8.87215 6.70676 7.85685 8.49588C6.84155 10.285 6.49109 12.445 6.87324 14.5583L7.42973 17.6158L5.7321 20.2855C5.61447 20.4704 5.57149 20.7013 5.6126 20.9274L6.07815 23.4852C6.11931 23.7114 6.24121 23.9141 6.41702 24.049C6.59284 24.1838 6.80817 24.2396 7.01565 24.2042L12.4919 23.2688L12.647 24.1214C12.8528 25.252 13.4623 26.2659 14.3414 26.9401C15.2205 27.6142 16.2971 27.8934 17.3345 27.7162C18.3719 27.539 19.2851 26.9199 19.8732 25.9951C20.4612 25.0704 20.676 23.9157 20.4702 22.785L20.315 21.9324L25.7912 20.997C25.9987 20.9616 26.1813 20.8378 26.2989 20.6528C26.4165 20.4679 26.4595 20.2369 26.4183 20.0108L25.9528 17.453C25.9116 17.2269 25.7896 17.0241 25.6138 16.8894L23.076 14.9431Z"
-                                fill="black" />
-                        </g>
-                    </svg>
+                @include('super_admin.components.notif_button')
 
-                    @if ($global_notifikasi_unread > 0)
-                        <span id="notif-badge"
-                            class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                            {{ $global_notifikasi_unread }}
-                        </span>
-                    @endif
-                </button>
-
-                <!-- Profil Admin -->
-                <div
-                    class="flex items-center gap-3 bg-white px-4 py-2 border border-orange-500 shadow-md rounded-2xl w-full sm:w-auto">
-
-                    <a href="{{ route('superadmin.profile') }}" class="shrink-0">
-                        @if (Auth::user()->role == 'super_admin')
-                            @if (Auth::user()->superadmin?->img_profile)
-                                <img id="pu" class="w-10 h-10 object-cover rounded-full profile-img"
-                                    src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
-                            @else
-                                <img id="pu" class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
-                                    alt="">
-                            @endif
-                        @else
-                            <img class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
-                                alt="">
-                        @endif
-                    </a>
-
-                    <div class="text-sm break-words max-w-[130px] sm:max-w-[180px] md:max-w-none">
-                        <span class="font-semibold break-words">{{ Auth::user()->username }}</span>
-                        <p class="text-gray-500 text-sm break-words">{{ Auth::user()->email }}</p>
-                    </div>
-
-                </div>
+                {{-- User Badge Dropdown --}}
+                @include('super_admin.components.user_badge_dropdown')
             </div>
         </div>
 
-        
-        <div class="flex items-center gap-2 mt-4 mb-4">
-
-            <!-- Tombol Hapus -->
-            <form action="{{ route('superadmin.email-subs.bulk-delete') }}" method="POST">
-                @csrf
-                @method('DELETE')
-
-                <div class="mt-4 flex items-center gap-3">
-                    <!-- Tombol Hapus -->
-                    <button type="submit"
-                        class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold transition">
-                        Hapus Terpilih
-                    </button>
-            
-                    <!-- Icon PDF -->
-                    <button type="submit" formaction="{{ route('superadmin.email-subscribers.pdf') }}" formmethod="GET"
-                        class="inline-flex items-center justify-center
-        w-10 h-10
-        rounded-lg
-        text-orange-500
-        hover:bg-orange-100
-        transition
-        focus:outline-none focus:ring-2 focus:ring-orange-400">
-
-                        <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <mask id="mask0_680_18811" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
-                                width="28" height="28">
-                                <rect x="0.367188" y="0.15625" width="27.3438" height="27.3438"
-                                    fill="url(#pattern0_680_18811)" />
-                            </mask>
-                            <g mask="url(#mask0_680_18811)">
-                                <rect x="-6.92188" y="-4.0957" width="39.4965" height="34.0278" fill="#FA6601" />
-                            </g>
-                            <defs>
-                                <pattern id="pattern0_680_18811" patternContentUnits="objectBoundingBox" width="1"
-                                    height="1">
-                                    <use xlink:href="#image0_680_18811" transform="scale(0.0078125)" />
-                                </pattern>
-                                <image id="image0_680_18811" width="128" height="128" preserveAspectRatio="none"
-                                    xlink:href="data:image/png;base64,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" />
-                            </defs>
-                        </svg>
-                    </button>
-                </div>
-
-
-        </div>
-
-
         @if (session('success'))
-            <div class="bg-green-100 text-green-700 px-4 py-2 rounded mb-4">
-                {{ session('success') }}
+            <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-3 text-sm shadow-sm animate-fade-in">
+                <svg class="w-5 h-5 text-emerald-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('success') }}</span>
             </div>
         @endif
 
-        
-        <div class="overflow-x-auto">
-            <table class="w-full border border-gray-300 rounded-lg">
-                <thead class="bg-orange-500 text-white">
-                    <tr>
-                        <th class="px-4 py-2 border border-gray-800">
-                            <input type="checkbox" class="accent-orange-500" id="checkAll">
-                        </th>
-                        <th class="px-4 py-2 border border-gray-800">Email</th>
-                        <th class="px-4 py-2 border border-gray-800">Sumber</th>
-                        <th class="px-4 py-2 border border-gray-800">Nama</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse ($subscribers as $i => $sub)
-                        <tr class="text-center">
-                            <td class="px-4 py-2 border border-gray-800">
-                                <input type="checkbox" name="ids[]" value="{{ $sub->id }}" class="itemCheckbox">
-                            </td>
+        @if ($errors->any())
+            <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm shadow-sm">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
-                            {{-- Email --}}
-                            <td class="px-4 py-2 border border-gray-800">{{ $sub->email }}</td>
+        <!-- Quick Stats Cards -->
+        @php
+            $totalCount = $subscribers->count();
+            $pelamarCount = $subscribers->whereNotNull('pelamar_id')->count();
+            $perusahaanCount = $subscribers->whereNotNull('perusahaan_id')->count();
+            $guestCount = $subscribers->whereNull('pelamar_id')->whereNull('perusahaan_id')->count();
+        @endphp
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Total Subscribers</p>
+                    <p class="text-2xl font-bold text-gray-900 mt-0.5">{{ number_format($totalCount) }}</p>
+                </div>
+            </div>
 
-                            {{-- Sumber --}}
-                            <td class="px-4 py-2 border border-gray-800">
-                                @if ($sub->pelamar_id)
-                                    <span class="text-blue-600 font-semibold">Pelamar</span>
-                                @elseif ($sub->perusahaan_id)
-                                    <span class="text-green-600 font-semibold">Perusahaan</span>
-                                @else
-                                    <span class="text-gray-500">Guest</span>
-                                @endif
-                            </td>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Dari Pelamar</p>
+                    <p class="text-2xl font-bold text-indigo-600 mt-0.5">{{ number_format($pelamarCount) }}</p>
+                </div>
+            </div>
 
-                            {{-- Nama --}}
-                            <td class="px-4 py-2 border border-gray-800">
-                                @if ($sub->pelamar)
-                                    {{ $sub->pelamar->nama_pelamar ?? $sub->pelamar->user->username }}
-                                @elseif ($sub->perusahaan)
-                                    {{ $sub->perusahaan->nama_perusahaan ?? $sub->perusahaan->user->username }}
-                                @else
-                                    -
-                                @endif
-                            </td>
-                        </tr>
-                    @empty
-                        <tr>
-                            <td colspan="5" class="py-4 text-center text-gray-500">
-                                Belum ada subscriber
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Dari Perusahaan</p>
+                    <p class="text-2xl font-bold text-emerald-600 mt-0.5">{{ number_format($perusahaanCount) }}</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-slate-50 text-slate-600 flex items-center justify-center shrink-0">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Tamu / Guest</p>
+                    <p class="text-2xl font-bold text-slate-700 mt-0.5">{{ number_format($guestCount) }}</p>
+                </div>
+            </div>
         </div>
-        </form>
+
+        <!-- Main Card -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <!-- Form Pembungkus Bulk Delete & PDF Export -->
+            <form id="subscriberForm" action="{{ route('superadmin.email-subs.bulk-delete') }}" method="POST">
+                @csrf
+                @method('DELETE')
+
+                <!-- Action Toolbar -->
+                <div class="p-5 border-b border-gray-100 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+                    <!-- Left: Action Buttons -->
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <!-- Tombol Hapus Terpilih -->
+                        <button type="button"
+                            @click="openDeleteConfirm()"
+                            :disabled="selectedCount === 0"
+                            :class="selectedCount > 0 ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-600 hover:text-white cursor-pointer shadow-sm' : 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed opacity-60'"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border text-sm font-semibold transition-all duration-200">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            <span>Hapus Terpilih</span>
+                            <span x-show="selectedCount > 0" class="px-2 py-0.5 text-xs bg-rose-100 text-rose-700 rounded-full font-bold ml-0.5" x-text="selectedCount"></span>
+                        </button>
+
+                        <!-- Tombol Unduh PDF -->
+                        <button type="submit" 
+                            formaction="{{ route('superadmin.email-subscribers.pdf') }}" 
+                            formmethod="GET"
+                            class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-blue-200 bg-blue-50 text-[#00509d] hover:bg-[#00509d] hover:text-white text-sm font-semibold transition-all duration-200 shadow-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                            <span>Unduh PDF</span>
+                            <span x-show="selectedCount > 0" class="text-xs opacity-80" x-text="'(' + selectedCount + ' dipilih)'"></span>
+                        </button>
+
+                        <!-- Filter Sumber Dropdown -->
+                        <div class="relative inline-block">
+                            <select x-model="filterSource" @change="filterRows()"
+                                class="bg-gray-50 border border-gray-200 text-gray-700 text-sm font-medium rounded-xl px-3 py-2.5 pr-8 focus:ring-2 focus:ring-[#00509d] focus:border-transparent cursor-pointer">
+                                <option value="all">Semua Sumber</option>
+                                <option value="pelamar">Pelamar</option>
+                                <option value="perusahaan">Perusahaan</option>
+                                <option value="guest">Guest / Tamu</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Right: Search Input -->
+                    <div class="relative w-full md:w-72">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                        <input type="text" 
+                            x-model="search" 
+                            @input="filterRows()"
+                            placeholder="Cari email atau nama..." 
+                            class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition-all">
+                    </div>
+                </div>
+
+                <!-- Table Container -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50/80 text-gray-600 text-xs font-semibold uppercase tracking-wider border-b border-gray-100">
+                                <th class="py-3.5 px-4 w-12 text-center">
+                                    <input type="checkbox" id="checkAll" 
+                                        @change="toggleAll($el.checked)"
+                                        class="w-4 h-4 rounded text-[#00509d] border-gray-300 focus:ring-[#00509d] cursor-pointer">
+                                </th>
+                                <th class="py-3.5 px-4">Email Subscriber</th>
+                                <th class="py-3.5 px-4">Sumber</th>
+                                <th class="py-3.5 px-4">Nama / Pengguna</th>
+                                <th class="py-3.5 px-4 text-center">Tanggal Berlangganan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-sm text-gray-700">
+                            @forelse ($subscribers as $sub)
+                                @php
+                                    $sourceType = 'guest';
+                                    $displayName = '-';
+                                    if ($sub->pelamar_id) {
+                                        $sourceType = 'pelamar';
+                                        $displayName = $sub->pelamar->nama_pelamar ?? ($sub->pelamar->user->username ?? 'Pelamar');
+                                    } elseif ($sub->perusahaan_id) {
+                                        $sourceType = 'perusahaan';
+                                        $displayName = $sub->perusahaan->nama_perusahaan ?? ($sub->perusahaan->user->username ?? 'Perusahaan');
+                                    }
+                                @endphp
+                                <tr class="subscriber-row hover:bg-blue-50/40 transition-colors"
+                                    data-email="{{ $sub->email }}"
+                                    data-nama="{{ $displayName }}"
+                                    data-source="{{ $sourceType }}">
+                                    <!-- Checkbox -->
+                                    <td class="py-3.5 px-4 text-center">
+                                        <input type="checkbox" name="ids[]" value="{{ $sub->id }}" 
+                                            @change="updateCount()"
+                                            class="itemCheckbox w-4 h-4 rounded text-[#00509d] border-gray-300 focus:ring-[#00509d] cursor-pointer">
+                                    </td>
+
+                                    <!-- Email -->
+                                    <td class="py-3.5 px-4">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-8 h-8 rounded-lg bg-blue-50 text-[#00509d] flex items-center justify-center shrink-0">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <span class="font-medium text-gray-900 block">{{ $sub->email }}</span>
+                                                <span class="text-xs text-gray-400">ID: #{{ $sub->id }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+
+                                    <!-- Sumber -->
+                                    <td class="py-3.5 px-4">
+                                        @if ($sub->pelamar_id)
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                                </svg>
+                                                Pelamar
+                                            </span>
+                                        @elseif ($sub->perusahaan_id)
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-100">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                                                </svg>
+                                                Perusahaan
+                                            </span>
+                                        @else
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-600 border border-gray-200">
+                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                                                </svg>
+                                                Guest
+                                            </span>
+                                        @endif
+                                    </td>
+
+                                    <!-- Nama -->
+                                    <td class="py-3.5 px-4 font-medium text-gray-800">
+                                        {{ $displayName }}
+                                    </td>
+
+                                    <!-- Tanggal Daftar -->
+                                    <td class="py-3.5 px-4 text-center text-gray-500 text-xs">
+                                        {{ $sub->created_at ? $sub->created_at->format('d M Y, H:i') : '-' }}
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" class="py-12 text-center">
+                                        <div class="flex flex-col items-center justify-center text-gray-400">
+                                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 text-gray-400">
+                                                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                            <p class="text-base font-semibold text-gray-700">Belum Ada Subscriber</p>
+                                            <p class="text-sm text-gray-400 mt-1">Daftar pelanggan newsletter akan muncul otomatis di sini.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforelse
+
+                            <!-- Search Empty State -->
+                            <tr id="searchEmptyState" style="display: none;">
+                                <td colspan="5" class="py-12 text-center">
+                                    <div class="flex flex-col items-center justify-center text-gray-400">
+                                        <svg class="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                        <p class="text-sm font-medium text-gray-600">Tidak ada subscriber yang cocok dengan pencarian.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="px-5 py-3.5 border-t border-gray-100 bg-gray-50/50 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 gap-2">
+                    <span>Menampilkan <strong>{{ $subscribers->count() }}</strong> total data subscriber</span>
+                    <span class="text-gray-400">Centang baris untuk melakukan aksi massal</span>
+                </div>
+            </form>
+        </div>
+
+        <!-- Modal Konfirmasi Hapus Modern -->
+        <div x-show="openDeleteModal" 
+            x-cloak
+            class="fixed inset-0 z-50 overflow-y-auto"
+            aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            
+            <!-- Backdrop Blur -->
+            <div x-show="openDeleteModal"
+                x-transition:enter="ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+                @click="openDeleteModal = false"></div>
+
+            <div class="flex min-h-full items-center justify-center p-4 text-center">
+                <div x-show="openDeleteModal"
+                    x-transition:enter="ease-out duration-300"
+                    x-transition:enter-start="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    x-transition:enter-end="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave="ease-in duration-200"
+                    x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
+                    x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all w-full max-w-md p-6 border border-gray-100">
+                    
+                    <!-- Close button -->
+                    <button @click="openDeleteModal = false" type="button" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 p-1.5 rounded-xl hover:bg-gray-100 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+
+                    <!-- Icon & Content -->
+                    <div class="flex flex-col items-center text-center">
+                        <div class="w-16 h-16 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center mb-4 ring-8 ring-rose-50/60">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                        </div>
+
+                        <h3 class="text-xl font-bold text-gray-900" id="modal-title">Hapus Subscriber?</h3>
+                        
+                        <p class="mt-2 text-sm text-gray-500 leading-relaxed">
+                            Apakah Anda yakin ingin menghapus <span class="font-bold text-rose-600" x-text="selectedCount + ' subscriber'"></span> yang dipilih? Tindakan ini bersifat permanen dan tidak dapat dipulihkan.
+                        </p>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="mt-6 flex items-center gap-3">
+                        <button type="button" 
+                            @click="openDeleteModal = false"
+                            class="flex-1 py-2.5 px-4 rounded-xl border border-gray-200 text-gray-700 bg-white hover:bg-gray-50 text-sm font-semibold transition shadow-sm">
+                            Batal
+                        </button>
+                        <button type="button"
+                            @click="submitDelete()"
+                            class="flex-1 py-2.5 px-4 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold transition shadow-sm hover:shadow flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                            <span>Ya, Hapus Sekarang</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @include('super_admin.notif.modal_notif')
         @include('super_admin.notif.modal_semua')
-    </div>
-    <script>
-        document.getElementById('checkAll').addEventListener('change', function() {
-            document.querySelectorAll('.itemCheckbox').forEach(cb => {
-                cb.checked = this.checked;
-            });
-        });
-    </script>
-
+    </main>
 @endsection
+
+

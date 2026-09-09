@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <div class="w-full sm:ml-64 mb-12">
         <div class="bg-white">
@@ -85,14 +85,14 @@
                                 <label class="flex items-center space-x-2">
                                     <input type="radio" name="gender" value="Laki-laki"
                                         {{ $talentHunter->gender == 'Laki-laki' ? 'checked' : '' }}
-                                        class="h-4 w-4 text-orange-500 border-2 border-orange-400 focus:ring-orange-500" />
+                                        class="h-4 w-4 text-blue-700 border-2 border-blue-600 focus:ring-blue-700" />
                                     <span class="text-sm font-semibold text-gray-700 break-words">Laki-laki</span>
                                 </label>
 
                                 <label class="flex items-center space-x-2">
                                     <input type="radio" name="gender" value="Perempuan"
                                         {{ $talentHunter->gender == 'Perempuan' ? 'checked' : '' }}
-                                        class="h-4 w-4 text-orange-500 border-2 border-orange-400 focus:ring-orange-500" />
+                                        class="h-4 w-4 text-blue-700 border-2 border-blue-600 focus:ring-blue-700" />
                                     <span class="text-sm font-semibold text-gray-700 break-words">Perempuan</span>
                                 </label>
                             </div>
@@ -125,12 +125,12 @@
                         <!-- Tombol -->
                         <div class="flex flex-col sm:flex-row justify-center sm:space-x-4 space-y-2 sm:space-y-0 mt-6">
                             <button type="submit"
-                                class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-medium text-sm px-8 py-2 rounded-md shadow-sm transition duration-150">
+                                class="w-full sm:w-auto bg-blue-700 hover:bg-blue-800 text-white font-medium text-sm px-8 py-2 rounded-md shadow-sm transition duration-150">
                                 Simpan
                             </button>
 
                             <a href="{{ route('superadmin.talent-hunter.detail', $talentHunter->id) }}"
-                                class="w-full sm:w-auto border border-orange-500 text-orange-500 hover:bg-gray-100 font-medium text-sm px-9 py-2 rounded-md transition duration-150 text-center">
+                                class="w-full sm:w-auto border border-blue-700 text-blue-700 hover:bg-gray-100 font-medium text-sm px-9 py-2 rounded-md transition duration-150 text-center">
                                 Batal
                             </a>
                         </div>

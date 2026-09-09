@@ -1,145 +1,172 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <!-- Main Content -->
-    <main class="flex-1 p-6 sm:ml-64 min-h-screen overflow-y-auto pb-20" x-data="{ openNotif: false, openAllNotif: false }">
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+    <main class="flex-1 p-6 sm:ml-64" x-data="{ openNotif: false, openAllNotif: false }">
 
-            <h1 class="text-2xl font-medium break-words">Pengaturan</h1>
+        <!-- Header Topbar -->
+        <div class="flex justify-between items-center mb-8 flex-col sm:flex-row gap-4 sm:gap-0 border-b border-gray-100 pb-5">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">
+                    Pengaturan Akun
+                </h1>
+                <p class="text-sm text-gray-500 mt-1">Kelola keamanan kredensial dan kata sandi akun Super Admin</p>
+            </div>
 
-            <div class="flex items-center gap-3 flex-wrap">
-
+            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
                 {{-- Tombol Notifikasi --}}
-                <button @click="openNotif = true" class="relative">
-                    <svg width="31" height="32" viewBox="0 0 31 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_722_7956)">
-                            <path
-                                d="M23.076 14.9431L22.6747 12.7383L21.1101 13.0055L21.5756 15.5633C21.6168 15.7894 21.7387 15.9922 21.9146 16.127L24.4524 18.0732L24.6985 19.4255L7.4876 22.3654L7.24147 21.0131L8.93911 18.3434C9.05673 18.1585 9.09972 17.9276 9.05861 17.7015L8.43786 14.2911C8.21777 13.0934 8.29153 11.8668 8.65169 10.7352C9.01186 9.60353 9.64569 8.60691 10.4892 7.84595C11.3326 7.08499 12.3559 6.58665 13.4555 6.40126C14.5552 6.21586 15.6924 6.34997 16.7522 6.79004L16.4051 4.88278C15.595 4.65063 14.7612 4.55689 13.9346 4.605L13.6165 2.85717L12.0518 3.12444L12.37 4.87227C10.4802 5.41568 8.87215 6.70676 7.85685 8.49588C6.84155 10.285 6.49109 12.445 6.87324 14.5583L7.42973 17.6158L5.7321 20.2855C5.61447 20.4704 5.57149 20.7013 5.6126 20.9274L6.07815 23.4852C6.11931 23.7114 6.24121 23.9141 6.41702 24.049C6.59284 24.1838 6.80817 24.2396 7.01565 24.2042L12.4919 23.2688L12.647 24.1214C12.8528 25.252 13.4623 26.2659 14.3414 26.9401C15.2205 27.6142 16.2971 27.8934 17.3345 27.7162C18.3719 27.539 19.2851 26.9199 19.8732 25.9951C20.4612 25.0704 20.676 23.9157 20.4702 22.785L20.315 21.9324L25.7912 20.997C25.9987 20.9616 26.1813 20.8378 26.2989 20.6528C26.4165 20.4679 26.4595 20.2369 26.4183 20.0108L25.9528 17.453C25.9116 17.2269 25.7896 17.0241 25.6138 16.8894L23.076 14.9431ZM18.9055 23.0523C19.029 23.7307 18.9002 24.4235 18.5473 24.9784C18.1945 25.5332 17.6466 25.9047 17.0242 26.011C16.4017 26.1173 15.7557 25.9498 15.2283 25.5453C14.7008 25.1408 14.3351 24.5325 14.2117 23.8541L14.0565 23.0015L18.7504 22.1997L18.9055 23.0523Z"
-                                fill="black" />
-                        </g>
-                    </svg>
+                @include('super_admin.components.notif_button')
 
-                    @if ($global_notifikasi_unread > 0)
-                        <span id="notif-badge"
-                            class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                            {{ $global_notifikasi_unread }}
-                        </span>
-                    @endif
-                </button>
-                
-                
-                <!-- Profile -->
-                <div
-                    class="flex items-center gap-2 bg-white px-3 py-2 border border-gray-500 shadow-md rounded-2xl min-w-0">
-
-                    <a href="{{ route('superadmin.profile') }}">
-                        @if (Auth::user()?->avatar)
-                            <img id="pu" class="w-10 h-10 object-cover rounded-full profile-img"
-                                src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
-                        @else
-                            <img id="pu" class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'SuperAdmin') }}&background=00509d&color=fff&size=128"
-                                alt="">
-                        @endif
-                    </a>
-
-                    <div class="text-sm min-w-0">
-                        <span class="font-semibold break-words">{{ Auth::user()->username }}</span>
-                        <p class="text-gray-500 text-sm break-words">{{ Auth::user()->email }}</p>
-                    </div>
-
-                </div>
+                {{-- User Badge Dropdown --}}
+                @include('super_admin.components.user_badge_dropdown')
             </div>
         </div>
 
-        <div class="space-y-4">
+        {{-- Alerts --}}
+        <div class="max-w-4xl space-y-4 mb-6">
             @if (session('success'))
-                <div
-                    class="p-3 bg-green-100 text-green-700 rounded 
-                    break-words overflow-hidden text-sm sm:text-base">
-                    {{ session('success') }}
+                <div class="flex items-center gap-3 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl text-sm">
+                    <svg class="w-5 h-5 text-emerald-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="font-medium">{{ session('success') }}</span>
                 </div>
             @endif
 
             @if (session('error'))
-                <div
-                    class="p-3 bg-red-100 text-red-700 rounded 
-                    break-words overflow-hidden text-sm sm:text-base">
-                    {{ session('error') }}
+                <div class="flex items-center gap-3 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm">
+                    <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <span class="font-medium">{{ session('error') }}</span>
                 </div>
             @endif
 
             @if ($errors->any())
-                <div
-                    class="p-3 bg-red-100 text-red-700 rounded 
-                    break-words overflow-hidden text-sm sm:text-base">
-                    <ul class="list-disc ml-5 space-y-1">
+                <div class="p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl text-sm">
+                    <div class="flex items-center gap-2 font-semibold mb-2 text-rose-900">
+                        <svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        Terdapat beberapa kesalahan input:
+                    </div>
+                    <ul class="list-disc ml-6 space-y-1 text-xs">
                         @foreach ($errors->all() as $err)
-                            <li class="break-words">{{ $err }}</li>
+                            <li>{{ $err }}</li>
                         @endforeach
                     </ul>
                 </div>
             @endif
         </div>
 
+        {{-- Content Grid --}}
+        <div class="max-w-4xl grid grid-cols-1 md:grid-cols-3 gap-6">
 
-        {{-- pengaturan --}}
-        <div class="w-full flex items-start justify-start p-4 sm:p-10">
-            <div class="w-full max-w-2xl space-y-6">
-
-                <!-- Tombol Ganti Password -->
-                <button onclick="document.getElementById('passwordFormSuper').classList.toggle('hidden')"
-                    class="w-full bg-[#00509d] transition duration-300 hover:bg-[#003d7a] 
-                   text-white font-medium py-3 rounded-lg text-left pl-4
-                   break-words">
-                    Ganti Password
-                </button>
-
-                <!-- Form Ganti Password -->
-                <form id="passwordFormSuper" action="{{ route('superadmin.password.update') }}" method="POST"
-                    class="hidden mt-4 space-y-4 border-2 border-gray-600 bg-white p-4 sm:p-6 
-                   rounded-lg shadow break-words overflow-hidden">
-                    @csrf
-
-                    <div>
-                        <label class="block text-sm font-medium break-words">Kata Sandi Lama</label>
-                        <input type="password" name="old_password" required
-                            class="mt-1 w-full border-2 border-gray-400 px-3 py-2 
-                           rounded text-sm sm:text-base">
+            <!-- Kolom Kiri: Form Ganti Password (Lebih Lebar) -->
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+                    <div class="flex items-center gap-3 mb-6 pb-4 border-b border-gray-100">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-[#00509d]">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-gray-800">Keamanan Kata Sandi</h2>
+                            <p class="text-xs text-gray-500">Perbarui kata sandi Anda secara berkala untuk menjaga akun tetap aman</p>
+                        </div>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-medium break-words">Kata Sandi Baru</label>
-                        <input type="password" name="new_password" required
-                            class="mt-1 w-full border-2 border-gray-400 px-3 py-2 
-                           rounded text-sm sm:text-base">
-                    </div>
+                    <form action="{{ route('superadmin.password.update') }}" method="POST" class="space-y-5">
+                        @csrf
 
-                    <div>
-                        <label class="block text-sm font-medium break-words">Konfirmasi Kata Sandi Baru</label>
-                        <input type="password" name="new_password_confirmation" required
-                            class="mt-1 w-full border-2 border-gray-400 px-3 py-2 
-                           rounded text-sm sm:text-base">
-                    </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                                Kata Sandi Saat Ini <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="password" name="old_password" required placeholder="Masukkan kata sandi lama"
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] outline-none transition duration-150">
+                        </div>
 
-                    <button type="submit"
-                        class="w-full bg-[#003d7a] hover:bg-[#003d7a] 
-                       text-white py-2 rounded-lg font-medium text-sm sm:text-base">
-                        Simpan Password
-                    </button>
-                </form>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                                Kata Sandi Baru <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="password" name="new_password" required placeholder="Minimal 8 karakter"
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] outline-none transition duration-150">
+                        </div>
 
-                <!-- Ganti Email -->
-                <a href="{{ route('email.ubah') }}"
-                    class="block w-full bg-[#00509d] transition duration-300 hover:bg-[#003d7a] 
-                   text-white py-3 rounded-lg text-left pl-5 break-words text-sm sm:text-base">
-                    Ganti Email
-                </a>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2">
+                                Konfirmasi Kata Sandi Baru <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="password" name="new_password_confirmation" required placeholder="Ulangi kata sandi baru"
+                                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] outline-none transition duration-150">
+                        </div>
+
+                        <div class="pt-2">
+                            <button type="submit"
+                                class="w-full sm:w-auto px-6 py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-medium rounded-xl text-sm shadow-sm transition duration-200 flex items-center justify-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Simpan Perubahan Kata Sandi
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
+
+            <!-- Kolom Kanan: Info Akun & Email -->
+            <div class="space-y-6">
+                <!-- Card Email -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-[#00509d]">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-gray-800 text-sm">Alamat Email</h3>
+                    </div>
+                    <p class="text-xs text-gray-500 mb-2">Email akun terdaftar saat ini:</p>
+                    <div class="p-3 bg-gray-50 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 break-all mb-4">
+                        {{ auth()->user()->email ?? '-' }}
+                    </div>
+                    <a href="{{ route('email.ubah') }}"
+                        class="inline-flex items-center justify-center w-full px-4 py-2.5 bg-white border border-[#00509d] text-[#00509d] hover:bg-blue-50 text-xs font-semibold rounded-xl transition duration-150">
+                        Ubah Alamat Email
+                    </a>
+                </div>
+
+                <!-- Card Profil Cepat -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+                    <h3 class="font-bold text-gray-800 text-sm mb-3">Informasi Akun</h3>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Username</span>
+                            <span class="font-medium text-gray-800">{{ auth()->user()->username ?? 'Super Admin' }}</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                            <span class="text-gray-500">Peran</span>
+                            <span class="px-2 py-0.5 bg-blue-100 text-blue-800 font-semibold rounded-md">Super Admin</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-gray-500">Terdaftar Sejak</span>
+                            <span class="font-medium text-gray-800">{{ auth()->user()->created_at ? auth()->user()->created_at->format('d M Y') : '-' }}</span>
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <a href="{{ route('superadmin.profile') }}"
+                            class="inline-flex items-center justify-center w-full px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-semibold rounded-xl transition duration-150">
+                            Buka Profil Lengkap
+                        </a>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         @include('super_admin.notif.modal_notif')
         @include('super_admin.notif.modal_semua')
     </main>
 @endsection
-

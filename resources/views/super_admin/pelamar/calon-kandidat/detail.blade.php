@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <div class="sm:ml-64 p-6 md:p-10 bg-white min-h-screen font-[Poppins] w-full">
 
@@ -7,7 +7,7 @@
         <h1 class="text-xl sm:text-2xl font-semibold mb-8 text-gray-800">Detail Calon Kandidat</h1>
 
         <!-- Kartu Kandidat -->
-        <div class="max-w-4xl mx-auto bg-orange-600 rounded-2xl shadow-lg text-white p-6 sm:p-8 md:p-10">
+        <div class="max-w-4xl mx-auto bg-blue-800 rounded-2xl shadow-lg text-white p-6 sm:p-8 md:p-10">
             <div class="flex flex-col md:flex-row items-center gap-6 mb-8">
                 @if ($pelamar->img_profile)
                     <img class="w-28 h-28 object-cover rounded-full shadow-md border-4 border-white"
@@ -20,7 +20,7 @@
 
                 <div class="text-center md:text-left">
                     <h3 class="text-2xl font-semibold">{{ $pelamar->nama_pelamar }}</h3>
-                    {{-- <p class="text-orange-100 mt-1">{{ $pelamar->divisi }}</p> --}}
+                    {{-- <p class="text-blue-100 mt-1">{{ $pelamar->divisi }}</p> --}}
                 </div>
             </div>
 
@@ -30,28 +30,28 @@
                 @csrf
 
                 <div>
-                    <label class="block text-sm text-orange-100 mb-1">Divisi</label>
-                    <p class="text-orange-600 bg-white px-3 py-2 rounded-md">
+                    <label class="block text-sm text-blue-100 mb-1">Divisi</label>
+                    <p class="text-blue-800 bg-white px-3 py-2 rounded-md">
                         {{ is_array($pelamar->divisi) ? implode(', ', $pelamar->divisi) : $pelamar->divisi ?? '-' }}
                     </p>
 
                 </div>
 
                 <div>
-                    <label class="block text-sm text-orange-100 mb-1">Mulai Pelatihan</label>
+                    <label class="block text-sm text-blue-100 mb-1">Mulai Pelatihan</label>
                     <input type="date" name="mulai_pelatihan" value="{{ $pelamar->mulai_pelatihan }}"
-                        class="w-full px-3 py-2 rounded-md text-black border border-gray-300 focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                        class="w-full px-3 py-2 rounded-md text-black border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none">
                 </div>
 
                 <div>
-                    <label class="block text-sm text-orange-100 mb-1">Selesai Pelatihan</label>
+                    <label class="block text-sm text-blue-100 mb-1">Selesai Pelatihan</label>
                     <input type="date" name="selesai_pelatihan" value="{{ $pelamar->selesai_pelatihan }}"
-                        class="w-full px-3 py-2 rounded-md text-black border border-gray-300 focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                        class="w-full px-3 py-2 rounded-md text-black border border-gray-300 focus:ring-2 focus:ring-blue-600 focus:outline-none">
                 </div>
 
                 <div class="col-span-1 sm:col-span-2 md:col-span-3 flex justify-center mt-6">
                     <button type="submit"
-                        class="bg-orange-400 text-white hover:bg-orange-500 transition duration-300 font-semibold px-6 py-2 rounded-lg shadow">
+                        class="bg-blue-600 text-white hover:bg-blue-700 transition duration-300 font-semibold px-6 py-2 rounded-lg shadow">
                         Simpan Tanggal
                     </button>
                 </div>
