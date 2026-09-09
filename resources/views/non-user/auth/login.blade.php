@@ -225,38 +225,221 @@
                                     <span class="text-[10px] px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold shrink-0">123</span>
                                 </button>
 
+                                <!-- ================= PERUSAHAAN (1-6) ================= -->
                                 <!-- Perusahaan 1 -->
                                 <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan1@areakerja.test', 'password123', 'PT AreaKerja Tech')"
                                     class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-white hover:bg-blue-50 transition text-left group cursor-pointer">
                                     <div class="truncate mr-2">
                                         <div class="font-bold text-blue-900 flex items-center gap-1 text-xs">
-                                            <i class="ph ph-buildings text-blue-600"></i> Perusahaan 1
+                                            <i class="ph ph-buildings text-blue-600"></i> Perusahaan 1 (Tech)
                                         </div>
                                         <div class="text-[10px] text-blue-700 font-mono truncate">perusahaan1@areakerja.test</div>
                                     </div>
                                     <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold shrink-0">pwd123</span>
                                 </button>
 
+                                <!-- Perusahaan 2 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan2@areakerja.test', 'password123', 'PT Nusantara Digital')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-white hover:bg-blue-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-blue-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-buildings text-blue-600"></i> Perusahaan 2 (Agency)
+                                        </div>
+                                        <div class="text-[10px] text-blue-700 font-mono truncate">perusahaan2@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Perusahaan 3 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan3@areakerja.test', 'password123', 'PT Inovasi Karya Media')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-white hover:bg-blue-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-blue-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-buildings text-blue-600"></i> Perusahaan 3 (Desain)
+                                        </div>
+                                        <div class="text-[10px] text-blue-700 font-mono truncate">perusahaan3@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Perusahaan 4 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan4@areakerja.test', 'password123', 'PT Mitra Sejahtera Abadi')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-white hover:bg-blue-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-blue-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-buildings text-blue-600"></i> Perusahaan 4 (Finance)
+                                        </div>
+                                        <div class="text-[10px] text-blue-700 font-mono truncate">perusahaan4@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Perusahaan 5 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan5@areakerja.test', 'password123', 'PT Techindo Cloud')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-white hover:bg-blue-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-blue-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-buildings text-blue-600"></i> Perusahaan 5 (DevOps)
+                                        </div>
+                                        <div class="text-[10px] text-blue-700 font-mono truncate">perusahaan5@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Perusahaan 6 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'perusahaan'" onclick="fillDemo('perusahaan6@areakerja.test', 'password123', 'PT Sukses Gemilang')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-blue-200 bg-white hover:bg-blue-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-blue-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-buildings text-blue-600"></i> Perusahaan 6 (Logistik)
+                                        </div>
+                                        <div class="text-[10px] text-blue-700 font-mono truncate">perusahaan6@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- ================= PELAMAR (1-6) ================= -->
                                 <!-- Pelamar 1 -->
-                                <button type="button" x-show="tab === 'all' || tab === 'pelamar'" onclick="fillDemo('pelamar1@areakerja.test', 'password123', 'Pelamar 1')"
+                                <button type="button" x-show="tab === 'all' || tab === 'pelamar'" onclick="fillDemo('pelamar1@areakerja.test', 'password123', 'Budi Santoso (Backend)')"
                                     class="flex items-center justify-between p-2 rounded-xl border border-teal-200 bg-white hover:bg-teal-50 transition text-left group cursor-pointer">
                                     <div class="truncate mr-2">
                                         <div class="font-bold text-teal-900 flex items-center gap-1 text-xs">
-                                            <i class="ph ph-user text-teal-600"></i> Pelamar 1
+                                            <i class="ph ph-user text-teal-600"></i> Pelamar 1 (Budi)
                                         </div>
                                         <div class="text-[10px] text-teal-700 font-mono truncate">pelamar1@areakerja.test</div>
                                     </div>
                                     <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 font-bold shrink-0">pwd123</span>
                                 </button>
 
+                                <!-- Pelamar 2 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'pelamar'" onclick="fillDemo('pelamar2@areakerja.test', 'password123', 'Ahmad Rizky (Frontend)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-teal-200 bg-white hover:bg-teal-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-teal-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-user text-teal-600"></i> Pelamar 2 (Ahmad)
+                                        </div>
+                                        <div class="text-[10px] text-teal-700 font-mono truncate">pelamar2@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Pelamar 3 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'pelamar'" onclick="fillDemo('pelamar3@areakerja.test', 'password123', 'Dewi Lestari (UI/UX)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-teal-200 bg-white hover:bg-teal-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-teal-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-user text-teal-600"></i> Pelamar 3 (Dewi)
+                                        </div>
+                                        <div class="text-[10px] text-teal-700 font-mono truncate">pelamar3@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Pelamar 4 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'pelamar'" onclick="fillDemo('pelamar4@areakerja.test', 'password123', 'Fajar Pratama (Data)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-teal-200 bg-white hover:bg-teal-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-teal-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-user text-teal-600"></i> Pelamar 4 (Fajar)
+                                        </div>
+                                        <div class="text-[10px] text-teal-700 font-mono truncate">pelamar4@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Pelamar 5 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'pelamar'" onclick="fillDemo('pelamar5@areakerja.test', 'password123', 'Rina Indah (Marketing)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-teal-200 bg-white hover:bg-teal-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-teal-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-user text-teal-600"></i> Pelamar 5 (Rina)
+                                        </div>
+                                        <div class="text-[10px] text-teal-700 font-mono truncate">pelamar5@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Pelamar 6 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'pelamar'" onclick="fillDemo('pelamar6@areakerja.test', 'password123', 'Eko Prasetyo (Finance)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-teal-200 bg-white hover:bg-teal-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-teal-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-user text-teal-600"></i> Pelamar 6 (Eko)
+                                        </div>
+                                        <div class="text-[10px] text-teal-700 font-mono truncate">pelamar6@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-teal-100 text-teal-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- ================= KANDIDAT (1-6) ================= -->
                                 <!-- Kandidat 1 -->
-                                <button type="button" x-show="tab === 'all' || tab === 'kandidat'" onclick="fillDemo('kandidat1@areakerja.test', 'password123', 'Kandidat 1')"
+                                <button type="button" x-show="tab === 'all' || tab === 'kandidat'" onclick="fillDemo('kandidat1@areakerja.test', 'password123', 'Siti Rahayu (Flutter/Vue)')"
                                     class="flex items-center justify-between p-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 transition text-left group cursor-pointer">
                                     <div class="truncate mr-2">
                                         <div class="font-bold text-rose-900 flex items-center gap-1 text-xs">
-                                            <i class="ph ph-star text-rose-600"></i> Kandidat 1
+                                            <i class="ph ph-star text-rose-600"></i> Kandidat 1 (Siti)
                                         </div>
                                         <div class="text-[10px] text-rose-700 font-mono truncate">kandidat1@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Kandidat 2 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'kandidat'" onclick="fillDemo('kandidat2@areakerja.test', 'password123', 'Doni Kurniawan (Java/Docker)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-rose-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-star text-rose-600"></i> Kandidat 2 (Doni)
+                                        </div>
+                                        <div class="text-[10px] text-rose-700 font-mono truncate">kandidat2@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Kandidat 3 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'kandidat'" onclick="fillDemo('kandidat3@areakerja.test', 'password123', 'Maya Kartika (HR/Psikologi)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-rose-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-star text-rose-600"></i> Kandidat 3 (Maya)
+                                        </div>
+                                        <div class="text-[10px] text-rose-700 font-mono truncate">kandidat3@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Kandidat 4 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'kandidat'" onclick="fillDemo('kandidat4@areakerja.test', 'password123', 'Agus Wijaya (Mobile/Flutter)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-rose-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-star text-rose-600"></i> Kandidat 4 (Agus)
+                                        </div>
+                                        <div class="text-[10px] text-rose-700 font-mono truncate">kandidat4@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Kandidat 5 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'kandidat'" onclick="fillDemo('kandidat5@areakerja.test', 'password123', 'Nabila Putri (Social Media)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-rose-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-star text-rose-600"></i> Kandidat 5 (Nabila)
+                                        </div>
+                                        <div class="text-[10px] text-rose-700 font-mono truncate">kandidat5@areakerja.test</div>
+                                    </div>
+                                    <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0">pwd123</span>
+                                </button>
+
+                                <!-- Kandidat 6 -->
+                                <button type="button" x-show="tab === 'all' || tab === 'kandidat'" onclick="fillDemo('kandidat6@areakerja.test', 'password123', 'Hendra Saputra (Network)')"
+                                    class="flex items-center justify-between p-2 rounded-xl border border-rose-200 bg-white hover:bg-rose-50 transition text-left group cursor-pointer">
+                                    <div class="truncate mr-2">
+                                        <div class="font-bold text-rose-900 flex items-center gap-1 text-xs">
+                                            <i class="ph ph-star text-rose-600"></i> Kandidat 6 (Hendra)
+                                        </div>
+                                        <div class="text-[10px] text-rose-700 font-mono truncate">kandidat6@areakerja.test</div>
                                     </div>
                                     <span class="text-[10px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 font-bold shrink-0">pwd123</span>
                                 </button>

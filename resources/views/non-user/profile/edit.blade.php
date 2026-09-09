@@ -16,10 +16,9 @@
                         <div class="flex flex-col md:flex-row items-center gap-4 md:gap-8 w-full md:w-auto">
                             <div class="flex flex-col items-center w-full md:w-auto">
                                 <div class="relative inline-flex items-center gap-3">
-                                    <div x-data="{ zoom: false }" class="cursor-pointer inline-block" @click="zoom = !zoom">
+                                    <div class="inline-block">
                                         <img id="pp"
-                                            class="w-36 h-36 sm:w-40 sm:h-40 object-cover rounded-full border-2 border-[#00509d] shadow-sm transition-transform duration-300"
-                                            :class="zoom ? 'scale-[2] z-50 relative' : 'scale-100'"
+                                            class="w-36 h-36 sm:w-40 sm:h-40 object-cover rounded-full border-2 border-[#00509d] shadow-sm"
                                             src="{{ Auth::user()->pelamar->img_profile
                                                 ? asset('storage/' . Auth::user()->pelamar->img_profile)
                                                 : 'https://ui-avatars.com/api/?name=' . urlencode(Auth::user()->username) . '&background=00509d&color=fff&size=128' }}"

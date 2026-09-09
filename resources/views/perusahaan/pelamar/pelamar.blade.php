@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <section class="relative">
         @php
@@ -104,12 +104,12 @@
 
                                             <td class="px-4 py-4 whitespace-nowrap">
                                                 @if ($p->status === 'diterima')
-                                                    <span class="px-3 py-1 bg-emerald-100 text-emerald-700 font-extrabold text-xs rounded-full border border-emerald-200">
-                                                        âœ“ Diterima
+                                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-emerald-100 text-emerald-700 font-extrabold text-xs rounded-full border border-emerald-200">
+                                                        <i class="ph ph-check font-bold"></i> Diterima
                                                     </span>
                                                 @elseif ($p->status === 'ditolak')
-                                                    <span class="px-3 py-1 bg-rose-100 text-rose-700 font-extrabold text-xs rounded-full border border-rose-200">
-                                                        âœ• Ditolak
+                                                    <span class="inline-flex items-center gap-1 px-3 py-1 bg-rose-100 text-rose-700 font-extrabold text-xs rounded-full border border-rose-200">
+                                                        <i class="ph ph-x font-bold"></i> Ditolak
                                                     </span>
                                                 @else
                                                     <a href="{{ route('pelamar.konfirmasi', $p->id) }}"

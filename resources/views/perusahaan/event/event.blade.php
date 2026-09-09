@@ -1,61 +1,110 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
-    <div class="flex flex-col gap-6 items-center justify-center min-h-screen p-4 sm:p-6 mt-16">
-        @foreach ($events as $event)
-          <div class="w-full max-w-xl sm:max-w-2xl md:max-w-3xl mx-auto rounded-xl overflow-hidden relative">
+    <div class="min-h-screen bg-slate-50/50 pt-28 pb-20">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6">
 
-                <!-- Gambar -->
-                <img src="{{ $event->image ? asset('storage/' . $event->image) : asset('images/megangbuku.jpg') }}"
-                    alt="Event" class="w-full h-48 sm:h-56 md:h-64 object-cover">
+            <!-- Filter Status Bar -->
+            <div class="flex items-center justify-between flex-wrap gap-4 mb-8">
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">Event & Job Fair</h1>
+                    <p class="text-xs sm:text-sm text-slate-500 mt-1">Temukan berbagai acara seminar karir, workshop, dan bursa kerja menarik.</p>
+                </div>
 
-                <!-- Overlay -->
-                <div class="absolute inset-0 bg-black bg-opacity-40 rounded-xl"></div>
-
-                <!-- Konten -->
-                <div class="absolute inset-0 flex flex-col justify-between p-4 sm:p-6 text-white break-all">
-
-                    <!-- Tanggal (atas kanan) -->
-                    <div class="text-xs sm:text-sm text-right">
-                        {{ \Carbon\Carbon::parse($event->tgl_mulai)->translatedFormat('j F Y') }}
-                    </div>
-
-
-                    <!-- Info -->
-                    <div>
-                        <h2 class="text-xl sm:text-2xl font-bold mb-2">{{ $event->title }}</h2>
-                        <p class="text-xs sm:text-sm mb-3 w-full sm:w-[80%]">
-                            {{ Str::limit(strip_tags($event->content), 120) }}
-                        </p>
-
-
-                        <a href="{{ route('perusahaan.event.show', $event->id) }}"
-                            class="bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-medium px-4 py-2 rounded">
-                            Lihat Lebih Detail
-                        </a>
-                    </div>
+                <div class="flex items-center gap-2 bg-white p-1.5 rounded-2xl border border-slate-200 shadow-xs text-xs font-semibold">
+                    <a href="{{ route('perusahaan.event.index') }}"
+                        class="px-4 py-2 rounded-xl transition {{ empty($status) ? 'bg-[#00509d] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                        Semua
+                    </a>
+                    <a href="{{ route('perusahaan.event.index', ['status' => 'buka']) }}"
+                        class="px-4 py-2 rounded-xl transition {{ ($status ?? '') === 'buka' ? 'bg-[#00509d] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                        Upcoming
+                    </a>
+                    <a href="{{ route('perusahaan.event.index', ['status' => 'tutup']) }}"
+                        class="px-4 py-2 rounded-xl transition {{ ($status ?? '') === 'tutup' ? 'bg-[#00509d] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                        Ended
+                    </a>
                 </div>
             </div>
-        @endforeach
 
-        @if ($events->isEmpty())
-            <div class="flex items-center justify-center min-h-screen bg-gray-white">
-                <div
-                    class="bg-white border border-gray-300 rounded-2xl shadow-sm w-full max-w-2xl flex flex-col items-center justify-center py-20 px-10">
-                    <!-- Icon Amplop Terbuka Mirip Gambar -->
-                    <svg width="110" height="110" viewBox="0 0 150 139" fill="none"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path
-                            d="M147.433 47.1239L78.2019 0.970095C77.2539 0.337562 76.1397 0 75 0C73.8603 0 72.7461 0.337562 71.7981 0.970095L2.56731 47.1239C1.777 47.6512 1.12914 48.3655 0.681273 49.2034C0.233403 50.0413 -0.000615858 50.9768 1.2172e-06 51.9268V126.927C1.2172e-06 129.987 1.21566 132.922 3.37954 135.086C5.54342 137.25 8.47827 138.465 11.5385 138.465H138.462C141.522 138.465 144.457 137.25 146.62 135.086C148.784 132.922 150 129.987 150 126.927V51.9268C150.001 50.9768 149.767 50.0413 149.319 49.2034C148.871 48.3655 148.223 47.6512 147.433 47.1239ZM52.4423 92.3115L11.5385 121.158V63.1263L52.4423 92.3115ZM64.2476 98.0807H85.7524L126.591 126.927H23.4087L64.2476 98.0807ZM97.5577 92.3115L138.462 63.1263V121.158L97.5577 92.3115Z"
-                            fill="#606060" fill-opacity="0.8" />
-                    </svg><br>
-                    <!-- Teks -->
-                    <p class="text-gray-500 text-center text-lg font-medium leading-relaxed">
-                        Tidak Ada Event Yang Tersedia <br>
-                        Untuk Saat Ini
-                    </p>
+            <!-- List Events -->
+            @if ($events->count() > 0)
+                <div class="space-y-8">
+                    @foreach ($events as $event)
+                        @php
+                            $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
+                            $defaultImages = [
+                                'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80',
+                                'https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&auto=format&fit=crop&q=80',
+                                'https://images.unsplash.com/photo-1475721027785-f74eccf877e2?w=1200&auto=format&fit=crop&q=80'
+                            ];
+                            $imgUrl = $event->image ? asset('storage/' . $event->image) : $defaultImages[$loop->index % count($defaultImages)];
+                        @endphp
+
+                        <div>
+                            <!-- Tanggal Event -->
+                            <p class="text-xs sm:text-sm font-semibold text-slate-500 mb-2">
+                                {{ \Carbon\Carbon::parse($event->tgl_mulai)->translatedFormat('d F Y') }}
+                            </p>
+
+                            <!-- Banner Card Matching Figma -->
+                            <div class="relative rounded-3xl overflow-hidden shadow-md group min-h-[220px] sm:min-h-[260px] md:min-h-[290px] flex flex-col justify-end p-6 sm:p-8 md:p-10 border border-slate-100">
+                                <!-- Background Image -->
+                                <img src="{{ $imgUrl }}" alt="{{ $event->title }}"
+                                    class="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+
+                                <!-- Dark Gradient Overlay -->
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/50 to-black/30"></div>
+
+                                <!-- Status Badge (Top Right) -->
+                                <div class="absolute top-4 right-4 sm:top-6 sm:right-6 z-10">
+                                    @if ($isEnded)
+                                        <span class="px-3.5 py-1 bg-slate-700/90 backdrop-blur-md text-white font-bold text-xs rounded-full shadow-sm">
+                                            Ended
+                                        </span>
+                                    @else
+                                        <span class="px-3.5 py-1 bg-emerald-600/90 backdrop-blur-md text-white font-bold text-xs rounded-full shadow-sm flex items-center gap-1.5">
+                                            <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span> Upcoming
+                                        </span>
+                                    @endif
+                                </div>
+
+                                <!-- Content Inside Banner -->
+                                <div class="relative z-10 max-w-2xl">
+                                    <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-2 tracking-tight leading-snug">
+                                        {{ $event->title }}
+                                    </h2>
+                                    <p class="text-xs sm:text-sm text-white/90 line-clamp-2 mb-5 leading-relaxed font-normal">
+                                        {{ strip_tags($event->content) }}
+                                    </p>
+                                    <a href="{{ route('perusahaan.event.show', $event->id) }}"
+                                        class="inline-block bg-[#00509d] hover:bg-[#003d7a] text-white font-bold text-xs sm:text-sm px-8 py-2.5 rounded-lg shadow-md transition duration-200">
+                                        Bergabung
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+
+                    <!-- Pagination -->
+                    @if ($events instanceof \Illuminate\Contracts\Pagination\Paginator && $events->hasPages())
+                        <div class="pt-6 flex justify-center">
+                            {{ $events->links() }}
+                        </div>
+                    @endif
                 </div>
-            </div>
-        @endif
+            @else
+                <!-- Empty State Matching Figma -->
+                <div class="text-center py-24 px-4 flex flex-col items-center justify-center">
+                    <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-slate-100 flex items-center justify-center text-slate-400 mb-6 border border-slate-200 shadow-inner">
+                        <i class="ph ph-envelope-open text-5xl sm:text-6xl text-slate-400"></i>
+                    </div>
+                    <h3 class="text-base sm:text-lg md:text-xl font-bold text-slate-500 max-w-md mx-auto leading-relaxed">
+                        Tidak Ada Event Yang Tersedia untuk Saat Ini
+                    </h3>
+                </div>
+            @endif
+
+        </div>
     </div>
 
     @include('layouts.footer')

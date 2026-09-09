@@ -1,5 +1,5 @@
-﻿<!-- ================= MODAL STEP 2 ================= -->
-<div id="modalStep2" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
+<!-- ================= MODAL STEP 2 ================= -->
+<div id="modalStep2" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 items-center justify-center">
     <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative p-6">
         <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
 

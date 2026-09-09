@@ -86,7 +86,7 @@
                                     <rect width="22.8395" height="22.8395" fill="url(#pattern0_643_6018)" />
                                 </mask>
                                 <g mask="url(#mask0_643_6018)">
-                                    <rect width="22.8395" height="22.8395" fill="#F26419" />
+                                    <rect width="22.8395" height="22.8395" fill="#00509d" />
                                 </g>
                                 <defs>
                                     <pattern id="pattern0_643_6018" patternContentUnits="objectBoundingBox" width="1"
@@ -111,7 +111,7 @@
                                 <rect x="0.984375" width="22.8395" height="22.8395" fill="url(#pattern0_643_6012)" />
                             </mask>
                             <g mask="url(#mask0_643_6012)">
-                                <rect x="0.984375" width="22.8395" height="22.8395" fill="#F26419" />
+                                <rect x="0.984375" width="22.8395" height="22.8395" fill="#00509d" />
                             </g>
                             <defs>
                                 <pattern id="pattern0_643_6012" patternContentUnits="objectBoundingBox" width="1"

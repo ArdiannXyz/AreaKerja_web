@@ -683,15 +683,15 @@ class PelamarController extends Controller
 
 
 
-    public function bacaSemua()
+    public function bacaSemua(Request $request)
     {
         $userId = auth()->id();
 
-        $updated = Notifikasi::where('user_id', $userId)
+        Notifikasi::where('user_id', $userId)
             ->where('is_read', 0)
             ->update(['is_read' => 1]);
 
-        dd($userId, $updated, Notifikasi::where('user_id', $userId)->get());
+        return response()->json(['success' => true]);
     }
 
 

@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-slate-50 min-h-screen text-slate-800 pt-28 pb-16" x-data="{ tab: '{{ request('tab', 'profil') }}' }">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 space-y-6">
@@ -46,8 +46,8 @@
                             <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">
                                 {{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}
                             </h1>
-                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
-                                âœ“ Terverifikasi
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                                <i class="ph ph-check-circle text-xs font-bold"></i> Terverifikasi
                             </span>
                         </div>
                         <p class="text-sm font-semibold text-slate-500 mt-1">

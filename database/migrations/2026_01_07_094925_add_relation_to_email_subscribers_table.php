@@ -31,10 +31,12 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('email_subscribers', function (Blueprint $table) {
-            $table->dropForeign(['pelamar_id']);
-            $table->dropForeign(['perusahaan_id']);
-            $table->dropColumn(['pelamar_id', 'perusahaan_id']);
-        });
+        if (Schema::hasTable('email_subscribers')) {
+            Schema::table('email_subscribers', function (Blueprint $table) {
+                $table->dropForeign(['pelamar_id']);
+                $table->dropForeign(['perusahaan_id']);
+                $table->dropColumn(['pelamar_id', 'perusahaan_id']);
+            });
+        }
     }
 };

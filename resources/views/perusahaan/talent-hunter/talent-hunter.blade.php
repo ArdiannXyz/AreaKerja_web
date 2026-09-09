@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <div class="mt-16">
@@ -19,7 +19,7 @@
             </div>
         </section>
     </div>
-    <section class="w-full text-white py-20" style="background: linear-gradient(to right, orange, #ff7b00)">
+    <section class="w-full text-white py-20 bg-[#00509d]">
         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center px-6">
 
             <div class="flex justify-center">
@@ -241,50 +241,79 @@
     @include('perusahaan.modal-topup.step3')
 
     <!-- Benefit Talent Hunter -->
-    <section class="bg-white py-12">
-        <div class="text-center py-10">
+    <section class="bg-white py-14 px-6">
+        <div class="max-w-4xl mx-auto text-center">
             <!-- Judul -->
             <h2 class="text-2xl font-bold text-[#003d7a]">Benefit Talent Hunter</h2>
-            <div class="w-20 h-1 bg-[#00509d] mx-auto my-2"></div>
+            <div class="w-20 h-1 bg-[#00509d] mx-auto my-3 rounded-full"></div>
 
-            <!-- Atas: 2 item -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 max-w-3xl mx-auto">
-                <!-- Kandidat -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/jam.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-[#00509d]">Kandidat</h3>
-                    <p class="text-sm text-[#00509d]">Mendapatkan kandidat sesuai kebutuhan perusahaan dan posisi yang
-                        ditujukan.</p>
+            <!-- Grid 4 item -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12 mt-10">
+                <!-- 1. Kandidat -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <circle cx="19" cy="11" r="2"></circle>
+                            <path d="M19 8v1"></path>
+                            <path d="M19 13v1"></path>
+                            <path d="M16 11h1"></path>
+                            <path d="M21 11h1"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Kandidat</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Mendapatkan kandidat sesuai kebutuhan perusahaan dan posisi yang ditujukan.
+                    </p>
                 </div>
 
-                <!-- Siap Kerja -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/komputer.jpg') }}" class="w-12 h-12 mb-2" />
-                    <h3 class="font-bold text-[#00509d]">Siap Kerja</h3>
-                    <p class="text-sm text-[#00509d]">Kandidat yang didapatkan dipastikan siap kerja dengan perusahaan
-                        yang
-                        direkomendasikan.</p>
+                <!-- 2. Siap Kerja -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                            <path d="m9 10 2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Siap Kerja</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Kandidat yang didapatkan dipastikan siap kerja dengan perusahaan yang direkomendasikan.
+                    </p>
+                </div>
+
+                <!-- 3. Memudahkan -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+                            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Memudahkan</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Mempermudah perusahaan dalam penyaringan dan seleksi kandidat.
+                    </p>
+                </div>
+
+                <!-- 4. Perlindungan & Garansi -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Perlindungan Garansi</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Jaminan penggantian kandidat baru jika tidak cocok dengan spesifikasi perusahaan.
+                    </p>
                 </div>
             </div>
-
-            <!-- Bawah: 2 item -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 max-w-3xl mx-auto">
-                <!-- Memudahkan -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/roket.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-[#00509d]">Memudahkan</h3>
-                    <p class="text-sm text-[#00509d]">Mempermudah perusahaan dalam penyaringan kandidat.</p>
-                </div>
-
-                <!-- Jaminan -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/roket.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-[#00509d]">Jaminan</h3>
-                    <p class="text-sm text-[#00509d]">Jaminan ganti kandidat baru jika tidak cocok dengan spesifikasi
-                        perusahaan.</p>
-                </div>
-            </div>
-            {{-- @include('perusahaan.modal-talent') --}}
         </div>
     </section>
     {{-- AUTO RUPIAH --}}

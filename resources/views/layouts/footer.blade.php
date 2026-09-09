@@ -4,12 +4,14 @@
     ============================================================ --}}
 
 <style>
-    /* ── Footer Variables ── */
     .ak-footer {
         font-family: 'Poppins', sans-serif;
         background-color: #00509d;
         color: #fff;
         position: relative;
+        width: 100%;
+        margin-top: auto;
+        margin-bottom: 0 !important;
     }
 
     /* ── Nav links ── */
@@ -140,8 +142,8 @@
     /* ── Back to top ── */
     #ak-back-to-top {
         position: fixed;
-        bottom: 1.5rem;
-        right: 1.5rem;
+        bottom: 2rem;
+        right: 2rem;
         width: 40px;
         height: 40px;
         border-radius: 12px;
@@ -212,12 +214,12 @@
     }
 </style>
 
-<footer class="ak-footer" aria-label="Footer AreaKerja">
+<footer class="ak-footer bg-[#00509d] text-white relative z-10 w-full" aria-label="Footer AreaKerja">
 
     {{-- ══════════════════════════════════════════════
         MAIN FOOTER — Desktop
     ══════════════════════════════════════════════ --}}
-    <div class="max-w-7xl mx-auto px-6 md:px-10 lg:px-8 pt-12 pb-10">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 lg:px-8 pt-8 pb-6">
 
         {{-- ── Desktop Grid (hidden on mobile) ── --}}
         <div class="hidden lg:grid lg:grid-cols-6 xl:grid-cols-6 gap-8 xl:gap-10">
@@ -228,7 +230,7 @@
                 <a href="{{ route('beranda') }}" class="inline-block" aria-label="AreaKerja Beranda">
                     <img src="{{ asset('images/logo_area_kerja_putih.png') }}"
                          alt="AreaKerja Logo"
-                         class="h-7 w-auto object-contain">
+                         class="h-5 w-auto object-contain">
                 </a>
 
                 {{-- Tagline --}}
@@ -383,7 +385,7 @@
                 <a href="{{ route('beranda') }}" aria-label="AreaKerja Beranda">
                     <img src="{{ asset('images/logo_area_kerja_putih.png') }}"
                          alt="AreaKerja Logo"
-                         class="h-7 w-auto object-contain">
+                         class="h-5 w-auto object-contain">
                 </a>
                 <p class="text-white/65 text-xs leading-relaxed mt-0.5">
                     Temukan peluang kerja yang tepat dan bangun kariermu bersama AreaKerja.
@@ -505,7 +507,7 @@
         BOTTOM BAR
     ══════════════════════════════════════════════ --}}
     <hr class="ak-divider">
-    <div class="max-w-7xl mx-auto px-6 md:px-10 lg:px-8 py-4">
+    <div class="max-w-7xl mx-auto px-6 md:px-10 lg:px-8 pt-5 pb-8 sm:pb-10">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
 
             {{-- Copyright --}}
@@ -514,7 +516,7 @@
             </p>
 
             {{-- Legal links --}}
-            <div class="flex items-center gap-4 sm:gap-5">
+            <div class="flex items-center gap-4 sm:gap-5 pr-14 sm:pr-16">
                 <a href="{{ route('syarat.ketentuan') }}" class="ak-bottom-link">Syarat &amp; Ketentuan</a>
                 <a href="{{ route('pelamar.bantuan') }}" class="ak-bottom-link">Bantuan</a>
             </div>

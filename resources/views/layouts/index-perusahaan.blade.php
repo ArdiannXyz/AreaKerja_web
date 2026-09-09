@@ -32,8 +32,29 @@
         }
     </style>
     <style>
+        html {
+            height: 100%;
+            background-color: #00509d;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #00509d;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content-wrapper {
+            flex: 1 0 auto;
+            background-color: #ffffff;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
         }
 
         .notif-profil {
@@ -199,6 +220,264 @@
         }
     </style>
 
+    <script>
+        // Global Notification Functions
+        window.markAsRead = async function(url, el) {
+            try {
+                let res = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                        "Accept": "application/json"
+                    }
+                });
+                let data = await res.json();
+                if (data.success && el) {
+                    el.classList.remove("bg-white", "font-medium", "text-gray-900");
+                    el.classList.add("bg-gray-50/80", "text-gray-600");
+                    const badges = document.querySelectorAll('#notif-badge, .notif-badge');
+                    badges.forEach(badge => {
+                        let count = parseInt(badge.textContent);
+                        if (count > 1) {
+                            badge.textContent = count - 1;
+                        } else {
+                            badge.remove();
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("markAsRead error:", error);
+            }
+        };
+
+        window.hapusNotif = async function(id, btnEl) {
+            const item = btnEl ? btnEl.closest('.notif-item') : document.querySelector(`.notif-item[data-id="${id}"]`);
+            if (item) {
+                item.style.transition = 'all 0.25s ease';
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(20px)';
+                setTimeout(() => item.remove(), 250);
+            }
+
+            try {
+                let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
+                let res = await fetch(url, {
+                    method: "DELETE",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                        "Accept": "application/json"
+                    }
+                });
+                let data = await res.json();
+                if (!data.success && item) {
+                    item.style.opacity = '1';
+                    item.style.transform = 'none';
+                }
+            } catch (err) {
+                console.error(err);
+                if (item) {
+                    item.style.opacity = '1';
+                    item.style.transform = 'none';
+                }
+            }
+        };
+
+        window.bacaSemuaNotif = async function() {
+            const hasItems = document.querySelectorAll('.notif-item').length > 0;
+            const hasBadge = document.querySelector('#notif-badge, .notif-badge') !== null;
+            const hasUnread = document.querySelectorAll('.notif-item.bg-white, .notif-item.font-medium, .notif-item:not(.bg-gray-50\\/80):not(.bg-gray-200)').length > 0;
+
+            if (!hasItems || (!hasBadge && !hasUnread)) {
+                Swal.fire({
+                    title: '<span class="text-xs font-semibold text-gray-700">Tidak ada notifikasi baru</span>',
+                    icon: 'info',
+                    iconColor: '#00509d',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'w-[280px] p-4 rounded-2xl shadow-xl',
+                        icon: 'scale-75 my-1'
+                    }
+                });
+                return;
+            }
+
+            try {
+                let res = await fetch("{{ route('notifikasi.bacaSemua') }}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                        "Accept": "application/json"
+                    }
+                });
+                let data = await res.json();
+                if (data.success) {
+                    document.querySelectorAll('.notif-item').forEach(item => {
+                        item.classList.remove('bg-white', 'font-medium', 'text-gray-900');
+                        item.classList.add('bg-gray-50/80', 'text-gray-600');
+                    });
+                    document.querySelectorAll('#notif-badge, .notif-badge').forEach(b => b.remove());
+                    Swal.fire({
+                        title: '<span class="text-xs font-bold text-gray-800">Semua Ditandai Dibaca</span>',
+                        icon: 'success',
+                        timer: 1200,
+                        showConfirmButton: false,
+                        customClass: {
+                            popup: 'w-[260px] p-3 rounded-2xl shadow-lg',
+                            icon: 'scale-75 my-1'
+                        }
+                    });
+                }
+            } catch (err) {
+                console.error("bacaSemua error:", err);
+            }
+        };
+
+        window.hapusSemuaNotif = function() {
+            const items = document.querySelectorAll('.notif-item');
+            if (items.length === 0) {
+                Swal.fire({
+                    title: '<span class="text-xs font-semibold text-gray-700">Tidak ada notifikasi untuk dihapus</span>',
+                    icon: 'info',
+                    iconColor: '#00509d',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'w-[280px] p-4 rounded-2xl shadow-lg',
+                        icon: 'scale-75 my-1'
+                    }
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: '<span class="text-sm font-bold text-gray-800">Hapus Semua Notifikasi?</span>',
+                text: 'Semua notifikasi Anda akan dibersihkan.',
+                icon: 'warning',
+                iconColor: '#ef4444',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'w-[300px] p-4 rounded-2xl shadow-xl',
+                    htmlContainer: 'text-xs text-gray-500 my-2',
+                    confirmButton: 'text-xs px-3.5 py-1.5 rounded-lg font-medium',
+                    cancelButton: 'text-xs px-3.5 py-1.5 rounded-lg font-medium',
+                    icon: 'scale-75 my-1'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
+                            method: "DELETE",
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                                "Accept": "application/json"
+                            }
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            document.querySelectorAll('.notif-item').forEach(e => e.remove());
+                            document.querySelectorAll('#notif-badge, .notif-badge').forEach(b => b.remove());
+                            Swal.fire({
+                                title: '<span class="text-xs font-bold text-gray-800">Berhasil Dihapus</span>',
+                                icon: 'success',
+                                timer: 1200,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'w-[260px] p-3 rounded-2xl shadow-lg',
+                                    icon: 'scale-75 my-1'
+                                }
+                            });
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+            });
+        };
+
+        window.hapusSemuaBacaNotif = function() {
+            const readItems = document.querySelectorAll('.notif-item.bg-gray-100, .notif-item.bg-gray-200, .notif-item.bg-gray-50\\/80, .notif-item.bg-gray-50\\/70');
+            if (readItems.length === 0) {
+                Swal.fire({
+                    title: '<span class="text-xs font-semibold text-gray-700">Tidak ada notifikasi yang sudah dibaca</span>',
+                    icon: 'info',
+                    iconColor: '#00509d',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    customClass: {
+                        popup: 'w-[280px] p-4 rounded-2xl shadow-lg',
+                        icon: 'scale-75 my-1'
+                    }
+                });
+                return;
+            }
+
+            Swal.fire({
+                title: '<span class="text-sm font-bold text-gray-800">Hapus Notifikasi Dibaca?</span>',
+                text: 'Notifikasi yang sudah dibaca akan dibersihkan.',
+                icon: 'warning',
+                iconColor: '#ef4444',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                customClass: {
+                    popup: 'w-[300px] p-4 rounded-2xl shadow-xl',
+                    htmlContainer: 'text-xs text-gray-500 my-2',
+                    confirmButton: 'text-xs px-3.5 py-1.5 rounded-lg font-medium',
+                    cancelButton: 'text-xs px-3.5 py-1.5 rounded-lg font-medium',
+                    icon: 'scale-75 my-1'
+                }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
+                            method: "DELETE",
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                                "Accept": "application/json"
+                            }
+                        });
+                        let data = await res.json();
+                        if (data.success) {
+                            document.querySelectorAll('.notif-item.bg-gray-100, .notif-item.bg-gray-200, .notif-item.bg-gray-50\\/80, .notif-item.bg-gray-50\\/70')
+                                .forEach(e => e.remove());
+                            Swal.fire({
+                                title: '<span class="text-xs font-bold text-gray-800">Berhasil Dihapus</span>',
+                                icon: 'success',
+                                timer: 1200,
+                                showConfirmButton: false,
+                                customClass: {
+                                    popup: 'w-[260px] p-3 rounded-2xl shadow-lg',
+                                    icon: 'scale-75 my-1'
+                                }
+                            });
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    }
+                }
+            });
+        };
+
+        function notifHandler() {
+            return {
+                hapus(id, btnEl) { return window.hapusNotif(id, btnEl); },
+                hapusSemua() { return window.hapusSemuaNotif(); },
+                bacaSemua() { return window.bacaSemuaNotif(); },
+                hapusSemuaBaca() { return window.hapusSemuaBacaNotif(); }
+            };
+        }
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.data('notifHandler', notifHandler);
+        });
+    </script>
     <script src="//unpkg.com/alpinejs" defer></script>
 
 </head>
@@ -268,8 +547,8 @@
 
                     <!-- Badge angka merah -->
                     @if ($global_notifikasi_unread > 0)
-                        <span
-                            class="absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                        <span id="notif-badge"
+                            class="notif-badge absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
                             {{ $global_notifikasi_unread }}
                         </span>
                     @endif
@@ -284,167 +563,97 @@
 
                 {{-- Jika sudah login tampilkan dropdown (Foto Profil) --}}
                 @auth
-                    <div class="flex items-center">
-                        <button id="ntap" type="button" class="flex items-center rounded-full focus:outline-none focus:ring-2 focus:ring-[#00509d] transition transform hover:scale-105"
+                    <div class="flex items-center space-x-3">
+                        <button id="ntap" type="button" class="flex text-sm rounded-full focus:ring-4 focus:ring-gray-300"
                             id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown"
                             data-dropdown-placement="bottom">
                             <span class="sr-only">Open user menu</span>
                             @if (Auth::user()->role == 'perusahaan' && Auth::user()->perusahaan?->img_profile)
-                                <img id="pu" class="w-10 h-10 sm:w-11 sm:h-11 object-cover rounded-full border-2 border-[#00509d] shadow-sm profile-img"
+                                <img id="pu" class="w-10 h-10 object-cover rounded-full profile-img"
                                     src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}"
                                     alt="{{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}">
                             @else
-                                <img id="pu" class="w-10 h-10 sm:w-11 sm:h-11 rounded-full border-2 border-[#00509d] shadow-sm"
+                                <img id="pu" class="w-10 h-10 rounded-full"
                                     src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->role == 'perusahaan' ? (Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username) : Auth::user()->username) }}&background=00509d&color=fff&size=128"
                                     alt="{{ Auth::user()->username }}">
                             @endif
                         </button>
 
                         <!-- Dropdown menu -->
-                        <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-md border"
+                        <div class="z-50 min-w-[220px] max-w-[300px] hidden my-4 text-base bg-white text-gray-800 divide-y divide-gray-100 rounded-xl shadow-2xl border border-slate-100"
                             id="user-dropdown">
-                            <div class="bg-white rounded-2xl shadow-lg w-80 overflow-hidden">
-                                <!-- Header -->
-                                <div class="flex items-center gap-3 px-5 py-4">
-                                    @if (Auth::user()->role == 'perusahaan')
-                                        @if (Auth::user()->perusahaan->img_profile)
-                                            <img id="pu" class="w-10 h-10 object-cover rounded-full profile-img"
-                                                src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}"
-                                                alt="Profile">
-                                        @else
-                                            <img id="pu" class="w-10 h-10 rounded-full"
-                                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
-                                                alt="">
-                                        @endif
-                                    @else
-                                        <img class="w-10 h-10 rounded-full"
-                                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
-                                                alt="">
-                                    @endif
-                                    <div>
-                                        <span
-                                            class="block text-sm text-gray-900 break-all">{{ Auth::user()->username }}</span>
-                                        <span
-                                            class="block text-sm text-gray-500 truncate">{{ Auth::user()->email }}</span>
-                                    </div>
-                                </div>
-                                <hr>
+                            <!-- Header Info -->
+                            <div class="px-4 py-3">
+                                <span class="block text-sm font-bold text-gray-900 break-all">{{ Auth::user()->username }}</span>
+                                <span class="block text-xs text-gray-500 truncate mt-0.5">{{ Auth::user()->email }}</span>
+                            </div>
 
-                                 <!-- Menu -->
-                                <div class="flex flex-col mt-4">
+                            <!-- Menu List -->
+                            <ul class="py-2 text-gray-700 text-sm font-medium" aria-labelledby="user-menu-button">
+                                <li>
                                     <a href="{{ route('profile.perusahaan') }}"
-                                        class="flex items-center gap-3 px-5 py-3 hover:bg-blue-50 hover:text-[#00509d] text-gray-700 font-medium"
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition"
                                         id="profile-lank">
-                                        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M11 1C5.477 1 1 5.477 1 11C1 16.523 5.477 21 11 21C16.523 21 21 16.523 21 11C21 5.477 16.523 1 11 1Z"
-                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
-                                                stroke-linejoin="round" />
-                                            <path
-                                                d="M3.27344 17.346C3.27344 17.346 5.50244 14.5 11.0024 14.5C16.5024 14.5 18.7324 17.346 18.7324 17.346M11.0024 11C11.7981 11 12.5611 10.6839 13.1238 10.1213C13.6864 9.55871 14.0024 8.79565 14.0024 8C14.0024 7.20435 13.6864 6.44129 13.1238 5.87868C12.5611 5.31607 11.7981 5 11.0024 5C10.2068 5 9.44373 5.31607 8.88112 5.87868C8.31851 6.44129 8.00244 7.20435 8.00244 8C8.00244 8.79565 8.31851 9.55871 8.88112 10.1213C9.44373 10.6839 10.2068 11 11.0024 11Z"
-                                                fill="currentColor" />
-                                        </svg>
+                                        <i class="ph ph-user mr-2 text-[#00509d] text-lg"></i>
                                         Pengaturan & Profil Perusahaan
                                     </a>
+                                </li>
 
-                                    @if ($perusahaan->is_berlangganan == 1)
+                                @if ($perusahaan->is_berlangganan == 1)
+                                    <li>
                                         <a href="{{ url('/perusahaan/dashboard?show=dashboard') }}"
-                                            class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
-                                            <svg width="20" height="19" viewBox="0 0 15 16" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path
-                                                    d="M14.8064 13.7977C14.8064 14.272 14.6455 14.6779 14.3236 15.0154C14.0017 15.3529 13.6143 15.5219 13.1613 15.5225H1.64516C1.19274 15.5225 0.805581 15.3534 0.483677 15.0154C0.161774 14.6773 0.000548387 14.2714 0 13.7977L0 1.72439C0 1.25008 0.161226 0.843896 0.483677 0.505842C0.806129 0.167789 1.19329 -0.000948906 1.64516 -0.00037384H13.1613C13.6137 -0.00037384 14.0011 0.168365 14.3236 0.505842C14.646 0.843321 14.807 1.2495 14.8064 1.72439V13.7977ZM13.1613 9.4858H8.22581V13.7977H13.1613V9.4858ZM13.1613 7.76104V1.72439H8.22581V7.76104H13.1613ZM6.58064 13.7977L6.58064 1.72439H1.64516L1.64516 13.7977H6.58064Z"
-                                                    fill="currentColor" />
-                                            </svg>
-
+                                            class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                            <i class="ph ph-squares-four mr-2 text-[#00509d] text-lg"></i>
                                             Dashboard
                                         </a>
-                                    @else
-                                    @endif
+                                    </li>
+                                @endif
 
-                                    <button onclick="toggleModal()"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
-                                        <svg width="20" height="22" viewBox="0 0 20 19" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M2 19C1.45 19 0.979333 18.8043 0.588 18.413C0.196667 18.0217 0.000666667 17.5507 0 17V6C0 5.45 0.196 4.97933 0.588 4.588C0.98 4.19667 1.45067 4.00067 2 4H6V2C6 1.45 6.196 0.979333 6.588 0.588C6.98 0.196667 7.45067 0.000666667 8 0H12C12.55 0 13.021 0.196 13.413 0.588C13.805 0.98 14.0007 1.45067 14 2V4H18C18.55 4 19.021 4.196 19.413 4.588C19.805 4.98 20.0007 5.45067 20 6V17C20 17.55 19.8043 18.021 19.413 18.413C19.0217 18.805 18.5507 19.0007 18 19H2ZM2 17H18V6H2V17ZM8 4H12V2H8V4Z"
-                                                fill="currentColor" />
-                                        </svg>
-
+                                <li>
+                                    <button type="button" onclick="toggleModal()"
+                                        class="w-full flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition text-left">
+                                        <i class="ph ph-coins mr-2 text-[#00509d] text-lg"></i>
                                         Koin Area Kerja
                                     </button>
+                                </li>
 
+                                <li>
                                     <a href="{{ route('perusahaan.kandidat.saya') }}"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
-                                        <svg width="20" height="19" viewBox="0 0 22 22" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M19.3333 1H2.66667C2.22464 1 1.80072 1.17559 1.48816 1.48816C1.17559 1.80072 1 2.22464 1 2.66667V19.3333C1 19.7754 1.17559 20.1993 1.48816 20.5118C1.80072 20.8244 2.22464 21 2.66667 21H19.3333C19.7754 21 20.1993 20.8244 20.5118 20.5118C20.8244 20.1993 21 19.7754 21 19.3333V2.66667C21 2.22464 20.8244 1.80072 20.5118 1.48816C20.1993 1.17559 19.7754 1 19.3333 1Z"
-                                                stroke="currentColor" stroke-width="1.66667" stroke-linecap="round"
-                                                stroke-linejoin="round" />
-                                            <path
-                                                d="M9.3342 14.8889L12.112 17.1111L16.5564 11.5556M5.44531 6H16.5564M5.44531 10.4444H9.88976"
-                                                stroke="currentColor" stroke-width="1.66667" stroke-linecap="round"
-                                                stroke-linejoin="round" />
-                                        </svg>
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-users mr-2 text-[#00509d] text-lg"></i>
                                         Kandidat Saya
                                     </a>
+                                </li>
 
+                                <li>
                                     <a href="{{ route('syarat.ketentuan') }}"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path d="M14 2H6C5.46957 2 4.96086 2.21071 4.58579 2.58579C4.21071 2.96086 4 3.46957 4 4V20C4 20.5304 4.21071 21.0391 4.58579 21.4142C4.96086 21.7893 5.46957 22 6 22H18C18.5304 22 19.0391 21.7893 19.4142 21.4142C19.7893 21.0391 20 20.5304 20 20V8L14 2Z" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M14 2V8H20" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16 13H8" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M16 17H8" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                            <path d="M10 9H8" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                        </svg>
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-file-text mr-2 text-[#00509d] text-lg"></i>
                                         Syarat dan Ketentuan
                                     </a>
+                                </li>
 
+                                <li>
                                     <a href="{{ route('verifikasi_pelamar') }}"
-                                        class="flex items-center gap-3 px-5 py-3 text-gray-700 hover:bg-blue-50 hover:text-[#00509d]">
-                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <path
-                                                d="M17 11H7C5.89543 11 5 11.8954 5 13V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V13C19 11.8954 18.1046 11 17 11Z"
-                                                stroke="currentColor" stroke-width="1.66667" stroke-linecap="round"
-                                                stroke-linejoin="round" />
-                                            <path
-                                                d="M8 11V7C8 5.93913 8.42143 4.92172 9.17157 4.17157C9.92172 3.42143 10.9391 3 12 3C13.0609 3 14.0783 3.42143 14.8284 4.17157C15.5786 4.92172 16 5.93913 16 7V11"
-                                                stroke="currentColor" stroke-width="1.66667" stroke-linecap="round"
-                                                stroke-linejoin="round" />
-                                            <path
-                                                d="M12 15V17"
-                                                stroke="currentColor" stroke-width="1.66667" stroke-linecap="round"
-                                                stroke-linejoin="round" />
-                                        </svg>
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-lock-key mr-2 text-[#00509d] text-lg"></i>
                                         Ganti Password
                                     </a>
+                                </li>
 
-                                    <hr class="my-1 border-gray-100">
-
+                                <li class="px-4 pt-2 pb-1">
                                     <form action="{{ route('logout_perusahaan') }}" method="POST" class="w-full">
                                         @csrf
                                         <button type="submit"
-                                            class="w-full flex items-center gap-3 px-5 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 font-medium transition text-left">
-                                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M15 3H19C19.5304 3 20.0391 3.21071 20.4142 3.58579C20.7893 3.96086 21 4.46957 21 5V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H15" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M10 17L15 12L10 7" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                                <path d="M15 12H3" stroke="currentColor" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
-                                            </svg>
+                                            class="w-full py-2 bg-[#00509d] text-white font-bold rounded-lg shadow-sm hover:bg-[#003d7a] transition text-sm text-center">
                                             Keluar
                                         </button>
                                     </form>
-                                </div>
-                            </div>
+                                </li>
+                            </ul>
                         </div>
-
-
-                    @endauth
+                    </div>
+                @endauth
 
                 {{-- Menu Mobile Dropdown (Hanya HP < 768px) --}}
                 <div x-show="openMenu" x-transition x-cloak @click.outside="openMenu = false"
@@ -511,7 +720,9 @@
     @endif
 
     {{-- isi halaman --}}
-    @yield('content')
+    <main class="page-content-wrapper">
+        @yield('content')
+    </main>
     {{-- NOTIF --}}
     @include('perusahaan.notif.modal_notif')
     @include('perusahaan.notif.modal_semua')
@@ -540,228 +751,6 @@
         });
     </script>
 
-    {{-- NOTIF --}}
-    <script>
-        // Tandai dibaca
-        async function markAsRead(url, el) {
-            try {
-                let res = await fetch(url, {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
-                        "Accept": "application/json"
-                    }
-                });
-
-                let data = await res.json();
-
-                if (data.success) {
-
-                    // Ubah warna bg
-                    el.classList.remove("bg-white");
-                    el.classList.add("bg-gray-200");
-
-                    // Kurangi badge
-                    const badge = document.getElementById("notif-badge");
-                    if (badge) {
-                        let count = parseInt(badge.textContent);
-                        if (count > 1) {
-                            badge.textContent = count - 1;
-                        } else {
-                            badge.remove();
-                        }
-                    }
-                }
-
-            } catch (error) {
-                console.error("markAsRead error:", error);
-            }
-        }
-
-        // AlpineJS init
-        document.addEventListener('alpine:init', () => {
-            Alpine.data('notifHandler', () => ({
-
-                // Lihat Detail Notifikasi
-                viewDetail(id, judul, pesan, createdAt, readUrl, el) {
-                    if (readUrl && el) {
-                        markAsRead(readUrl, el);
-                    }
-
-                    Swal.fire({
-                        title: `<div class="text-base font-bold text-gray-800">${judul || 'Detail Notifikasi'}</div>`,
-                        html: `
-                            <div class="text-left text-sm text-gray-700 leading-relaxed bg-blue-50/50 p-4 rounded-xl border border-blue-100 mt-2 mb-3">
-                                ${pesan}
-                            </div>
-                            <div class="text-xs text-gray-400 text-left flex items-center gap-1">
-                                â±ï¸ ${createdAt}
-                            </div>
-                        `,
-                        showCancelButton: true,
-                        confirmButtonColor: '#00509d',
-                        cancelButtonColor: '#ef4444',
-                        confirmButtonText: 'Tutup',
-                        cancelButtonText: 'Hapus Notifikasi Ini',
-                        customClass: {
-                            popup: 'rounded-2xl shadow-xl'
-                        }
-                    }).then((result) => {
-                        if (result.dismiss === Swal.DismissReason.cancel) {
-                            this.hapus(id);
-                        }
-                    });
-                },
-
-                // Hapus satu notifikasi dengan SweetAlert
-                hapus(id) {
-                    Swal.fire({
-                        title: 'Hapus Notifikasi?',
-                        text: 'Notifikasi ini akan dihapus secara permanen.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: 'Ya, Hapus!',
-                        cancelButtonText: 'Batal',
-                        customClass: {
-                            popup: 'rounded-2xl shadow-xl'
-                        }
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                            let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
-
-                            try {
-                                let res = await fetch(url, {
-                                    method: "DELETE",
-                                    headers: {
-                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                        "Accept": "application/json"
-                                    }
-                                });
-
-                                let data = await res.json();
-
-                                if (data.success) {
-                                    document.querySelectorAll(`.notif-item[data-id="${id}"]`).forEach(e => e.remove());
-                                    Swal.fire({
-                                        title: 'Terhapus!',
-                                        text: 'Notifikasi berhasil dihapus.',
-                                        icon: 'success',
-                                        timer: 1500,
-                                        showConfirmButton: false
-                                    });
-                                }
-                            } catch (err) {
-                                console.error(err);
-                            }
-                        }
-                    });
-                },
-
-                // Hapus semua dengan SweetAlert
-                hapusSemua() {
-                    Swal.fire({
-                        title: 'Hapus Semua Notifikasi?',
-                        text: 'Semua notifikasi Anda akan dihapus secara permanen.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: 'Ya, Hapus Semua!',
-                        cancelButtonText: 'Batal',
-                        customClass: {
-                            popup: 'rounded-2xl shadow-xl'
-                        }
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                            try {
-                                let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
-                                    method: "DELETE",
-                                    headers: {
-                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                        "Accept": "application/json"
-                                    }
-                                });
-
-                                let data = await res.json();
-
-                                if (data.success) {
-                                    document.querySelectorAll('.notif-item').forEach(e => e.remove());
-                                    Swal.fire({
-                                        title: 'Terhapus!',
-                                        text: 'Semua notifikasi berhasil dihapus.',
-                                        icon: 'success',
-                                        timer: 1500,
-                                        showConfirmButton: false
-                                    });
-                                }
-                            } catch (err) {
-                                console.error(err);
-                            }
-                        }
-                    });
-                },
-
-                // Hapus semua yang sudah dibaca dengan SweetAlert
-                hapusSemuaBaca() {
-                    Swal.fire({
-                        title: 'Hapus Notifikasi Dibaca?',
-                        text: 'Semua notifikasi yang sudah dibaca akan dihapus.',
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#ef4444',
-                        cancelButtonColor: '#6b7280',
-                        confirmButtonText: 'Ya, Hapus!',
-                        cancelButtonText: 'Batal',
-                        customClass: {
-                            popup: 'rounded-2xl shadow-xl'
-                        }
-                    }).then(async (result) => {
-                        if (result.isConfirmed) {
-                            try {
-                                let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
-                                    method: "DELETE",
-                                    headers: {
-                                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                                        "Accept": "application/json"
-                                    }
-                                });
-
-                                let data = await res.json();
-
-                                if (data.success) {
-                                    document.querySelectorAll('.notif-item.bg-gray-100, .notif-item.bg-gray-200, .notif-item.bg-gray-50\\/70')
-                                        .forEach(e => e.remove());
-                                    Swal.fire({
-                                        title: 'Terhapus!',
-                                        text: 'Notifikasi yang sudah dibaca berhasil dihapus.',
-                                        icon: 'success',
-                                        timer: 1500,
-                                        showConfirmButton: false
-                                    });
-                                }
-                            } catch (err) {
-                                console.error(err);
-                            }
-                        }
-                    });
-                }
-
-            }));
-        });
-    </script>
-
-    <script>
-        document.querySelector('form[target="hiddenFrame"]').addEventListener('submit', () => {
-            document.querySelectorAll('.notif-item').forEach(item => {
-                item.classList.remove('bg-white');
-                item.classList.add('bg-gray-200');
-            });
-            const badge = document.querySelector('.absolute .bg-red-500');
-            if (badge) badge.remove();
-        });
-    </script>
     {{-- TRX176466817743382688 --}}
 
     {{-- TOP UP --}}

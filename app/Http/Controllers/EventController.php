@@ -132,13 +132,23 @@ class EventController extends Controller
             ->take(3)
             ->get();
 
-        $perusahaanList = \App\Models\Perusahaan::whereNotNull('nama_perusahaan')
-            ->take(8)
+        // Ambil hanya perusahaan yang tergabung/mendaftar di event ini
+        $joinedUserIds = \Illuminate\Support\Facades\DB::table('event_participants')
+            ->where('event_id', $event->id)
+            ->pluck('user_id');
+
+        $perusahaanList = \App\Models\Perusahaan::whereIn('user_id', $joinedUserIds)
+            ->whereNotNull('nama_perusahaan')
             ->get();
 
         $userId = auth()->id();
-        $registeredEvents = $userId ? session('registered_events_' . $userId, []) : [];
-        $isRegistered = $userId ? in_array($event->id, $registeredEvents) : false;
+        $isRegistered = false;
+        if ($userId) {
+            $isRegistered = \Illuminate\Support\Facades\DB::table('event_participants')
+                ->where('event_id', $event->id)
+                ->where('user_id', $userId)
+                ->exists();
+        }
         $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
 
         return view('non-user.event.show', compact('event', 'otherEvents', 'perusahaanList', 'isRegistered', 'isEnded'));
@@ -167,9 +177,29 @@ class EventController extends Controller
         }
 
         $userId = auth()->id();
-        $registered = session('registered_events_' . $userId, []);
-        $registered[] = (int)$event->id;
-        session(['registered_events_' . $userId => array_unique($registered)]);
+
+        // Cek jika sudah terdaftar di database
+        $alreadyRegistered = \Illuminate\Support\Facades\DB::table('event_participants')
+            ->where('event_id', $event->id)
+            ->where('user_id', $userId)
+            ->exists();
+
+        if ($alreadyRegistered) {
+            return response()->json([
+                'success' => false,
+                'already_registered' => true,
+                'message' => 'Anda sudah terdaftar pada event ini.'
+            ], 200);
+        }
+
+        // Simpan ke database
+        \Illuminate\Support\Facades\DB::table('event_participants')->insert([
+            'event_id' => $event->id,
+            'user_id' => $userId,
+            'status' => 'terdaftar',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return response()->json([
             'success' => true,
