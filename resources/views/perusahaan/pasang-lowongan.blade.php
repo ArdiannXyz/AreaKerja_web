@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <section class="relative mt-20 w-full overflow-hidden min-h-[340px] md:min-h-[400px] flex items-center bg-gray-900 shadow-md">
@@ -129,7 +129,7 @@
 
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 text-left overflow-hidden rounded-xl shadow-sm">
                 <!-- Step 1 -->
-                <div class="bg-[#E65100] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                <div class="bg-[#002855] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">01</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Pilih paket pemasangan lowongan sesuai yang anda inginkan
@@ -137,7 +137,7 @@
                 </div>
 
                 <!-- Step 2 -->
-                <div class="bg-[#F57C00] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                <div class="bg-[#003d7a] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">02</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Kirim materi lowongan via formulir website atau whatsapp kami
@@ -145,7 +145,7 @@
                 </div>
 
                 <!-- Step 3 -->
-                <div class="bg-[#FB8C00] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                <div class="bg-[#00509d] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">03</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Anda akan diberi instruksi pembayaran
@@ -153,7 +153,7 @@
                 </div>
 
                 <!-- Step 4 -->
-                <div class="bg-[#FFA726] p-6 text-white flex flex-col justify-start min-h-[140px]">
+                <div class="bg-[#1e73be] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">04</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
                         Lowongan anda siap di publish!
@@ -164,37 +164,46 @@
     </section>
 
     <!-- Why Choose Us (Kenapa Harus Area Kerja ?) -->
-    <section class="py-14 bg-white max-w-6xl mx-auto px-4 sm:px-6">
-        <h2 class="text-2xl sm:text-3xl font-bold text-[#00509d] text-center mb-2">
-            Kenapa Harus Area Kerja ?
-        </h2>
-        <div class="w-32 h-1 bg-[#00509d] mx-auto mb-10 rounded-full"></div>
+    <section class="py-16 max-w-6xl mx-auto px-4 sm:px-6 bg-white">
+        <div class="text-center mb-12">
+            <h2 class="text-2xl sm:text-3xl font-bold text-[#00509d]">Kenapa Harus Area Kerja ?</h2>
+            <div class="w-36 h-1 bg-[#00509d] mx-auto mt-3 rounded-full"></div>
+        </div>
 
-        <div class="grid md:grid-cols-2 gap-10 items-center max-w-5xl mx-auto">
-            <!-- Left Image -->
+        <div class="grid grid-cols-1 md:grid-cols-2 items-center gap-10 max-w-5xl mx-auto">
+            <!-- Left Woman Image -->
             <div class="flex justify-center">
                 <img src="{{ asset('images/wongwong.png') }}" alt="Area Kerja" class="max-w-full md:max-w-sm h-auto object-contain">
             </div>
 
-            <!-- Right Benefit Points -->
-            <div class="space-y-6">
-                <div class="flex items-center gap-4">
-                    <img src="{{ asset('images/2.png') }}" alt="Website Icon" class="w-16 h-16 shrink-0 object-contain">
-                    <p class="text-xs sm:text-sm font-medium text-[#00509d] leading-relaxed">
-                        Website kami menjangkau ratusan perusahaan yang siap menerima ribuan pencari kerja.
+            <!-- Right Feature Cards -->
+            <div class="space-y-5">
+                <!-- Feature 1 -->
+                <div class="bg-[#00509d] text-white rounded-2xl p-6 flex items-center gap-5 shadow-sm hover:translate-x-1 transition duration-200">
+                    <div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center shrink-0 text-3xl">
+                        <i class="ph ph-globe"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm leading-relaxed font-medium">
+                        Website kami menjangkau ratusan perusahaan yang siap menerima ribuan pencari kerja
                     </p>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <img src="{{ asset('images/3.png') }}" alt="Social Media Icon" class="w-16 h-16 shrink-0 object-contain">
-                    <p class="text-xs sm:text-sm font-medium text-[#00509d] leading-relaxed">
+                <!-- Feature 2 -->
+                <div class="bg-[#00509d] text-white rounded-2xl p-6 flex items-center gap-5 shadow-sm hover:translate-x-1 transition duration-200">
+                    <div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center shrink-0 text-3xl">
+                        <i class="ph ph-chat-circle-dots"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm leading-relaxed font-medium">
                         Akun media social kami diikuti ratusan ribu pencari kerja serta memiliki jaringan social media yang lengkap
                     </p>
                 </div>
 
-                <div class="flex items-center gap-4">
-                    <img src="{{ asset('images/1.png') }}" alt="Harga Icon" class="w-16 h-16 shrink-0 object-contain">
-                    <p class="text-xs sm:text-sm font-medium text-[#00509d] leading-relaxed">
+                <!-- Feature 3 -->
+                <div class="bg-[#00509d] text-white rounded-2xl p-6 flex items-center gap-5 shadow-sm hover:translate-x-1 transition duration-200">
+                    <div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center shrink-0 text-3xl">
+                        <i class="ph ph-thumbs-up"></i>
+                    </div>
+                    <p class="text-xs sm:text-sm leading-relaxed font-medium">
                         Harga yang ramah bagi para pencari kerja tetapi dengan keuntungan peluang yang besar
                     </p>
                 </div>
