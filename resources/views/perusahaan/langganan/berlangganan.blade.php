@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Section Atas -->
     <div class="bg-white p-10 flex flex-wrap justify-between items-center overflow-hidden  mt-16">
@@ -77,9 +77,9 @@
     </div>
 
     <!-- Section Harga & Ajak Berlangganan -->
-    <div>
+    <div class="bg-white">
         <div
-            class="max-w-6xl mx-auto border-4 border-[#00509d] rounded-2xl p-10 py-2 flex flex-col md:flex-row justify-between items-center gap-8 mb-24 mt-24 scale-[0.85] md:scale-100">
+            class="max-w-6xl mx-auto border-4 border-[#00509d] rounded-2xl p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8 my-12 md:my-16">
             <!-- Text -->
             <div class="md:w-1/2">
                 <h3 class="text-xl font-bold text-blue-900 mb-4">Berlangganan Bersama Kami</h3>

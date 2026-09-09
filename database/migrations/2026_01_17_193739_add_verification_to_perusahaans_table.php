@@ -24,7 +24,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('perusahaans', function (Blueprint $table) {
-            $table->dropColumn(['verification_status', 'verified_at', 'verifikation_note']);
+            $table->dropColumn(['verification_status', 'verified_at', 'verification_note']);
         });
     }
 };

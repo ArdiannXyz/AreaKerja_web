@@ -607,16 +607,59 @@ class PerusahaanController extends Controller
     }
 
     // EVENT
-    public function event()
+    public function event(Request $request)
     {
-        $events = \App\Models\Event::where('status', '!=', 'draft')->latest('tgl_mulai')->get();
-        return view('perusahaan.event.event', compact('events'));
+        $search = $request->query('q');
+        $status = $request->query('status');
+
+        $events = \App\Models\Event::with('kegiatan')
+            ->when($search, function ($q) use ($search) {
+                $q->where(function ($sub) use ($search) {
+                    $sub->where('title', 'like', "%{$search}%")
+                        ->orWhere('lokasi', 'like', "%{$search}%")
+                        ->orWhere('content', 'like', "%{$search}%");
+                });
+            })
+            ->when($status, function ($q) use ($status) {
+                $q->where('status', $status);
+            }, function ($q) {
+                $q->where('status', '!=', 'draft');
+            })
+            ->orderBy('tgl_mulai', 'asc')
+            ->paginate(9);
+
+        return view('perusahaan.event.event', compact('events', 'search', 'status'));
     }
 
     public function detail($id)
     {
         $event = \App\Models\Event::with('kegiatan')->findOrFail($id);
-        return view('perusahaan.event.gabung-event', compact('event'));
+        $otherEvents = \App\Models\Event::where('id', '!=', $id)
+            ->where('status', 'buka')
+            ->latest('tgl_mulai')
+            ->take(3)
+            ->get();
+
+        // Ambil hanya perusahaan yang tergabung/mendaftar di event ini
+        $joinedUserIds = \Illuminate\Support\Facades\DB::table('event_participants')
+            ->where('event_id', $event->id)
+            ->pluck('user_id');
+
+        $perusahaanList = \App\Models\Perusahaan::whereIn('user_id', $joinedUserIds)
+            ->whereNotNull('nama_perusahaan')
+            ->get();
+
+        $userId = auth()->id();
+        $isRegistered = false;
+        if ($userId) {
+            $isRegistered = \Illuminate\Support\Facades\DB::table('event_participants')
+                ->where('event_id', $event->id)
+                ->where('user_id', $userId)
+                ->exists();
+        }
+        $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
+
+        return view('perusahaan.event.gabung-event', compact('event', 'otherEvents', 'perusahaanList', 'isRegistered', 'isEnded'));
     }
 
     // BERLANGGANAN

@@ -30,4 +30,14 @@ class Event extends Model
     {
         return $this->hasMany(KegiatanEvent::class, 'event_id');
     }
+
+    public function participants()
+    {
+        return $this->hasMany(\App\Models\EventParticipant::class, 'event_id');
+    }
+
+    public function companies()
+    {
+        return $this->belongsToMany(Perusahaan::class, 'event_participants', 'event_id', 'user_id', 'id', 'user_id');
+    }
 }

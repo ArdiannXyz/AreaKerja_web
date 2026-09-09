@@ -1,6 +1,6 @@
-﻿    @extends('layouts.index-perusahaan')
+    @extends('layouts.index-perusahaan')
     @section('content')
-        <div class="w-full mx-auto bg-white min-h-screen p-6 mt-20">
+        <div class="w-full mx-auto bg-white p-6 pb-8 mt-20">
             <!-- Header -->
             <h2 class="text-lg text-[#00509d] font-semibold">Dashboard</h2>
             <h1 class="text-2xl font-semibold mt-1 mb-4">Selamat Datang di Area Kerja <br>
@@ -254,20 +254,19 @@
 
             </div>
 
-            <h1 class="text-center text-3xl text-[#00509d] font-bold mt-8">Tentang Area Kerja</h1>
+            <h1 class="text-center text-3xl text-[#00509d] font-bold mt-8 mb-4">Tentang Area Kerja</h1>
             <!-- === Bagian Bawah === -->
             <div class="grid md:grid-cols-2 gap-8 mb-4 items-center">
                 <!-- Gambar -->
                 <div class="flex justify-center">
-                    <img src="{{ asset('images/nari.jpg') }}" alt="Illustrasi" class="w-full max-w-md">
+                    <img src="{{ asset('images/nari.jpg') }}" alt="Illustrasi" class="w-full max-w-md object-contain">
                 </div>
                 <!-- 3 Card kecil -->
-                <div class="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto">
+                <div class="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto items-center">
                     <!-- Card 1 -->
-                    <div
-                        class="bg-[#00509d] text-white p-6 max-h-44 mt-28 rounded-lg flex flex-col justify-center shadow">
+                    <div class="bg-[#00509d] text-white p-6 rounded-lg flex flex-col justify-center shadow">
                         <div class="flex items-center space-x-3 mb-3">
-                            <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-10 h-10">
+                            <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-7 h-7 object-contain">
                             <div>
                                 <p class="font-bold text-lg">01</p>
                                 <p class="text-sm">Mencari Lowongan</p>
@@ -282,7 +281,7 @@
                     <div class="flex flex-col gap-6">
                         <div class="border-2 border-[#00509d] rounded-lg p-6 text-[#00509d] shadow-sm">
                             <div class="flex items-center space-x-3 mb-3">
-                                <img src="{{ asset('images/logoarea.png') }}" alt="logo" class="w-10 h-10">
+                                <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="logo" class="w-7 h-7 object-contain">
                                 <div>
                                     <p class="font-bold text-lg">02</p>
                                     <p class="text-sm">Lowongan Terbaru</p>
@@ -295,7 +294,7 @@
 
                         <div class="border-2 border-[#00509d] rounded-lg p-6 text-[#00509d] shadow-sm">
                             <div class="flex items-center space-x-3 mb-3">
-                                <img src="{{ asset('images/logoarea.png') }}" alt="logo" class="w-10 h-10">
+                                <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="logo" class="w-7 h-7 object-contain">
                                 <div>
                                     <p class="font-bold text-lg">03</p>
                                     <p class="text-sm">Pasti Cocok</p>
@@ -310,366 +309,5 @@
 
             </div>
         </div>
-        </div>
-        <!-- ================= MODAL STEP 1 ================= -->
-        <!-- ================= MODAL STEP 1 ================= -->
-        <div id="modalStep1" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div
-                class="bg-white w-80 sm:w-full sm:max-w-md rounded-2xl shadow-xl relative p-6 max-h-[80vh] overflow-y-auto">
-
-                <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
-                <h2 class="text-lg font-semibold mb-4">Top Up Koin</h2>
-                <div class="grid grid-cols-3 gap-4">
-                    @foreach ($hargaPembayarans as $paket)
-                        <label
-                            class="paketCoinWrapper cursor-pointer border rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition flex flex-col items-center">
-
-                            <!-- Input radio -->
-                            <input type="radio" name="paket" value="{{ $paket->id }}"
-                                data-jumlah="{{ $paket->jumlah_koin }}" data-harga="{{ $paket->harga }}"
-                                class="hidden paketCoin">
-
-                            <!-- Isi kartu -->
-                            <div class="flex flex-col items-center flex-1 p-4">
-                                <img src="{{ asset('icon/' . ($paket->icon ?? 'default-icon.png')) }}"
-                                    alt="{{ $paket->nama }}" class="w-14 h-14 mb-3">
-                                <span class="text-lg font-bold text-gray-800">
-                                    {{ number_format($paket->jumlah_koin, 0, ',', '.') }}
-                                </span>
-                            </div>
-
-                            <!-- Bagian harga -->
-                            <div class="w-full bg-[#00509d] text-white text-center py-2 font-semibold">
-                                Rp. {{ number_format($paket->harga, 0, ',', '.') }}
-                            </div>
-                        </label>
-                    @endforeach
-                </div>
-
-                <div class="flex justify-center mt-6">
-                    <button onclick="goToStep(2)"
-                        class="px-6 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-md">
-                        Konfirmasi
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= MODAL STEP 2 ================= -->
-        <div id="modalStep2" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div class="bg-white w-80 sm:w-full sm:max-w-md rounded-2xl shadow-xl relative p-6">
-
-                <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
-
-                <h2 class="text-lg font-semibold mb-4">Metode Pembayaran</h2>
-
-                <!-- Dropdown Transfer Bank -->
-                <details class="border rounded-xl overflow-hidden">
-                    <summary class="flex items-center justify-between px-4 py-3 cursor-pointer">
-                        <span class="flex items-center gap-2 font-medium">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00509d]" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 9V7a5 5 0 00-10 0v2H5v12h14V9h-2z" />
-                            </svg>
-                            Transfer Bank
-                        </span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-500" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </summary>
-                    <div class="divide-y">
-                        @foreach ($daftarBank as $bank)
-                            @if (strtolower($bank->nama_bank) !== 'qris')
-                                <label
-                                    class="pembayaranWrapper flex justify-between items-center px-4 py-3 cursor-pointer hover:bg-gray-50 transition">
-                                    <div class="flex items-center gap-3">
-                                        <img src="{{ asset($bank->logo_image ?? 'default-bank.png') }}" class="w-8 h-8">
-                                        <span class="font-medium">{{ $bank->nama_bank }}</span>
-                                    </div>
-                                    <input type="radio" name="bank" value="{{ $bank->id }}"
-                                        data-bank="{{ $bank->nama_bank }}" class="hidden peer metodePembayaran">
-                                    <span
-                                        class="w-5 h-5 border-2 border-[#00509d] rounded-full flex items-center justify-center peer-checked:bg-[#00509d]">
-                                        <span class="hidden peer-checked:block w-2.5 h-2.5 bg-white rounded-full"></span>
-                                    </span>
-                                </label>
-                            @endif
-                        @endforeach
-                    </div>
-                </details>
-
-                <!-- QRIS (pisah dari dropdown) -->
-                @foreach ($daftarBank as $bank)
-                    @if (strtolower($bank->nama_bank) === 'qris')
-                        <label
-                            class="pembayaranWrapper mt-3 flex justify-between items-center px-4 py-3 border rounded-xl cursor-pointer hover:bg-gray-50 transition">
-                            <div class="flex items-center gap-3">
-                                <img src="{{ asset($bank->logo_image ?? 'default-bank.png') }}" class="w-8 h-8">
-                                <span class="font-medium">{{ $bank->nama_bank }}</span>
-                            </div>
-                            <input type="radio" name="bank" value="{{ $bank->id }}"
-                                data-bank="{{ $bank->nama_bank }}" class="hidden peer metodePembayaran">
-                            <span
-                                class="w-5 h-5 border-2 border-[#00509d] rounded-full flex items-center justify-center peer-checked:bg-[#00509d]">
-                                <span class="hidden peer-checked:block w-2.5 h-2.5 bg-white rounded-full"></span>
-                            </span>
-                        </label>
-                    @endif
-                @endforeach
-
-
-                <!-- Tombol navigasi -->
-                <div class="flex justify-between mt-6">
-                    <button onclick="goToStep(1)" class="text-[#00509d]">Kembali</button>
-                    <button onclick="goToStep(3)" class="text-[#00509d] font-semibold">Selanjutnya</button>
-                </div>
-            </div>
-        </div>
-
-
-
-        <!-- ================= MODAL STEP 3 ================= -->
-        <div id="modalStep3" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div class="bg-white w-80 sm:w-full sm:max-w-lg rounded-2xl shadow-xl relative p-8">
-
-                <button onclick="closeAllModal()"
-                    class="absolute top-4 right-4 text-gray-500 hover:text-black text-xl">âœ•</button>
-
-                <h2 class="text-xl font-bold">Detail Pembayaran</h2>
-                <div class="h-1 w-32 bg-[#00509d] mb-6"></div>
-
-                <div class="border border-[#00509d] rounded-lg p-6 space-y-3 text-sm">
-                    {{-- <div class="flex justify-between">
-                        <span>No. Transaksi</span>
-                        <span id="detailTransaksi">-</span>
-                    </div> --}}
-                    <div class="flex justify-between">
-                        <span>Nama Pengirim</span>
-                        <span id="detailPengirim">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Nama Penerima</span>
-                        <span id="detailPenerima">Area Kerja</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Metode Pembayaran</span>
-                        <span class="bg-[#00509d] text-white text-xs font-medium px-3 py-1 rounded-full"
-                            id="detailBank">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Tgl/Waktu</span>
-                        <span id="detailWaktu">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Jumlah Deposit</span>
-                        <span id="detailHarga">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span>Biaya Admin</span>
-                        <span id="detailAdmin">Rp. 2.000</span>
-                    </div>
-                    <div class="border-t border-dashed my-3"></div>
-                    <div class="flex justify-between font-semibold">
-                        <span>Total Pembayaran</span>
-                        <span id="detailTotal">-</span>
-                    </div>
-                </div>
-
-                <div class="flex justify-center mt-8">
-                    <button type="button" id="btnKonfirmasi"
-                        class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold rounded-full">
-                        Konfirmasi
-                    </button>
-                </div>
-
-            </div>
-
-        </div>
-        <script>
-            //redirect
-            document.getElementById('btnKonfirmasi').addEventListener('click', function() {
-                if (!selectedKoin || !selectedBank) {
-                    alert("Silakan pilih paket dan metode pembayaran dulu.");
-                    return;
-                }
-
-                fetch("{{ route('catatan_cash.store') }}", {
-                        method: "POST",
-                        headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                             'Accept': 'application/json',
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({  
-                            harga_pembayaran_id: document.querySelector(".paketCoin:checked").value,
-                            daftar_bank_id: document.querySelector(".metodePembayaran:checked").value,
-                        })
-                    })
-                    .then(async res => {
-                        let data = {};
-
-                        // paksa baca JSON kalau ada
-                        try {
-                            data = await res.json();
-                        } catch (e) {}
-
-                        /* ===============================
-                            SWITCH ALERT VERIFIKASI
-                        =============================== */
-                        if (res.status === 403 && data.type === 'verification') {
-                            Swal.fire({
-                                icon: 'warning',
-                                title: 'Akun Belum Terverifikasi',
-                                text: data.message,
-                                confirmButtonText: 'Mengerti',
-                            });
-                            return null; //  STOP TOTAL
-                        }
-
-                        if (!res.ok) {
-                            throw new Error(data.message || 'Terjadi kesalahan');
-                        }
-
-                        return data;
-                    })
-                    .then(data => {
-                        if (!data) return;
-
-                        if (data.success && data.redirect_url) {
-                            window.location.href = data.redirect_url;
-                        }
-                    })
-                    .catch(err => {
-                        console.error(err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: err.message || 'Terjadi kesalahan',
-                        });
-                    });
-            });
-
-
-
-            let selectedKoin = null;
-            let selectedHarga = null;
-            let selectedBank = null;
-
-            function toggleModal() {
-                closeAllModal();
-                document.getElementById('modalStep1').classList.remove('hidden');
-                document.getElementById('modalStep1').classList.add('flex');
-                updateButtons();
-            }
-
-            function closeAllModal() {
-                document.querySelectorAll('[id^="modalStep"]').forEach(m => {
-                    m.classList.add('hidden');
-                    m.classList.remove('flex');
-                });
-            }
-
-            function goToStep(step) {
-                // âœ… Validasi sebelum pindah step
-                if (step === 2 && !selectedKoin) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Oops...',
-                        text: 'Silakan pilih paket koin terlebih dahulu!',
-                        confirmButtonColor: '#00509d' // warna tombol orange
-                    });
-                    return;
-                }
-                if (step === 3 && !selectedBank) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Oops...',
-                        text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                        confirmButtonColor: '#00509d'
-                    });
-                    return;
-                }
-
-                closeAllModal();
-                let modal = document.getElementById('modalStep' + step);
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-
-                updateButtons();
-
-                // Step 3: update detail pembayaran
-                if (step === 3) {
-                    const biayaAdmin = 2000;
-                    const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
-
-                    // // ðŸ”‘ Buat No Transaksi random unik
-                    // const randomPart = Math.floor(Math.random() * 1000000);
-                    // const noTransaksi = "TRX" + Date.now() + randomPart;
-
-                    // document.getElementById('detailTransaksi').innerText = noTransaksi;
-                    document.getElementById('detailPengirim').innerText = "{{ Auth::user()->perusahaan->nama_perusahaan }}";
-                    document.getElementById('detailBank').innerText = selectedBank ?? '-';
-                    document.getElementById('detailWaktu').innerText = new Date().toLocaleString('id-ID');
-                    document.getElementById('detailHarga').innerText = "Rp. " + (selectedHarga ?? 0).toLocaleString('id-ID');
-                    document.getElementById('detailTotal').innerText = "Rp. " + totalBayar.toLocaleString('id-ID');
-                }
-            }
-
-
-            // ðŸ”‘ Update status tombol (disable/enable)
-            function updateButtons() {
-                // Step 1: tombol konfirmasi paket
-                const btnStep1 = document.querySelector('#modalStep1 button');
-                if (btnStep1) {
-                    btnStep1.disabled = !selectedKoin;
-                    btnStep1.classList.toggle('opacity-50', !selectedKoin);
-                    btnStep1.classList.toggle('cursor-not-allowed', !selectedKoin);
-                }
-
-                // Step 2: tombol selanjutnya metode pembayaran
-                const btnStep2 = document.querySelector('#modalStep2 button:last-child');
-                if (btnStep2) {
-                    btnStep2.disabled = !selectedBank;
-                    btnStep2.classList.toggle('opacity-50', !selectedBank);
-                    btnStep2.classList.toggle('cursor-not-allowed', !selectedBank);
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                // Step 1: Pilih Paket Koin
-                document.querySelectorAll('.paketCoin').forEach(el => {
-                    el.addEventListener('change', function() {
-                        selectedKoin = this.dataset.jumlah;
-                        selectedHarga = parseInt(this.dataset.harga);
-
-                        // Highlight kartu terpilih
-                        document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-[#00509d]');
-                        });
-                        this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
-
-                        updateButtons();
-                    });
-                });
-
-                // Step 2: Pilih Metode Pembayaran
-                document.querySelectorAll('.metodePembayaran').forEach(el => {
-                    el.addEventListener('change', function() {
-                        selectedBank = this.dataset.bank;
-
-                        // Highlight bank terpilih
-                        document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-[#00509d]');
-                        });
-                        this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
-
-                        updateButtons();
-                    });
-                });
-            });
-        </script>
         @include('layouts.footer')
     @endsection
-

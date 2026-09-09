@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <div class="flex items-center justify-center bg-white my-12 mt-16">
         <div class="w-[600px] border border-gray-300 rounded-lg p-6 bg-white shadow-sm">
@@ -10,7 +10,7 @@
                 <input type="text"
                     class="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#00509d]">
             </div>
-            89
+
             <!-- Gender -->
             <div class="mb-4">
                 <label class="block mb-1">Gender</label>
