@@ -12,7 +12,7 @@
                 <div class="font-semibold w-full sm:w-auto">
                     <div class="flex items-center space-x-2">
                         <img src="{{ asset('images/logoarea.png') }}" class="w-10 h-10 sm:w-12 sm:h-12" alt="">
-                        <span class="text-orange-500 font-bold text-lg sm:text-xl">areakerja.com</span>
+                        <span class="text-blue-700 font-bold text-lg sm:text-xl">areakerja.com</span>
                     </div>
                     <p class="text-sm text-gray-600 mt-1 leading-snug break-words">
                         Jl. Laksda Adisucipto No.80, Ambarrukmo, Caturtunggal, Kec.<br>
@@ -22,7 +22,7 @@
 
                 {{-- info user --}}
                 <div class="text-sm text-gray-700 font-semibold w-full sm:w-auto text-left sm:text-right">
-                    <div class="flex justify-start sm:justify-end space-x-3 mt-2 text-orange-500 text-lg">
+                    <div class="flex justify-start sm:justify-end space-x-3 mt-2 text-blue-700 text-lg">
                         <span>
                             <a href="{{ route('superadmin.laporan.unduh', ['tanggal' => $tanggal]) }}">
                                 <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
@@ -33,7 +33,7 @@
                                             fill="url(#pattern0_680_18811)" />
                                     </mask>
                                     <g mask="url(#mask0_680_18811)">
-                                        <rect x="-6.92188" y="-4.0957" width="39.4965" height="34.0278" fill="#FA6601" />
+                                        <rect x="-6.92188" y="-4.0957" width="39.4965" height="34.0278" fill="#00509d" />
                                     </g>
                                     <defs>
                                         <pattern id="pattern0_680_18811" patternContentUnits="objectBoundingBox"
@@ -76,7 +76,7 @@
                 <div class="w-full overflow-x-auto rounded-xl border border-gray-200">
                     <table class="min-w-max w-full text-sm border-collapse">
                         <thead>
-                            <tr class="bg-orange-500 text-white text-left">
+                            <tr class="bg-blue-700 text-white text-left">
                                 <th class="py-2 px-3">Transaksi</th>
                                 <th class="py-2 px-3">Dari</th>
                                 <th class="py-2 px-3">Jenis Transaksi</th>

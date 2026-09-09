@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -67,10 +67,10 @@
                 <div class="flex items-center justify-center">
                     <div class="max-w-md w-full px-8">
                         <h2 class="text-2xl font-bold text-gray-800 mb-4">Verifikasi Akun</h2>
-                        <p class="text-orange-500 font-medium mb-4">
+                        <p class="text-blue-700 font-medium mb-4">
                             Silahkan verifikasi akun anda terlebih dahulu untuk bisa melakukan penggantian kata sandi
                         </p>
-                        <p class="mb-2 text-orange-500 font-medium">
+                        <p class="mb-2 text-blue-700 font-medium">
                             Kode verifikasi telah dikirim ke email 
                         </p>
                            <span class="font-semibold">emailpengguna@gmail.com</span>.
@@ -93,9 +93,9 @@
                                 class="w-12 h-12 text-center border-b-4 border-black text-lg focus:outline-none">
                         </div>
 
-                        <p class="text-center text-orange-500">Belum menerima kode verifikasi melalui email?</p>
-                        <p class="text-center mt-1 text-orange-500">Kirim Ulang Kode Verifikasi 
-                              <span id="countdown" class="text-orange-500 font-semibold">(00:45)</span>
+                        <p class="text-center text-blue-700">Belum menerima kode verifikasi melalui email?</p>
+                        <p class="text-center mt-1 text-blue-700">Kirim Ulang Kode Verifikasi 
+                              <span id="countdown" class="text-blue-700 font-semibold">(00:45)</span>
             </p>
         </div>
     </div>
@@ -109,7 +109,7 @@
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     countdownEl.textContent = "(00:00)";
-                    countdownEl.classList.remove("text-orange-500");
+                    countdownEl.classList.remove("text-blue-700");
                     countdownEl.classList.add("text-blue-600", "cursor-pointer");
                     countdownEl.textContent = " Kirim Ulang";
                 } else {
@@ -125,11 +125,11 @@
     </script><br>
                         <div class="flex justify-center">
                             <button type="submit"
-                                class=" bg-orange-500 text-white px-40 py-3 rounded-lg font-small text-sm hover:bg-orange-600 transition">
+                                class=" bg-blue-700 text-white px-40 py-3 rounded-lg font-small text-sm hover:bg-blue-800 transition">
                                 Lanjutkan
                             </button>
                         </div><br>
-                        <p class="text-center font-semibold text-orange-500 hover:text-orange-600">Ubah Email</p>
+                        <p class="text-center font-semibold text-blue-700 hover:text-blue-800">Ubah Email</p>
                     </div>
                 </div>
             </div>
@@ -145,7 +145,7 @@
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     countdownEl.textContent = "(00:00)";
-                    countdownEl.classList.remove("text-orange-500");
+                    countdownEl.classList.remove("text-blue-700");
                     countdownEl.classList.add("text-blue-600", "cursor-pointer");
                     countdownEl.textContent = " Kirim Ulang";
                 } else {

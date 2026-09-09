@@ -51,7 +51,7 @@
         <div class="h-full px-3 py-4 overflow-y-auto bg-[#00509d]">
             <div class="px-4 py-2">
                 <div class="inline-flex items-center -ml-2 gap-1 border-b-2 border-blue-300 pb-2">
-                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-14 h-14">
+                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-8 h-8 object-contain">
                     <p class="text-xl text-white font-semibold">areakerja.com</p>
                 </div>
             </div>

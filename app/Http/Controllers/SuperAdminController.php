@@ -124,14 +124,18 @@ class SuperAdminController extends Controller
     {
         return view('super_admin.profile.profile-superadmin');
     }
-    public function edit_profile(SuperAdmin $superadmin)
+    public function edit_profile()
     {
-        return view(
-            'super_admin.profile.edit-profile-superadmin',
-            [
-                "data" => $superadmin
-            ]
-        );
+        $superadmin = SuperAdmin::where('user_id', Auth::user()->id)->first();
+
+        // Buat record jika belum ada
+        if (!$superadmin) {
+            $superadmin = SuperAdmin::create(['user_id' => Auth::user()->id]);
+        }
+
+        return view('super_admin.profile.edit-profile-superadmin', [
+            'data' => $superadmin,
+        ]);
     }
     public function update_profile_superadmin(Request $request, SuperAdmin $superadmin)
     {

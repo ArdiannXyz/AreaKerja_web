@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -91,27 +91,27 @@
                     <div>
                         <label for="email" class="block text-sm font-medium text-gray-700">Email Super Admin</label>
                         <input type="email" value="{{ old('email') }}" id="email" name="email" required placeholder="superadmin@areakerja.test"
-                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
+                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-blue-700 focus:border-blue-700" />
                     </div>
                     <div>
                         <label for="password" class="block text-sm font-medium text-gray-700">Kata Sandi</label>
                         <input type="password" id="password" name="password" required placeholder="Kata Sandi"
-                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
+                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-blue-700 focus:border-blue-700" />
                     </div>
                     <div class="flex justify-between items-center text-sm">
                         <label class="flex items-center">
                             <input type="checkbox" name="remember" class="mr-2 border rounded-sm"> Ingat saya
                         </label>
-                        <a href="#" class="text-orange-500 hover:underline">Lupa kata sandi?</a>
+                        <a href="#" class="text-blue-700 hover:underline">Lupa kata sandi?</a>
                     </div>
                     <div class="flex justify-center">
                         <button type="submit"
-                            class="w-52 h-14 bg-orange-500 text-white py-2.5 rounded-full font-small text-sm hover:bg-orange-600 transition">
+                            class="w-52 h-14 bg-blue-700 text-white py-2.5 rounded-full font-small text-sm hover:bg-blue-800 transition">
                             MASUK
                         </button>
                     </div>
                     <p class="text-center text-sm mt-4">Tidak Memiliki Akun? <a href="{{ route('superadmin.register') }}"
-                            class="text-orange-500 font-medium"> Daftar
+                            class="text-blue-700 font-medium"> Daftar
                             Sekarang</a></p>
                 </form>
             </div>

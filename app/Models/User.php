@@ -166,13 +166,27 @@ class User extends Authenticatable
 
     public function getSuperadminAttribute()
     {
+        $record = null;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('superadmins')) {
+                $record = \Illuminate\Support\Facades\DB::table('superadmins')->where('user_id', $this->id)->first();
+            }
+        } catch (\Throwable $e) {}
+
         return (object)[
-            'id'           => $this->id,
-            'img_profile'  => $this->avatar ?? null,
-            'nama'         => $this->nama_lengkap ?? $this->username,
-            'nama_lengkap' => $this->nama_lengkap ?? $this->username,
-            'email'        => $this->email,
-            'telepon'      => $this->telepon ?? '',
+            'id'            => $record->id ?? null,
+            'user_id'       => $this->id,
+            'img_profile'   => $record->img_profile ?? $this->avatar ?? null,
+            'nama'          => $record->nama_lengkap ?? $this->nama_lengkap ?? $this->username,
+            'nama_lengkap'  => $record->nama_lengkap ?? $this->nama_lengkap ?? $this->username,
+            'email'         => $this->email,
+            'telepon'       => $this->telepon ?? '',
+            'provinsi'      => $record->provinsi ?? null,
+            'kota'          => $record->kota ?? null,
+            'kecamatan'     => $record->kecamatan ?? null,
+            'desa'          => $record->desa ?? null,
+            'kode_pos'      => $record->kode_pos ?? null,
+            'detail_alamat' => $record->detail_alamat ?? null,
         ];
     }
 }

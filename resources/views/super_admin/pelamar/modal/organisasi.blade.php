@@ -1,4 +1,4 @@
-<!-- Main modal -->
+﻿<!-- Main modal -->
 <div id="create_organisasimodal" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -27,14 +27,14 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Nama Organisasi</label>
                         <input type="text" name="nama_organisasi"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                             required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Jabatan</label>
                         <input type="text" name="jabatan"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                             required>
                     </div>
 
@@ -42,25 +42,25 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Awal</label>
                             <input type="number" name="tahun_awal"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                                 required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Akhir</label>
                             <input type="number" name="tahun_akhir"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400">
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Deskripsi</label>
                         <textarea name="deskripsi" rows="4"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"></textarea>
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></textarea>
                     </div>
 
                     <div class="flex justify-end">
                         <button type="submit"
-                            class="bg-orange-500 font-medium hover:bg-orange-600 text-white px-5 py-2 rounded-lg shadow-md transition">
+                            class="bg-blue-700 font-medium hover:bg-blue-800 text-white px-5 py-2 rounded-lg shadow-md transition">
                             Simpan
                         </button>
                     </div>

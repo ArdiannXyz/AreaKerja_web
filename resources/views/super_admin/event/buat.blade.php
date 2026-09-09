@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto" x-data="{ openModal: false, openNotif: false, openAllNotif: false }">
 
@@ -68,7 +68,7 @@
                             <div class="relative w-full md:w-32">
                                 <input type="time" name="jam_mulai" id="jam_mulai"
                                     class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-                    focus:border-orange-500 focus:ring-0">
+                    focus:border-blue-700 focus:ring-0">
                                 <span id="ph_mulai"
                                     class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
                                     12:00 PM
@@ -82,7 +82,7 @@
                             <div class="relative w-full md:w-32">
                                 <input type="time" name="jam_akhir" id="jam_akhir"
                                     class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-                    focus:border-orange-500 focus:ring-0">
+                    focus:border-blue-700 focus:ring-0">
                                 <span id="ph_akhir"
                                     class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
                                     12:00 PM

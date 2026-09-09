@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto">
         {{-- Paket Harga Pembayaran --}}
@@ -14,7 +14,7 @@
                 <div class="overflow-x-auto border-2 border-gray-400 rounded-2xl shadow-sm">
                     <table class="w-full min-w-[500px] border-collapse">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-blue-700 text-white">
                                 <th class="px-6 py-3 text-left font-semibold text-lg whitespace-nowrap">Nama</th>
                                 <th class="px-6 py-3 text-right font-semibold text-lg whitespace-nowrap">Harga</th>
                             </tr>
@@ -41,7 +41,7 @@
 
                 <div class="mt-6 flex justify-center">
                     <button type="submit"
-                        class="bg-orange-500 hover:bg-orange-600 transition px-10 py-2 rounded-lg text-white font-semibold shadow-md">
+                        class="bg-blue-700 hover:bg-blue-800 transition px-10 py-2 rounded-lg text-white font-semibold shadow-md">
                         Simpan
                     </button>
                 </div>

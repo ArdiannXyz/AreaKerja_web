@@ -168,7 +168,7 @@
 
                 <!-- Logo responsif -->
                 <img src="{{ asset('images/logo_area_kerja_putih.png') }}"
-                    class="h-10 sm:h-14 w-auto object-contain me-1" alt="areakerjaputih Logo" />
+                    class="h-8 w-auto object-contain me-2" alt="areakerjaputih Logo" />
 
                 <!-- Teks responsif -->
                 <span class="self-center text-lg sm:text-xl font-semibold whitespace-nowrap text-white">
