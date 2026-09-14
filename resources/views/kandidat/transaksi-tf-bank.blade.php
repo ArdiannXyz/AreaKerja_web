@@ -1,4 +1,4 @@
-﻿@extends('layouts.index')
+@extends('layouts.index')
 @section('content')
     <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 md:px-14 py-12 bg-white rounded-xl shadow border mt-16">
         <!-- Header -->
@@ -117,27 +117,76 @@
 
         <!-- Upload Bukti -->
         @if ($transaksi->status == 'pending' || $transaksi->status == 'ditolak')
-            <div class="mb-6">
+            <div class="mb-8 p-6 bg-slate-50 border border-slate-200 rounded-2xl">
+                <div class="flex items-center gap-2.5 mb-4">
+                    <i class="ph-fill ph-upload-simple text-xl text-[#00509d]"></i>
+                    <h3 class="text-base font-extrabold text-slate-900">Upload Bukti Pembayaran</h3>
+                </div>
+
                 @if ($transaksi->status == 'ditolak')
-                    <p class="mb-2 text-sm text-red-600 font-medium">
-                        Bukti transfer ditolak. Silakan upload ulang bukti yang benar.
-                    </p>
+                    <div class="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2.5 text-rose-700 text-xs font-semibold">
+                        <i class="ph-fill ph-warning-circle text-lg shrink-0"></i>
+                        <span>Bukti transfer sebelumnya ditolak. Silakan unggah ulang foto/dokumen bukti pembayaran yang valid.</span>
+                    </div>
                 @endif
 
                 <form action="{{ route('kandidat.catatan_cash.upload_bukti', $transaksi->id) }}" method="POST"
-                    enctype="multipart/form-data">
+                    enctype="multipart/form-data" class="space-y-4">
                     @csrf
-                    <input type="file" name="bukti" required
-                        class="mb-3 border border-gray-300 rounded p-2 w-full @error('bukti') border-red-500 @enderror">
+
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <!-- Tombol Upload Custom -->
+                        <label for="bukti_kandidat"
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-2xs shrink-0">
+                            <i class="ph ph-upload-simple text-base font-bold"></i>
+                            <span>Pilih File Bukti</span>
+                        </label>
+
+                        <!-- Input File Hidden -->
+                        <input type="file" id="bukti_kandidat" name="bukti" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,image/jpg,application/pdf" required class="hidden">
+
+                        <div class="flex-1 min-w-0">
+                            <!-- Nama File -->
+                            <p id="kandidat-file-name" class="text-xs font-bold text-slate-700 truncate">
+                                Belum ada file yang dipilih
+                            </p>
+                            <!-- Format dan Ukuran File -->
+                            <p class="text-[11px] text-slate-500 mt-0.5">
+                                Format: JPG, JPEG, PNG, atau PDF (Maks. 5MB)
+                            </p>
+                        </div>
+                    </div>
+
                     @error('bukti')
-                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        <p class="text-xs font-semibold text-rose-500 mt-1 flex items-center gap-1">
+                            <i class="ph ph-warning-circle font-bold"></i>
+                            <span>{{ $message }}</span>
+                        </p>
                     @enderror
 
-                    <button type="submit"
-                        class="px-5 py-3 text-sm bg-green-500 hover:bg-green-600 text-white rounded-lg shadow w-full sm:w-auto">
-                        {{ $transaksi->status == 'pending' ? 'Upload Bukti' : 'Upload Ulang Bukti' }}
-                    </button>
+                    <div class="pt-2">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition">
+                            <i class="ph ph-check-circle font-bold text-base"></i>
+                            <span>{{ $transaksi->status == 'pending' ? 'Kirim Bukti Pembayaran' : 'Kirim Ulang Bukti Pembayaran' }}</span>
+                        </button>
+                    </div>
                 </form>
+
+                <script>
+                    document.getElementById('bukti_kandidat')?.addEventListener('change', function() {
+                        const fileNameEl = document.getElementById('kandidat-file-name');
+                        if (this.files && this.files.length > 0) {
+                            const file = this.files[0];
+                            const sizeKb = (file.size / 1024).toFixed(1);
+                            fileNameEl.textContent = file.name + ' (' + (sizeKb > 1024 ? (sizeKb / 1024).toFixed(2) + ' MB' : sizeKb + ' KB') + ')';
+                            fileNameEl.classList.add('text-[#00509d]');
+                        } else {
+                            fileNameEl.textContent = 'Belum ada file yang dipilih';
+                            fileNameEl.classList.remove('text-[#00509d]');
+                        }
+                    });
+                </script>
             </div>
         @endif
 

@@ -85,6 +85,10 @@ class CatatanCashController extends Controller
 
         $request->validate([
             'bukti' => 'required|mimes:jpg,jpeg,png,pdf|max:5120',
+        ], [
+            'bukti.required' => 'Silakan pilih file bukti pembayaran terlebih dahulu.',
+            'bukti.mimes'    => 'Format file bukti pembayaran harus berupa JPG, JPEG, PNG, atau PDF.',
+            'bukti.max'      => 'Ukuran file bukti pembayaran maksimal 5MB.',
         ]);
 
         $path = $request->file('bukti')->store('bukti-transfer', 'public');

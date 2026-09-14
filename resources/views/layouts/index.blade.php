@@ -494,6 +494,31 @@
         .tinymce-content td {
             padding: 8px;
         }
+
+        html {
+            height: 100%;
+            background-color: #00509d;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #00509d;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content-wrapper {
+            flex: 1 0 auto;
+            background-color: #ffffff;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
     </style>
 </head>
 
@@ -861,7 +886,9 @@
         </div>
     </header>
     {{-- Isi Halaman --}}
-    @yield('content')
+    <main class="page-content-wrapper">
+        @yield('content')
+    </main>
 
     {{-- NOTIF --}}
     @include('non-user.notif.modal_notif')

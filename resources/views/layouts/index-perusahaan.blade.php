@@ -18,7 +18,7 @@
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-    <link rel="icon" sizes="512x512" type="image/png" href="{{ asset('images/logoarea.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_biru.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -826,8 +826,8 @@
 
         function toggleModal() {
             closeAllModal();
-            document.getElementById('modalStep1').classList.remove('hidden');
-            document.getElementById('modalStep1').classList.add('flex');
+            document.getElementById('modalStep1')?.classList.remove('hidden');
+            document.getElementById('modalStep1')?.classList.add('flex');
             updateButtons();
         }
 
@@ -838,21 +838,79 @@
             });
         }
 
+        function selectCoinPackage(wrapperEl, id, jumlah, harga) {
+            const radio = wrapperEl.querySelector('.paketCoin');
+            if (radio) {
+                radio.checked = true;
+            }
+            selectedKoin = jumlah;
+            selectedHarga = parseInt(harga);
+
+            // Highlight kartu terpilih
+            document.querySelectorAll('.paketCoinWrapper').forEach(w => {
+                w.classList.remove('border-[#00509d]', 'bg-blue-50/40', 'ring-2', 'ring-[#00509d]/30', 'shadow-md');
+                w.classList.add('border-slate-200');
+            });
+            wrapperEl.classList.remove('border-slate-200');
+            wrapperEl.classList.add('border-[#00509d]', 'bg-blue-50/40', 'ring-2', 'ring-[#00509d]/30', 'shadow-md');
+
+            updateButtons();
+        }
+
+        function selectPaymentMethod(wrapperEl, id, bankName) {
+            const radio = wrapperEl.querySelector('.metodePembayaran');
+            if (radio) {
+                radio.checked = true;
+            }
+            selectedBank = bankName;
+
+            // Highlight bank terpilih
+            document.querySelectorAll('.pembayaranWrapper').forEach(w => {
+                w.classList.remove('border-[#00509d]', 'bg-blue-50/30', 'ring-2', 'ring-[#00509d]/30', 'shadow-xs');
+                w.classList.add('border-slate-200');
+                const iconCheck = w.querySelector('.radioCheckIcon');
+                if (iconCheck) {
+                    iconCheck.classList.remove('border-[#00509d]', 'bg-[#00509d]');
+                    iconCheck.classList.add('border-slate-300');
+                    const iconI = iconCheck.querySelector('i');
+                    if (iconI) iconI.classList.add('hidden');
+                }
+            });
+
+            wrapperEl.classList.remove('border-slate-200');
+            wrapperEl.classList.add('border-[#00509d]', 'bg-blue-50/30', 'ring-2', 'ring-[#00509d]/30', 'shadow-xs');
+            const activeCheck = wrapperEl.querySelector('.radioCheckIcon');
+            if (activeCheck) {
+                activeCheck.classList.remove('border-slate-300');
+                activeCheck.classList.add('border-[#00509d]', 'bg-[#00509d]');
+                const iconI = activeCheck.querySelector('i');
+                if (iconI) iconI.classList.remove('hidden');
+            }
+
+            updateButtons();
+        }
+
+        window.toggleModal = toggleModal;
+        window.closeAllModal = closeAllModal;
+        window.goToStep = goToStep;
+        window.selectCoinPackage = selectCoinPackage;
+        window.selectPaymentMethod = selectPaymentMethod;
+
         function goToStep(step) {
-            // âœ… Validasi sebelum pindah step
+            // Validasi sebelum pindah step
             if (step === 2 && !selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Oops...',
-                    text: 'Silakan pilih paket koin terlebih dahulu!',
-                    confirmButtonColor: '#00509d' // warna tombol orange
+                    title: 'Pilih Paket Koin',
+                    text: 'Silakan pilih salah satu paket koin terlebih dahulu!',
+                    confirmButtonColor: '#00509d'
                 });
                 return;
             }
             if (step === 3 && !selectedBank) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Oops...',
+                    title: 'Pilih Pembayaran',
                     text: 'Silakan pilih metode pembayaran terlebih dahulu!',
                     confirmButtonColor: '#00509d'
                 });
@@ -861,31 +919,41 @@
 
             closeAllModal();
             let modal = document.getElementById('modalStep' + step);
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            }
 
             updateButtons();
+
+            // Step 2: update summary
+            if (step === 2) {
+                const summaryKoin = document.getElementById('step2KoinSummary');
+                const summaryHarga = document.getElementById('step2HargaSummary');
+                if (summaryKoin) summaryKoin.innerText = Number(selectedKoin).toLocaleString('id-ID');
+                if (summaryHarga) summaryHarga.innerText = 'Rp ' + Number(selectedHarga).toLocaleString('id-ID');
+            }
 
             // Step 3: update detail pembayaran
             if (step === 3) {
                 const biayaAdmin = 2000;
                 const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
 
-                // // ðŸ”‘ Buat No Transaksi random unik
-                // const randomPart = Math.floor(Math.random() * 1000000);
-                // const noTransaksi = "TRX" + Date.now() + randomPart;
+                const detailPengirim = document.getElementById('detailPengirim');
+                const detailBank = document.getElementById('detailBank');
+                const detailWaktu = document.getElementById('detailWaktu');
+                const detailHarga = document.getElementById('detailHarga');
+                const detailTotal = document.getElementById('detailTotal');
 
-                // document.getElementById('detailTransaksi').innerText = noTransaksi;
-                document.getElementById('detailPengirim').innerText = "{{ Auth::user()->perusahaan->nama_perusahaan }}";
-                document.getElementById('detailBank').innerText = selectedBank ?? '-';
-                document.getElementById('detailWaktu').innerText = new Date().toLocaleString('id-ID');
-                document.getElementById('detailHarga').innerText = "Rp. " + (selectedHarga ?? 0).toLocaleString('id-ID');
-                document.getElementById('detailTotal').innerText = "Rp. " + totalBayar.toLocaleString('id-ID');
+                if (detailPengirim) detailPengirim.innerText = "{{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}";
+                if (detailBank) detailBank.innerText = selectedBank ?? '-';
+                if (detailWaktu) detailWaktu.innerText = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                if (detailHarga) detailHarga.innerText = "Rp " + (selectedHarga ?? 0).toLocaleString('id-ID');
+                if (detailTotal) detailTotal.innerText = "Rp " + totalBayar.toLocaleString('id-ID');
             }
         }
 
-
-        // ðŸ”‘ Update status tombol (disable/enable)
+        // Update status tombol (disable/enable)
         function updateButtons() {
             // Step 1: tombol konfirmasi paket
             const btnStep1 = document.getElementById('btnConfirmStep1');
@@ -919,39 +987,8 @@
                     closeAllModal();
                 }
             });
-        });
 
-        document.addEventListener('DOMContentLoaded', () => {
-            // Step 1: Pilih Paket Koin
-            document.querySelectorAll('.paketCoin').forEach(el => {
-                el.addEventListener('change', function() {
-                    selectedKoin = this.dataset.jumlah;
-                    selectedHarga = parseInt(this.dataset.harga);
-
-                    // Highlight kartu terpilih
-                    document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-[#00509d]');
-                    });
-                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
-
-                    updateButtons();
-                });
-            });
-
-            // Step 2: Pilih Metode Pembayaran
-            document.querySelectorAll('.metodePembayaran').forEach(el => {
-                el.addEventListener('change', function() {
-                    selectedBank = this.dataset.bank;
-
-                    // Highlight bank terpilih
-                    document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-[#00509d]');
-                    });
-                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
-
-                    updateButtons();
-                });
-            });
+            updateButtons();
         });
     </script>
     <script src="//unpkg.com/alpinejs" defer></script>

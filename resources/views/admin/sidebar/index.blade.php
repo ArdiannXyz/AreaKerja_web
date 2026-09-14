@@ -9,7 +9,7 @@
     <title>Admin</title>
 
     @vite('resources/css/app.css')
-    <link rel="icon" sizes="512x512" type="image/png" href="{{ asset('images/logoarea.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_biru.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css"
