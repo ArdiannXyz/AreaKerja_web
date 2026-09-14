@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <div class="max-w-4xl scale-90 mx-auto bg-white px-14 py-12 rounded-xl shadow border mt-16">
         <!-- Header -->
@@ -121,56 +121,74 @@
 
         <!-- Upload Bukti -->
         @if ($transaksi->status == 'pending' || $transaksi->status == 'ditolak')
-            <div class="mb-6">
+            <div class="mb-8 p-6 bg-slate-50 border border-slate-200 rounded-2xl">
+                <div class="flex items-center gap-2.5 mb-4">
+                    <i class="ph-fill ph-upload-simple text-xl text-[#00509d]"></i>
+                    <h3 class="text-base font-extrabold text-slate-900">Upload Bukti Pembayaran</h3>
+                </div>
 
                 @if ($transaksi->status == 'ditolak')
-                    <p class="mb-2 text-sm text-red-600 font-medium">
-                        Bukti transfer ditolak. Silakan upload ulang bukti yang benar.
-                    </p>
+                    <div class="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2.5 text-rose-700 text-xs font-semibold">
+                        <i class="ph-fill ph-warning-circle text-lg shrink-0"></i>
+                        <span>Bukti transfer sebelumnya ditolak. Silakan unggah ulang foto/dokumen bukti pembayaran yang valid.</span>
+                    </div>
                 @endif
 
                 <form action="{{ route('catatan_cash.upload_bukti', $transaksi->id) }}" method="POST"
-                    enctype="multipart/form-data">
+                    enctype="multipart/form-data" class="space-y-4">
                     @csrf
 
-                    <!-- Tombol Upload Custom -->
-                    <label for="bukti"
-                        class="flex items-center justify-center gap-2 px-4 py-2 bg-[#00509d] text-white 
-               rounded-lg cursor-pointer hover:bg-[#003d7a] transition shadow-sm w-[170px]">
+                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                        <!-- Tombol Upload Custom -->
+                        <label for="bukti"
+                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-2xs shrink-0">
+                            <i class="ph ph-upload-simple text-base font-bold"></i>
+                            <span>Pilih File Bukti</span>
+                        </label>
 
-                        <!-- Icon Upload -->
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                            stroke="currentColor" class="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M7.5 12l4.5-4.5m0 0L16.5 12m-4.5-4.5V15" />
-                        </svg>
+                        <!-- Input File Hidden -->
+                        <input type="file" id="bukti" name="bukti" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,image/jpg,application/pdf" required class="hidden">
 
-                        Pilih File
-                    </label>
-
-                    <!-- Input File Hidden -->
-                    <input type="file" id="bukti" name="bukti" required class="hidden">
-
-                    <!-- Nama File -->
-                    <p id="file-name" class="text-sm text-gray-600 mt-2">
-                        Belum ada file yang dipilih
-                    </p>
+                        <div class="flex-1 min-w-0">
+                            <!-- Nama File -->
+                            <p id="file-name" class="text-xs font-bold text-slate-700 truncate">
+                                Belum ada file yang dipilih
+                            </p>
+                            <!-- Format dan Ukuran File -->
+                            <p class="text-[11px] text-slate-500 mt-0.5">
+                                Format: JPG, JPEG, PNG, atau PDF (Maks. 5MB)
+                            </p>
+                        </div>
+                    </div>
 
                     @error('bukti')
-                        <p class="text-xs text-red-500 mt-1">{{ $message }}</p>
+                        <p class="text-xs font-semibold text-rose-500 mt-1 flex items-center gap-1">
+                            <i class="ph ph-warning-circle font-bold"></i>
+                            <span>{{ $message }}</span>
+                        </p>
                     @enderror
 
-                    <button type="submit"
-                        class="px-5 py-3 mt-4 text-sm bg-green-500 hover:bg-green-600 
-               text-white rounded-lg shadow">
-                        {{ $transaksi->status == 'pending' ? 'Upload Bukti' : 'Upload Ulang Bukti' }}
-                    </button>
+                    <div class="pt-2">
+                        <button type="submit"
+                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition">
+                            <i class="ph ph-check-circle font-bold text-base"></i>
+                            <span>{{ $transaksi->status == 'pending' ? 'Kirim Bukti Pembayaran' : 'Kirim Ulang Bukti Pembayaran' }}</span>
+                        </button>
+                    </div>
                 </form>
 
                 <script>
                     document.getElementById('bukti').addEventListener('change', function() {
-                        document.getElementById('file-name').textContent =
-                            this.files.length ? this.files[0].name : 'Belum ada file yang dipilih';
+                        const fileNameEl = document.getElementById('file-name');
+                        if (this.files && this.files.length > 0) {
+                            const file = this.files[0];
+                            const sizeKb = (file.size / 1024).toFixed(1);
+                            fileNameEl.textContent = file.name + ' (' + (sizeKb > 1024 ? (sizeKb / 1024).toFixed(2) + ' MB' : sizeKb + ' KB') + ')';
+                            fileNameEl.classList.add('text-[#00509d]');
+                        } else {
+                            fileNameEl.textContent = 'Belum ada file yang dipilih';
+                            fileNameEl.classList.remove('text-[#00509d]');
+                        }
                     });
                 </script>
             </div>

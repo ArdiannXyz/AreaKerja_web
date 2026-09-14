@@ -248,12 +248,6 @@
 
 
 
-        <!-- ================= MODAL STEP 1 ================= -->
-        @include('perusahaan.modal-topup.step1')
-        <!-- ================= MODAL STEP 2 ================= -->
-        @include('perusahaan.modal-topup.step2')
-        <!-- ================= MODAL STEP 3 ================= -->
-        @include('perusahaan.modal-topup.step3')
         <script>
             //redirect
             document.getElementById('btnKonfirmasi').addEventListener('click', function() {
