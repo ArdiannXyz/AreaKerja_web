@@ -1,36 +1,49 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto">
-        {{-- Paket Harga Pembayaran --}}
-        <div class="mb-10">
-            <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                <h2 class="text-xl font-semibold text-gray-700">Paket Harga Pembayaran</h2>
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-3 flex-1">
+                <a href="{{ route('superadmin.paket-harga') }}"
+                   class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0">
+                    <i class="ph ph-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <p class="text-xs text-slate-400">Finance / <span class="text-slate-500 font-medium">Edit Harga Pembayaran</span></p>
+                    <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Paket Harga Pembayaran</h1>
+                </div>
             </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
             <form action="{{ route('superadmin.paket-harga.update-pembayaran') }}" method="post">
-                @csrf
-                @method('PUT')
+                @csrf @method('PUT')
 
-                <div class="overflow-x-auto border-2 border-gray-400 rounded-2xl shadow-sm">
-                    <table class="w-full min-w-[500px] border-collapse">
-                        <thead>
-                            <tr class="bg-blue-700 text-white">
-                                <th class="px-6 py-3 text-left font-semibold text-lg whitespace-nowrap">Nama</th>
-                                <th class="px-6 py-3 text-right font-semibold text-lg whitespace-nowrap">Harga</th>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <th class="px-5 py-3.5">Nama Paket</th>
+                                <th class="px-5 py-3.5 text-right">Harga (Rp)</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-400">
+                        <tbody class="divide-y divide-slate-100">
                             @foreach ($pembayaran as $p)
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-6 text-gray-700 break-words">{{ $p->nama }}</td>
-                                    <td class="py-3 px-6 text-right">
-                                        <div
-                                            class="inline-flex items-center bg-gray-100 px-3 py-1 rounded-lg border border-gray-300 flex-wrap gap-1">
+                                <tr class="hover:bg-slate-50/60 transition duration-150">
+                                    <td class="px-5 py-4 font-medium text-slate-800">{{ $p->nama }}</td>
+                                    <td class="px-5 py-4 text-right">
+                                        <div class="inline-flex items-center bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 gap-2">
+                                            <span class="text-xs text-slate-500 font-medium">Rp</span>
                                             <input type="hidden" name="id[]" value="{{ $p->id }}">
-                                            <span class="mr-2 text-sm text-gray-600 whitespace-nowrap">Rp</span>
                                             <input type="number" name="harga[]"
-                                                class="bg-transparent w-28 text-center outline-none text-gray-800 font-medium"
-                                                value="{{ $p->harga }}">
+                                                   class="bg-transparent w-28 text-center outline-none text-slate-800 font-semibold text-sm"
+                                                   value="{{ $p->harga }}">
                                         </div>
                                     </td>
                                 </tr>
@@ -39,13 +52,21 @@
                     </table>
                 </div>
 
-                <div class="mt-6 flex justify-center">
+                <div class="px-5 py-4 border-t border-slate-100 flex justify-end gap-3">
+                    <a href="{{ route('superadmin.paket-harga') }}"
+                       class="inline-flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold px-4 py-2.5 rounded-xl transition">
+                        Batal
+                    </a>
                     <button type="submit"
-                        class="bg-blue-700 hover:bg-blue-800 transition px-10 py-2 rounded-lg text-white font-semibold shadow-md">
-                        Simpan
+                            class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition shadow-sm">
+                        <i class="ph ph-floppy-disk text-base"></i>
+                        Simpan Perubahan
                     </button>
                 </div>
             </form>
         </div>
+
+        @include('super_admin.notif.modal_notif')
+        @include('super_admin.notif.modal_semua')
     </main>
 @endsection

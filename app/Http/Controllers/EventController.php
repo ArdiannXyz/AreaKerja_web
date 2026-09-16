@@ -310,6 +310,9 @@ class EventController extends Controller
         $this->ensureTableAndData();
         $event = Event::with('kegiatan')->findOrFail($id);
 
+        if (view()->exists('super_admin.event.view')) {
+            return view('super_admin.event.view', compact('event'));
+        }
         if (view()->exists('super_admin.event.detail')) {
             return view('super_admin.event.detail', compact('event'));
         }

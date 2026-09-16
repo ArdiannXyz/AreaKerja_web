@@ -47,7 +47,11 @@
         </div>
 
         {{-- ================= TAB 1: PAKET HARGA ================= --}}
-        <div x-show="currentTab === 'paket_harga'" x-cloak class="space-y-8">
+        <div x-show="currentTab === 'paket_harga'" x-cloak 
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="space-y-8">
             {{-- Paket Harga Koin --}}
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <div class="flex items-center justify-between mb-4 flex-wrap gap-2 pb-4 border-b border-gray-100">
@@ -134,7 +138,11 @@
         </div>
 
         {{-- ================= TAB 2: RIWAYAT TRANSAKSI ================= --}}
-        <div x-show="currentTab === 'riwayat'" x-cloak class="space-y-8">
+        <div x-show="currentTab === 'riwayat'" x-cloak 
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="space-y-8">
             {{-- Riwayat Tunai --}}
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <div class="mb-4 pb-3 border-b border-gray-100">
@@ -349,7 +357,11 @@
         </div>
 
         {{-- ================= TAB 3: LAPORAN KEUANGAN ================= --}}
-        <div x-show="currentTab === 'laporan'" x-cloak class="space-y-6">
+        <div x-show="currentTab === 'laporan'" x-cloak 
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="space-y-6">
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-100 mb-6">
                     <div>

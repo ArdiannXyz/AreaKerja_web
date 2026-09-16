@@ -13,7 +13,8 @@
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_biru.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo_area_kerja_favicon.png') }}?v=6">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=6">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -132,7 +133,7 @@
                 <nav class="flex-1 px-4 text-sm">
                     <div class="font-bold mb-3 ml-3">Umum</div>
                     <div
-                        class="{{ request()->is('super_admin/dashboard') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/dashboard*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.dashboard') }}"
                             class="flex font-semibold items-center mb-4 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="15" height="16" viewBox="0 0 15 16" fill="currentColor"
@@ -147,7 +148,7 @@
 
                     <div class="font-bold ml-3 mb-3">Super Admin</div>
                     <div
-                        class="{{ request()->is('super_admin/pelamar') || request()->is('super_admin/pelamar/tambah/kandidat') || request()->is('super_admin/kandidat/1') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/pelamar*') || request()->is('super_admin/kandidat*') || request()->is('super_admin/non-kandidat*') || request()->is('super_admin/calon-kandidat*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.pelamar') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
@@ -163,8 +164,8 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/perusahaan') || request()->is('super_admin/tambah/perusahaan') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
-                        <a href={{ route('superadmin.perusahaan') }}
+                        class="{{ request()->is('super_admin/perusahaan*') || request()->is('super_admin/tambah/perusahaan*') || request()->is('super_admin/lowongan*') || request()->is('super_admin/recruitment*') || request()->is('super_admin/talent*') || request()->is('super_admin/panggilan*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.perusahaan') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -182,7 +183,7 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/paket/harga') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/paket/harga*') || request()->is('super_admin/laporan*') || request()->is('super_admin/update/harga*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.paket-harga') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" fill="none"
@@ -194,7 +195,7 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/freeze') || request()->is('super_admin/detail/freeze') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/freeze*') || request()->is('super_admin/detail/freeze*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.freeze') }}"
                             class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="14" height="17" viewBox="0 0 14 17" fill="currentColor"
@@ -207,8 +208,8 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/tips/kerja') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
-                        <a href="/super_admin/tips/kerja"
+                        class="{{ request()->is('super_admin/tips/kerja*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.tips-kerja') }}"
                             class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -220,8 +221,8 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/event') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
-                        <a href="/super_admin/event"
+                        class="{{ request()->is('super_admin/event*') || request()->is('super_admin/events*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.eventform') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -234,7 +235,7 @@
                     </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Lowongan</div>
                     <div
-                        class="{{ request()->is('super_admin/manajemen/lowongan/gold') ||  request()->is('super_admin/manajemen/lowongan/silver') ||  request()->is('super_admin/manajemen/lowongan/bronze') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/manajemen/lowongan*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.manajemen.lowongan.gold') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-1 transition duration-300">
                             <i class="ph ph-wrench text-2xl"></i>
@@ -243,7 +244,7 @@
                     </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Akun</div>
                     <div
-                        class="{{ request()->is('super_admin/add/user') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/add/user*') || request()->is('super_admin/edit/user*') || request()->is('super_admin/detail/user*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.add.user') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
@@ -256,7 +257,7 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/email-subs') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/email-subs*') || request()->is('super_admin/email-subscribers*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.email-subs.index') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <i class="ph ph-envelope"></i>
@@ -264,7 +265,7 @@
                         </a>
                     </div>
                     <div
-                        class=" {{ request()->is('super_admin/social-links') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        class=" {{ request()->is('super_admin/social-links*') || request()->is('super_admin/header-image*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.social.index') }}"
                             class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
@@ -321,7 +322,6 @@
             window.csrf = "{{ csrf_token() }}";
         </script>
         <script src="{{ asset('js/super_admin.js') }}"></script>
-        @include('finance.sidebar.modal-logout')
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
         <script>
             const _fileInput = document.getElementById('fileinputsuperadmin');
@@ -361,7 +361,6 @@
             }
         </script>
 
-        <script src="//unpkg.com/alpinejs" defer></script>
         <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
         @stack('scripts')

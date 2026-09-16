@@ -1,115 +1,101 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <div class="p-4 sm:ml-64 w-full max-w-full overflow-x-hidden">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
-        <div class="bg-white rounded-lg shadow-md border overflow-x-auto p-6">
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-3 flex-1">
+                <a href="{{ route('superadmin.paket-harga') }}"
+                   class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0">
+                    <i class="ph ph-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <p class="text-xs text-slate-400">Finance / <span class="text-slate-500 font-medium">Detail Laporan</span></p>
+                    <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Laporan Transaksi</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
-            {{-- header --}}
-            <div
-                class="flex flex-col sm:flex-row w-full max-w-full overflow-x-auto whitespace-nowrap justify-between items-start sm:items-start gap-4">
+        <!-- Report Card -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
 
-                {{-- logo alamat --}}
-                <div class="font-semibold w-full sm:w-auto">
-                    <div class="flex items-center space-x-2">
-                        <img src="{{ asset('images/logoarea.png') }}" class="w-10 h-10 sm:w-12 sm:h-12" alt="">
-                        <span class="text-blue-700 font-bold text-lg sm:text-xl">areakerja.com</span>
+            <!-- Report Header: Logo + Download + User Info -->
+            <div class="flex flex-col sm:flex-row justify-between items-start gap-5 p-6 border-b border-slate-100">
+
+                {{-- Logo & Alamat --}}
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <img src="{{ asset('images/logoarea.png') }}" class="w-10 h-10" alt="Logo AreaKerja">
+                        <span class="text-[#00509d] font-bold text-lg">areakerja.com</span>
                     </div>
-                    <p class="text-sm text-gray-600 mt-1 leading-snug break-words">
+                    <p class="text-xs text-slate-400 leading-relaxed max-w-xs">
                         Jl. Laksda Adisucipto No.80, Ambarrukmo, Caturtunggal, Kec.<br>
                         Depok, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55281
                     </p>
                 </div>
 
-                {{-- info user --}}
-                <div class="text-sm text-gray-700 font-semibold w-full sm:w-auto text-left sm:text-right">
-                    <div class="flex justify-start sm:justify-end space-x-3 mt-2 text-blue-700 text-lg">
-                        <span>
-                            <a href="{{ route('superadmin.laporan.unduh', ['tanggal' => $tanggal]) }}">
-                                <svg width="28" height="28" viewBox="0 0 28 28" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                                    <mask id="mask0_680_18811" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0"
-                                        y="0" width="28" height="28">
-                                        <rect x="0.367188" y="0.15625" width="27.3438" height="27.3438"
-                                            fill="url(#pattern0_680_18811)" />
-                                    </mask>
-                                    <g mask="url(#mask0_680_18811)">
-                                        <rect x="-6.92188" y="-4.0957" width="39.4965" height="34.0278" fill="#00509d" />
-                                    </g>
-                                    <defs>
-                                        <pattern id="pattern0_680_18811" patternContentUnits="objectBoundingBox"
-                                            width="1" height="1">
-                                            <use xlink:href="#image0_680_18811" transform="scale(0.0078125)" />
-                                        </pattern>
-                                        <image id="image0_680_18811" width="128" height="128"
-                                            preserveAspectRatio="none"
-                                            xlink:href="data:image/png;base64,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" />
-                                    </defs>
-                                </svg>
-                            </a>
-                        </span>
-                    </div>
-
-                    <div class="text-sm leading-relaxed space-y-1 mt-3 break-words">
-                        <p>
-                            <span class="font-semibold">Username :</span>
-                            <span class="font-medium">{{ Auth::user()->username ?? '-' }}</span>
-                        </p>
-                        <p>
-                            <span class="font-semibold">Email :</span>
-                            <span class="break-all">{{ Auth::user()->email ?? '-' }}</span>
-                        </p>
-                        <p>
-                            <span class="font-semibold">No. Telp :</span>
-                            <span>0816-3428-25322</span>
-                        </p>
+                {{-- Download + User Info --}}
+                <div class="text-right">
+                    <a href="{{ route('superadmin.laporan.unduh', ['tanggal' => $tanggal]) }}"
+                       title="Unduh PDF"
+                       class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-semibold px-4 py-2 rounded-xl transition shadow-sm mb-3">
+                        <i class="ph ph-download-simple text-base"></i>
+                        Unduh PDF
+                    </a>
+                    <div class="text-xs text-slate-600 space-y-1 text-right">
+                        <p><span class="font-semibold text-slate-500">Username :</span> {{ Auth::user()->username ?? '-' }}</p>
+                        <p><span class="font-semibold text-slate-500">Email :</span> {{ Auth::user()->email ?? '-' }}</p>
                     </div>
                 </div>
             </div>
 
-            {{-- riwayat transaksi --}}
-            <div class="mt-10">
-                <div class="flex justify-between items-center mb-3">
-                    <h2 class="font-semibold text-lg">Laporan Transaksi Penghasilan</h2>
-                </div>
+            <!-- Transaction Table -->
+            <div class="p-6">
+                <h2 class="text-sm font-bold text-slate-700 uppercase tracking-wider mb-4">Laporan Transaksi Penghasilan</h2>
 
-                <!-- Table Responsive -->
-                <div class="w-full overflow-x-auto rounded-xl border border-gray-200">
-                    <table class="min-w-max w-full text-sm border-collapse">
-                        <thead>
-                            <tr class="bg-blue-700 text-white text-left">
-                                <th class="py-2 px-3">Transaksi</th>
-                                <th class="py-2 px-3">Dari</th>
-                                <th class="py-2 px-3">Jenis Transaksi</th>
-                                <th class="py-2 px-3">Sumber Dana</th>
-                                <th class="py-2 px-3">Nominal IDR</th>
-                                <th class="py-2 px-3">Transaksi Koin</th>
+                <div class="overflow-x-auto rounded-xl border border-slate-100">
+                    <table class="w-full text-sm text-left">
+                        <thead class="bg-slate-50 border-b border-slate-100">
+                            <tr class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <th class="py-3 px-4">Transaksi</th>
+                                <th class="py-3 px-4">Dari</th>
+                                <th class="py-3 px-4">Jenis</th>
+                                <th class="py-3 px-4">Sumber Dana</th>
+                                <th class="py-3 px-4">Nominal (IDR)</th>
+                                <th class="py-3 px-4 text-center">Transaksi Koin</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-slate-100">
                             @forelse ($transaksi as $t)
-                                <tr class="border-t">
-                                    <td class="px-3 py-2 break-all">{{ $t->no_referensi ?? '-' }}</td>
-                                    <td class="px-3 py-2 break-words">{{ $t->dari ?? '-' }}</td>
-                                    <td class="px-3 py-2 break-words">{{ $t->pesanan ?? '-' }}</td>
-                                    <td class="px-3 py-2 break-words">{{ $t->sumber_dana ?? ($t->sumberDana ?? '-') }}</td>
-                                    <td class="px-3 py-2">
+                                <tr class="hover:bg-slate-50/60 transition duration-150">
+                                    <td class="px-4 py-3 text-xs font-mono text-slate-600 break-all">{{ $t->no_referensi ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-slate-700 text-xs">{{ $t->dari ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-slate-700 text-xs">{{ $t->pesanan ?? '-' }}</td>
+                                    <td class="px-4 py-3 text-slate-600 text-xs">{{ $t->sumber_dana ?? ($t->sumberDana ?? '-') }}</td>
+                                    <td class="px-4 py-3 text-slate-800 font-medium text-xs">
                                         @if ($t->tipe == 'cash')
                                             Rp{{ number_format($t->total, 0, ',', '.') }}
                                         @else
-                                            -
+                                            <span class="text-slate-400">-</span>
                                         @endif
                                     </td>
-                                    <td class="px-3 py-2 text-center">
+                                    <td class="px-4 py-3 text-center text-slate-700 text-xs">
                                         @if ($t->tipe == 'koin')
-                                            {{ $t->total_koin }} Koin
+                                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold bg-amber-100 text-amber-700">
+                                                {{ $t->total_koin }} Koin
+                                            </span>
                                         @else
-                                            -
+                                            <span class="text-slate-400">-</span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="7" class="text-center py-4 text-gray-500">
+                                    <td colspan="6" class="text-center py-8 text-slate-400 text-xs">
                                         Tidak ada transaksi pada tanggal ini
                                     </td>
                                 </tr>
@@ -118,20 +104,27 @@
                     </table>
                 </div>
 
+                <!-- Summary Footer -->
+                <div class="mt-4 pt-4 border-t border-slate-100 flex flex-col sm:flex-row gap-3">
+                    <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-3 flex-1">
+                        <i class="ph ph-currency-circle-dollar text-emerald-600 text-xl"></i>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Total Tunai</p>
+                            <p class="text-sm font-bold text-emerald-700">Rp{{ number_format($totalCash, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3 bg-amber-50 border border-amber-100 rounded-xl px-4 py-3 flex-1">
+                        <i class="ph ph-coins text-amber-600 text-xl"></i>
+                        <div>
+                            <p class="text-xs text-slate-400 font-medium">Total Koin</p>
+                            <p class="text-sm font-bold text-amber-700">{{ $totalKoin }} Koin</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-
-            {{-- footer --}}
-            <div class="mt-4 text-sm text-gray-800 font-semibold space-y-1">
-                <p class="flex justify-between sm:block">
-                    <span>Total Tunai</span>
-                    <span>: Rp{{ number_format($totalCash, 0, ',', '.') }}</span>
-                </p>
-                <p class="flex justify-between sm:block">
-                    <span>Total Koin</span>
-                    <span>: {{ $totalKoin }} Koin</span>
-                </p>
-            </div>
-
         </div>
-    </div>
+
+        @include('super_admin.notif.modal_notif')
+        @include('super_admin.notif.modal_semua')
+    </main>
 @endsection

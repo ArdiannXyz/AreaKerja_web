@@ -198,16 +198,22 @@
 
                     <!-- Right: Search Input -->
                     <div class="relative w-full md:w-72">
-                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                            </svg>
+                        <div class="flex items-center bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition">
+                            <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
+                            <input type="text" 
+                                x-model="search" 
+                                @input="filterRows()"
+                                placeholder="Cari email atau nama..." 
+                                class="w-full px-2.5 py-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400"
+                                style="border: none !important; outline: none !important; box-shadow: none !important;">
+                            <button type="button" 
+                                x-show="search" 
+                                @click="search = ''; filterRows()"
+                                class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2 flex-shrink-0 transition cursor-pointer"
+                                title="Hapus pencarian">
+                                <i class="ph ph-x text-[10px] font-bold"></i>
+                            </button>
                         </div>
-                        <input type="text" 
-                            x-model="search" 
-                            @input="filterRows()"
-                            placeholder="Cari email atau nama..." 
-                            class="w-full pl-10 pr-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition-all">
                     </div>
                 </div>
 

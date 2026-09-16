@@ -1,9 +1,27 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto" x-data="{ openModal: false, openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openModal: false, openNotif: false, openAllNotif: false }">
+
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-3 flex-1">
+                <a href="{{ route('superadmin.eventform') }}"
+                   class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0">
+                    <i class="ph ph-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <p class="text-xs text-slate-400">Event / <span class="text-slate-500 font-medium">Buat Event Baru</span></p>
+                    <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Buat Event</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
         {{-- content --}}
-        <div class="w-full bg-white">
+        <div class="w-full bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
             <form action="{{ route('superadmin.event.store') }}" method="post" enctype="multipart/form-data"
                 class="w-full">
                 @csrf
@@ -175,12 +193,14 @@
                     <!-- Submit -->
                     <div class="flex flex-col md:flex-row gap-4 mt-6 w-full">
                         <button type="submit"
-                            class="bg-green-600 text-white px-6 md:px-14 py-2 text-lg rounded-md shadow hover:bg-green-700 w-full md:w-auto">
-                            Simpan
+                            class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition shadow-sm w-full md:w-auto justify-center">
+                            <i class="ph ph-floppy-disk text-base"></i>
+                            Simpan Event
                         </button>
 
-                        <a href="/super_admin/event"
-                            class="bg-red-600 hover:bg-red-700 text-white px-6 md:px-16 py-2 text-lg rounded-md shadow w-full md:w-auto text-center">
+                        <a href="{{ route('superadmin.eventform') }}"
+                           class="inline-flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold px-6 py-2.5 rounded-xl transition w-full md:w-auto justify-center">
+                            <i class="ph ph-x text-base"></i>
                             Batal
                         </a>
                     </div>
@@ -353,5 +373,7 @@
         </script>
 
 
+        @include('super_admin.notif.modal_notif')
+        @include('super_admin.notif.modal_semua')
     </main>
 @endsection

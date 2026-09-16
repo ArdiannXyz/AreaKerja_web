@@ -124,6 +124,19 @@ class PelamarController extends Controller
 
     public function index(Request $request)
     {
+        if (Auth::check()) {
+            $role = Auth::user()->role;
+            if ($role === 'super_admin') {
+                return redirect()->route('superadmin.dashboard');
+            }
+            if ($role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            if ($role === 'finance') {
+                return redirect()->route('finance.dashboard');
+            }
+        }
+
         // Ambil kategori dari query string
         $kategori = $request->query('kategori');
 

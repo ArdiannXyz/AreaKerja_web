@@ -1,21 +1,21 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-gray-50/50 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
         {{-- Topbar Header --}}
-        <div class="flex justify-between items-center mb-6 flex-col sm:flex-row gap-4 sm:gap-0 border-b border-gray-100 pb-5">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
             <div>
-                <h1 class="text-2xl font-bold text-gray-800">Tips Kerja</h1>
-                <p class="text-sm text-gray-500 mt-1">Kelola artikel panduan karir, tips kerja, dan publikasi</p>
+                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">Tips Kerja</h1>
+                <p class="text-xs text-slate-400 mt-0.5">Kelola artikel panduan karir, tips kerja, dan publikasi</p>
             </div>
 
-            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
                 @include('super_admin.components.notif_button')
 
                 {{-- User Badge Dropdown --}}
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
         {{-- Flash Messages --}}
         @if (session('success'))
@@ -79,12 +79,17 @@
 
                 {{-- Kanan: Search Input --}}
                 <div class="flex items-center gap-2">
-                    <div class="relative w-full sm:w-64">
+                    <div class="flex items-center bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition w-full sm:w-64">
+                        <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
                         <input id="search_input" type="text" onkeyup="searchTable()" placeholder="Ketik kata kunci..."
-                            class="w-full pl-9 pr-4 py-2 border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-[#00509d]">
-                        <svg class="w-4 h-4 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                        </svg>
+                            autocomplete="off"
+                            class="flex-1 px-2.5 py-2 text-xs bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400"
+                            style="border: none !important; outline: none !important; box-shadow: none !important;">
+                        <button type="button" onclick="document.getElementById('search_input').value=''; searchTable();"
+                            class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2 flex-shrink-0 transition cursor-pointer"
+                            title="Hapus pencarian">
+                            <i class="ph ph-x text-[10px]"></i>
+                        </button>
                     </div>
                 </div>
             </div>
