@@ -22,7 +22,8 @@
 
     <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_biru.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo_area_kerja_favicon.png') }}?v=6">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=6">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -761,36 +762,46 @@
                                             @endif
                                         </a>
                                     </li>
+
+                                    <li>
+                                        <a href="{{ route('lowongan.tersimpan') }}"
+                                            class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                            <i class="ph ph-bookmark-simple mr-2 text-[#00509d] text-lg"></i>
+                                            Lowongan Tersimpan
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="{{ route('transaksi.pendaftaran') }}"
+                                            class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                            <i class="ph ph-receipt mr-2 text-[#00509d] text-lg"></i>
+                                            Transaksi
+                                        </a>
+                                    </li>
+
+                                    <li>
+                                        <a href="/bantuan"
+                                            class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                            <i class="ph ph-question mr-2 text-[#00509d] text-lg"></i>
+                                            Bantuan
+                                        </a>
+                                    </li>
                                 @endif
 
-                                <li>
-                                    <a href="{{ $dashboardRoute ?? route('lowongan.tersimpan') }}"
-                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
-                                        <i class="ph ph-bookmark-simple mr-2 text-[#00509d] text-lg"></i>
-                                        Lowongan Tersimpan
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="{{ $dashboardRoute ?? route('transaksi.pendaftaran') }}"
-                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
-                                        <i class="ph ph-receipt mr-2 text-[#00509d] text-lg"></i>
-                                        Transaksi
-                                    </a>
-                                </li>
-
-                                <li>
-                                    <a href="/bantuan"
-                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
-                                        <i class="ph ph-question mr-2 text-[#00509d] text-lg"></i>
-                                        Bantuan
-                                    </a>
-                                </li>
                                 <li class="px-4 pt-2 pb-1">
-                                    <form action="{{ route('logout_pelamar') }}" method="POST">
+                                    @php
+                                        $logoutRoute = match ($role) {
+                                            'super_admin' => route('logout_superadmin'),
+                                            'admin'       => route('logout_admin'),
+                                            'finance'     => route('logout_finance'),
+                                            'perusahaan'  => route('logout_perusahaan'),
+                                            default       => route('logout_pelamar'),
+                                        };
+                                    @endphp
+                                    <form action="{{ $logoutRoute }}" method="POST">
                                         @csrf
                                         <button type="submit"
-                                            class="w-full py-2 bg-[#00509d] text-white font-bold rounded-lg shadow-sm hover:bg-[#003d7a] transition text-sm">
+                                            class="w-full py-2 bg-[#00509d] text-white font-bold rounded-lg shadow-sm hover:bg-[#003d7a] transition text-sm cursor-pointer">
                                             Keluar
                                         </button>
                                     </form>

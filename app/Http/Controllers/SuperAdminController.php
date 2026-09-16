@@ -38,63 +38,128 @@ class SuperAdminController extends Controller
         // ===========================
         // RANGE WAKTU
         // ===========================
-
-        // Awal bulan ini
         $startThisMonth = $now->copy()->startOfMonth();
-
-        // Awal 3 bulan sebelumnya
-        $startThreeMonthsAgo = $now->copy()->subMonths(3)->startOfMonth();
-
-        // Akhir bulan lalu
         $startLastMonth = $now->copy()->subMonth()->startOfMonth();
         $endLastMonth = $startThisMonth->copy()->subSecond();
 
         // ===========================
-        // PELAMAR
+        // PELAMAR STATS
         // ===========================
         $totalPelamar = Pelamar::count();
         $newPelamarThisMonth = Pelamar::where('created_at', '>=', $startThisMonth)->count();
         $newPelamarLastMonth = Pelamar::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
         $growthPelamar = $this->calcGrowth($newPelamarLastMonth, $newPelamarThisMonth);
 
+        $totalKandidatAktif = Pelamar::where('kategori', 'kandidat aktif')->count();
+        $totalCalonKandidat = Pelamar::where('kategori', 'calon kandidat')->count();
+        $totalPelamarReguler = Pelamar::where('kategori', 'pelamar')->count();
+
         // ===========================
-        // PERUSAHAAN
+        // PERUSAHAAN STATS
         // ===========================
         $totalPerusahaan = Perusahaan::count();
         $newPerusahaanThisMonth = Perusahaan::where('created_at', '>=', $startThisMonth)->count();
         $newPerusahaanLastMonth = Perusahaan::whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
         $growthPerusahaan = $this->calcGrowth($newPerusahaanLastMonth, $newPerusahaanThisMonth);
 
+        $perusahaanApproved = Perusahaan::where('verification_status', 'approved')->count();
+        $perusahaanPending = Perusahaan::where('verification_status', 'pending')->count();
+
         // ===========================
-        // ADMIN
+        // LOWONGAN STATS
+        // ===========================
+        $totalLowongan = LowonganPerusahaan::count();
+        $lowonganBuka = LowonganPerusahaan::where('status', 'buka')->count();
+        $lowonganTutup = LowonganPerusahaan::where('status', 'tutup')->count();
+
+        // ===========================
+        // ADMIN & USER STATS
         // ===========================
         $totalAdmin = User::where('role', 'admin')->count();
         $newAdminThisMonth = User::where('role', 'admin')->where('created_at', '>=', $startThisMonth)->count();
         $newAdminLastMonth = User::where('role', 'admin')->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
         $growthAdmin = $this->calcGrowth($newAdminLastMonth, $newAdminThisMonth);
 
-        // ===========================
-        // SUPER ADMIN
-        // ===========================
         $totalSuperAdmin = User::where('role', 'super_admin')->count();
         $newSuperAdminThisMonth = User::where('role', 'super_admin')->where('created_at', '>=', $startThisMonth)->count();
         $newSuperAdminLastMonth = User::where('role', 'super_admin')->whereBetween('created_at', [$startLastMonth, $endLastMonth])->count();
         $growthSuperAdmin = $this->calcGrowth($newSuperAdminLastMonth, $newSuperAdminThisMonth);
 
+        $totalUsers = User::count();
+        $totalFreeze = User::where('status', 1)->orWhereNotNull('alasan_freeze_akun')->count();
+
+        // ===========================
+        // DATA TREN 6 BULAN TERAKHIR
+        // ===========================
+        $chartMonths = [];
+        $chartPelamar = [];
+        $chartPerusahaan = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $monthDate = $now->copy()->subMonths($i);
+            $monthStart = $monthDate->copy()->startOfMonth();
+            $monthEnd = $monthDate->copy()->endOfMonth();
+
+            $chartMonths[] = $monthDate->translatedFormat('M Y');
+            $chartPelamar[] = Pelamar::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+            $chartPerusahaan[] = Perusahaan::whereBetween('created_at', [$monthStart, $monthEnd])->count();
+        }
+
+        // ===========================
+        // AKTIVITAS TERBARU
+        // ===========================
+        $latestLowongans = LowonganPerusahaan::with('perusahaan')
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $latestPerusahaans = Perusahaan::latest()
+            ->take(5)
+            ->get();
+
+        $latestPelamars = Pelamar::with('user')
+            ->latest()
+            ->take(5)
+            ->get();
+
         return view('super_admin.dashboard', [
             "title" => "Dashboard",
 
-            'totalPelamar'       => $totalPelamar,
-            'growthPelamar'      => $growthPelamar,
+            // Pelamar
+            'totalPelamar'        => $totalPelamar,
+            'growthPelamar'       => $growthPelamar,
+            'totalKandidatAktif'  => $totalKandidatAktif,
+            'totalCalonKandidat'  => $totalCalonKandidat,
+            'totalPelamarReguler' => $totalPelamarReguler,
 
-            'totalPerusahaan'    => $totalPerusahaan,
-            'growthPerusahaan'   => $growthPerusahaan,
+            // Perusahaan
+            'totalPerusahaan'     => $totalPerusahaan,
+            'growthPerusahaan'    => $growthPerusahaan,
+            'perusahaanApproved'  => $perusahaanApproved,
+            'perusahaanPending'   => $perusahaanPending,
 
-            'totalAdmin'         => $totalAdmin,
-            'growthAdmin'        => $growthAdmin,
+            // Lowongan
+            'totalLowongan'       => $totalLowongan,
+            'lowonganBuka'        => $lowonganBuka,
+            'lowonganTutup'       => $lowonganTutup,
 
-            'totalSuperAdmin'    => $totalSuperAdmin,
-            'growthSuperAdmin'   => $growthSuperAdmin,
+            // Staff & User
+            'totalAdmin'          => $totalAdmin,
+            'growthAdmin'         => $growthAdmin,
+            'totalSuperAdmin'     => $totalSuperAdmin,
+            'growthSuperAdmin'    => $growthSuperAdmin,
+            'totalUsers'          => $totalUsers,
+            'totalFreeze'         => $totalFreeze,
+
+            // Chart data
+            'chartMonths'         => $chartMonths,
+            'chartPelamar'        => $chartPelamar,
+            'chartPerusahaan'     => $chartPerusahaan,
+
+            // Recent Feeds
+            'latestLowongans'     => $latestLowongans,
+            'latestPerusahaans'   => $latestPerusahaans,
+            'latestPelamars'      => $latestPelamars,
         ]);
     }
 
@@ -209,9 +274,58 @@ class SuperAdminController extends Controller
         $search = $request->input('search');
 
         $data = User::when($search, function ($query, $search) {
-            $query->where('username', 'like', "%{$search}%")
-                ->orWhere('role', 'like', "%{$search}%");
-        })->get();
+            $query->where(function ($q) use ($search) {
+                $q->where('username', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('role', 'like', "%{$search}%")
+                    ->orWhere('nama_lengkap', 'like', "%{$search}%")
+                    // Pelamar (wilayah & kategori)
+                    ->orWhereHas('pelamar', function ($pq) use ($search) {
+                        $pq->where('provinsi', 'like', "%{$search}%")
+                            ->orWhere('kota', 'like', "%{$search}%")
+                            ->orWhere('alamat', 'like', "%{$search}%")
+                            ->orWhere('kategori', 'like', "%{$search}%")
+                            ->orWhere('nama_pelamar', 'like', "%{$search}%");
+                    })
+                    // Perusahaan (wilayah)
+                    ->orWhereHas('perusahaan', function ($cq) use ($search) {
+                        $cq->where('provinsi', 'like', "%{$search}%")
+                            ->orWhere('kota', 'like', "%{$search}%")
+                            ->orWhere('alamat', 'like', "%{$search}%")
+                            ->orWhere('nama_perusahaan', 'like', "%{$search}%");
+                    })
+                    // Admin (wilayah)
+                    ->orWhereHas('admin', function ($aq) use ($search) {
+                        $aq->where('detail_alamat', 'like', "%{$search}%")
+                            ->orWhere('desa', 'like', "%{$search}%")
+                            ->orWhereHas('provinsi', function ($prq) use ($search) {
+                                $prq->where('nama', 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('kota', function ($ktq) use ($search) {
+                                $ktq->where('nama', 'like', "%{$search}%");
+                            });
+                    })
+                    // Finance (wilayah)
+                    ->orWhereHas('finance', function ($fq) use ($search) {
+                        $fq->where('detail_alamat', 'like', "%{$search}%")
+                            ->orWhere('desa', 'like', "%{$search}%")
+                            ->orWhereHas('provinsi', function ($fprq) use ($search) {
+                                $fprq->where('nama', 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('kota', function ($fktq) use ($search) {
+                                $fktq->where('nama', 'like', "%{$search}%");
+                            });
+                    });
+
+                // Status
+                if (stripos($search, 'aktif') !== false) {
+                    $q->orWhere('status', 0);
+                }
+                if (stripos($search, 'ban') !== false || stripos($search, 'freeze') !== false) {
+                    $q->orWhere('status', 1);
+                }
+            });
+        })->with(['pelamar', 'perusahaan'])->get();
 
         return view('super_admin.freeze.freeze', [
             'data' => $data,
@@ -264,31 +378,28 @@ class SuperAdminController extends Controller
         $calonKandidatQuery = Pelamar::where('kategori', 'calon kandidat');
 
         if ($search) {
-            $kandidatQuery->where(function ($q) use ($search) {
+            $filterClosure = function ($q) use ($search) {
                 $q->where('nama_pelamar', 'like', "%{$search}%")
+                    ->orWhere('kota', 'like', "%{$search}%")
+                    ->orWhere('provinsi', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhere('kategori', 'like', "%{$search}%")
                     ->orWhereHas('user', function ($u) use ($search) {
-                        $u->where('username', 'like', "%{$search}%");
+                        $u->where('username', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
                     });
-            });
+            };
 
-            $nonKandidatQuery->where(function ($q) use ($search) {
-                $q->where('nama_pelamar', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($u) use ($search) {
-                        $u->where('username', 'like', "%{$search}%");
-                    });
-            });
-
-            $calonKandidatQuery->where(function ($q) use ($search) {
-                $q->where('nama_pelamar', 'like', "%{$search}%")
-                    ->orWhereHas('user', function ($u) use ($search) {
-                        $u->where('username', 'like', "%{$search}%");
-                    });
-            });
+            $kandidatQuery->where($filterClosure);
+            $nonKandidatQuery->where($filterClosure);
+            $calonKandidatQuery->where($filterClosure);
         }
 
-        $kandidat = $kandidatQuery->get();
-        $nonKandidat = $nonKandidatQuery->get();
-        $calonKandidat = $calonKandidatQuery->get();
+        $relations = ['user', 'riwayat_pendidikan', 'alamat_pelamar'];
+
+        $kandidat = $kandidatQuery->with($relations)->get();
+        $nonKandidat = $nonKandidatQuery->with($relations)->get();
+        $calonKandidat = $calonKandidatQuery->with($relations)->get();
 
         session()->forget(['pelamar_terakhir_id', 'kategori_terakhir']);
 
@@ -538,8 +649,6 @@ class SuperAdminController extends Controller
             'riwayat_pendidikan',
             'pengalaman_organisasi',
             'pengalaman_kerja',
-            'skill',
-            'sosmed',
         ])->find($id);
 
         if (!$pelamar) {
@@ -730,8 +839,9 @@ class SuperAdminController extends Controller
 
     public function edit_non_kandidat(Pelamar $pelamar)
     {
-        return view('super_admin.pelamar.non-kandidat.edit', [
-            "data" => $pelamar
+        return redirect()->route('superadmin.pelamar.edit', [
+            'kategori' => 'non_kandidat',
+            'id' => $pelamar->id
         ]);
     }
 
@@ -1312,7 +1422,7 @@ class SuperAdminController extends Controller
 
     public function detail($id)
     {
-        $user = User::with(['admin', 'finance', 'perusahaan', 'pelamar'])->findOrFail($id);
+        $user = User::findOrFail($id);
 
         return view('super_admin.add.detail', [
             'user' => $user
@@ -1321,9 +1431,9 @@ class SuperAdminController extends Controller
 
     public function hapus($id)
     {
-        $user = User::with(['admin', 'finance', 'perusahaan', 'pelamar'])->findOrFail($id);
+        $user = User::findOrFail($id);
 
-        //  Hapus gambar profil sesuai role
+        // Hapus gambar profil sesuai role
         if ($user->role === 'admin' && $user->admin?->img_profile) {
             Storage::delete('public/' . $user->admin->img_profile);
         } elseif ($user->role === 'finance' && $user->finance?->img_profile) {
@@ -1334,18 +1444,18 @@ class SuperAdminController extends Controller
             Storage::delete('public/' . $user->pelamar->img_profile);
         }
 
-        //  Hapus data terkait sesuai role
-        if ($user->role === 'admin' && $user->admin) {
-            $user->admin->delete();
-        } elseif ($user->role === 'finance' && $user->finance) {
-            $user->finance->delete();
+        // Hapus data terkait sesuai role
+        if ($user->role === 'admin') {
+            \App\Models\Admin::where('user_id', $user->id)->delete();
+        } elseif ($user->role === 'finance') {
+            \App\Models\Finance::where('user_id', $user->id)->delete();
         } elseif ($user->role === 'perusahaan' && $user->perusahaan) {
             $user->perusahaan->delete();
         } elseif ($user->role === 'pelamar' && $user->pelamar) {
             $user->pelamar->delete();
         }
 
-        // 🔹 Terakhir, hapus user utamanya
+        // Terakhir, hapus user utamanya
         $user->delete();
 
         return redirect()->back()->with('success', 'Data User Berhasil Dihapus');
@@ -1377,16 +1487,42 @@ class SuperAdminController extends Controller
     public function halPerusahaan(Request $request)
     {
         $search = $request->input('search');
+        $filterStatus = $request->input('status'); // approved | pending | rejected
+
         $perusahaan = Perusahaan::with('user')
+            ->withCount('lowonganPerusahaans')
             ->when($search, function ($query, $search) {
                 $query->where('nama_perusahaan', 'like', "%{$search}%")
+                    ->orWhere('kota', 'like', "%{$search}%")
+                    ->orWhere('provinsi', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
+                    ->orWhere('jenis_perusahaan', 'like', "%{$search}%")
                     ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('username', 'like', "%{$search}%");
+                        $q->where('username', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
                     });
             })
-            ->get();
+            ->when($filterStatus, function ($query, $filterStatus) {
+                $query->where('verification_status', $filterStatus);
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        // Stats
+        $totalPerusahaan   = Perusahaan::count();
+        $totalApproved     = Perusahaan::where('verification_status', 'approved')->count();
+        $totalPending      = Perusahaan::where('verification_status', 'pending')->count();
+        $totalRejected     = Perusahaan::where('verification_status', 'rejected')->count();
+
         return view('super_admin.perusahaan.data-perusahaan', [
-            'perusahaan' => $perusahaan
+            'perusahaan'       => $perusahaan,
+            'search'           => $search,
+            'filterStatus'     => $filterStatus,
+            'totalPerusahaan'  => $totalPerusahaan,
+            'totalApproved'    => $totalApproved,
+            'totalPending'     => $totalPending,
+            'totalRejected'    => $totalRejected,
         ]);
     }
 
@@ -1679,14 +1815,25 @@ class SuperAdminController extends Controller
         return redirect()->route('superadmin.paket-harga')->with('success', 'Harga pembayaran berhasil diperbarui.');
     }
 
-
     public function panggilan(Request $request)
     {
         $search = $request->input('search');
 
         $perusahaans = Perusahaan::query()
             ->when($search, function ($query) use ($search) {
-                $query->where('nama_perusahaan', 'like', '%' . $search . '%');
+                $query->where('nama_perusahaan', 'like', '%' . $search . '%')
+                    ->orWhere('kota', 'like', '%' . $search . '%')
+                    ->orWhere('provinsi', 'like', '%' . $search . '%')
+                    ->orWhere('alamat', 'like', '%' . $search . '%')
+                    ->orWhereHas('alamat_perusahaan', function ($apq) use ($search) {
+                        $apq->where('desa', 'like', "%{$search}%")
+                            ->orWhereHas('provinsi', function ($pr) use ($search) {
+                                $pr->where('nama', 'like', "%{$search}%");
+                            })
+                            ->orWhereHas('kota', function ($kt) use ($search) {
+                                $kt->where('nama', 'like', "%{$search}%");
+                            });
+                    });
             })
             ->with([
                 'pasanglowongan.pelamar' => function ($query) {
@@ -1724,15 +1871,26 @@ class SuperAdminController extends Controller
                 $q->where('perusahaan_id', $perusahaan_id);
             })
             ->when($search, function ($q) use ($search) {
-                $q->whereHas('pelamar', function ($sub) use ($search) {
-                    $sub->where('nama_pelamar', 'like', "%$search%");
+                $q->where(function ($sub) use ($search) {
+                    $sub->whereHas('pelamar', function ($pel) use ($search) {
+                        $pel->where('nama_pelamar', 'like', "%$search%")
+                            ->orWhere('kota', 'like', "%$search%")
+                            ->orWhere('provinsi', 'like', "%$search%")
+                            ->orWhereHas('user', function ($u) use ($search) {
+                                $u->where('email', 'like', "%$search%")
+                                  ->orWhere('username', 'like', "%$search%");
+                            });
+                    })
+                    ->orWhereHas('lowongan_perusahaan', function ($low) use ($search) {
+                        $low->where('nama', 'like', "%$search%");
+                    });
                 });
             })
             ->get()
             ->map(function ($item) {
                 return [
                     'nama' => $item->pelamar->nama_pelamar,
-                    'email' => $item->pelamar->user->email,
+                    'email' => $item->pelamar->user->email ?? '-',
                     'lowongan' => $item->lowongan_perusahaan->nama,
                     'tanggal_diterima' => $item->updated_at->format('d M Y'),
                     'jenis' => 'pelamar_melamar'
@@ -1756,7 +1914,6 @@ class SuperAdminController extends Controller
 
 
 
-
     //Talent Hunter
     public function talentHunterForm(Request $request)
     {
@@ -1767,8 +1924,12 @@ class SuperAdminController extends Controller
                 $query->where('posisi', 'like', "%{$keyword}%")
                     ->orWhereHas('perusahaan', function ($q2) use ($keyword) {
                         $q2->where('nama_perusahaan', 'like', "%{$keyword}%")
+                            ->orWhere('kota', 'like', "%{$keyword}%")
+                            ->orWhere('provinsi', 'like', "%{$keyword}%")
+                            ->orWhere('alamat', 'like', "%{$keyword}%")
                             ->orWhereHas('user', function ($q3) use ($keyword) {
-                                $q3->where('username', 'like', "%{$keyword}%");
+                                $q3->where('username', 'like', "%{$keyword}%")
+                                   ->orWhere('email', 'like', "%{$keyword}%");
                             });
                     });
             })
@@ -1804,7 +1965,14 @@ class SuperAdminController extends Controller
             ->when($search, function ($q) use ($search) {
                 $q->where(function ($query) use ($search) {
                     $query->whereHas('pelamar', function ($pel) use ($search) {
-                        $pel->where('nama_pelamar', 'like', '%' . $search . '%');
+                        $pel->where('nama_pelamar', 'like', '%' . $search . '%')
+                            ->orWhere('kota', 'like', '%' . $search . '%')
+                            ->orWhere('provinsi', 'like', '%' . $search . '%')
+                            ->orWhere('alamat', 'like', '%' . $search . '%')
+                            ->orWhereHas('user', function ($u) use ($search) {
+                                $u->where('username', 'like', '%' . $search . '%')
+                                  ->orWhere('email', 'like', '%' . $search . '%');
+                            });
                     })
                         ->orWhereHas('lowonganPerusahaan', function ($low) use ($search) {
                             $low->where('nama', 'like', '%' . $search . '%');
@@ -1829,14 +1997,19 @@ class SuperAdminController extends Controller
         $perusahaan = Perusahaan::with('user')
             ->when($search, function ($query, $search) {
                 $query->where('nama_perusahaan', 'like', "%{$search}%")
+                    ->orWhere('kota', 'like', "%{$search}%")
+                    ->orWhere('provinsi', 'like', "%{$search}%")
+                    ->orWhere('alamat', 'like', "%{$search}%")
                     ->orWhereHas('user', function ($q) use ($search) {
-                        $q->where('username', 'like', "%{$search}%");
+                        $q->where('username', 'like', "%{$search}%")
+                          ->orWhere('email', 'like', "%{$search}%");
                     });
             })
             ->get();
 
         return view('super_admin.recruitment.perusahaan', [
-            'perusahaan' => $perusahaan
+            'perusahaan' => $perusahaan,
+            'search' => $search
         ]);
     }
 

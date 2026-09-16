@@ -1,188 +1,233 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
-        <div class="flex flex-wrap md:flex-nowrap justify-between items-center mb-6 gap-3">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
-            <h1 class="text-2xl font-medium whitespace-nowrap">
-                Event
-            </h1>
-
-            <div class="flex items-center gap-3 flex-wrap md:flex-nowrap w-full md:w-auto">
-
-                {{-- Tombol Notifikasi --}}
-                @include('super_admin.components.notif_button')
-
-                {{-- User Badge Dropdown --}}
-                @include('super_admin.components.user_badge_dropdown')
-
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div>
+                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">Event</h1>
+                <p class="text-xs text-slate-400 mt-0.5">Kelola semua event dan webinar yang ada di platform AreaKerja</p>
             </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
-        </div>
-
-
-
-        {{-- content --}}
-        <div class="w-full">
-            <div class="flex flex-wrap justify-between items-start lg:items-center mb-4 gap-4">
-
-                <!-- Tombol Buat Post -->
-                <div class="space-x-2 grid grid-cols-2 gap-2 lg:inline-flex md:inline-flex w-full sm:w-auto">
-                    <a href="{{ route('superadmin.event.createForm') }}"
-                        class="bg-blue-500 hover:bg-blue-600 transition duration-300 text-white px-4 py-2 rounded-md text-center w-full sm:w-auto">
-                        Buat Post
-                    </a>
-                </div>
+        <!-- Toolbar -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-4 mb-6">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
 
                 <!-- Search -->
-                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+                <div class="relative w-full md:w-80" x-data="{
+                    open: false,
+                    query: '{{ request('q') }}',
+                    recommendations: [
+                        { label: 'Buka', category: 'Status', icon: 'ph-check-circle' },
+                        { label: 'Tutup', category: 'Status', icon: 'ph-prohibit' },
+                        { label: 'Draft', category: 'Status', icon: 'ph-pencil-simple-line' },
+                        { label: 'Webinar', category: 'Tipe', icon: 'ph-video-camera' },
+                        { label: 'Workshop', category: 'Tipe', icon: 'ph-briefcase' },
+                        { label: 'Seminar', category: 'Tipe', icon: 'ph-presentation-chart' },
+                    ],
+                    get filtered() {
+                        if (!this.query.trim()) return this.recommendations.slice(0, 4);
+                        return this.recommendations.filter(r =>
+                            r.label.toLowerCase().includes(this.query.toLowerCase()) ||
+                            r.category.toLowerCase().includes(this.query.toLowerCase())
+                        );
+                    },
+                    select(val) {
+                        this.query = val;
+                        this.open = false;
+                        $nextTick(() => { $refs.eventSearchForm.submit(); });
+                    }
+                }" @click.outside="open = false">
 
-                    <form method="GET" action="{{ route('superadmin.eventform') }}"
-                        class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-
-                        <input type="text" name="q" placeholder="Cari Event" value="{{ request('q') }}"
-                            class="border border-gray-500 hover:bg-gray-100 rounded-md px-3 py-2 
-                           w-full sm:w-56 md:w-60 focus:outline-none focus:ring-2 focus:ring-gray-400
-                           break-words">
-
-                        <button type="submit"
-                            class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-md w-full sm:w-auto text-center">
-                            Cari
-                        </button>
+                    <form x-ref="eventSearchForm" method="GET" action="{{ route('superadmin.eventform') }}" autocomplete="off" class="flex items-center w-full">
+                        <div class="h-10 flex items-center w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition">
+                            <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
+                            <input type="text" name="q" x-model="query"
+                                @focus="open = true"
+                                @input="open = true"
+                                autocomplete="off"
+                                placeholder="Cari event..."
+                                class="flex-1 h-full px-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
+                                style="border: none !important; outline: none !important; box-shadow: none !important;">
+                            <template x-if="query.length > 0">
+                                <a href="{{ route('superadmin.eventform') }}"
+                                   @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.eventform') }}';"
+                                   class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
+                                   title="Hapus pencarian">
+                                    <i class="ph ph-x text-[10px] font-bold"></i>
+                                </a>
+                            </template>
+                            <button type="submit" class="hidden"></button>
+                        </div>
                     </form>
 
-                </div>
-            </div>
-
-
-
-            {{-- Table --}}
-            <div class="w-full border-2 border-gray-400 rounded-3xl shadow-md overflow-hidden">
-
-                {{-- Tambah scroll horizontal untuk mobile --}}
-                <div class="overflow-x-auto">
-
-                    <table class="w-full border-collapse table-fixed md:table-fixed min-w-max md:min-w-full">
-
-                        <thead class="bg-gray-50">
-                            <tr class="text-center">
-                                <th class="p-4 font-semibold text-gray-700 text-center w-[15%]">Status</th>
-                                <th class="p-4 font-semibold text-gray-700 w-[65%] break-words">Nama</th>
-                                <th class="p-4 font-semibold text-gray-700 w-[10%]">Kuota</th>
-                                <th class="p-4 font-semibold text-gray-700 w-[25%]">Mulai</th>
-                                <th class="p-4 font-semibold text-gray-700 w-[25%]">Selesai</th>
-                                <th class="px-6 py-4 font-semibold text-gray-700 w-[12%] text-right">Aksi</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            @forelse ($events as $event)
-                                <tr class="text-center">
-
-                                    <td class="px-6 py-3 text-white whitespace-nowrap">
-                                        @if ($event->status == 'buka')
-                                            <button onclick="openStatusModal({{ $event->id }}, 'tutup')"
-                                                class="bg-green-500 px-5 py-1 rounded-lg">
-                                                Buka
-                                            </button>
-                                        @elseif ($event->status == 'tutup')
-                                            <button onclick="openStatusModal({{ $event->id }}, 'buka')"
-                                                class="bg-red-500 px-5 py-1 rounded-lg">
-                                                Tutup
-                                            </button>
-                                        @else
-                                            <span class="bg-gray-500 px-5 py-1 rounded-lg">
-                                                Draft
+                    <!-- Autocomplete Dropdown -->
+                    <div x-cloak x-show="open && filtered.length > 0"
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 -translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 -translate-y-1"
+                         class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-slate-100 shadow-xl p-2 z-50 max-h-72 overflow-y-auto">
+                        <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-50 mb-1">
+                            <span>Saran Pencarian</span>
+                            <i class="ph ph-sparkle text-[#00509d]"></i>
+                        </div>
+                        <ul class="space-y-0.5">
+                            <template x-for="(item, idx) in filtered" :key="idx">
+                                <li>
+                                    <button type="button" @click="select(item.label)"
+                                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-blue-50/70 hover:text-[#00509d] transition group">
+                                        <span class="flex items-center gap-2.5 text-xs text-slate-700 group-hover:text-[#00509d] font-medium">
+                                            <span class="w-6 h-6 rounded-lg bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-slate-500 group-hover:text-[#00509d] transition">
+                                                <i :class="'ph ' + item.icon" class="text-xs"></i>
                                             </span>
-                                        @endif
-                                    </td>
-
-                                    <td class="px-6 py-3 text-blue-400 font-medium break-words">
-                                        <a href="{{ route('superadmin.detail.event', $event->id) }}">
-                                            {{ $event->title }}
-                                        </a>
-                                    </td>
-
-                                    <td class="px-6 py-3 text-gray-700 whitespace-nowrap">{{ $event->kuota ?? '-' }}</td>
-
-                                    <td class="px-6 py-3 text-gray-700 whitespace-nowrap">
-                                        {{ \Carbon\Carbon::parse($event->tgl_mulai)->format('d M Y') }}
-                                        {{ $event->jam_mulai }}
-                                    </td>
-
-                                    <td class="px-6 py-3 text-gray-700 whitespace-nowrap">
-                                        @if ($event->tgl_akhir)
-                                            {{ \Carbon\Carbon::parse($event->tgl_akhir)->format('d M Y') }}
-                                            {{ $event->jam_akhir }}
-                                        @else
-                                            -
-                                        @endif
-                                    </td>
-
-                                    <td class="px-6 py-4 flex items-center gap-2 whitespace-nowrap">
-                                        <form action="{{ route('superadmin.event.destroy', $event->id) }}" method="post">
-                                            @csrf
-                                            @method('delete')
-                                            <button type="submit"
-                                                class="bg-gray-500 text-white p-2 rounded hover:bg-gray-600 flex items-center justify-center">
-                                                <svg width="19" height="20" viewBox="0 0 19 20" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M3.42593 20C2.79784 20 2.25997 19.7822 1.81231 19.3467C1.36466 18.9111 1.14121 18.3881 1.14198 17.7778V3.33333H0V1.11111H5.70988V0H12.5617V1.11111H18.2716V3.33333H17.1296V17.7778C17.1296 18.3889 16.9058 18.9122 16.4581 19.3478C16.0105 19.7833 15.473 20.0007 14.8457 20H3.42593ZM14.8457 3.33333H3.42593V17.7778H14.8457V3.33333ZM5.70988 15.5556H7.99383V5.55556H5.70988V15.5556ZM10.2778 15.5556H12.5617V5.55556H10.2778V15.5556Z"
-                                                        fill="white" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="7" class="text-center py-5 text-gray-500">
-                                        Belum ada event.
-                                    </td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                                            <span x-text="item.label"></span>
+                                        </span>
+                                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 group-hover:bg-blue-100 text-slate-500 group-hover:text-[#00509d] font-medium"
+                                              x-text="item.category"></span>
+                                    </button>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
 
                 </div>
 
-                <div class="mt-4">
-                    {{ $events->links() }}
-                </div>
-
+                <a href="{{ route('superadmin.event.createForm') }}"
+                   class="h-10 inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-semibold px-4 rounded-xl transition duration-200 shadow-xs flex-shrink-0">
+                    <i class="ph ph-plus-circle text-base"></i>
+                    Buat Event
+                </a>
             </div>
-
-            {{-- End Table --}}
-
         </div>
 
-        <!-- Modal -->
-        <div id="statusModal" class="fixed inset-0 bg-black/50 flex items-center justify-center hidden z-50 p-4">
+        <!-- Data Table -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                    <thead class="bg-slate-50 border-b border-slate-100">
+                        <tr class="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <th class="px-5 py-3.5 text-center w-24">Status</th>
+                            <th class="px-5 py-3.5 min-w-[200px]">Nama Event</th>
+                            <th class="px-5 py-3.5 text-center w-20">Kuota</th>
+                            <th class="px-5 py-3.5 min-w-[140px]">Mulai</th>
+                            <th class="px-5 py-3.5 min-w-[140px]">Selesai</th>
+                            <th class="px-5 py-3.5 text-center w-32">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse ($events as $event)
+                            <tr class="hover:bg-slate-50/60 transition duration-150">
 
-            <div
-                class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md 
-                max-h-[90vh] overflow-y-auto break-words">
+                                <td class="px-5 py-3.5 text-center">
+                                    @if ($event->status == 'buka')
+                                        <button onclick="openStatusModal({{ $event->id }}, 'tutup')"
+                                                class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700 hover:bg-emerald-200 transition">
+                                            <i class="ph ph-check-circle"></i> Buka
+                                        </button>
+                                    @elseif ($event->status == 'tutup')
+                                        <button onclick="openStatusModal({{ $event->id }}, 'buka')"
+                                                class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-700 hover:bg-rose-200 transition">
+                                            <i class="ph ph-prohibit"></i> Tutup
+                                        </button>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-500">
+                                            <i class="ph ph-pencil-simple-line"></i> Draft
+                                        </span>
+                                    @endif
+                                </td>
 
-                <h2 class="text-lg font-semibold mb-3" id="modalTitle">
-                    Ubah Status Event
-                </h2>
+                                <td class="px-5 py-3.5">
+                                    <a href="{{ route('superadmin.detail.event', $event->id) }}"
+                                       class="font-semibold text-[#00509d] hover:underline">
+                                        {{ $event->title }}
+                                    </a>
+                                </td>
 
-                <p id="modalMessage" class="mb-5 text-gray-700"></p>
+                                <td class="px-5 py-3.5 text-center text-slate-600 text-xs font-medium">
+                                    {{ $event->kuota ?? '-' }}
+                                </td>
+
+                                <td class="px-5 py-3.5 text-slate-600 text-xs">
+                                    {{ \Carbon\Carbon::parse($event->tgl_mulai)->format('d M Y') }}
+                                    <span class="text-slate-400">{{ $event->jam_mulai }}</span>
+                                </td>
+
+                                <td class="px-5 py-3.5 text-slate-600 text-xs">
+                                    @if ($event->tgl_akhir)
+                                        {{ \Carbon\Carbon::parse($event->tgl_akhir)->format('d M Y') }}
+                                        <span class="text-slate-400">{{ $event->jam_akhir }}</span>
+                                    @else
+                                        <span class="text-slate-400">-</span>
+                                    @endif
+                                </td>
+
+                                <td class="px-5 py-3.5">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <a href="{{ route('superadmin.detail.event', $event->id) }}"
+                                           title="Lihat Detail"
+                                           class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#00509d] text-slate-600 hover:text-white flex items-center justify-center transition">
+                                            <i class="ph ph-eye text-base"></i>
+                                        </a>
+                                        <a href="{{ route('superadmin.edit.event', $event->id) }}"
+                                           title="Edit Event"
+                                           class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-emerald-600 text-slate-600 hover:text-white flex items-center justify-center transition">
+                                            <i class="ph ph-pencil-simple text-base"></i>
+                                        </a>
+                                        <form action="{{ route('superadmin.event.destroy', $event->id) }}" method="post"
+                                              onsubmit="return confirm('Yakin ingin menghapus event ini? Data tidak bisa dikembalikan!')">
+                                            @csrf @method('delete')
+                                            <button type="submit"
+                                                    title="Hapus Event"
+                                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white flex items-center justify-center transition">
+                                                <i class="ph ph-trash text-base"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" class="py-8 text-center text-slate-400 text-xs">
+                                    Belum ada data event
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+
+            @if($events->hasPages())
+                <div class="px-5 py-4 border-t border-slate-100">
+                    {{ $events->links() }}
+                </div>
+            @endif
+        </div>
+
+        <!-- Status Modal -->
+        <div id="statusModal" class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center hidden z-50 p-4">
+            <div class="bg-white rounded-2xl shadow-xl p-6 w-full max-w-md border border-slate-100">
+                <h2 class="text-base font-semibold text-slate-800 mb-1" id="modalTitle">Ubah Status Event</h2>
+                <p id="modalMessage" class="mb-5 text-sm text-slate-500"></p>
 
                 <form id="statusForm" method="POST">
-                    @csrf
-                    @method('PUT')
-
+                    @csrf @method('PUT')
                     <input type="hidden" name="status" id="statusInput">
 
                     <div class="flex flex-col sm:flex-row justify-end gap-3">
                         <button type="button" onclick="closeStatusModal()"
-                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 w-full sm:w-auto">
+                                class="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-sm font-semibold transition w-full sm:w-auto">
                             Batal
                         </button>
-
                         <button type="submit"
-                            class="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900 w-full sm:w-auto">
+                                class="px-4 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-xl text-sm font-semibold transition w-full sm:w-auto">
                             Konfirmasi
                         </button>
                     </div>
@@ -190,13 +235,9 @@
             </div>
         </div>
 
-
-
         @include('super_admin.notif.modal_notif')
         @include('super_admin.notif.modal_semua')
-
     </main>
-
 
     <script>
         function openStatusModal(id, status) {
@@ -206,13 +247,9 @@
             const statusInput = document.getElementById('statusInput');
             const form = document.getElementById('statusForm');
 
-            // Isi form action
             form.action = `/super_admin/events/status/${id}`;
-
-            // Isi status input
             statusInput.value = status;
 
-            // Ubah tulisan modal
             if (status === 'tutup') {
                 title.textContent = "Tutup Event?";
                 msg.textContent = "Event akan ditutup dan tidak bisa lagi menerima pendaftaran.";

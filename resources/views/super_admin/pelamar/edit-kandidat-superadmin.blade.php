@@ -1,511 +1,507 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-white overflow-x-auto" x-data="{ openNotif: false, openAllNotif: false }">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-            <h1 class="text-2xl font-medium">
-                @if ($kategori === 'non_kandidat')
-                    Edit Non Kandidat
-                @elseif ($kategori === 'calon_kandidat')
-                    Edit Calon Kandidat
-                @elseif ($kategori === 'kandidat')
-                    Edit Kandidat
-                @else
-                    Edit Data
-                @endif
-            </h1>
-           <div class="flex items-center gap-3 flex-wrap">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
-                {{-- Tombol Notifikasi --}}
-                @include('super_admin.components.notif_button')
-                {{-- User Badge Dropdown --}}
-                @include('super_admin.components.user_badge_dropdown')
+        @php
+            $kategori = $kategori ?? 'kandidat';
+        @endphp
 
-                    {{-- <select class="appearance-none px-8 py-2 bg-transparent text-gray-600 text-md focus:outline-none">
-                        <option>Text 1</option>
-                        <option>Text 2</option>
-                        <option>Text 3</option>
-                    </select> --}}
+        {{-- TOP NAVIGATION & ADMIN BAR --}}
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('superadmin.pelamar') }}"
+                    class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0"
+                    title="Kembali ke Data Pelamar">
+                    <i class="ph ph-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <p class="text-xs text-slate-400">Pelamar / <span class="text-slate-500 font-medium">Edit Data</span></p>
+                    <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">
+                        @if ($kategori === 'non_kandidat')
+                            Edit Pelamar
+                        @elseif ($kategori === 'calon_kandidat')
+                            Edit Calon Kandidat
+                        @elseif ($kategori === 'kandidat')
+                            Edit Kandidat
+                        @else
+                            Edit Data Pelamar
+                        @endif
+                    </h1>
                 </div>
             </div>
-        </div>
 
-       <div class="w-full max-w-6xl mx-auto p-4 sm:p-6 bg-white border-2 border-gray-400 rounded-2xl shadow-md form-container">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
-            <h2 class="text-lg font-semibold mb-10">
-                @if ($kategori === 'non_kandidat')
-                    Tambahkan Non Kandidat
-                @elseif ($kategori === 'calon_kandidat')
-                    Tambahkan Calon Kandidat
-                @elseif ($kategori === 'kandidat')
-                    Tambahkan Kandidat
-                @else
-                    Tambahkan Data
-                @endif
-            </h2>
+        {{-- FORM CONTAINER --}}
+        <div class="max-w-5xl mx-auto space-y-6">
 
-
-
-            <!-- Form -->
-            @if (!$pelamar)
-                <div class="bg-yellow-100 text-yellow-800 p-3 rounded-lg mb-4">
-                    ?? Harap buat data pelamar terlebih dahulu sebelum mengisi Sosmed, Alamat, Pendidikan, Organisasi,
-                    Pengalaman,
-                    dan Skill.
+            @if (session('error'))
+                <div x-data="{ show: true }" x-show="show"
+                    class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl flex items-center justify-between text-xs sm:text-sm shadow-sm">
+                    <div class="flex items-center gap-2.5">
+                        <svg class="w-5 h-5 text-rose-600 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>{{ session('error') }}</span>
+                    </div>
+                    <button class="text-rose-400 hover:text-rose-700 text-lg font-bold" @click="show=false">&times;</button>
                 </div>
             @endif
 
-            <form action="{{ route('superadmin.pelamar.update', $pelamar->id) }}" method="POST"
-                enctype="multipart/form-data" class="space-y-4">
+            @if ($errors->any())
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl text-xs sm:text-sm shadow-sm space-y-1">
+                    <span class="font-bold block text-rose-900 mb-1">Terdapat kesalahan input:</span>
+                    @foreach ($errors->all() as $error)
+                        <div class="flex items-center gap-1.5 text-rose-700">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
+                            <span>{{ $error }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+
+            {{-- MAIN FORM --}}
+            <form action="{{ route('superadmin.pelamar.update', $pelamar->id) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
-                <!-- Header -->
-                <div class="flex items-center justify-between mb-10">
-                   <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+                {{-- CARD 1: FOTO & IDENTITAS AKUN --}}
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+                    <div class="flex items-center gap-3 pb-5 mb-6 border-b border-slate-100">
+                        <div class="p-2 rounded-xl bg-blue-50 text-blue-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                            </svg>
+                        </div>
                         <div>
-                            <div>
-                                <img id="pp" class="w-28 h-28 object-cover rounded-full border border-gray-300"
-                                    src="{{ $pelamar && $pelamar->img_profile
-                                        ? asset('storage/' . $pelamar->img_profile)
-                                        : 'https://ui-avatars.com/api/?name=' .
-                                            urlencode($pelamar->nama_pelamar ?? 'Pelamar') .
-                                            '&background=00509d&color=fff&size=128' }}"
-                                    alt="Preview Foto">
+                            <h2 class="text-base font-bold text-slate-900">Informasi Akun & Data Diri</h2>
+                            <p class="text-xs text-slate-500">Identitas dan kredensial akun kandidat</p>
+                        </div>
+                    </div>
+
+                    {{-- Upload Foto Profil --}}
+                    <div class="flex flex-col sm:flex-row items-center sm:items-start gap-6 mb-8 p-4 rounded-2xl bg-slate-50/70 border border-slate-100">
+                        <div class="relative flex-shrink-0">
+                            <img id="pp" class="w-24 h-24 object-cover rounded-2xl border-2 border-white shadow-sm bg-white"
+                                src="{{ $pelamar && $pelamar->img_profile
+                                    ? asset('storage/' . $pelamar->img_profile)
+                                    : 'https://ui-avatars.com/api/?name=' . urlencode($pelamar->nama_pelamar ?? 'Kandidat') . '&background=00509d&color=fff&size=128' }}"
+                                alt="Preview Foto">
+                        </div>
+
+                        <div class="space-y-2 text-center sm:text-left">
+                            <span class="block text-xs font-bold text-slate-800">Foto Profil Kandidat</span>
+                            <p class="text-[11px] text-slate-500">Format: JPG, PNG, atau WebP. Maksimal 2MB.</p>
+                            
+                            <div class="flex items-center justify-center sm:justify-start gap-2.5 pt-1">
+                                <label class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer shadow-sm transition">
+                                    <input type="file" name="img_profile" id="fileinput" accept="image/*" class="hidden">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                                    </svg>
+                                    <span>Ganti Foto</span>
+                                </label>
+
+                                <button type="button" id="removeButton"
+                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                    </svg>
+                                    <span>Hapus</span>
+                                </button>
                             </div>
-
                         </div>
-                        <label
-                            class="flex items-center gap-2 px-4 py-2 text-md border-2 border-blue-800 bg-blue-700 hover:bg-blue-800 text-white rounded-md cursor-pointer">
-                            <input type="file" name="img_profile" id="fileinput" accept="image/*" class="hidden">
-                            <svg width="13" height="13" viewBox="0 0 13 13" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M4.70151 4.04985L6.00476 2.64706V8.49608C6.00476 8.65783 6.06472 8.81297 6.17145 8.92735C6.27818 9.04173 6.42293 9.10598 6.57387 9.10598C6.72481 9.10598 6.86956 9.04173 6.97629 8.92735C7.08302 8.81297 7.14297 8.65783 7.14297 8.49608V2.64706L8.44623 4.04985C8.49913 4.10701 8.56208 4.15239 8.63143 4.18335C8.70078 4.21431 8.77516 4.23026 8.85029 4.23026C8.92542 4.23026 8.99981 4.21431 9.06916 4.18335C9.13851 4.15239 9.20145 4.10701 9.25436 4.04985C9.3077 3.99315 9.35004 3.92569 9.37893 3.85137C9.40782 3.77705 9.4227 3.69733 9.4227 3.61681C9.4227 3.5363 9.40782 3.45658 9.37893 3.38226C9.35004 3.30793 9.3077 3.24048 9.25436 3.18378L6.97793 0.744145C6.92381 0.688618 6.85999 0.645092 6.79013 0.616064C6.65157 0.555062 6.49616 0.555062 6.35761 0.616064C6.28775 0.645092 6.22393 0.688618 6.1698 0.744145L3.89338 3.18378C3.84032 3.24064 3.79823 3.30815 3.76951 3.38246C3.74079 3.45676 3.72601 3.53639 3.72601 3.61681C3.72601 3.69723 3.74079 3.77687 3.76951 3.85117C3.79823 3.92547 3.84032 3.99298 3.89338 4.04985C3.94644 4.10671 4.00944 4.15182 4.07877 4.1826C4.1481 4.21338 4.2224 4.22922 4.29745 4.22922C4.37249 4.22922 4.4468 4.21338 4.51613 4.1826C4.58545 4.15182 4.64845 4.10671 4.70151 4.04985Z"
-                                    fill="currentColor" />
-                            </svg>
-                            Upload
-                        </label>
-                        <button type="button" id="removeButton"
-                            class="flex items-center gap-2 px-4 py-2 text-md border-2 border-blue-800 text-blue-800 rounded-md hover:bg-gray-100">
-                            <svg width="13" height="14" viewBox="0 0 13 14" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M11.7907 2.77852H9.4194V2.30947C9.4194 1.93628 9.2695 1.57837 9.00268 1.31448C8.73586 1.05059 8.37397 0.902344 7.99663 0.902344H5.1511C4.77376 0.902344 4.41188 1.05059 4.14506 1.31448C3.87824 1.57837 3.72834 1.93628 3.72834 2.30947V2.77852H1.35707C1.23129 2.77852 1.11066 2.82793 1.02172 2.9159C0.932779 3.00386 0.882813 3.12316 0.882812 3.24756C0.882813 3.37196 0.932779 3.49126 1.02172 3.57922C1.11066 3.66719 1.23129 3.7166 1.35707 3.7166H1.83132V12.1594C1.83132 12.4082 1.93125 12.6468 2.10913 12.8227C2.28701 12.9986 2.52827 13.0975 2.77983 13.0975H10.3679C10.6195 13.0975 10.8607 12.9986 11.0386 12.8227C11.2165 12.6468 11.3164 12.4082 11.3164 12.1594V3.7166H11.7907C11.9165 3.7166 12.0371 3.66719 12.126 3.57922C12.215 3.49126 12.2649 3.37196 12.2649 3.24756C12.2649 3.12316 12.215 3.00386 12.126 2.9159C12.0371 2.82793 11.9165 2.77852 11.7907 2.77852Z"
-                                    fill="currentColor" />
-                            </svg>
-                            Remove
-                        </button>
-                    </div>
-                </div>
-                <!-- User Info -->
-                {{-- <div> 
-                    <label class="block text-md font-medium mb-1">User ID <span class="text-red-500">*</span></label>
-                    <input type="text" class="w-full mt-1 border-2 border-gray-400 shadow rounded-lg px-3 py-2" placeholder="User ID" />
-                </div> --}}
-                <div>
-                    <label class="block text-md font-medium mb-1">Username <span class="text-red-500">*</span></label>
-                    <input type="text" name="username" value="{{ $pelamar?->user?->username }}" readonly
-                        class="w-full mt-1 border-2 border-gray-400 shadow rounded-lg px-3 py-2" placeholder="Username" />
-                </div>
-
-                <div>
-                    <label class="block text-md font-medium mb-1">Email <span class="text-red-500">*</span></label>
-                    <input type="email" name="email" value="{{ $pelamar?->user?->email }}" readonly
-                        class="w-full mt-1 border-2 border-gray-400 shadow rounded-lg px-3 py-2" placeholder="Email" />
-                </div>
-
-                <div>
-                    <label class="block text-md font-medium mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
-                    <input type="text" name="nama_pelamar"
-                        class="w-full mt-1 border-2 border-gray-400 shadow rounded-lg px-3 py-2" placeholder="Nama Lengkap"
-                        value="{{ $pelamar->nama_pelamar ?? '' }}" />
-                </div>
-                <div>
-                    <label class="block text-md font-medium mb-1">Kata Sandi <span class="text-red-500">*</span></label>
-                    <input type="password" name="password" value="{{ $pelamar?->user?->password }}" disabled
-                        class="w-full mt-1 border-2 border-gray-400 shadow rounded-lg px-3 py-2" placeholder="Kata Sandi" />
-                </div>
-
-                <!-- Gender -->
-                <div>
-                    <div class="mt-2 mb-4">
-                        <label class="block text-md font-medium mb-1">Gender <span class="text-red-500">*</span></label>
-                        <div class="flex gap-6 mt-1">
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="laki-laki"
-                                    class="accent-blue-700 border-2 border-blue-700"
-                                    {{ old('gender', $pelamar->gender ?? '') == 'laki-laki' ? 'checked' : '' }}>
-                                <span>Laki-Laki</span>
-                            </label>
-                            <label class="flex items-center gap-2">
-                                <input type="radio" name="gender" value="perempuan"
-                                    class="accent-blue-700 border-2 border-blue-700"
-                                    {{ old('gender', $pelamar->gender ?? '') == 'perempuan' ? 'checked' : '' }}>
-                                <span>Perempuan</span>
-                            </label>
-                        </div>
-
                     </div>
 
+                    {{-- Form Fields Grid --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 text-xs">
+                        {{-- Username (Readonly) --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5">
+                                Username <span class="text-slate-400 font-normal">(Tidak dapat diubah)</span>
+                            </label>
+                            <input type="text" name="username" value="{{ $pelamar?->user?->username }}" readonly
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-500 bg-slate-50 cursor-not-allowed focus:outline-none" />
+                        </div>
+
+                        {{-- Email (Readonly) --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5">
+                                Email <span class="text-slate-400 font-normal">(Tidak dapat diubah)</span>
+                            </label>
+                            <input type="email" name="email" value="{{ $pelamar?->user?->email }}" readonly
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-500 bg-slate-50 cursor-not-allowed focus:outline-none" />
+                        </div>
+
+                        {{-- Nama Lengkap --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5">
+                                Nama Lengkap <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="text" name="nama_pelamar" value="{{ old('nama_pelamar', $pelamar->nama_pelamar ?? '') }}"
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                                placeholder="Nama Lengkap" required />
+                        </div>
+
+                        {{-- No. Telepon --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5">
+                                No. Telepon / WhatsApp <span class="text-rose-500">*</span>
+                            </label>
+                            <input type="text" name="telepon_pelamar" value="{{ old('telepon_pelamar', $pelamar->telepon_pelamar ?? '') }}"
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                                placeholder="08xxxxxxxxxx" required />
+                        </div>
+
+                        {{-- Gender --}}
+                        <div class="md:col-span-2">
+                            <label class="block font-semibold text-slate-700 mb-1.5">
+                                Jenis Kelamin <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition">
+                                    <input type="radio" name="gender" value="laki-laki"
+                                        class="accent-blue-600 text-blue-600 focus:ring-blue-500"
+                                        {{ old('gender', $pelamar->gender ?? '') == 'laki-laki' ? 'checked' : '' }} required>
+                                    <span class="font-medium text-slate-800 text-xs">Laki-Laki</span>
+                                </label>
+                                <label class="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 cursor-pointer transition">
+                                    <input type="radio" name="gender" value="perempuan"
+                                        class="accent-blue-600 text-blue-600 focus:ring-blue-500"
+                                        {{ old('gender', $pelamar->gender ?? '') == 'perempuan' ? 'checked' : '' }}>
+                                    <span class="font-medium text-slate-800 text-xs">Perempuan</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        {{-- Divisi --}}
+                        @php
+                            $selectedDivisi = is_array($pelamar?->divisi)
+                                ? $pelamar?->divisi
+                                : json_decode($pelamar?->divisi, true);
+                            $selectedDivisi = old('divisi', $selectedDivisi ?? []);
+                        @endphp
+
+                        <div id="divisi-wrapper" class="md:col-span-2 {{ in_array($kategori, ['calon_kandidat', 'kandidat']) ? '' : 'hidden' }}">
+                            <label class="block font-semibold text-slate-700 mb-1.5">
+                                Bidang / Divisi yang Diminati <span class="text-rose-500">*</span>
+                            </label>
+                            <select id="divisi" name="divisi[]" multiple class="w-full">
+                                @foreach ($divisis as $divisi)
+                                    <option value="{{ $divisi->divisi }}"
+                                        {{ in_array($divisi->divisi, $selectedDivisi) ? 'selected' : '' }}>
+                                        {{ $divisi->divisi }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                 </div>
 
-                <!-- No. Telepon -->
-                <div>
-                    <label class="block text-md font-medium mb-1">No. Telepon <span class="text-red-500">*</span></label>
-                    <input type="text" name="telepon_pelamar" value="{{ $pelamar->telepon_pelamar ?? '' }}"
-                        class="w-full mt-1 border-2 border-gray-400 shadow rounded-lg px-3 py-2"
-                        placeholder="08********" />
-                </div>
+                {{-- CARD 2: DATA PELENGKAP (Alamat, Pendidikan, Organisasi, Pengalaman, Skill) --}}
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+                    <div class="flex items-center gap-3 pb-5 mb-6 border-b border-slate-100">
+                        <div class="p-2 rounded-xl bg-purple-50 text-purple-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Data Pelengkap & Riwayat</h2>
+                            <p class="text-xs text-slate-500">Kelola riwayat pendidikan, pengalaman, dan keahlian</p>
+                        </div>
+                    </div>
 
-                @php
-                    $kategori = $kategori ?? request()->route('kategori'); // misalnya dikirim dari controller
-                @endphp
-                <!-- Hidden input kategori -->
-                <input type="hidden" name="kategori"
-                    value="@switch($kategori)
-        @case('non_kandidat') pelamar @break
-        @case('calon_kandidat') calon kandidat @break
-        @case('kandidat') kandidat aktif @break
-        @default pelamar
-    @endswitch">
-
-                {{-- Bidang yang Diminati --}}
-                @if (in_array($kategori, ['calon_kandidat', 'kandidat']))
-                    <select id="divisi" name="divisi[]" multiple
-                        class="w-full border-2 border-gray-400 shadow rounded-lg px-3 py-2">
-                        @foreach ($divisis as $divisi)
-                            <option value="{{ $divisi->divisi }}"
-                                {{ in_array($divisi->divisi, (array) $pelamar->divisi) ? 'selected' : '' }}>
-                                {{ $divisi->divisi }}
-                            </option>
-                        @endforeach
-                    </select>
-                @endif
-
-                <!-- Alamat -->
-                @if (isset($pelamar) && $pelamar->alamat_pelamar->count() > 0)
-                    <label class="text-md font-medium mt-4">Alamat</label>
-                   <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
-
-                        <div class="p-4 w-full bg-gray-100 rounded-lg">
-                            @foreach ($pelamar->alamat_pelamar ?? [] as $almt)
-                                <div class="mb-6 border-b border-gray-200 pb-3">
-                                    <h3 class="font-semibold text-gray-800 text-lg">
-                                        {{ $almt->label }}
-                                    </h3>
-
-                                    <p class="text-gray-600 text-sm">
-                                        Desa {{ $almt->desa }}, Kecamatan {{ $almt->kecamatan }},
-                                        {{ $almt->kota }}, {{ $almt->provinsi }} - {{ $almt->kode_pos }}
-                                    </p>
-
-                                    <p class="text-gray-600 text-sm leading-relaxed">
-                                        {{ $almt->detail }}
-                                    </p>
+                    <div class="space-y-4">
+                        {{-- 1. Alamat --}}
+                        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 flex-shrink-0">
+                                    <svg class="w-4 h-4 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    </svg>
                                 </div>
-                            @endforeach
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Alamat Domisili</h4>
+                                    @if ($pelamar && $pelamar->alamat_pelamar->count() > 0)
+                                        <p class="text-[11px] text-slate-500 mt-0.5">
+                                            {{ $pelamar->alamat_pelamar->first()->detail ?? $pelamar->alamat_pelamar->first()->desa }},
+                                            {{ $pelamar->alamat_pelamar->first()->kota }}
+                                        </p>
+                                    @else
+                                        <p class="text-[11px] text-slate-400 italic mt-0.5">Belum ada data alamat</p>
+                                    @endif
+                                </div>
+                            </div>
 
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                @if ($pelamar && $pelamar->alamat_pelamar->count() > 0)
+                                    <button data-modal-target="show-alamat" data-modal-toggle="show-alamat" type="button"
+                                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition shadow-sm">
+                                        Lihat / Edit
+                                    </button>
+                                @endif
+                                <button type="button" data-modal-target="create_alamatmodal" data-modal-toggle="create_alamatmodal"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Tambah</span>
+                                </button>
+                            </div>
                         </div>
-                        <button data-modal-target="show-alamat" data-modal-toggle="show-alamat" type="button"
-                            class="mb-20 ml-4">
-                            <svg width="18" height="16" viewBox="0 0 10 11" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M9.83752 2.87443C10.0542 2.65779 10.0542 2.29673 9.83752 2.0912L8.5377 0.791384C8.33218 0.574747 7.97112 0.574747 7.75448 0.791384L6.7324 1.80791L8.81544 3.89095M0 8.54586V10.6289H2.08304L8.22664 4.47976L6.14359 2.39672L0 8.54586Z"
-                                    fill="#00509d" />
-                            </svg>
-                        </button>
+
+                        {{-- 2. Pendidikan --}}
+                        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 flex-shrink-0">
+                                    <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M12 14l9-5-9-5-9 5 9 5z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Riwayat Pendidikan</h4>
+                                    @if ($pelamar && $pelamar->riwayat_pendidikan->count() > 0)
+                                        <p class="text-[11px] text-slate-500 mt-0.5">
+                                            {{ $pelamar->riwayat_pendidikan->count() }} data pendidikan terdaftar
+                                        </p>
+                                    @else
+                                        <p class="text-[11px] text-slate-400 italic mt-0.5">Belum ada riwayat pendidikan</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                @if ($pelamar && $pelamar->riwayat_pendidikan->count() > 0)
+                                    <button data-modal-target="show-pendidikan" data-modal-toggle="show-pendidikan" type="button"
+                                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition shadow-sm">
+                                        Lihat / Edit
+                                    </button>
+                                @endif
+                                <button type="button" data-modal-target="create_pendidikanmodal" data-modal-toggle="create_pendidikanmodal"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Tambah</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- 3. Pengalaman Kerja --}}
+                        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 flex-shrink-0">
+                                    <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Pengalaman Kerja</h4>
+                                    @if ($pelamar && $pelamar->pengalaman_kerja->count() > 0)
+                                        <p class="text-[11px] text-slate-500 mt-0.5">
+                                            {{ $pelamar->pengalaman_kerja->count() }} riwayat karir terdaftar
+                                        </p>
+                                    @else
+                                        <p class="text-[11px] text-slate-400 italic mt-0.5">Belum ada pengalaman kerja</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                @if ($pelamar && $pelamar->pengalaman_kerja->count() > 0)
+                                    <button data-modal-target="show-kerja" data-modal-toggle="show-kerja" type="button"
+                                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition shadow-sm">
+                                        Lihat / Edit
+                                    </button>
+                                @endif
+                                <button type="button" data-modal-target="create_kerjamodal" data-modal-toggle="create_kerjamodal"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Tambah</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- 4. Pengalaman Organisasi --}}
+                        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 flex-shrink-0">
+                                    <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Pengalaman Organisasi</h4>
+                                    @if ($pelamar && $pelamar->pengalaman_organisasi->count() > 0)
+                                        <p class="text-[11px] text-slate-500 mt-0.5">
+                                            {{ $pelamar->pengalaman_organisasi->count() }} aktivitas organisasi terdaftar
+                                        </p>
+                                    @else
+                                        <p class="text-[11px] text-slate-400 italic mt-0.5">Belum ada pengalaman organisasi</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                @if ($pelamar && $pelamar->pengalaman_organisasi->count() > 0)
+                                    <button data-modal-target="show-org" data-modal-toggle="show-org" type="button"
+                                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition shadow-sm">
+                                        Lihat / Edit
+                                    </button>
+                                @endif
+                                <button type="button" data-modal-target="create_organisasimodal" data-modal-toggle="create_organisasimodal"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Tambah</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {{-- 5. Keahlian (Skills) --}}
+                        <div class="p-4 rounded-2xl border border-slate-200/80 bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                            <div class="flex items-start gap-3">
+                                <div class="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 flex-shrink-0">
+                                    <svg class="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="text-xs font-bold text-slate-900">Keahlian & Kompetensi</h4>
+                                    @if ($pelamar && $pelamar->skill->count() > 0)
+                                        <p class="text-[11px] text-slate-500 mt-0.5">
+                                            {{ $pelamar->skill->count() }} keahlian ditambahkan
+                                        </p>
+                                    @else
+                                        <p class="text-[11px] text-slate-400 italic mt-0.5">Belum ada data keahlian</p>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 self-end sm:self-auto">
+                                @if ($pelamar && $pelamar->skill->count() > 0)
+                                    <button data-modal-target="show-skill" data-modal-toggle="show-skill" type="button"
+                                        class="px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-medium transition shadow-sm">
+                                        Lihat / Edit
+                                    </button>
+                                @endif
+                                <button type="button" data-modal-target="create_skillmodal" data-modal-toggle="create_skillmodal"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                                    <span>Tambah</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
-                @else
-                    @php
-                        $pelamarSudahAda = isset($pelamar) && $pelamar->id;
-                    @endphp
-                    <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-800 mb-1">Alamat</label>
-                        <button type="button"
-                            class="w-full flex justify-between items-center bg-blue-700 text-white px-4 py-2 rounded-lg"
-                            @if (!$pelamarSudahAda) onclick="alert('Harap buat data pelamar terlebih dahulu sebelum menambahkan Alamat.')"
-        @else
-            data-modal-target="create_alamatmodal2" 
-            data-modal-toggle="create_alamatmodal2" @endif>
-                            <span>Alamat</span>
-                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path d="M2 11.2789H20.5578M11.2789 2V20.5578" stroke="white" stroke-width="2.65112"
-                                    stroke-linecap="round" stroke-linejoin="round" />
+                </div>
+
+                {{-- CARD 3: MEDIA SOSIAL --}}
+                <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8">
+                    <div class="flex items-center gap-3 pb-5 mb-6 border-b border-slate-100">
+                        <div class="p-2 rounded-xl bg-pink-50 text-pink-600">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
                             </svg>
-                        </button>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-bold text-slate-900">Media Sosial & Portofolio</h2>
+                            <p class="text-xs text-slate-500">Tautan akun jejaring sosial dan website profil kandidat</p>
+                        </div>
                     </div>
-                @endif
 
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+                        {{-- Instagram --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i class="ph ph-instagram-logo text-pink-600 text-sm"></i>
+                                <span>Instagram</span>
+                            </label>
+                            <input type="text" name="social_media[instagram]"
+                                value="{{ old('social_media.instagram', $pelamar?->sosmed?->instagram) }}"
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                                placeholder="Username atau link Instagram" />
+                        </div>
 
-                <div>
-                    <!-- Pendidikan -->
-                    @if (isset($pelamar) && $pelamar->riwayat_pendidikan->count() > 0)
-                        <label class="text-md font-medium">Pendidikan</label>
-                        <div class="flex flex-col sm:flex-row sm:justify-between gap-4">
+                        {{-- LinkedIn --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i class="ph ph-linkedin-logo text-blue-700 text-sm"></i>
+                                <span>LinkedIn</span>
+                            </label>
+                            <input type="text" name="social_media[linkedin]"
+                                value="{{ old('social_media.linkedin', $pelamar?->sosmed?->linkedin) }}"
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                                placeholder="Link profil LinkedIn" />
+                        </div>
 
-                            <div class="p-4 w-full bg-gray-100 rounded-lg">
-                                @foreach ($pelamar->riwayat_pendidikan ?? [] as $pend)
-                                    <div class="mb-6">
-                                        <h3 class="font-semibold text-gray-800 text-lg">
-                                            {{ $pend->asal_pendidikan }} - {{ $pend->pendidikan }}
-                                            ({{ $pend->tahun_awal }} - {{ $pend->tahun_akhir }})
-                                        </h3>
-                                        <p class="text-gray-600 text-sm leading-relaxed">
-                                            {{ $pend->jurusan }}
-                                        </p>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <button data-modal-target="show-pendidikan2" data-modal-toggle="show-pendidikan2"
-                                type="button" class="mb-20 ml-4">
-                                <svg width="18" height="16" viewBox="0 0 10 11" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M9.83752 2.87443C10.0542 2.65779 10.0542 2.29673 9.83752 2.0912L8.5377 0.791384C8.33218 0.574747 7.97112 0.574747 7.75448 0.791384L6.7324 1.80791L8.81544 3.89095M0 8.54586V10.6289H2.08304L8.22664 4.47976L6.14359 2.39672L0 8.54586Z"
-                                        fill="#00509d" />
-                                </svg>
-                            </button>
+                        {{-- Website --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i class="ph ph-globe text-emerald-600 text-sm"></i>
+                                <span>Website / Portofolio</span>
+                            </label>
+                            <input type="text" name="social_media[website]"
+                                value="{{ old('social_media.website', $pelamar?->sosmed?->website) }}"
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                                placeholder="https://portofolio-anda.com" />
                         </div>
-                    @else
-                        @php
-                            $pelamarSudahAda = isset($pelamar) && $pelamar->id;
-                        @endphp
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-800 mb-1">Pendidikan</label>
-                            <button type="button"
-                                class="w-full flex justify-between items-center bg-blue-700 text-white px-4 py-2 rounded-lg"
-                                @if (!$pelamarSudahAda) onclick="alert('Harap buat data pelamar terlebih dahulu sebelum menambahkan pendidikan.')"
-        @else
-            data-modal-target="create_pendidikanmodal2" 
-            data-modal-toggle="create_pendidikanmodal2" @endif>
-                                <span>Tambahkan Pendidikan</span>
-                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2 11.2789H20.5578M11.2789 2V20.5578" stroke="white" stroke-width="2.65112"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </button>
-                        </div>
-                    @endif
-                </div>
-                <div>
-                    <!-- Organisasi -->
-                    @if (isset($pelamar) && $pelamar->pengalaman_organisasi->count() > 0)
-                        <label class="text-md font-medium">Organisasi</label>
-                        <div class="flex justify-between mt-2">
-                            <div class="p-4 w-full bg-gray-100 rounded-lg">
-                                @foreach ($pelamar->pengalaman_organisasi ?? [] as $org)
-                                    <div class="mb-6">
-                                        <h3 class="font-semibold text-gray-800 text-lg">
-                                            {{ $org->jabatan }} - {{ $org->nama_organisasi }}
-                                            ({{ $org->tahun_awal }} - {{ $org->tahun_akhir }})
-                                        </h3>
-                                        <p class="text-gray-600 text-sm leading-relaxed">
-                                            {{ $org->deskripsi }}
-                                        </p>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <button data-modal-target="show-org2" data-modal-toggle="show-org2" type="button"
-                                class="mb-20 ml-4">
-                                <svg width="18" height="16" viewBox="0 0 10 11" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M9.83752 2.87443C10.0542 2.65779 10.0542 2.29673 9.83752 2.0912L8.5377 0.791384C8.33218 0.574747 7.97112 0.574747 7.75448 0.791384L6.7324 1.80791L8.81544 3.89095M0 8.54586V10.6289H2.08304L8.22664 4.47976L6.14359 2.39672L0 8.54586Z"
-                                        fill="#00509d" />
-                                </svg>
-                            </button>
-                        </div>
-                    @else
-                        @php
-                            $pelamarSudahAda = isset($pelamar) && $pelamar->id;
-                        @endphp
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-800 mb-1">Organisasi</label>
-                            <button type="button"
-                                class="w-full flex justify-between items-center bg-blue-700 text-white px-4 py-2 rounded-lg"
-                                @if (!$pelamarSudahAda) onclick="alert('Harap buat data pelamar terlebih dahulu sebelum menambahkan Organisasi.')"
-        @else
-            data-modal-target="create_organisasimodal2" 
-            data-modal-toggle="create_organisasimodal2" @endif>
-                                <span>Tambahkan Organisasi</span>
-                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2 11.2789H20.5578M11.2789 2V20.5578" stroke="white" stroke-width="2.65112"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </button>
-                        </div>
-                    @endif
 
-                </div>
-                <div>
-                    <!-- Pengalaman -->
-                    @if (isset($pelamar) && $pelamar->pengalaman_kerja->count() > 0)
-                        <label class="text-md font-medium">Pengalaman Kerja <span class="text-red-500"></span></label>
-                        <div class="flex justify-between mt-2">
-                            <div class="p-4 w-full bg-gray-100 rounded-lg">
-                                @foreach ($pelamar->pengalaman_kerja ?? [] as $kerja)
-                                    <div class="mb-6">
-                                        <h3 class="font-semibold text-gray-800 text-lg">
-                                            {{ $kerja->posisi_pekerjaan }} - {{ $kerja->nama_perusahaan }}
-                                            ({{ $kerja->tahun_awal }} - {{ $kerja->tahun_akhir }})
-                                        </h3>
-                                        <p class="text-gray-600 text-sm leading-relaxed">
-                                            {{ $kerja->deskripsi }}
-                                        </p>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <button data-modal-target="show-kerja2" data-modal-toggle="show-kerja2" type="button"
-                                class="mb-20 ml-4">
-                                <svg width="18" height="16" viewBox="0 0 10 11" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M9.83752 2.87443C10.0542 2.65779 10.0542 2.29673 9.83752 2.0912L8.5377 0.791384C8.33218 0.574747 7.97112 0.574747 7.75448 0.791384L6.7324 1.80791L8.81544 3.89095M0 8.54586V10.6289H2.08304L8.22664 4.47976L6.14359 2.39672L0 8.54586Z"
-                                        fill="#00509d" />
-                                </svg>
-                            </button>
+                        {{-- Twitter / X --}}
+                        <div>
+                            <label class="block font-semibold text-slate-700 mb-1.5 flex items-center gap-1.5">
+                                <i class="ph ph-x-logo text-slate-800 text-sm"></i>
+                                <span>Twitter (X)</span>
+                            </label>
+                            <input type="text" name="social_media[twitter]"
+                                value="{{ old('social_media.twitter', $pelamar?->sosmed?->twitter) }}"
+                                class="w-full border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs text-slate-800 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition"
+                                placeholder="Username atau link Twitter/X" />
                         </div>
-                    @else
-                        @php
-                            $pelamarSudahAda = isset($pelamar) && $pelamar->id;
-                        @endphp
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-800 mb-1">Pengalaman</label>
-                            <button type="button"
-                                class="w-full flex justify-between items-center bg-blue-700 text-white px-4 py-2 rounded-lg"
-                                @if (!$pelamarSudahAda) onclick="alert('Harap buat data pelamar terlebih dahulu sebelum menambahkan PEngalaman Kerja.')"
-        @else
-            data-modal-target="create_kerjamodal2" 
-            data-modal-toggle="create_kerjamodal2" @endif>
-                                <span>Tambahkan Pengalaman</span>
-                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2 11.2789H20.5578M11.2789 2V20.5578" stroke="white" stroke-width="2.65112"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </button>
-                        </div>
-                    @endif
+                    </div>
                 </div>
 
-                <div>
-                    <!-- Skill -->
-                    @if (isset($pelamar) && $pelamar->skill->count() > 0)
-                        <label class="text-md font-medium">Skill</label>
-                        <div class="flex justify-between mt-2">
-                            <div class="p-4 w-full bg-gray-100 rounded-lg">
-                                @foreach ($pelamar->skill as $sk)
-                                    <div class="mb-6">
-                                        <h3 class="font-semibold text-gray-800 text-lg">
-                                            {{ $sk->skill }}
-                                        </h3>
-                                        <p class="text-gray-600 text-sm leading-relaxed">
-                                            {{ $sk->experience_level }}
-                                        </p>
-                                    </div>
-                                @endforeach
-                            </div>
-                            <button data-modal-target="show-skill2" data-modal-toggle="show-skill2" type="button"
-                                class="mb-20 ml-4">
-                                <svg width="18" height="16" viewBox="0 0 10 11" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M9.83752 2.87443C10.0542 2.65779 10.0542 2.29673 9.83752 2.0912L8.5377 0.791384C8.33218 0.574747 7.97112 0.574747 7.75448 0.791384L6.7324 1.80791L8.81544 3.89095M0 8.54586V10.6289H2.08304L8.22664 4.47976L6.14359 2.39672L0 8.54586Z"
-                                        fill="#00509d" />
-                                </svg>
-                            </button>
-                        </div>
-                    @else
-                        @php
-                            $pelamarSudahAda = isset($pelamar) && $pelamar->id;
-                        @endphp
-                        <div class="mb-4">
-                            <label class="block text-sm font-semibold text-gray-800 mb-1">Skill</label>
-                            <button type="button"
-                                class="w-full flex justify-between items-center bg-blue-700 text-white px-4 py-2 rounded-lg"
-                                @if (!$pelamarSudahAda) onclick="alert('Harap buat data pelamar terlebih dahulu sebelum menambahkan Skill.')"
-        @else
-            data-modal-target="create_skillmodal2" 
-            data-modal-toggle="create_skillmodal2" @endif>
-                                <span>Tambahkan Skill</span>
-                                <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M2 11.2789H20.5578M11.2789 2V20.5578" stroke="white" stroke-width="2.65112"
-                                        stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                            </button>
-                        </div>
-                    @endif
-                </div>
-
-
-
-                <!-- Social Media -->
-                <div>
-                    <label class="block text-lg font-medium mb-5">Social Media</label>
-
-                    <label class="block text-md font-medium">Instagram</label>
-                    <input type="text" name="social_media[instagram]" value="{{ $pelamar?->sosmed?->instagram }}"
-                        class="w-full mt-1 mb-5 border-2 border-gray-400 shadow rounded-lg px-3 py-2"
-                        placeholder="Instagram" />
-
-                    <label class="block text-md font-medium">LinkedIn</label>
-                    <input type="text" name="social_media[linkedin]" value="{{ $pelamar?->sosmed?->linkedin }}"
-                        class="w-full mt-1 mb-5 border-2 border-gray-400 shadow rounded-lg px-3 py-2"
-                        placeholder="LinkedIn" />
-
-                    <label class="block text-md font-medium">Website</label>
-                    <input type="text" name="social_media[website]" value="{{ $pelamar?->sosmed?->website }}"
-                        class="w-full mt-1 mb-5 border-2 border-gray-400 shadow rounded-lg px-3 py-2"
-                        placeholder="Website" />
-
-                    <label class="block text-md font-medium">Twitter</label>
-                    <input type="text" name="social_media[twitter]" value="{{ $pelamar?->sosmed?->twitter }}"
-                        class="w-full mt-1 mb-5 border-2 border-gray-400 shadow rounded-lg px-3 py-2"
-                        placeholder="Twitter" />
-                </div>
-
-
-                <!-- Buttons -->
-                <div class="md:col-span-2 flex justify-center items-center gap-4 mt-4">
-                    <button type="submit"
-                        class="bg-blue-800 text-white font-medium px-10 py-2 rounded-md hover:bg-blue-700 border border-blue-800 transition">Upload
-                    </button>
-                    <a href={{ route('superadmin.pelamar') }}
-                        class="bg-white text-blue-800 font-medium px-12 py-2 rounded-md hover:bg-gray-100 border border-blue-800 transition">Batal
+                {{-- SUBMIT & ACTION BUTTONS --}}
+                <div class="flex items-center justify-end gap-3 pt-2">
+                    <a href="{{ route('superadmin.pelamar') }}"
+                        class="px-6 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs transition shadow-sm">
+                        Batal
                     </a>
+                    <button type="submit"
+                        class="inline-flex items-center gap-2 px-8 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition shadow-sm shadow-blue-500/25">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                        </svg>
+                        <span>Simpan Perubahan</span>
+                    </button>
                 </div>
+
             </form>
         </div>
 
-        @include('super_admin.notif.modal_semua')
+        {{-- Modals Notifikasi --}}
         @include('super_admin.notif.modal_notif')
+        @include('super_admin.notif.modal_semua')
 
+        {{-- Modals Data Pelengkap --}}
         @include('super_admin.pelamar.modal.alamat2')
         @include('super_admin.pelamar.modal.pendidikan2')
         @include('super_admin.pelamar.modal.organisasi2')
         @include('super_admin.pelamar.modal.pengalaman2')
         @include('super_admin.pelamar.modal.skill2')
 
-        {{-- detail --}}
+        {{-- Detail Modals --}}
         @include('super_admin.pelamar.modal.detail_pendidikan2')
         @include('super_admin.pelamar.modal.detail_organisasi2')
         @include('super_admin.pelamar.modal.detail_pengalaman2')
         @include('super_admin.pelamar.modal.detail_skill2')
         @include('super_admin.pelamar.modal.detail_alamat')
 
-        {{-- edit --}}
-
-        {{-- Tom Select CSS --}}
+        {{-- Tom Select CSS & JS --}}
         <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
-
-        {{-- Tom Select JS --}}
         <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
 
+        {{-- Script Upload Foto & TomSelect --}}
         <script>
             document.getElementById('fileinput').addEventListener('change', function(e) {
                 const file = e.target.files[0];
@@ -521,53 +517,38 @@
             document.getElementById('removeButton').addEventListener('click', function() {
                 const img = document.getElementById('pp');
                 const fileInput = document.getElementById('fileinput');
-
-                // Reset ke avatar default
-                img.setAttribute('src',
-                    'https://ui-avatars.com/api/?name=Pelamar&background=00509d&color=fff&size=128');
-                fileInput.value = ''; // Reset input file
+                img.setAttribute('src', 'https://ui-avatars.com/api/?name=Kandidat&background=00509d&color=fff&size=128');
+                fileInput.value = '';
             });
-        </script>
 
-        <script>
             document.addEventListener('DOMContentLoaded', function() {
-                // Inisialisasi TomSelect untuk "Divisi"
-                const divisiSelect = new TomSelect("#divisi", {
-                    plugins: ['remove_button'],
-                    persist: false,
-                    create: false,
-                    hideSelected: true,
-                    maxItems: 5,
-                    placeholder: "Pilih Divisi",
-                    render: {
-                        option: function(data, escape) {
-                            return `
-                        <div class="flex items-center justify-between">
-                            <span>${escape(data.text)}</span>
-                            <input type="checkbox" class="ml-2 accent-blue-700 pointer-events-none">
-                        </div>
-                    `;
-                        },
-                        item: function(data, escape) {
-                            return `<div class="py-1 px-2 bg-blue-100 text-blue-900 rounded-lg">${escape(data.text)}</div>`;
+                const divisiEl = document.getElementById('divisi');
+                if (divisiEl) {
+                    const divisiSelect = new TomSelect("#divisi", {
+                        plugins: ['remove_button'],
+                        persist: false,
+                        create: false,
+                        hideSelected: true,
+                        maxItems: 5,
+                        placeholder: "Pilih divisi yang diminati...",
+                        render: {
+                            item: function(data, escape) {
+                                return `<div class="py-1 px-2.5 bg-blue-50 text-blue-700 border border-blue-200 rounded-lg text-xs font-semibold mr-1 mb-1">${escape(data.text)}</div>`;
+                            }
                         }
+                    });
+
+                    const kategori = "{{ $kategori }}";
+                    if (kategori !== 'calon_kandidat' && kategori !== 'kandidat') {
+                        document.getElementById('divisi-wrapper')?.classList.add('hidden');
+                        divisiSelect.clear();
                     }
-                });
-
-                // Ambil kategori dari PHP ke JS
-                const kategori = "{{ $kategori }}";
-
-                // Kalau bukan calon_kandidat atau kandidat ? sembunyikan dan kosongkan pilihan
-                if (kategori !== 'calon_kandidat' && kategori !== 'kandidat') {
-                    document.getElementById('divisi-wrapper').classList.add('hidden');
-                    divisiSelect.clear();
                 }
             });
         </script>
 
-        {{-- Notif --}}
+        {{-- Notif Script --}}
         <script>
-            // Tandai dibaca
             async function markAsRead(url, el) {
                 try {
                     let res = await fetch(url, {
@@ -577,16 +558,10 @@
                             "Accept": "application/json"
                         }
                     });
-
                     let data = await res.json();
-
                     if (data.success) {
-
-                        // Ubah warna bg
                         el.classList.remove("bg-white");
                         el.classList.add("bg-gray-200");
-
-                        // Kurangi badge
                         const badge = document.getElementById("notif-badge");
                         if (badge) {
                             let count = parseInt(badge.textContent);
@@ -597,22 +572,16 @@
                             }
                         }
                     }
-
                 } catch (error) {
                     console.error("markAsRead error:", error);
                 }
             }
 
-            // AlpineJS init
             document.addEventListener('alpine:init', () => {
                 Alpine.data('notifHandler', () => ({
-
-                    // Hapus satu notifikasi
                     async hapus(id) {
                         if (!confirm("Hapus notifikasi ini?")) return;
-
                         let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
-
                         let res = await fetch(url, {
                             method: "DELETE",
                             headers: {
@@ -620,18 +589,13 @@
                                 "Accept": "application/json"
                             }
                         });
-
                         let data = await res.json();
-
                         if (data.success) {
                             document.querySelector(`.notif-item[data-id="${id}"]`)?.remove();
                         }
                     },
-
-                    // Hapus semua
                     async hapusSemua() {
                         if (!confirm("Hapus semua notifikasi?")) return;
-
                         let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
                             method: "DELETE",
                             headers: {
@@ -639,18 +603,13 @@
                                 "Accept": "application/json"
                             }
                         });
-
                         let data = await res.json();
-
                         if (data.success) {
                             document.querySelectorAll('.notif-item').forEach(e => e.remove());
                         }
                     },
-
-                    // Hapus semua yang sudah dibaca
                     async hapusSemuaBaca() {
                         if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
-
                         let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
                             method: "DELETE",
                             headers: {
@@ -658,32 +617,13 @@
                                 "Accept": "application/json"
                             }
                         });
-
                         let data = await res.json();
-
                         if (data.success) {
-                            document.querySelectorAll('.notif-item.bg-gray-200')
-                                .forEach(e => e.remove());
+                            document.querySelectorAll('.notif-item.bg-gray-200').forEach(e => e.remove());
                         }
                     }
-
                 }));
             });
         </script>
-
-
-
-        <script>
-            document.querySelector('form[target="hiddenFrame"]').addEventListener('submit', () => {
-                document.querySelectorAll('.notif-item').forEach(item => {
-                    item.classList.remove('bg-white');
-                    item.classList.add('bg-gray-200');
-                });
-                const badge = document.querySelector('.absolute .bg-red-500');
-                if (badge) badge.remove();
-            });
-        </script>
-        <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
-
     </main>
 @endsection

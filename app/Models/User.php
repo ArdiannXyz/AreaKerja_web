@@ -38,6 +38,16 @@ class User extends Authenticatable
         'status'            => 'integer',
     ];
 
+    public function admin()
+    {
+        return $this->hasOne(Admin::class, 'user_id', 'id');
+    }
+
+    public function finance()
+    {
+        return $this->hasOne(Finance::class, 'user_id', 'id');
+    }
+
     public function pelamar()
     {
         return $this->hasOne(Pelamar::class, 'user_id', 'id');

@@ -9,7 +9,8 @@
     <title>Admin</title>
 
     @vite('resources/css/app.css')
-    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_biru.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_favicon.png') }}?v=6">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=6">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" type="text/css"
