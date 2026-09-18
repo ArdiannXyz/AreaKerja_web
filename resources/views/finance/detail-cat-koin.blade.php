@@ -1,16 +1,47 @@
-﻿@extends('finance.sidebar.index')
+@extends('finance.sidebar.index')
 @section('sidebar')
-    <div class="p-4 sm:ml-64" x-data="{ openCashModal: false, openKoinModal: false, detailCash: {}, detailKoin: {} }" x-cloak>
+    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6" 
+         x-data="{ openCashModal: false, openKoinModal: false, detailCash: {}, detailKoin: {} }" 
+         x-cloak>
 
-        <header class="w-full flex items-center justify-between px-6 py-3">
-            <p class="font-semibold text-2xl">Catatan Transaksi</p>
+        <!-- Top Header & Breadcrumb -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200/80">
+            <div class="flex items-center gap-3 flex-1">
+                <a href="{{ route('finance.catatan') }}"
+                   class="w-10 h-10 rounded-2xl bg-white border border-slate-200/80 hover:bg-blue-50/50 hover:border-[#00509d]/40 flex items-center justify-center text-slate-600 transition shadow-2xs">
+                    <i class="ph ph-arrow-left text-lg font-bold"></i>
+                </a>
+                <div>
+                    <div class="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
+                        <a href="{{ route('finance.dashboard') }}" class="hover:text-[#00509d]">Finance</a>
+                        <span>/</span>
+                        <a href="{{ route('finance.catatan') }}" class="hover:text-[#00509d]">Catatan Transaksi</a>
+                        <span>/</span>
+                        <span class="text-slate-600 font-semibold">Semua Riwayat Lengkap</span>
+                    </div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">Semua Riwayat Transaksi</h1>
+                </div>
+            </div>
         </header>
 
-        <div class="p-4">
+        <div class="space-y-8">
 
             {{-- ====================== TABEL CATATAN KOIN ====================== --}}
-            <div class="mb-12">
-                <h2 class="text-lg font-semibold mb-2">Riwayat Koin</h2>
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#00509d] border border-blue-100 flex items-center justify-center text-lg shrink-0 font-bold">
+                            <i class="ph-fill ph-coins"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-extrabold text-slate-900">Seluruh Riwayat Mutasi Koin</h2>
+                            <p class="text-xs text-slate-500">Daftar lengkap transaksi koin masuk & keluar</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl">
+                        {{ $catatanKoins->count() }} Data
+                    </span>
+                </div>
 
                 <div class="rounded-2xl overflow-hidden border overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm min-w-[800px]">

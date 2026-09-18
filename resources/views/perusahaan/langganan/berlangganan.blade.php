@@ -1,539 +1,433 @@
 @extends('layouts.index-perusahaan')
 @section('content')
-    <!-- Section Atas -->
-    <div class="bg-white p-10 flex flex-wrap justify-between items-center overflow-hidden  mt-16">
-        <div class="max-w-lg">
-            <div class="text-2xl text-blue-900 font-semibold mb-4">
-                <p>Berlangganan Bersama Kami <br> Menjadi Yang Terdepan</p>
-            </div>
-            <div class="text-sm font-medium text-blue-900 mb-8">
-                <p>Jangan lewatkan kesempatan untuk selalu mendapatkan <br> penawaran menarik dengan berlangganan.</p>
-            </div>
-            <div>
-                @if ($perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired))
-                    <p class="text-green-600 font-semibold">
-                        Anda berlangganan hingga
-                        {{ \Carbon\Carbon::parse($perusahaan->tanggal_expired)->translatedFormat('d F Y') }}
+    <div class="w-full bg-slate-50/50 min-h-screen pb-20">
+
+        <!-- ================= HERO SECTION ================= -->
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12">
+            <div class="bg-white rounded-3xl p-6 sm:p-10 lg:p-12 border border-slate-200/80 shadow-xs flex flex-col-reverse lg:flex-row items-center justify-between gap-8 sm:gap-12 relative overflow-hidden">
+                <div class="absolute -top-24 -left-24 w-72 h-72 bg-blue-50 rounded-full blur-3xl pointer-events-none"></div>
+
+                <!-- Text Content -->
+                <div class="max-w-xl space-y-5 relative z-10">
+                    <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#00509d] text-xs font-black tracking-wide uppercase">
+                        <i class="ph-fill ph-crown text-amber-500 text-sm"></i>
+                        <span>Paket Langganan Eksklusif</span>
+                    </div>
+
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+                        Berlangganan Bersama Kami, <br>
+                        <span class="text-[#00509d]">Menjadi Yang Terdepan.</span>
+                    </h1>
+
+                    <p class="text-sm sm:text-base text-slate-600 font-normal leading-relaxed">
+                        Dapatkan akses prioritas tanpa batas ke ribuan talenta terbaik, event rekrutmen eksklusif, serta konsultasi rekrutmen intensif dari tim ahli AreaKerja.
                     </p>
-                @else
-                    <button onclick="openModal()"
-                        class="bg-[#00509d] text-white px-6 py-3 rounded-xl shadow text-sm font-medium">
-                        Berlangganan
-                    </button>
-                @endif
+
+                    <div class="pt-2">
+                        @if ($perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired))
+                            <div class="inline-flex items-center gap-3 px-5 py-3 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl shadow-2xs">
+                                <div class="w-8 h-8 rounded-xl bg-emerald-500 text-white flex items-center justify-center font-bold text-base shrink-0">
+                                    <i class="ph-fill ph-check-circle"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Status Langganan Aktif</p>
+                                    <p class="text-xs sm:text-sm font-bold text-slate-700">
+                                        Berlaku hingga {{ \Carbon\Carbon::parse($perusahaan->tanggal_expired)->translatedFormat('d F Y') }}
+                                    </p>
+                                </div>
+                            </div>
+                        @else
+                            <button onclick="openModal()"
+                                class="inline-flex items-center gap-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-3.5 rounded-2xl shadow-sm hover:shadow-md transition text-sm font-extrabold transform active:scale-98">
+                                <i class="ph-bold ph-lightning text-amber-400 text-base"></i>
+                                <span>Mulai Berlangganan</span>
+                            </button>
+                        @endif
+                    </div>
+                </div>
+
+                <!-- Hero Illustration -->
+                <div class="w-full lg:w-1/2 flex justify-center relative z-10">
+                    <img src="{{ asset('images/brolbaru.png') }}"
+                        alt="Ilustrasi Berlangganan" 
+                        class="w-full max-w-[420px] sm:max-w-[480px] h-auto object-contain drop-shadow-sm">
+                </div>
             </div>
         </div>
-        <div class="flex justify-center md:justify-end w-full md:w-1/2">
-            <img src="{{ asset('images/brolbaru.png') }}"
-                alt="berlangganan" class="w-[450px] md:w-[550px] lg:w-[650px] h-auto object-contain">
+
+        <!-- ================= BENEFIT SECTION ================= -->
+        <div class="w-full py-16 px-4 sm:px-6 lg:px-8 text-white relative overflow-hidden"
+            style="background: linear-gradient(135deg, #00509d 0%, #003366 100%);">
+            
+            <div class="max-w-6xl mx-auto">
+                <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
+                    <span class="px-3 py-1 rounded-full bg-white/10 text-blue-200 text-xs font-extrabold uppercase tracking-wider">
+                        Keuntungan Mitra
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                        Benefit Berlangganan Di AreaKerja
+                    </h2>
+                    <p class="text-xs sm:text-sm text-blue-100 font-medium">
+                        Solusi terpadu untuk percepatan dan efisiensi proses *hiring* perusahaan Anda.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Benefit 1 -->
+                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
+                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
+                            <i class="ph-fill ph-calendar-star text-amber-400"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-white mb-2">Event Eksklusif</h3>
+                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
+                            Diundang khusus ke dalam bursa kerja dan webinar rekrutmen yang diadakan oleh AreaKerja.
+                        </p>
+                    </div>
+
+                    <!-- Benefit 2 -->
+                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
+                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
+                            <i class="ph-fill ph-chats-circle text-sky-300"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-white mb-2">Konsultasi Lifetime</h3>
+                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
+                            Dukungan konsultasi berkelanjutan dari spesialis HR dalam menyaring pekerja yang tepat.
+                        </p>
+                    </div>
+
+                    <!-- Benefit 3 -->
+                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
+                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
+                            <i class="ph-fill ph-megaphone-simple text-emerald-300"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-white mb-2">Prioritas Listing</h3>
+                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
+                            Lowongan pekerjaan perusahaan akan diposisikan di daftar teratas untuk menarik pelamar aktif.
+                        </p>
+                    </div>
+
+                    <!-- Benefit 4 -->
+                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
+                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
+                            <i class="ph-fill ph-users-three text-rose-300"></i>
+                        </div>
+                        <h3 class="text-base font-extrabold text-white mb-2">Database Terverifikasi</h3>
+                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
+                            Akses cepat ke profil dan portofolio kandidat siap kerja yang telah divalidasi tim.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= SUBSCRIPTION PRICING CARD ================= -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="bg-white rounded-3xl border-2 border-[#00509d] p-8 sm:p-12 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-10">
+                <div class="max-w-xl space-y-4">
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-50 text-[#00509d] text-xs font-extrabold">
+                        <i class="ph-fill ph-sparkle"></i>
+                        <span>Akses Lengkap 1 Tahun Penuh</span>
+                    </div>
+
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                        Paket Langganan Tahunan
+                    </h2>
+
+                    <p class="text-sm text-slate-600 font-medium leading-relaxed">
+                        Investasi cerdas untuk seluruh kebutuhan rekrutmen perusahaan. Nikmati seluruh fitur premium tanpa biaya tambahan tersembunyi.
+                    </p>
+
+                    <div class="pt-2 flex items-center gap-3">
+                        <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
+                            <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-6 h-6 object-contain">
+                            <span class="text-2xl font-black text-[#00509d]">{{ number_format($hargaLangganan, 0, ',', '.') }}</span>
+                            <span class="text-xs font-extrabold text-amber-700">Koin / Tahun</span>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        @if ($perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired))
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-xl">
+                                <i class="ph-fill ph-check text-base"></i>
+                                <span>Paket Anda sedang aktif</span>
+                            </div>
+                        @else
+                            <button onclick="openModal()"
+                                class="inline-flex items-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-3.5 rounded-2xl shadow-sm text-sm font-extrabold transition transform active:scale-98">
+                                <span>Langganan Sekarang</span>
+                                <i class="ph-bold ph-arrow-right"></i>
+                            </button>
+                        @endif
+                    </div>
+                </div>
+
+                <div class="w-full lg:w-1/2 flex justify-center">
+                    <img src="{{ asset('images/jempol.png') }}"
+                        alt="Ilustrasi Sukses" 
+                        class="w-full max-w-[320px] sm:max-w-[380px] h-auto object-contain">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ================= MODAL 1: CHECKOUT PEMBAYARAN ================= -->
+    <div id="modalBayar" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-7 relative border border-slate-100 transform transition-all">
+            <!-- Close Button -->
+            <button onclick="closeModal()"
+                class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition focus:outline-none">
+                <i class="ph ph-x font-bold text-base"></i>
+            </button>
+
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-5">
+                <div class="w-10 h-10 rounded-2xl bg-blue-50 text-[#00509d] border border-blue-100 flex items-center justify-center text-xl font-bold shrink-0">
+                    <i class="ph-fill ph-crown"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-black text-slate-900">Konfirmasi Langganan</h2>
+                    <p class="text-xs text-slate-500 font-medium">Pembayaran paket tahunan AreaKerja</p>
+                </div>
+            </div>
+
+            <!-- Price Card -->
+            <div class="bg-blue-50/60 border border-blue-200/80 rounded-2xl p-4 mb-4">
+                <div class="flex justify-between items-center mb-1">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Tagihan Tahunan</span>
+                    <span class="px-2 py-0.5 bg-blue-100 text-[#00509d] text-[10px] font-black rounded-md">12 Bulan</span>
+                </div>
+                <div class="flex items-center gap-2 mt-2">
+                    <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-7 h-7 object-contain">
+                    <span class="text-2xl font-black text-[#00509d]">{{ number_format($hargaLangganan, 0, ',', '.') }}</span>
+                    <span class="text-xs font-bold text-slate-600">Koin</span>
+                </div>
+            </div>
+
+            <!-- Current Coin Balance -->
+            <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 mb-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs font-bold text-slate-500">Saldo Koin Perusahaan</p>
+                        <div class="flex items-center gap-1.5 mt-1">
+                            <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-5 h-5 object-contain">
+                            <span class="text-base font-black text-slate-900">{{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }} Koin</span>
+                        </div>
+                    </div>
+                    <button type="button" onclick="closeModal(); toggleModal();"
+                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 text-xs font-extrabold rounded-xl transition shadow-2xs">
+                        <i class="ph-bold ph-plus-circle text-sm"></i>
+                        <span>Top Up Koin</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Action Button -->
+            <div class="space-y-2">
+                <button id="btnBayar" type="button"
+                    class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold py-3 rounded-2xl shadow-xs hover:shadow-md transition text-sm flex items-center justify-center gap-2">
+                    <i class="ph-bold ph-check"></i>
+                    <span>Bayar Sekarang ({{ $hargaLangganan }} Koin)</span>
+                </button>
+                <button type="button" onclick="closeModal()"
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">
+                    Batalkan
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- Section Benefit -->
-    <div class="bg-[#00509d] py-16 px-6 text-white">
-        <div class="max-w-6xl mx-auto text-center">
-            <h2 class="text-xl md:text-2xl font-bold mb-12">
-                Benefit Berlangganan Di AreaKerja
+    <!-- ================= MODAL 2: PEMBAYARAN SUKSES ================= -->
+    <div id="modalSukses" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 relative text-center border border-slate-100 transform transition-all">
+            
+            <div class="w-16 h-16 rounded-3xl bg-blue-50 text-[#00509d] border border-blue-100 flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
+                <i class="ph-fill ph-check-circle text-emerald-500"></i>
+            </div>
+
+            <h2 class="text-xl font-black text-slate-900 tracking-tight mb-1">
+                Pembayaran Sukses!
             </h2>
+            <p class="text-xs sm:text-sm text-slate-600 font-medium">
+                Selamat, status langganan perusahaan Anda di <span class="font-bold text-[#00509d]">areakerja.com</span> telah aktif selama 1 tahun ke depan.
+            </p>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-4 mb-10">
-                <!-- Item 1 -->
-                <div class="flex flex-col items-center">
-                    <div class="mb-4">
-                        <!-- Icon Globe -->
-                        <svg width="89" height="89" viewBox="0 0 89 89" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M25.081 83.9936C24.9484 83.9936 24.7715 84.0821 24.6388 84.0821C16.0603 79.837 9.07365 72.8061 4.78438 64.2276C4.78438 64.0949 4.87282 63.9181 4.87282 63.7854C10.2676 65.3773 15.8392 66.5712 21.3666 67.4998C22.3394 73.0715 23.4891 78.5989 25.081 83.9936ZM83.8528 64.2718C79.4751 73.0715 72.179 80.1908 63.2909 84.48C64.9712 78.8642 66.3862 73.2041 67.3148 67.4998C72.8865 66.5712 78.3696 65.3773 83.7644 63.7854C83.7202 63.9623 83.8528 64.1392 83.8528 64.2718ZM84.2066 25.6242C78.635 23.9439 73.0191 22.5731 67.3148 21.6002C66.3862 15.896 65.0154 10.2359 63.2909 4.70849C72.4443 9.08619 79.8289 16.4708 84.2066 25.6242ZM25.0854 5.19048C23.4935 10.5852 22.3438 16.0684 21.4152 21.64C15.711 22.5244 10.0509 23.9394 4.43505 25.6198C8.72432 16.7317 15.8436 9.43553 24.6432 5.05782C24.7759 5.05782 24.9528 5.19048 25.0854 5.19048ZM59.7622 20.6716C49.5033 19.5219 39.156 19.5219 28.8971 20.6716C30.0026 14.6136 31.4176 8.55556 33.4075 2.71862C33.4959 2.36487 33.4517 2.09955 33.4959 1.7458C36.9893 0.905631 40.571 0.375 44.3297 0.375C48.0441 0.375 51.6701 0.905631 55.1192 1.7458C55.1634 2.09955 55.1634 2.36487 55.2518 2.71862C57.2417 8.59978 58.6567 14.6136 59.7622 20.6716ZM20.3982 60.0356C14.2959 58.9301 8.28212 57.5151 2.44518 55.5253C2.09143 55.4368 1.82611 55.481 1.47236 55.4368C0.632193 51.9435 0.101562 48.3617 0.101562 44.6031C0.101562 40.8887 0.632193 37.2627 1.47236 33.8136C1.82611 33.7694 2.09143 33.7694 2.44518 33.6809C8.32634 31.7353 14.2959 30.2761 20.3982 29.1706C19.2927 39.4294 19.2927 49.7768 20.3982 60.0356ZM88.5401 44.6031C88.5401 48.3617 88.0094 51.9435 87.1693 55.4368C86.8155 55.481 86.5502 55.4368 86.1964 55.5253C80.3153 57.4709 74.3015 58.9301 68.2434 60.0356C69.3931 49.7768 69.3931 39.4294 68.2434 29.1706C74.3015 30.2761 80.3595 31.6911 86.1964 33.6809C86.5502 33.7694 86.8155 33.8136 87.1693 33.8136C88.0094 37.3069 88.5401 40.8887 88.5401 44.6031ZM59.7622 68.5169C58.6567 74.6191 57.2417 80.6329 55.2518 86.4699C55.1634 86.8236 55.1634 87.089 55.1192 87.4427C51.6701 88.2829 48.0441 88.8135 44.3297 88.8135C40.571 88.8135 36.9893 88.2829 33.4959 87.4427C33.4517 87.089 33.4959 86.8236 33.4075 86.4699C31.4846 80.5988 29.9775 74.5996 28.8971 68.5169C34.0266 69.0917 39.156 69.4897 44.3297 69.4897C49.5033 69.4897 54.677 69.0917 59.7622 68.5169ZM60.9605 61.234C49.9113 62.6293 38.7304 62.6293 27.6811 61.234C26.286 50.1847 26.286 39.0038 27.6811 27.9546C38.7304 26.5594 49.9113 26.5594 60.9605 27.9546C62.3558 39.0038 62.3558 50.1847 60.9605 61.234Z"
-                                fill="white" />
-                        </svg>
-
-                    </div>
-                    <p class="text-sm font-medium">
-                        Di undang ke dalam event <br>
-                        yang diadakan oleh AreaKerja
-                    </p>
+            <!-- Email Notification Box -->
+            <div class="mt-5 bg-slate-50 border border-slate-200/80 rounded-2xl p-4 flex items-center justify-between text-left">
+                <div>
+                    <p class="text-xs font-extrabold text-slate-700">Kirim invoice & bukti ke email</p>
+                    <p class="text-[11px] font-semibold text-slate-500 truncate max-w-[220px]">{{ Auth::user()->email }}</p>
                 </div>
 
-                <!-- Item 2 -->
-                <div class="flex flex-col items-center">
-                    <div class="mb-4">
-                        <!-- Icon Chat -->
-                        <svg width="84" height="83" viewBox="0 0 84 83" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M62.4827 0.158203H21.1609C9.75608 0.158203 0.5 9.37296 0.5 20.7365V45.4469V49.5791C0.5 60.9425 9.75608 70.1573 21.1609 70.1573H27.3592C28.4748 70.1573 29.9624 70.9011 30.6649 71.8102L36.8632 80.0332C39.5904 83.6695 44.0532 83.6695 46.7804 80.0332L52.9787 71.8102C53.7638 70.7771 55.0034 70.1573 56.2844 70.1573H62.4827C73.8875 70.1573 83.1436 60.9425 83.1436 49.5791V20.7365C83.1436 9.37296 73.8875 0.158203 62.4827 0.158203ZM25.2931 41.48C22.9791 41.48 21.1609 39.6205 21.1609 37.3478C21.1609 35.0751 23.0204 33.2156 25.2931 33.2156C27.5658 33.2156 29.4253 35.0751 29.4253 37.3478C29.4253 39.6205 27.6071 41.48 25.2931 41.48ZM41.8218 41.48C39.5078 41.48 37.6896 39.6205 37.6896 37.3478C37.6896 35.0751 39.5491 33.2156 41.8218 33.2156C44.0945 33.2156 45.954 35.0751 45.954 37.3478C45.954 39.6205 44.1358 41.48 41.8218 41.48ZM58.3505 41.48C56.0365 41.48 54.2183 39.6205 54.2183 37.3478C54.2183 35.0751 56.0778 33.2156 58.3505 33.2156C60.6232 33.2156 62.4827 35.0751 62.4827 37.3478C62.4827 39.6205 60.6645 41.48 58.3505 41.48Z"
-                                fill="white" />
-                        </svg>
-
-                    </div>
-                    <p class="text-sm font-medium">
-                        Konsultasi Lifetime <br>
-                        dalam merekrut pekerja
-                    </p>
-                </div>
+                <label class="inline-flex items-center cursor-pointer">
+                    <input type="checkbox" id="sendEmailToggle" checked class="sr-only peer">
+                    <div class="w-11 h-6 bg-slate-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00509d]"></div>
+                </label>
             </div>
+
+            <button onclick="closeSukses()"
+                class="mt-6 w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold py-3 rounded-2xl shadow-xs transition text-sm">
+                Selesai
+            </button>
         </div>
     </div>
 
-    <!-- Section Harga & Ajak Berlangganan -->
-    <div class="bg-white">
-        <div
-            class="max-w-6xl mx-auto border-4 border-[#00509d] rounded-2xl p-6 md:p-10 flex flex-col md:flex-row justify-between items-center gap-8 my-12 md:my-16">
-            <!-- Text -->
-            <div class="md:w-1/2">
-                <h3 class="text-xl font-bold text-blue-900 mb-4">Berlangganan Bersama Kami</h3>
-                <p class="text-sm text-blue-900 mb-4 font-medium">
-                    Dan Anda akan mendapatkan benefit yang sangat <br> bermanfaat untuk perusahaan anda
-                </p>
-                <p class="text-sm font-medium text-blue-900 mb-6">
-                    Hanya Dengan <span class="text-[#00509d] font-bold">
-                        <img src="{{ asset('images/coin.png') }}" alt="" class="inline w-4 h-4">
-                        {{ $hargaLangganan }}</span> Per Tahun
-                </p>
-                @if ($perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired))
-                    <p class="text-green-600 font-semibold">
-                        Anda berlangganan hingga
-                        {{ \Carbon\Carbon::parse($perusahaan->tanggal_expired)->translatedFormat('d F Y') }}
-                    </p>
-                @else
-                    <button onclick="openModal()"
-                        class="bg-[#00509d] text-white px-6 py-3 rounded-xl shadow text-sm font-medium">
-                        Berlangganan
-                    </button>
-                @endif
+    <!-- ================= MODAL 3: PERMINTAAN PANGGILAN / ONBOARDING ================= -->
+    <div id="modalPanggilan" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-8 text-center border border-slate-100 transform transition-all">
+            <div class="w-16 h-16 rounded-3xl bg-blue-50 text-[#00509d] border border-blue-100 flex items-center justify-center text-3xl mx-auto mb-4">
+                <i class="ph-fill ph-headset"></i>
             </div>
-            <!-- Image -->
-            <div class="md:w-1/2 flex justify-center">
-                <img src="{{ asset('images/jempol.png') }}"
-                    alt="ilustrasi berlangganan" class="w-[350px] md:w-[450px] lg:w-[300px] h-auto object-contain">
-            </div>
+
+            <h2 class="text-xl font-black text-slate-900 tracking-tight mb-1">
+                Layanan Prioritas Aktif
+            </h2>
+            <p class="text-xs sm:text-sm text-slate-600 font-medium">
+                Permintaan konsultasi rekrutmen Anda telah dicatat. Tim account executive kami siap mendampingi Anda dalam 1x24 jam kerja.
+            </p>
+
+            <button onclick="closePanggilan()"
+                class="mt-6 w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold py-3 rounded-2xl shadow-xs transition text-sm">
+                Mengerti & Lanjutkan
+            </button>
         </div>
+    </div>
 
-        <!-- Modal Pembayaran -->
-        <div id="modalBayar" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-2xl shadow-lg w-[360px] p-5 relative">
-                <!-- Tombol close -->
-                <button onclick="closeModal()"
-                    class="absolute top-3 right-4 text-gray-500 text-2xl font-semibold">&times;</button>
+    <!-- ================= MODAL 4: ERROR KOIN KURANG ================= -->
+    <div id="modalErrorKoin" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 sm:p-7 text-center border border-slate-100 transform transition-all">
+            <div class="w-14 h-14 rounded-2xl bg-rose-50 border border-rose-200 text-rose-600 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="ph-fill ph-warning-circle"></i>
+            </div>
 
-                <!-- Judul -->
-                <h2 class="text-lg font-semibold text-gray-900 mb-5">Pembayaran</h2>
+            <h2 class="text-lg font-black text-slate-900 mb-1">Saldo Koin Tidak Cukup</h2>
+            <p class="text-xs text-slate-600 font-medium mb-6">
+                Saldo koin perusahaan Anda tidak mencukupi untuk berlangganan (Dibutuhkan {{ $hargaLangganan }} Koin).
+            </p>
 
-                <!-- Kotak Berlangganan -->
-                <div class="border-2 border-[#00509d] rounded-xl px-5 py-4 mb-3">
-                    <p class="text-sm font-medium text-gray-700 mb-2">Berlangganan</p>
-                    <div class="flex items-center gap-2">
-                        <img src="/images/coin.png" alt="coin" class="w-8 h-8">
-                        <p class="text-2xl font-bold text-[#00509d]">{{ $hargaLangganan }}</p>
-                    </div>
-                </div>
-
-                <!-- Tagihan -->
-                <div class="flex justify-between items-center text-sm font-medium text-gray-800 mb-6">
-                    <p>Tagihan Tahunan</p>
-                    <p>{{ $hargaLangganan }} Koin</p>
-                </div>
-
-                <!-- Koin Saya -->
-                <div class="mb-6">
-                    <p class="text-gray-700 text-sm mb-1">Koin saya :</p>
-                    <div
-                        class="flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg px-4 py-2">
-                        <div class="flex items-center gap-2">
-                            <img src="/images/coin.png" alt="coin" class="w-6 h-6">
-                            <p class="font-bold text-[#00509d] text-lg">
-                                {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }}</p>
-                        </div>
-                        <button onclick="toggleModal()"
-                            class="flex items-center text-green-600 text-xs font-semibold hover:underline">
-                            <span class="mr-1">Top Up Koin</span>
-                            <svg width="20" height="20" viewBox="0 0 22 22" fill="none"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <rect x="0.5" y="0.5" width="20" height="20" rx="10" fill="#42BB72" />
-                                <path d="M11 6V16M6 11H16" stroke="white" stroke-width="2" stroke-linecap="round" />
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Tombol Bayar -->
-                <button id="btnBayar"
-                    class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold py-2.5 rounded-lg transition">
-                    Bayar
+            <div class="space-y-2">
+                <button type="button" onclick="closeErrorKoin(); toggleModal();"
+                    class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold py-2.5 rounded-2xl transition text-xs shadow-xs">
+                    Top Up Koin Sekarang
                 </button>
-            </div>
-        </div>
-
-
-        <!-- Modal Sukses -->
-        <div id="modalSukses" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-2xl p-6 w-[400px] relative text-center">
-                <div class="bg-[#00509d] text-white py-3 rounded-t-2xl -mt-6 mb-4">
-                    <h2 class="font-semibold">Pembayaran Sukses</h2>
-                </div>
-
-                <div class="flex justify-center mb-3">
-                    <div class="bg-blue-100 rounded-full p-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                </div>
-
-                <p class="font-semibold text-gray-700 mb-1">
-                    Pembayaran dengan <span class="text-[#00509d] font-bold">areakerja.com</span> sukses
-                </p>
-
-                <div class="mt-4 bg-gray-50 rounded-lg p-3 flex justify-between items-center">
-                    <div class="text-left">
-                        <p class="text-gray-600 text-sm">Kirim bukti pembayaran ke email</p>
-                        <p class="text-gray-800 font-semibold">seveninc@gmail.com</p>
-                    </div>
-
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="sendEmailToggle" checked class="sr-only peer">
-                        <div
-                            class="w-10 h-5 bg-gray-200 rounded-full peer peer-checked:bg-[#00509d] relative after:absolute after:content-[''] after:w-4 after:h-4 after:bg-white after:rounded-full after:top-0.5 after:left-0.5 after:transition-all peer-checked:after:translate-x-5">
-                        </div>
-                    </label>
-                </div>
-
-                <button onclick="closeSukses()"
-                    class="mt-6 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold px-6 py-2 rounded-full">
-                    Selesai
-                </button>
-            </div>
-        </div>
-
-        <!-- Modal Permintaan Panggilan -->
-        <div id="modalPanggilan" class="fixed inset-0 bg-black/50 hidden items-center justify-center z-50">
-            <div class="bg-white rounded-2xl w-[420px] text-center overflow-hidden">
-                <div class="bg-[#00509d] text-white py-3 flex items-center justify-center">
-                    <img src="/images/logo_area_kerja_putih.png" alt="logo" class="h-5 mr-2">
-                    <span class="font-semibold">areakerja.com</span>
-                </div>
-                <div class="p-6 flex flex-col items-center">
-                    <div class="bg-blue-100 rounded-full p-3 mb-4">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                        </svg>
-                    </div>
-                    <p class="text-gray-800 font-semibold mb-1">
-                        Permintaan Panggilan anda sudah terkirim
-                    </p>
-                    <p class="text-gray-600 text-sm">
-                        Mohon tunggu 1/24 Jam untuk kami hubungi
-                    </p>
-                    <button onclick="closePanggilan()"
-                        class="mt-6 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold px-6 py-2 rounded-full">
-                        Selesai
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modal Error Koin Tidak Cukup -->
-        <div id="modalErrorKoin" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-            <div class="bg-white p-6 rounded-lg shadow-lg w-80 text-center">
-                <h2 class="text-xl font-semibold text-red-600 mb-3">Koin Tidak Cukup</h2>
-                <p class="text-gray-700 mb-4">Saldo koin kamu tidak mencukupi untuk berlangganan.</p>
-                <button onclick="closeErrorKoin()" class="bg-red-600 text-white px-4 py-2 rounded-md w-full">
+                <button type="button" onclick="closeErrorKoin()"
+                    class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">
                     Tutup
                 </button>
             </div>
         </div>
+    </div>
 
+    <!-- ================= JAVASCRIPT LOGIC ================= -->
+    <script>
+        function openModal() {
+            const m = document.getElementById('modalBayar');
+            if (m) m.style.display = 'flex';
+        }
 
+        function closeModal() {
+            const m = document.getElementById('modalBayar');
+            if (m) m.style.display = 'none';
+        }
 
-        <script>
-            //redirect
-            document.getElementById('btnKonfirmasi').addEventListener('click', function() {
-                if (!selectedKoin || !selectedBank) {
-                    alert("Silakan pilih paket dan metode pembayaran dulu.");
-                    return;
-                }
+        function showErrorKoin() {
+            const m = document.getElementById('modalErrorKoin');
+            if (m) m.style.display = 'flex';
+        }
 
-                fetch("{{ route('catatan_cash.store') }}", {
-                        method: "POST",
+        function closeErrorKoin() {
+            const m = document.getElementById('modalErrorKoin');
+            if (m) m.style.display = 'none';
+        }
+
+        function openSukses() {
+            const m = document.getElementById('modalSukses');
+            if (m) m.style.display = 'flex';
+        }
+
+        function closeSukses() {
+            const m = document.getElementById('modalSukses');
+            if (m) m.style.display = 'none';
+            const p = document.getElementById('modalPanggilan');
+            if (p) p.style.display = 'flex';
+        }
+
+        function closePanggilan() {
+            const p = document.getElementById('modalPanggilan');
+            if (p) p.style.display = 'none';
+            window.location.reload();
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const btnBayar = document.getElementById('btnBayar');
+            if (btnBayar) {
+                btnBayar.addEventListener('click', function() {
+                    btnBayar.disabled = true;
+                    btnBayar.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Memproses...';
+
+                    fetch('{{ route('berlangganan.store') }}', {
+                        method: 'POST',
                         headers: {
-                            "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                            "Accept": "application/json",
-                            "Content-Type": "application/json"
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({
-                            harga_pembayaran_id: document.querySelector(".paketCoin:checked").value,
-                            daftar_bank_id: document.querySelector(".metodePembayaran:checked").value,
-                        })
+                        body: JSON.stringify({})
                     })
-                    .then(async res => {
-                        let data = {};
+                    .then(res => res.json())
+                    .then(data => {
+                        btnBayar.disabled = false;
+                        btnBayar.innerHTML = '<i class="ph-bold ph-check"></i> <span>Bayar Sekarang ({{ $hargaLangganan }} Koin)</span>';
 
-                        // â›‘ï¸ paksa baca JSON kalau ada
-                        try {
-                            data = await res.json();
-                        } catch (e) {}
-
-                        /* ===============================
-                            SWITCH ALERT VERIFIKASI
-                        =============================== */
-                        if (res.status === 403 && data.type === 'verification') {
+                        if (!data.success && data.type === 'verification') {
+                            closeModal();
                             Swal.fire({
                                 icon: 'warning',
                                 title: 'Akun Belum Terverifikasi',
                                 text: data.message,
-                                confirmButtonText: 'Mengerti',
+                                confirmButtonColor: '#00509d',
+                                confirmButtonText: 'Mengerti'
                             });
-                            return null; // STOP TOTAL
+                            return;
                         }
 
-                        if (!res.ok) {
-                            throw new Error(data.message || 'Terjadi kesalahan');
+                        if (data.error === 'koin_kurang') {
+                            closeModal();
+                            showErrorKoin();
+                            return;
                         }
 
-                        return data;
-                    })
-                    .then(data => {
-                        if (!data) return;
+                        if (data.success) {
+                            closeModal();
+                            openSukses();
 
-                        if (data.success && data.redirect_url) {
-                            window.location.href = data.redirect_url;
+                            const sendEmail = document.getElementById('sendEmailToggle');
+                            if (sendEmail && sendEmail.checked) {
+                                fetch('{{ route('send.email') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                        'Accept': 'application/json',
+                                        'Content-Type': 'application/json'
+                                    },
+                                    body: JSON.stringify({})
+                                });
+                            }
+                        } else {
+                            showErrorKoin();
                         }
                     })
                     .catch(err => {
+                        btnBayar.disabled = false;
+                        btnBayar.innerHTML = '<i class="ph-bold ph-check"></i> <span>Bayar Sekarang ({{ $hargaLangganan }} Koin)</span>';
                         console.error(err);
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal',
-                            text: err.message || 'Terjadi kesalahan',
-                        });
-                    });
-            });
-
-
-
-            let selectedKoin = null;
-            let selectedHarga = null;
-            let selectedBank = null;
-
-            function toggleModal() {
-                closeAllModal();
-                document.getElementById('modalStep1').classList.remove('hidden');
-                document.getElementById('modalStep1').classList.add('flex');
-                updateButtons();
-            }
-
-            function closeAllModal() {
-                document.querySelectorAll('[id^="modalStep"]').forEach(m => {
-                    m.classList.add('hidden');
-                    m.classList.remove('flex');
-                });
-            }
-
-            function goToStep(step) {
-                // âœ… Validasi sebelum pindah step
-                if (step === 2 && !selectedKoin) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Oops...',
-                        text: 'Silakan pilih paket koin terlebih dahulu!',
-                        confirmButtonColor: '#00509d' // warna tombol orange
-                    });
-                    return;
-                }
-                if (step === 3 && !selectedBank) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Oops...',
-                        text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                        confirmButtonColor: '#00509d'
-                    });
-                    return;
-                }
-
-                closeAllModal();
-                let modal = document.getElementById('modalStep' + step);
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-
-                updateButtons();
-
-                // Step 3: update detail pembayaran
-                if (step === 3) {
-                    const biayaAdmin = 2000;
-                    const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
-
-                    // // ðŸ”‘ Buat No Transaksi random unik
-                    // const randomPart = Math.floor(Math.random() * 1000000);
-                    // const noTransaksi = "TRX" + Date.now() + randomPart;
-
-                    // document.getElementById('detailTransaksi').innerText = noTransaksi;
-                    document.getElementById('detailPengirim').innerText = "{{ Auth::user()->perusahaan->nama_perusahaan }}";
-                    document.getElementById('detailBank').innerText = selectedBank ?? '-';
-                    document.getElementById('detailWaktu').innerText = new Date().toLocaleString('id-ID');
-                    document.getElementById('detailHarga').innerText = "Rp. " + (selectedHarga ?? 0).toLocaleString('id-ID');
-                    document.getElementById('detailTotal').innerText = "Rp. " + totalBayar.toLocaleString('id-ID');
-                }
-            }
-
-
-            // ðŸ”‘ Update status tombol (disable/enable)
-            function updateButtons() {
-                // Step 1: tombol konfirmasi paket
-                const btnStep1 = document.querySelector('#modalStep1 button');
-                if (btnStep1) {
-                    btnStep1.disabled = !selectedKoin;
-                    btnStep1.classList.toggle('opacity-50', !selectedKoin);
-                    btnStep1.classList.toggle('cursor-not-allowed', !selectedKoin);
-                }
-
-                // Step 2: tombol selanjutnya metode pembayaran
-                const btnStep2 = document.querySelector('#modalStep2 button:last-child');
-                if (btnStep2) {
-                    btnStep2.disabled = !selectedBank;
-                    btnStep2.classList.toggle('opacity-50', !selectedBank);
-                    btnStep2.classList.toggle('cursor-not-allowed', !selectedBank);
-                }
-            }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                // Step 1: Pilih Paket Koin
-                document.querySelectorAll('.paketCoin').forEach(el => {
-                    el.addEventListener('change', function() {
-                        selectedKoin = this.dataset.jumlah;
-                        selectedHarga = parseInt(this.dataset.harga);
-
-                        // Highlight kartu terpilih
-                        document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-[#00509d]');
-                        });
-                        this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
-
-                        updateButtons();
+                        showErrorKoin();
                     });
                 });
-
-                // Step 2: Pilih Metode Pembayaran
-                document.querySelectorAll('.metodePembayaran').forEach(el => {
-                    el.addEventListener('change', function() {
-                        selectedBank = this.dataset.bank;
-
-                        // Highlight bank terpilih
-                        document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-[#00509d]');
-                        });
-                        this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
-
-                        updateButtons();
-                    });
-                });
-            });
-        </script>
-
-
-        <script>
-            function openModal() {
-                document.getElementById('modalBayar').classList.remove('hidden');
-                document.getElementById('modalBayar').classList.add('flex');
             }
+        });
+    </script>
 
-            function closeModal() {
-                document.getElementById('modalBayar').classList.add('hidden');
-            }
-
-            function showErrorKoin() {
-                const modalError = document.getElementById('modalErrorKoin');
-                modalError.classList.remove('hidden');
-                modalError.classList.add('flex');
-            }
-
-            function closeErrorKoin() {
-                const modalError = document.getElementById('modalErrorKoin');
-                modalError.classList.add('hidden');
-            }
-
-            const btnBayar = document.getElementById('btnBayar');
-            if (btnBayar) {
-                btnBayar.addEventListener('click', function() {
-                    fetch('{{ route('berlangganan.store') }}', {
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                'Accept': 'application/json',
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({})
-                        })
-                        .then(res => res.json())
-                        .then(data => {
-
-                            //Jika akun belum verifikasi Tampilkan alert dan stop semua proses
-                            if (!data.success && data.type === 'verification') {
-                                closeModal();
-
-                                Swal.fire({
-                                    icon: 'warning',
-                                    title: 'Akun Belum Terverifikasi',
-                                    text: data.message,
-                                    confirmButtonText: 'Mengerti'
-                                });
-
-                                return; //STOP SEMUA PROSES
-                            }
-
-                            // Jika koin tidak cukup â†’ Tampilkan modal error
-                            if (data.error === "koin_kurang") {
-                                closeModal();
-                                showErrorKoin();
-                                return;
-                            }
-
-                            if (data.success) {
-                                closeModal();
-
-                                const modalSukses = document.getElementById('modalSukses');
-                                modalSukses.classList.remove('hidden');
-                                modalSukses.classList.add('flex');
-
-                                const sendEmail = document.getElementById('sendEmailToggle');
-                                if (sendEmail && sendEmail.checked) {
-                                    fetch('{{ route('send.email') }}', {
-                                        method: 'POST',
-                                        headers: {
-                                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                                            'Accept': 'application/json',
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({})
-                                    });
-                                }
-                            } else {
-                                showErrorKoin(); // fallback
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            showErrorKoin(); // error juga tampil modal
-                        });
-                });
-            }
-
-            function closeSukses() {
-                document.getElementById('modalSukses').classList.add('hidden');
-                const modalPanggilan = document.getElementById('modalPanggilan');
-                modalPanggilan.classList.remove('hidden');
-                modalPanggilan.classList.add('flex');
-            }
-
-            function closePanggilan() {
-                document.getElementById('modalPanggilan').classList.add('hidden');
-                window.location.reload();
-            }
-        </script>
-
-
-        @include('layouts.footer')
-    @endsection
+    @include('layouts.footer')
+@endsection
 

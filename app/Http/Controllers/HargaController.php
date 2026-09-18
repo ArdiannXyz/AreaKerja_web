@@ -50,6 +50,21 @@ class HargaController extends Controller
 
     public function update_koin(Request $request)
     {
+        if ($request->has('id') && $request->has('harga')) {
+            $ids = $request->input('id');
+            $hargas = $request->input('harga');
+
+            foreach ($ids as $index => $id) {
+                if (isset($hargas[$index])) {
+                    PaketLowongan::where('id', $id)->update([
+                        'harga_koin' => max(0, (int)$hargas[$index]),
+                    ]);
+                }
+            }
+
+            return redirect()->route('finance.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');
+        }
+
         $request->validate([
             'pakets'         => 'required|array',
             'pakets.*.id'    => 'required|exists:paket_lowongans,id',

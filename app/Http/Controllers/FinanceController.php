@@ -158,12 +158,7 @@ class FinanceController extends Controller
         $omsetPerBulan = $cashData
             ->groupBy(fn($item) => Carbon::parse($item->created_at)->format('Y-m'))
             ->map(function ($group) {
-                $total = 0;
-                foreach ($group as $item) {
-                    if ($item->hargaPembayaran) {
-                        $total += $item->hargaPembayaran->harga;
-                    }
-                }
+                $total = $group->sum(fn($item) => (float)($item->total ?? ($item->hargaPembayaran?->harga ?? 0)));
 
                 $first = $group->first();
                 return [
@@ -211,7 +206,7 @@ class FinanceController extends Controller
         $omsetPerBulan = $cashData
             ->groupBy(fn($item) => Carbon::parse($item->created_at)->format('Y-m'))
             ->map(function ($group) {
-                $total = $group->sum(fn($i) => $i->hargaPembayaran?->harga ?? 0);
+                $total = $group->sum(fn($i) => (float)($i->total ?? ($i->hargaPembayaran?->harga ?? 0)));
 
                 $first = $group->first();
 
