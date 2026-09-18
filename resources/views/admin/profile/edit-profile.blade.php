@@ -1,146 +1,136 @@
 @extends('admin.sidebar.index')
 @section('sidebaradmin')
-    <div class="p-4 sm:p-6 sm:ml-64 bg-slate-50 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
-        <!-- HEADER TOP BAR -->
-        <header class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div>
-                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                    <i class="ph ph-note-pencil text-orange-500 text-2xl"></i> Edit Profil Admin
-                </h1>
-                <p class="text-xs font-semibold text-slate-500 mt-1">Perbarui data profil, foto, dan informasi alamat Anda.</p>
+        {{-- Header Top Bar --}}
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center gap-3">
+                <a href="{{ route('admin.profile') }}"
+                   class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0">
+                    <i class="ph ph-arrow-left text-base"></i>
+                </a>
+                <div>
+                    <p class="text-xs text-slate-400 font-medium">Profil / <span class="text-slate-600 font-semibold">Edit Profil</span></p>
+                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-tight">Edit Profil Admin</h1>
+                </div>
             </div>
 
-            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
-                {{-- Tombol Notifikasi --}}
-                <button @click="openNotif = true" class="relative p-2.5 bg-slate-100 hover:bg-orange-50 hover:text-orange-600 rounded-xl text-slate-600 transition shadow-xs">
-                    <i class="ph ph-bell text-xl"></i>
-                    @if (isset($global_notifikasi_unread) && $global_notifikasi_unread > 0)
-                        <span id="notif-badge" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white">
-                            {{ $global_notifikasi_unread }}
-                        </span>
-                    @endif
-                </button>
-
-                {{-- Profil Admin Pill --}}
-                <div class="flex items-center gap-3 bg-slate-100/80 px-3.5 py-2 rounded-2xl border border-slate-200">
-                    @if (Auth::user()?->avatar)
-                        <img id="pu" class="w-9 h-9 object-cover rounded-xl border border-slate-200"
-                            src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
-                    @else
-                        <img id="pu" class="w-9 h-9 rounded-xl border border-slate-200"
-                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=f97316&color=fff&size=128">
-                    @endif
-
-                    <div class="text-left">
-                        <div class="flex items-center gap-1.5">
-                            <span class="font-extrabold text-slate-800 text-xs leading-tight">{{ Auth::user()->username }}</span>
-                            <span class="bg-orange-100 text-orange-700 text-[10px] font-extrabold px-1.5 py-0.2 rounded-md">Admin</span>
-                        </div>
-                        <p class="text-slate-500 text-[11px] leading-tight mt-0.5">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('admin.components.notif_button')
+                @include('admin.components.user_badge_dropdown')
             </div>
         </header>
 
-        <!-- MAIN FORM CONTAINER -->
-        <div class="max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200 shadow-xs p-6 md:p-8">
-
-            @if ($errors->any())
-                <div class="mb-6 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3 rounded-xl text-xs font-bold space-y-1">
-                    <div class="flex items-center gap-1.5 text-sm font-extrabold">
-                        <i class="ph ph-warning-circle text-lg"></i> Perhatian: Form Belum Lengkap
-                    </div>
-                    <ul class="list-disc list-inside space-y-0.5 font-semibold">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+        {{-- Error Alerts --}}
+        @if ($errors->any())
+            <div class="max-w-4xl mx-auto mb-6 bg-rose-50 border border-rose-200 text-rose-700 px-4 py-3.5 rounded-2xl shadow-xs text-xs font-semibold space-y-1">
+                <div class="flex items-center gap-1.5 text-sm font-bold">
+                    <i class="ph ph-warning-circle text-lg"></i> Mohon Periksa Input Form
                 </div>
-            @endif
+                <ul class="list-disc list-inside space-y-0.5 font-medium pl-1">
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        {{-- Main Form Card --}}
+        <div class="max-w-4xl mx-auto bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 md:p-8">
 
             <form id="profileEditForm" action="{{ route('admin.update.profile', Auth::user()->id) }}" method="POST"
                 enctype="multipart/form-data" class="space-y-6">
                 @csrf
                 @method('PUT')
 
-                <!-- AVATAR UPLOAD SECTION -->
+                {{-- Avatar Upload Section --}}
                 <div class="flex flex-col sm:flex-row items-center justify-between gap-6 pb-6 border-b border-slate-100">
                     <div class="flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
-                        @if (Auth::user()->admin && Auth::user()->admin->img_profile)
-                            <img id="pa" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border-2 border-orange-500/20 shadow-xs"
-                                src="{{ asset('storage/' . Auth::user()->admin->img_profile) }}" alt="Profile">
-                        @else
-                            <img id="pa" class="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-2xl border-2 border-orange-500/20 shadow-xs"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=f97316&color=fff&size=128"
-                                alt="Profile">
-                        @endif
+                        @php
+                            $profileImg = Auth::user()->avatar ?? (Auth::user()->admin?->img_profile ?? null);
+                        @endphp
+
+                        <div class="relative">
+                            <img id="avatar-preview"
+                                class="w-20 h-20 rounded-2xl object-cover ring-2 ring-slate-200 shadow-xs {{ $profileImg ? '' : 'hidden' }}"
+                                src="{{ $profileImg ? asset('storage/' . $profileImg) : '' }}" alt="Profile Photo">
+
+                            <div id="avatar-initials"
+                                class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#00509d] to-[#003d7a] flex items-center justify-center text-white font-bold text-2xl shadow-xs {{ $profileImg ? 'hidden' : '' }}">
+                                {{ strtoupper(substr(Auth::user()->username ?? 'A', 0, 2)) }}
+                            </div>
+                        </div>
 
                         <div>
-                            <h3 class="font-extrabold text-lg text-slate-900">{{ Auth::user()->username }}</h3>
-                            <p class="text-xs text-slate-500 font-medium mt-0.5">Unggah foto profil baru dengan format JPG atau PNG.</p>
+                            <h3 class="font-bold text-base text-slate-900">{{ Auth::user()->username }}</h3>
+                            <p class="text-xs text-slate-400 font-medium mt-0.5">Format foto: JPG, PNG, atau WEBP. Maksimal 2MB.</p>
                         </div>
                     </div>
 
-                    <div class="flex items-center gap-3">
+                    <div class="flex items-center gap-2.5">
                         <input type="file" name="img_profile" id="fileinputadmin" accept="image/*" class="hidden">
 
                         <button type="button" onclick="document.getElementById('fileinputadmin').click();"
-                            class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2">
-                            <i class="ph ph-upload-simple text-base"></i> Unggah Foto
+                            class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-xs px-4 py-2 rounded-xl shadow-xs transition">
+                            <i class="ph ph-upload-simple text-sm"></i> Unggah Foto
                         </button>
 
-                        <button type="button"
-                            onclick="event.preventDefault(); document.getElementById('removeadminForm').submit();"
-                            class="px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 border border-rose-200 font-bold text-xs rounded-xl shadow-xs transition flex items-center gap-2">
-                            <i class="ph ph-trash text-base"></i> Hapus Foto
-                        </button>
+                        @if ($profileImg)
+                            <button type="button" onclick="confirmRemovePhoto()"
+                                class="inline-flex items-center gap-1.5 border border-slate-200 text-rose-600 hover:bg-rose-50 hover:border-rose-200 font-semibold text-xs px-4 py-2 rounded-xl transition">
+                                <i class="ph ph-trash text-sm"></i> Hapus
+                            </button>
+                        @endif
                     </div>
                 </div>
 
-                <!-- FORM INPUTS -->
-                <div class="space-y-6">
+                {{-- Form Fields --}}
+                <div class="space-y-5">
 
-                    <!-- EMAIL & USERNAME -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    {{-- Row 1: Email & Username --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <div class="flex items-center justify-between mb-1.5">
                                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider">Email</label>
-                                <span class="text-[10px] font-extrabold px-2 py-0.5 bg-slate-100 text-slate-500 rounded-md border border-slate-200 flex items-center gap-1">
-                                    <i class="ph ph-lock-key"></i> Terverifikasi & Terkunci
+                                <span class="text-[10px] font-semibold text-slate-400 flex items-center gap-1">
+                                    <i class="ph ph-lock-key"></i> Terkunci
                                 </span>
                             </div>
                             <input type="email" value="{{ Auth::user()->email }}" disabled readonly
-                                class="w-full border border-slate-300 bg-slate-100 text-slate-500 rounded-xl px-4 py-2.5 text-sm font-semibold cursor-not-allowed select-none">
+                                class="w-full border border-slate-200 bg-slate-50 text-slate-500 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                         </div>
 
                         <div>
-                            <label class="block mb-1.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Username <span class="text-rose-500">*</span></label>
+                            <label class="block mb-1.5 text-xs font-bold text-slate-700 uppercase tracking-wider">
+                                Username <span class="text-rose-500">*</span>
+                            </label>
                             <input type="text" name="username" value="{{ old('username', Auth::user()->username) }}" required
-                                class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                                class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-800 transition">
                         </div>
                     </div>
 
-                    <!-- NAMA LENGKAP -->
+                    {{-- Row 2: Nama Lengkap --}}
                     <div>
-                        <label class="block mb-1.5 text-xs font-bold text-slate-700 uppercase tracking-wider">Nama Lengkap <span class="text-rose-500">*</span></label>
-                        <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', Auth::user()->admin->nama_lengkap ?? '') }}" required
+                        <label class="block mb-1.5 text-xs font-bold text-slate-700 uppercase tracking-wider">
+                            Nama Lengkap <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="nama_lengkap" value="{{ old('nama_lengkap', Auth::user()->admin?->nama_lengkap ?? '') }}" required
                             placeholder="Masukkan Nama Lengkap Anda"
-                            class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                            class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-800 transition">
                     </div>
 
-                    <!-- ALAMAT SECTION HEADER -->
+                    {{-- Section Alamat --}}
                     <div class="pt-4 border-t border-slate-100">
                         <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
-                            <i class="ph ph-map-pin text-base text-orange-500"></i> Detail Alamat & Lokasi
+                            <i class="ph ph-map-pin text-base text-[#00509d]"></i> Detail Alamat & Lokasi
                         </h3>
 
-                        <!-- PROVINSI, KOTA, KECAMATAN -->
+                        {{-- Provinsi, Kota, Kecamatan --}}
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600">Provinsi <span class="text-rose-500">*</span></label>
                                 <select id="provinsiSelect" name="provinsi_id" required
-                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition bg-white">
+                                    class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-800 transition bg-white">
                                     <option value="">Pilih Provinsi</option>
                                     @foreach ($provinsis as $prov)
                                         <option value="{{ $prov->id }}"
@@ -154,7 +144,7 @@
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600">Kota / Kabupaten <span class="text-rose-500">*</span></label>
                                 <select id="kotaSelect" name="kota_id" required
-                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition bg-white">
+                                    class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-800 transition bg-white">
                                     <option value="">Pilih Kota</option>
                                     @if (isset($data->kota) && $data->kota)
                                         <option value="{{ $data->kota_id }}" selected>{{ $data->kota->nama }}</option>
@@ -165,7 +155,7 @@
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600">Kecamatan <span class="text-rose-500">*</span></label>
                                 <select id="kecamatanSelect" name="kecamatan_id" required
-                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 transition bg-white">
+                                    class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-800 transition bg-white">
                                     <option value="">Pilih Kecamatan</option>
                                     @if (isset($data->kecamatan) && $data->kecamatan)
                                         <option value="{{ $data->kecamatan_id }}" selected>{{ $data->kecamatan->nama }}</option>
@@ -174,44 +164,44 @@
                             </div>
                         </div>
 
-                        <!-- DESA & KODE POS -->
+                        {{-- Desa & Kode Pos --}}
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600">Desa / Kelurahan</label>
-                                <input type="text" name="desa" value="{{ old('desa', Auth::user()->admin->desa ?? '') }}"
+                                <input type="text" name="desa" value="{{ old('desa', Auth::user()->admin?->desa ?? '') }}"
                                     placeholder="Masukkan Desa / Kelurahan"
-                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                                    class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-800 transition">
                             </div>
 
                             <div>
                                 <label class="block mb-1.5 text-xs font-semibold text-slate-600">Kode Pos</label>
-                                <input type="text" name="kode_pos" value="{{ old('kode_pos', Auth::user()->admin->kode_pos ?? '') }}"
+                                <input type="text" name="kode_pos" value="{{ old('kode_pos', Auth::user()->admin?->kode_pos ?? '') }}"
                                     placeholder="Masukkan Kode Pos"
-                                    class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                                    class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-800 transition">
                             </div>
                         </div>
 
-                        <!-- DETAIL ALAMAT -->
+                        {{-- Detail Alamat --}}
                         <div>
                             <label class="block mb-1.5 text-xs font-semibold text-slate-600">Alamat Lengkap</label>
-                            <input type="text" name="detail_alamat" value="{{ old('detail_alamat', Auth::user()->admin->detail_alamat ?? '') }}"
+                            <input type="text" name="detail_alamat" value="{{ old('detail_alamat', Auth::user()->admin?->detail_alamat ?? '') }}"
                                 placeholder="Contoh: Jl. Area Kerja No. 123"
-                                class="w-full border border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 rounded-xl px-4 py-2.5 text-sm font-semibold text-slate-800 transition">
+                                class="w-full border border-slate-200 focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 rounded-xl px-4 py-2.5 text-xs font-semibold text-slate-800 transition">
                         </div>
                     </div>
 
                 </div>
 
-                <!-- ACTION BUTTONS -->
+                {{-- Action Buttons --}}
                 <div class="flex items-center justify-end gap-3 pt-6 border-t border-slate-100">
                     <a href="{{ route('admin.profile') }}"
-                        class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                        class="px-5 py-2.5 border border-slate-200 hover:bg-slate-50 text-slate-600 font-semibold text-xs rounded-xl transition">
                         Batal
                     </a>
 
                     <button type="submit"
-                        class="px-6 py-2.5 bg-orange-500 hover:bg-orange-600 text-white font-bold text-xs rounded-xl shadow-xs hover:shadow-md transition flex items-center gap-2">
-                        <i class="ph ph-floppy-disk text-base"></i> Simpan Perubahan
+                        class="inline-flex items-center gap-1.5 px-6 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-xs rounded-xl shadow-xs transition">
+                        <i class="ph ph-floppy-disk text-sm"></i> Simpan Perubahan
                     </button>
                 </div>
 
@@ -219,6 +209,7 @@
 
         </div>
 
+        {{-- Hidden Form for Removing Profile Photo --}}
         <form id="removeadminForm" action="{{ route('admin.destroy.profile', Auth::user()->id) }}" method="POST" class="hidden">
             @csrf
             @method('DELETE')
@@ -226,11 +217,49 @@
 
         @include('admin.notif.modal_notif')
         @include('admin.notif.modal_semua')
-    </div>
+    </main>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    {{-- Script AJAX Dinamis & Validation Alert --}}
     <script>
+        // Image Live Preview
+        document.getElementById('fileinputadmin')?.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(evt) {
+                    const preview = document.getElementById('avatar-preview');
+                    const initials = document.getElementById('avatar-initials');
+                    if (preview) {
+                        preview.src = evt.target.result;
+                        preview.classList.remove('hidden');
+                    }
+                    if (initials) {
+                        initials.classList.add('hidden');
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Confirm Remove Photo
+        function confirmRemovePhoto() {
+            Swal.fire({
+                title: 'Hapus Foto Profil?',
+                text: 'Foto profil Anda akan dihapus dan kembali ke inisial nama.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('removeadminForm').submit();
+                }
+            });
+        }
+
+        // Dependent dropdowns & submit validation
         document.addEventListener('DOMContentLoaded', function() {
             const profileEditForm = document.getElementById('profileEditForm');
             const provinsiSelect = document.getElementById('provinsiSelect');
@@ -247,39 +276,39 @@
                     if (!provinsiSelect.value) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Dropdown Alamat Belum Lengkap',
+                            title: 'Pilih Provinsi',
                             text: 'Harap pilih Provinsi terlebih dahulu!',
-                            confirmButtonColor: '#f97316'
+                            confirmButtonColor: '#00509d'
                         }).then(() => provinsiSelect.focus());
                         return false;
                     }
                     if (!kotaSelect.value) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Dropdown Alamat Belum Lengkap',
+                            title: 'Pilih Kota / Kabupaten',
                             text: 'Harap pilih Kota / Kabupaten terlebih dahulu!',
-                            confirmButtonColor: '#f97316'
+                            confirmButtonColor: '#00509d'
                         }).then(() => kotaSelect.focus());
                         return false;
                     }
                     if (!kecamatanSelect.value) {
                         Swal.fire({
                             icon: 'warning',
-                            title: 'Dropdown Alamat Belum Lengkap',
+                            title: 'Pilih Kecamatan',
                             text: 'Harap pilih Kecamatan terlebih dahulu!',
-                            confirmButtonColor: '#f97316'
+                            confirmButtonColor: '#00509d'
                         }).then(() => kecamatanSelect.focus());
                         return false;
                     }
 
                     Swal.fire({
-                        title: 'Simpan Perubahan Profil & Alamat?',
-                        text: 'Pastikan data alamat dan profil yang Anda masukkan sudah benar.',
+                        title: 'Simpan Perubahan?',
+                        text: 'Pastikan data profil dan alamat sudah benar.',
                         icon: 'question',
                         showCancelButton: true,
-                        confirmButtonColor: '#f97316',
+                        confirmButtonColor: '#00509d',
                         cancelButtonColor: '#64748b',
-                        confirmButtonText: 'Ya, Simpan Sekarang!',
+                        confirmButtonText: 'Ya, Simpan',
                         cancelButtonText: 'Batal'
                     }).then((result) => {
                         if (result.isConfirmed) {
