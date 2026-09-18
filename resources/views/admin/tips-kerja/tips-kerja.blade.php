@@ -1,301 +1,297 @@
 @extends('admin.sidebar.index')
 @section('sidebaradmin')
-    <div class="p-4 sm:ml-64" x-data="{
-        openNotif: false,
-        openAllNotif: false
-    }">
-        <main class="flex-1 p-6 bg-white overflow-y-auto">
-            <div class="flex flex-wrap justify-between items-center mb-6 gap-4">
-
-                <!-- Judul Halaman -->
-                <h1 class="text-2xl font-bold text-gray-800">
-                    Tips Kerja
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+        {{-- Topbar Header --}}
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div>
+                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                    <i class="ph ph-lightbulb text-[#00509d] text-2xl"></i> Tips Kerja
                 </h1>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Kelola artikel panduan karir, tips kerja, dan publikasi</p>
+            </div>
 
-                <!-- Profile & Header Right -->
-                <div class="flex items-center gap-3 flex-shrink-0">
-                    <!-- Profile -->
-                    <div class="flex items-center gap-2 bg-white px-3 py-2 border border-gray-500 shadow-md rounded-2xl w-max max-w-full overflow-hidden">
-                        <a href="#" class="shrink-0">
-                            @if (Auth::user()?->avatar)
-                                <img id="pu" class="w-10 h-10 object-cover rounded-full"
-                                    src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
-                            @else
-                                <img id="pu" class="w-10 h-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=00509d&color=fff&size=128">
-                            @endif
-                        </a>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('admin.components.notif_button')
+                @include('admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
-                        <div class="text-sm min-w-0">
-                            <span class="font-semibold block whitespace-normal break-words">
-                                {{ Auth::user()->username }}
-                            </span>
-                            <p class="text-gray-500 text-sm whitespace-normal break-words">
-                                {{ Auth::user()->email }}
-                            </p>
-                        </div>
+        {{-- Flash Messages --}}
+        @if (session('success'))
+            <div class="mb-4 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl text-xs font-medium flex items-center gap-2">
+                <i class="ph ph-check-circle text-lg text-emerald-600 flex-shrink-0"></i>
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="mb-4 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl text-xs font-medium flex items-center gap-2">
+                <i class="ph ph-warning-circle text-lg text-rose-600 flex-shrink-0"></i>
+                {{ session('error') }}
+            </div>
+        @endif
+
+        {{-- Main Content Card --}}
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 sm:p-6 mb-6">
+            {{-- Tabs Filter & Action Toolbar --}}
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                <div class="inline-flex p-1 bg-slate-100 rounded-xl space-x-1 text-xs font-semibold overflow-x-auto">
+                    <button type="button" id="btn_all"
+                        class="tab-btn px-4 py-2 rounded-lg transition duration-150 bg-[#00509d] text-white font-semibold shadow-xs">
+                        Semua ({{ $all }})
+                    </button>
+                    <button type="button" id="btn_terbit"
+                        class="tab-btn px-4 py-2 rounded-lg transition duration-150 text-slate-600 hover:text-slate-900 font-medium">
+                        Telah Terbit ({{ $terbit }})
+                    </button>
+                    <button type="button" id="btn_blmterbit"
+                        class="tab-btn px-4 py-2 rounded-lg transition duration-150 text-slate-600 hover:text-slate-900 font-medium">
+                        Draf ({{ $noterbit }})
+                    </button>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                    {{-- Search Input --}}
+                    <div class="flex items-center bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition w-full sm:w-64 h-10">
+                        <i class="ph ph-magnifying-glass text-slate-400 ml-3 flex-shrink-0 text-sm"></i>
+                        <input id="search_input" type="text" onkeyup="searchTable()" placeholder="Cari judul/penulis..."
+                            autocomplete="off"
+                            class="flex-1 px-2.5 py-1.5 text-xs bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400"
+                            style="border: none !important; outline: none !important; box-shadow: none !important;">
+                        <button type="button" onclick="document.getElementById('search_input').value=''; searchTable();"
+                            class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2 flex-shrink-0 transition cursor-pointer"
+                            title="Hapus pencarian">
+                            <i class="ph ph-x text-[10px]"></i>
+                        </button>
                     </div>
+
+                    <a href="{{ route('admin.tips-kerja.createForm') }}"
+                        class="h-10 inline-flex items-center justify-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-xs px-4 rounded-xl transition duration-150 shadow-xs flex-shrink-0">
+                        <i class="ph ph-plus-circle text-base"></i>
+                        Buat Post Baru
+                    </a>
                 </div>
             </div>
 
-            <!-- Notification Messages -->
-            @if (session('success'))
-                <div class="mb-4 p-4 bg-green-100 border-l-4 border-green-500 text-green-700 rounded-r-lg shadow-sm">
-                    {{ session('success') }}
-                </div>
-            @endif
+            {{-- Table Wrapper --}}
+            <div class="mt-5 rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
 
-            @if (session('error'))
-                <div class="mb-4 p-4 bg-red-100 border-l-4 border-red-500 text-red-700 rounded-r-lg shadow-sm">
-                    {{ session('error') }}
-                </div>
-            @endif
-
-            {{-- Main Content --}}
-            <div class="flex justify-center py-3">
-                <div class="w-full">
-
-                    {{-- Tab Headers & Create Button --}}
-                    <div class="flex flex-wrap justify-between items-center gap-3 mb-6 border-b border-gray-200 pb-3">
-                        <div class="flex gap-4 text-sm font-medium">
-                            <button type="button" id="btn_all" class="pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer">
-                                Semua ({{ $all }})
-                            </button>
-                            <button type="button" id="btn_terbit" class="pb-2 text-gray-600 hover:text-orange-500 cursor-pointer">
-                                Telah Terbit ({{ $terbit }})
-                            </button>
-                            <button type="button" id="btn_blmterbit" class="pb-2 text-gray-600 hover:text-orange-500 cursor-pointer">
-                                Draf / Belum Terbit ({{ $noterbit }})
-                            </button>
-                        </div>
-
-                        <a href="{{ route('admin.tips-kerja.createForm') }}"
-                            class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-5 py-2 rounded-lg shadow-md transition flex items-center gap-2">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            Buat Post Baru
-                        </a>
-                    </div>
-
-                    {{-- Search Bar --}}
-                    <div class="flex justify-end items-center mb-4 bg-gray-50 p-4 rounded-xl border border-gray-200">
-                        <div class="flex items-center gap-2 w-full sm:w-80">
-                            <input id="search_input" type="text" onkeyup="searchTable()" placeholder="Cari judul atau penulis..."
-                                class="border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white w-full focus:ring-2 focus:ring-orange-500 focus:outline-none">
-                            <button type="button" onclick="searchTable()"
-                                class="bg-gray-700 hover:bg-gray-800 text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm shrink-0">
-                                Cari
-                            </button>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto rounded-xl shadow-md border border-gray-200">
-
-                        {{-- TAB 1: SEMUA (DEFAULT VISIBLE) --}}
-                        <div id="semua" class="w-full">
-                            <table class="w-full text-sm text-left text-gray-700 min-w-[700px]">
-                                <thead class="bg-gray-800 text-white">
-                                    <tr>
-                                        <th class="px-4 py-3.5 font-semibold">Judul Artikel</th>
-                                        <th class="px-4 py-3.5 font-semibold">Penulis</th>
-                                        <th class="px-4 py-3.5 font-semibold text-center">Status</th>
-                                        <th class="px-4 py-3.5 font-semibold">Tanggal</th>
-                                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    @forelse ($semua as $s)
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-4 py-3.5 font-medium text-gray-900 break-words">
-                                                {{ $s->title }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-gray-600">
-                                                {{ $s->penulis ?? 'Admin' }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-center">
-                                                @if ($s->status == 'terbit')
-                                                    <span class="inline-block bg-green-100 text-green-800 text-xs px-2.5 py-1 rounded-full font-bold">Terbit</span>
-                                                @else
-                                                    <span class="inline-block bg-yellow-100 text-yellow-800 text-xs px-2.5 py-1 rounded-full font-bold">Draf</span>
-                                                @endif
-                                            </td>
-                                            <td class="px-4 py-3.5 text-gray-500 text-xs">
-                                                {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-center">
-                                                <div class="flex items-center justify-center gap-2">
-                                                    <form action="{{ route('admin.tips-kerja.toggleStatus', $s->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        @method('PUT')
-                                                        @if ($s->status == 'terbit')
-                                                            <button type="submit"
-                                                                class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition"
-                                                                title="Ubah ke Draf">
-                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                                                                Drafkan
-                                                            </button>
-                                                        @else
-                                                            <button type="submit"
-                                                                class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition"
-                                                                title="Terbitkan Artikel">
-                                                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                                                Terbitkan
-                                                            </button>
-                                                        @endif
-                                                    </form>
-                                                    <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
-                                                        class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                        Edit
-                                                    </a>
-                                                    <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
-                                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                        Hapus
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="5" class="px-4 py-8 text-center text-gray-500">
-                                                Tidak ada data tips kerja ditemukan.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {{-- TAB 2: SUDAH TERBIT --}}
-                        <div id="sudah_terbit" class="w-full hidden">
-                            <table class="w-full text-sm text-left text-gray-700 min-w-[700px]">
-                                <thead class="bg-gray-800 text-white">
-                                    <tr>
-                                        <th class="px-4 py-3.5 font-semibold">Judul Artikel</th>
-                                        <th class="px-4 py-3.5 font-semibold">Penulis</th>
-                                        <th class="px-4 py-3.5 font-semibold">Tanggal</th>
-                                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    @forelse ($sudah_terbit as $s)
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-4 py-3.5 font-medium text-gray-900 break-words">
-                                                {{ $s->title }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-gray-600">
-                                                {{ $s->penulis ?? 'Admin' }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-gray-500 text-xs">
-                                                {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-center">
-                                                <div class="flex items-center justify-center gap-2">
-                                                    <form action="{{ route('admin.tips-kerja.toggleStatus', $s->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        @method('PUT')
+                {{-- TAB 1: SEMUA (DEFAULT VISIBLE) --}}
+                <div id="semua" class="w-full">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-5 py-4 min-w-[220px]">Judul Artikel</th>
+                                    <th class="px-5 py-4 min-w-[130px]">Penulis</th>
+                                    <th class="px-5 py-4 text-center min-w-[100px]">Status</th>
+                                    <th class="px-5 py-4 text-center min-w-[120px]">Tanggal</th>
+                                    <th class="px-5 py-4 text-center min-w-[160px]">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs">
+                                @forelse ($semua as $s)
+                                    <tr class="hover:bg-blue-50/40 transition">
+                                        <td class="px-5 py-3.5 font-semibold text-slate-800 break-words">
+                                            {{ $s->title }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-slate-600 font-medium">
+                                            {{ $s->penulis ?? 'Admin' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center">
+                                            @if ($s->status == 'terbit')
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Terbit
+                                                </span>
+                                            @else
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-bold rounded-full bg-amber-50 text-amber-700 border border-amber-200/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Draf
+                                                </span>
+                                            @endif
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center text-slate-500 font-medium">
+                                            {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <form action="{{ route('admin.tips-kerja.toggleStatus', $s->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    @if ($s->status == 'terbit')
                                                         <button type="submit"
-                                                            class="bg-slate-600 hover:bg-slate-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition"
+                                                            class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-700 text-slate-600 hover:text-white flex items-center justify-center transition"
                                                             title="Ubah ke Draf">
-                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
-                                                            Drafkan
+                                                            <i class="ph ph-prohibit text-base"></i>
                                                         </button>
-                                                    </form>
-                                                    <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
-                                                        class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                        Edit
-                                                    </a>
-                                                    <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
-                                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                        Hapus
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="px-4 py-8 text-center text-gray-500">
-                                                Belum ada artikel yang diterbitkan.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
-                        {{-- TAB 3: BELUM TERBIT --}}
-                        <div id="belum_terbit" class="w-full hidden">
-                            <table class="w-full text-sm text-left text-gray-700 min-w-[700px]">
-                                <thead class="bg-gray-800 text-white">
-                                    <tr>
-                                        <th class="px-4 py-3.5 font-semibold">Judul Artikel</th>
-                                        <th class="px-4 py-3.5 font-semibold">Penulis</th>
-                                        <th class="px-4 py-3.5 font-semibold">Tanggal</th>
-                                        <th class="px-4 py-3.5 font-semibold text-center">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200 bg-white">
-                                    @forelse ($belum_terbit as $s)
-                                        <tr class="hover:bg-gray-50 transition">
-                                            <td class="px-4 py-3.5 font-medium text-gray-900 break-words">
-                                                {{ $s->title }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-gray-600">
-                                                {{ $s->penulis ?? 'Admin' }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-gray-500 text-xs">
-                                                {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
-                                            </td>
-                                            <td class="px-4 py-3.5 text-center">
-                                                <div class="flex items-center justify-center gap-2">
-                                                    <form action="{{ route('admin.tips-kerja.toggleStatus', $s->id) }}" method="POST" class="inline">
-                                                        @csrf
-                                                        @method('PUT')
+                                                    @else
                                                         <button type="submit"
-                                                            class="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition"
+                                                            class="w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200/60 flex items-center justify-center transition"
                                                             title="Terbitkan Artikel">
-                                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                                                            Terbitkan
+                                                            <i class="ph ph-check-circle text-base"></i>
                                                         </button>
-                                                    </form>
-                                                    <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
-                                                        class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                                        Edit
-                                                    </a>
-                                                    <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
-                                                        class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1 shadow-sm transition">
-                                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
-                                                        Hapus
-                                                    </button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="4" class="px-4 py-8 text-center text-gray-500">
-                                                Tidak ada draf artikel.
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-
+                                                    @endif
+                                                </form>
+                                                <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
+                                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-amber-500 text-slate-600 hover:text-white flex items-center justify-center transition"
+                                                    title="Edit Artikel">
+                                                    <i class="ph ph-pencil-simple text-base"></i>
+                                                </a>
+                                                <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
+                                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white flex items-center justify-center transition"
+                                                    title="Hapus Artikel">
+                                                    <i class="ph ph-trash text-base"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="py-12 text-center text-slate-400 text-xs">
+                                            <i class="ph ph-article text-4xl mb-2 block"></i>
+                                            Tidak ada data tips kerja ditemukan.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
                     </div>
-
-                    <!-- Form Delete Single Hidden -->
-                    <form id="singleDeleteForm" method="POST" class="hidden">
-                        @csrf
-                        @method('DELETE')
-                    </form>
-
                 </div>
+
+                {{-- TAB 2: SUDAH TERBIT --}}
+                <div id="sudah_terbit" class="w-full hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-5 py-4 min-w-[220px]">Judul Artikel</th>
+                                    <th class="px-5 py-4 min-w-[130px]">Penulis</th>
+                                    <th class="px-5 py-4 text-center min-w-[120px]">Tanggal</th>
+                                    <th class="px-5 py-4 text-center min-w-[160px]">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs">
+                                @forelse ($sudah_terbit as $s)
+                                    <tr class="hover:bg-blue-50/40 transition">
+                                        <td class="px-5 py-3.5 font-semibold text-slate-800 break-words">
+                                            {{ $s->title }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-slate-600 font-medium">
+                                            {{ $s->penulis ?? 'Admin' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center text-slate-500 font-medium">
+                                            {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <form action="{{ route('admin.tips-kerja.toggleStatus', $s->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit"
+                                                        class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-700 text-slate-600 hover:text-white flex items-center justify-center transition"
+                                                        title="Ubah ke Draf">
+                                                        <i class="ph ph-prohibit text-base"></i>
+                                                    </button>
+                                                </form>
+                                                <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
+                                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-amber-500 text-slate-600 hover:text-white flex items-center justify-center transition"
+                                                    title="Edit Artikel">
+                                                    <i class="ph ph-pencil-simple text-base"></i>
+                                                </a>
+                                                <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
+                                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white flex items-center justify-center transition"
+                                                    title="Hapus Artikel">
+                                                    <i class="ph ph-trash text-base"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="py-12 text-center text-slate-400 text-xs">
+                                            <i class="ph ph-article text-4xl mb-2 block"></i>
+                                            Belum ada artikel yang diterbitkan.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {{-- TAB 3: BELUM TERBIT --}}
+                <div id="belum_terbit" class="w-full hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left">
+                            <thead class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
+                                <tr>
+                                    <th class="px-5 py-4 min-w-[220px]">Judul Artikel</th>
+                                    <th class="px-5 py-4 min-w-[130px]">Penulis</th>
+                                    <th class="px-5 py-4 text-center min-w-[120px]">Tanggal</th>
+                                    <th class="px-5 py-4 text-center min-w-[160px]">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 text-xs">
+                                @forelse ($belum_terbit as $s)
+                                    <tr class="hover:bg-blue-50/40 transition">
+                                        <td class="px-5 py-3.5 font-semibold text-slate-800 break-words">
+                                            {{ $s->title }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-slate-600 font-medium">
+                                            {{ $s->penulis ?? 'Admin' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center text-slate-500 font-medium">
+                                            {{ $s->created_at ? $s->created_at->format('d M Y') : '-' }}
+                                        </td>
+                                        <td class="px-5 py-3.5 text-center">
+                                            <div class="flex items-center justify-center gap-1.5">
+                                                <form action="{{ route('admin.tips-kerja.toggleStatus', $s->id) }}" method="POST" class="inline">
+                                                    @csrf
+                                                    @method('PUT')
+                                                    <button type="submit"
+                                                        class="w-8 h-8 rounded-lg bg-emerald-50 hover:bg-emerald-600 text-emerald-600 hover:text-white border border-emerald-200/60 flex items-center justify-center transition"
+                                                        title="Terbitkan Artikel">
+                                                        <i class="ph ph-check-circle text-base"></i>
+                                                    </button>
+                                                </form>
+                                                <a href="{{ route('admin.tips-kerja.edit', $s->id) }}"
+                                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-amber-500 text-slate-600 hover:text-white flex items-center justify-center transition"
+                                                    title="Edit Artikel">
+                                                    <i class="ph ph-pencil-simple text-base"></i>
+                                                </a>
+                                                <button type="button" onclick="confirmDeleteSingle({{ $s->id }})"
+                                                    class="w-8 h-8 rounded-lg bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white flex items-center justify-center transition"
+                                                    title="Hapus Artikel">
+                                                    <i class="ph ph-trash text-base"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="4" class="py-12 text-center text-slate-400 text-xs">
+                                            <i class="ph ph-article text-4xl mb-2 block"></i>
+                                            Tidak ada draf artikel.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
             </div>
-        </main>
-    </div>
+
+            <!-- Form Delete Single Hidden -->
+            <form id="singleDeleteForm" method="POST" class="hidden">
+                @csrf
+                @method('DELETE')
+            </form>
+
+        </div>
+
+        @include('admin.notif.modal_notif')
+        @include('admin.notif.modal_semua')
+    </main>
 
     <!-- Script Tab & Actions -->
     <script>
@@ -308,32 +304,35 @@
             const tabTerbit = document.getElementById('sudah_terbit');
             const tabBlmterbit = document.getElementById('belum_terbit');
 
+            const activeClass = "tab-btn px-4 py-2 rounded-lg transition duration-150 bg-[#00509d] text-white font-semibold shadow-xs";
+            const inactiveClass = "tab-btn px-4 py-2 rounded-lg transition duration-150 text-slate-600 hover:text-slate-900 font-medium";
+
             function resetTabs() {
                 tabSemua.classList.add('hidden');
                 tabTerbit.classList.add('hidden');
                 tabBlmterbit.classList.add('hidden');
 
-                btnAll.className = "pb-2 text-gray-600 hover:text-orange-500 cursor-pointer";
-                btnTerbit.className = "pb-2 text-gray-600 hover:text-orange-500 cursor-pointer";
-                btnBlmterbit.className = "pb-2 text-gray-600 hover:text-orange-500 cursor-pointer";
+                btnAll.className = inactiveClass;
+                btnTerbit.className = inactiveClass;
+                btnBlmterbit.className = inactiveClass;
             }
 
             btnAll.addEventListener("click", () => {
                 resetTabs();
                 tabSemua.classList.remove('hidden');
-                btnAll.className = "pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer";
+                btnAll.className = activeClass;
             });
 
             btnTerbit.addEventListener("click", () => {
                 resetTabs();
                 tabTerbit.classList.remove('hidden');
-                btnTerbit.className = "pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer";
+                btnTerbit.className = activeClass;
             });
 
             btnBlmterbit.addEventListener("click", () => {
                 resetTabs();
                 tabBlmterbit.classList.remove('hidden');
-                btnBlmterbit.className = "pb-2 border-b-2 border-orange-500 font-bold text-orange-600 cursor-pointer";
+                btnBlmterbit.className = activeClass;
             });
         });
 

@@ -1,434 +1,333 @@
 @extends('admin.sidebar.index')
 @section('sidebaradmin')
-    <div class="p-4 sm:ml-64">
-        <div class="flex-1 p-6 bg-white overflow-y-auto" x-data="{
-            openModal: false,
-            openNotif: false,
-            openAllNotif: false
-        }">
-            <div class="flex flex-wrap lg:flex-nowrap justify-between items-center mb-10 gap-4">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openModal: false, openNotif: false, openAllNotif: false }">
 
-                <h1 class="text-2xl font-medium w-full lg:w-auto">Buat Event Baru</h1>
+        <!-- Header -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+            <div class="flex items-center gap-3 flex-1">
+                <a href="{{ route('admin.eventform') }}"
+                   class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0">
+                    <i class="ph ph-arrow-left text-sm"></i>
+                </a>
+                <div>
+                    <p class="text-xs text-slate-400">Event / <span class="text-slate-500 font-medium">Buat Event Baru</span></p>
+                    <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Buat Event</h1>
+                </div>
+            </div>
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('admin.components.notif_button')
+                @include('admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
-                <!-- Profil Admin -->
-                <div class="flex items-center gap-3 w-full lg:w-auto justify-end">
+        <!-- Form Card -->
+        <div class="w-full bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-8">
+            <form action="{{ route('admin.event.store') }}" method="post" enctype="multipart/form-data" class="w-full">
+                @csrf
 
-                    {{-- Tombol Notifikasi --}}
-                    <button @click="openNotif = true" class="relative">
-                        <!-- Icon Lonceng -->
-                        <svg width="31" height="32" viewBox="0 0 31 32" fill="none"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <g clip-path="url(#clip0_722_7956)">
-                                <path
-                                    d="M23.076 14.9431L22.6747 12.7383L21.1101 13.0055L21.5756 15.5633C21.6168 15.7894 21.7387 15.9922 21.9146 16.127L24.4524 18.0732L24.6985 19.4255L7.4876 22.3654L7.24147 21.0131L8.93911 18.3434C9.05673 18.1585 9.09972 17.9276 9.05861 17.7015L8.43786 14.2911C8.21777 13.0934 8.29153 11.8668 8.65169 10.7352C9.01186 9.60353 9.64569 8.60691 10.4892 7.84595C11.3326 7.08499 12.3559 6.58665 13.4555 6.40126C14.5552 6.21586 15.6924 6.34997 16.7522 6.79004L16.4051 4.88278C15.595 4.65063 14.7612 4.55689 13.9346 4.605L13.6165 2.85717L12.0518 3.12444L12.37 4.87227C10.4802 5.41568 8.87215 6.70676 7.85685 8.49588C6.84155 10.285 6.49109 12.445 6.87324 14.5583L7.42973 17.6158L5.7321 20.2855C5.61447 20.4704 5.57149 20.7013 5.6126 20.9274L6.07815 23.4852C6.11931 23.7114 6.24121 23.9141 6.41702 24.049C6.59284 24.1838 6.80817 24.2396 7.01565 24.2042L12.4919 23.2688L12.647 24.1214C12.8528 25.252 13.4623 26.2659 14.3414 26.9401C15.2205 27.6142 16.2971 27.8934 17.3345 27.7162C18.3719 27.539 19.2851 26.9199 19.8732 25.9951C20.4612 25.0704 20.676 23.9157 20.4702 22.785L20.315 21.9324L25.7912 20.997C25.9987 20.9616 26.1813 20.8378 26.2989 20.6528C26.4165 20.4679 26.4595 20.2369 26.4183 20.0108L25.9528 17.453C25.9116 17.2269 25.7896 17.0241 25.6138 16.8894L23.076 14.9431ZM18.9055 23.0523C19.029 23.7307 18.9002 24.4235 18.5473 24.9784C18.1945 25.5332 17.6466 25.9047 17.0242 26.011C16.4017 26.1173 15.7557 25.9498 15.2283 25.5453C14.7008 25.1408 14.3351 24.5325 14.2117 23.8541L14.0565 23.0015L18.7504 22.1997L18.9055 23.0523Z"
-                                    fill="black" />
-                            </g>
-                        </svg>
+                <!-- Judul -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Judul Event <span class="text-rose-500">*</span></label>
+                    <input type="text" placeholder="Masukkan judul event" name="title" value="{{ old('title') }}" required
+                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs">
+                    @error('title')
+                        <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                        <!-- Badge Notifikasi -->
-                        @if ($global_notifikasi_unread > 0)
-                            <span id="notif-badge"
-                                class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                                {{ $global_notifikasi_unread }}
-                            </span>
-                        @endif
-                    </button>
+                <!-- Status & Upload Media Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Status Event <span class="text-rose-500">*</span></label>
+                        <select name="status" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs">
+                            <option value="buka" {{ old('status') == 'buka' ? 'selected' : '' }}>Buka (Menerima Pendaftaran)</option>
+                            <option value="tutup" {{ old('status') == 'tutup' ? 'selected' : '' }}>Tutup</option>
+                            <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                        </select>
+                    </div>
 
-                    <!-- Profile Card -->
-                    <div
-                        class="flex items-center justify-between bg-white border border-gray-400 shadow-md 
-                   rounded-2xl px-3 py-2 w-full sm:w-auto h-auto sm:h-14">
-
-                        <div class="flex items-center gap-2">
-                            <a href="#">
-                                @if (Auth::user()->role == 'admin')
-                                    @if (Auth::user()->admin->img_profile)
-                                        <img class="w-10 h-10 object-cover rounded-full"
-                                            src="{{ asset('storage/' . Auth::user()->admin->img_profile) }}" alt="Profile">
-                                    @else
-                                        <img class="w-10 h-10 rounded-full"
-                                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
-                                            alt="">
-                                    @endif
-                                @else
-                                    <img class="w-10 h-10 rounded-full"
-                                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
-                                        alt="">
-                                @endif
-                            </a>
-
-                            <div class="text-sm break-words max-w-[200px]">
-                                <span class="font-semibold">{{ Auth::user()->username }}</span>
-                                <p class="text-gray-500 text-sm">{{ Auth::user()->email }}</p>
+                    <!-- Upload Media -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Gambar Banner Event</label>
+                        <div class="flex items-center gap-4">
+                            <div class="w-24 h-16 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 flex items-center justify-center flex-shrink-0">
+                                <img id="previewImage" src="{{ asset('images/no images.jpg') }}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <label for="uploadMedia"
+                                    class="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-slate-700 text-xs font-semibold transition">
+                                    <i class="ph ph-image text-sm"></i>
+                                    Pilih Gambar
+                                </label>
+                                <p class="text-[11px] text-slate-400 mt-1">PNG, JPG, WEBP maks 5MB.</p>
+                                <input id="uploadMedia" type="file" name="image" accept="image/*" hidden>
                             </div>
                         </div>
-
                     </div>
                 </div>
 
-            </div>
+                <!-- Editor -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-slate-600 mb-1.5">Isi Deskripsi Event</label>
+                    <textarea id="editor" name="content" class="w-full min-h-48 border border-slate-200 rounded-xl p-3">
+                        {{ old('content') }}
+                    </textarea>
+                </div>
 
-
-            <div class="w-full bg-white p-4 sm:p-6">
-                <form action="{{ route('admin.event.store') }}" method="post" enctype="multipart/form-data">
-                    @csrf
-
-                    <!-- Judul -->
-                    <input type="text" placeholder="Masukkan judul artikel" name="title"
-                        class="w-full bg-gray-200 border-2 border-gray-400 rounded-md px-4 py-2 mb-8 break-words">
-
-                    <!-- Upload Media -->
-                    <div class="mb-4">
-                        <label for="uploadMedia"
-                            class="cursor-pointer px-4 py-2 bg-gray-100 border-2 border-gray-400 rounded-lg shadow hover:bg-gray-200 text-sm font-medium inline-block">
-                            Tambahkan Media
-                        </label>
-                        <input id="uploadMedia" type="file" name="image" accept="image/*" hidden>
-
-                        <!-- Preview Gambar -->
-                        <div class="mt-3 w-full max-w-xs border-2 border-gray-400 rounded-md overflow-hidden">
-                            <img id="previewImage"
-                                src="{{ isset($event) && $event->image ? asset('storage/' . $event->image) : asset('images/no images.jpg') }}"
-                                class="w-full h-40 object-contain">
-                        </div>
-                    </div>
-
-                    <!-- Editor -->
-                    <div class="mt-4">
-                        <label class="block mb-2 text-lg font-medium">Isi Artikel</label>
-                        <textarea id="editor" name="content" class="w-full h-48 border border-gray-400 rounded-lg break-words">{{ old('content', $event->content ?? '') }}</textarea>
-                    </div>
-
-                    <div class="space-y-6 mt-6">
-
-                        <!-- Waktu Acara -->
-                        <div>
-                            <label class="block font-medium mb-1">Waktu Acara</label>
-
-                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:flex lg:items-center lg:gap-3 gap-3">
-                                <input type="date" name="tgl_mulai" id="tgl_mulai"
-                                    class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full"
+                <div class="space-y-5 pt-2 border-t border-slate-100">
+                    <!-- Waktu Acara -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Waktu Pelaksanaan Acara <span class="text-rose-500">*</span></label>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3 w-full">
+                            <!-- Tanggal Mulai -->
+                            <div class="flex-1">
+                                <span class="text-[11px] text-slate-400 block mb-1">Tanggal Mulai</span>
+                                <input type="date" name="tgl_mulai" id="tgl_mulai" required
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
                                     value="{{ old('tgl_mulai') }}">
+                            </div>
 
-                                <input type="date" name="tgl_akhir" id="tgl_akhir"
-                                    class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full"
+                            <!-- Tanggal Akhir -->
+                            <div class="flex-1">
+                                <span class="text-[11px] text-slate-400 block mb-1">Tanggal Selesai</span>
+                                <input type="date" name="tgl_akhir" id="tgl_akhir" required
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
                                     value="{{ old('tgl_akhir') }}">
+                            </div>
 
-                                <!-- Jam Mulai -->
-                                <div class="relative w-full sm:w-32">
-                                    <input type="time" name="jam_mulai" id="jam_mulai"
-                                        class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-        focus:border-orange-500 focus:ring-0">
+                            <!-- Jam Mulai -->
+                            <div class="w-full md:w-36">
+                                <span class="text-[11px] text-slate-400 block mb-1">Jam Mulai</span>
+                                <input type="time" name="jam_mulai" id="jam_mulai"
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                    value="{{ old('jam_mulai') }}">
+                            </div>
 
-                                    <!-- Fake Placeholder -->
-                                    <span id="ph_mulai"
-                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
-                                        12:00 PM
-                                    </span>
-                                </div>
+                            <span class="text-center text-xs text-slate-400 hidden md:block pt-4">sampai</span>
 
-                                <span class="text-center">Sampai</span>
-
-                                <!-- Jam Akhir -->
-                                <div class="relative w-full sm:w-32">
-                                    <input type="time" name="jam_akhir" id="jam_akhir"
-                                        class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-        focus:border-orange-500 focus:ring-0">
-
-                                    <!-- Fake Placeholder -->
-                                    <span id="ph_akhir"
-                                        class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
-                                        12:00 PM
-                                    </span>
-                                </div>
-
-                                <script>
-                                    const inputMulai = document.getElementById('jam_mulai');
-                                    const phMulai = document.getElementById('ph_mulai');
-
-                                    inputMulai.addEventListener('input', () => {
-                                        phMulai.style.display = inputMulai.value ? 'none' : 'block';
-                                    });
-
-                                    const inputAkhir = document.getElementById('jam_akhir');
-                                    const phAkhir = document.getElementById('ph_akhir');
-
-                                    inputAkhir.addEventListener('input', () => {
-                                        phAkhir.style.display = inputAkhir.value ? 'none' : 'block';
-                                    });
-                                </script>
-
+                            <!-- Jam Akhir -->
+                            <div class="w-full md:w-36">
+                                <span class="text-[11px] text-slate-400 block mb-1">Jam Selesai</span>
+                                <input type="time" name="jam_akhir" id="jam_akhir"
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                    value="{{ old('jam_akhir') }}">
                             </div>
                         </div>
+                    </div>
 
+                    <!-- Penutupan & Kuota Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <!-- Penutupan Pendaftaran -->
                         <div>
-                            <label class="block font-medium mb-1">Penutupan Pendaftaran</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Batas Akhir Pendaftaran</label>
                             <input type="date" name="penutupan_pendaftaran" id="penutupan_pendaftaran"
-                                class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full max-w-xs"
+                                class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
                                 value="{{ old('penutupan_pendaftaran') }}">
                         </div>
 
                         <!-- Kuota -->
                         <div>
-                            <label class="block font-medium mb-1">Kuota Partisipasi</label>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Kuota Partisipasi</label>
                             <input type="number" name="kuota"
-                                class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full max-w-[100px]"
-                                placeholder="000">
-                        </div>
-
-                        <!-- Link Form -->
-                        <div>
-                            <label class="block font-medium mb-1">Link Form</label>
-                            <input type="url" name="link_form"
-                                class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full"
-                                placeholder="https://example.com">
-                        </div>
-
-                        <!-- Lokasi -->
-                        <div>
-                            <label class="block font-medium mb-1">Lokasi</label>
-                            <textarea name="lokasi"
-                                class="w-full bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm h-32 max-h-64 break-words"
-                                placeholder="Isi Detail Alamat Acara"></textarea>
-                        </div>
-
-                        <!-- Daftar Kegiatan -->
-                        <div>
-                            <label class="block font-medium mb-2">Daftar Kegiatan</label>
-                            <div id="kegiatan-list" class="space-y-2"></div>
-                        </div>
-
-                        <!-- Tombol Tambah Acara -->
-                        <button type="button" @click="openModal = true"
-                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow">
-                            Tambah Acara
-                        </button>
-
-                        <!-- Modal -->
-                        <div x-show="openModal"
-                            class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4" x-cloak>
-
-                            <div
-                                class="bg-white rounded-lg shadow-lg w-full max-w-md p-6
-                max-h-[90vh] overflow-y-auto">
-
-                                <h2 class="text-lg font-semibold mb-4 break-words">
-                                    Tambah Kegiatan
-                                </h2>
-
-                                <div class="space-y-3">
-                                    <div>
-                                        <label class="block text-sm font-medium">Waktu</label>
-                                        <input type="time" id="modal-waktu"
-                                            class="w-full border-2 border-gray-400 rounded-md px-3 py-2 bg-gray-100">
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium">Kegiatan</label>
-                                        <input type="text" id="modal-kegiatan"
-                                            class="w-full border-2 border-gray-400 rounded-md px-3 py-2 bg-gray-100 break-words"
-                                            placeholder="Nama kegiatan">
-                                    </div>
-                                </div>
-
-                                <div class="mt-6 flex flex-col sm:flex-row justify-end gap-3">
-                                    <button type="button" @click="openModal = false"
-                                        class="bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-md w-full sm:w-auto">
-                                        Batal
-                                    </button>
-
-                                    <button type="button" onclick="tambahKegiatan(); openModal=false"
-                                        class="bg-green-600 hover:bg-green-500 text-white px-4 py-2 rounded-md w-full sm:w-auto">
-                                        Simpan
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-
-                        <!-- Submit -->
-                        <div class="flex flex-col sm:flex-row gap-4 mb-4">
-                            <button type="submit"
-                                class="bg-green-600 text-white px-14 py-2 text-lg rounded-md shadow hover:bg-green-500 w-full sm:w-auto">
-                                Simpan
-                            </button>
-
-                            <a href="/admin/event"
-                                class="bg-red-600 hover:bg-red-500 text-white px-16 py-2 text-lg rounded-md shadow text-center w-full sm:w-auto">
-                                Batal
-                            </a>
+                                class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                placeholder="Contoh: 100" value="{{ old('kuota') }}">
                         </div>
                     </div>
 
-                </form>
-            </div>
+                    <!-- Link Form -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Link Form Pendaftaran Eksternal (Opsional)</label>
+                        <input type="url" name="link_form"
+                            class="bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                            placeholder="https://forms.gle/..." value="{{ old('link_form') }}">
+                    </div>
 
+                    <!-- Lokasi -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Lokasi / Tempat Acara</label>
+                        <textarea name="lokasi" rows="3"
+                            class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                            placeholder="Isi Detail Alamat Acara atau link online (e.g. Zoom Meeting)">{{ old('lokasi') }}</textarea>
+                    </div>
 
-            <!-- TinyMCE -->
-            <script src="https://cdn.tiny.cloud/1/oqx873eo8a4800gwchmdyn357lbg0rvj9bxkryttzmw9uf7q/tinymce/8/tinymce.min.js"
-                referrerpolicy="origin"></script>
+                    <!-- Daftar Kegiatan -->
+                    <div class="pt-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-semibold text-slate-600">Jadwal Rangkaian Kegiatan</label>
+                            <button type="button" @click="openModal = true"
+                                class="inline-flex items-center gap-1 text-xs font-semibold text-[#00509d] hover:underline">
+                                <i class="ph ph-plus-circle text-sm"></i> Tambah Kegiatan
+                            </button>
+                        </div>
+                        <div id="kegiatan-list" class="space-y-2"></div>
+                    </div>
 
-            <script>
-                tinymce.init({
-                    selector: '#editor',
-                    height: 500,
-                    menubar: false,
-                    plugins: 'lists link image media code fullscreen mentions',
-                    toolbar: 'undo redo | bold italic underline | bullist numlist | link image media | code fullscreen',
+                    <!-- Modal Tambah Kegiatan -->
+                    <div x-show="openModal"
+                        class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs z-50 p-4" x-cloak>
+                        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 border border-slate-100">
+                            <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <i class="ph ph-calendar-plus text-[#00509d] text-lg"></i> Tambah Rangkaian Kegiatan
+                            </h2>
 
-                    setup: function(editor) {
+                            <div class="space-y-3 text-xs">
+                                <div>
+                                    <label class="block font-semibold text-slate-600 mb-1">Waktu</label>
+                                    <input type="time" id="modal-waktu"
+                                        class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]">
+                                </div>
 
-                        editor.ui.registry.addAutocompleter("usermentions", {
-                            trigger: '@',
-                            minChars: 1,
-                            fetch: async function(pattern, maxResults) {
-                                const res = await fetch("/tinymce-mention?q=" + pattern);
-                                const users = await res.json();
+                                <div>
+                                    <label class="block font-semibold text-slate-600 mb-1">Nama Kegiatan</label>
+                                    <input type="text" id="modal-kegiatan"
+                                        class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                        placeholder="Contoh: Pembukaan & Sambutan">
+                                </div>
+                            </div>
 
-                                return users.map(user => ({
-                                    value: user.name,
-                                    text: user.name
-                                }));
-                            },
-                            onAction: function(api, rng, value) {
-                                editor.selection.setRng(rng);
-                                editor.insertContent(`<span class="mention">@${value}</span>&nbsp;`);
-                                api.hide();
-                            }
-                        });
+                            <div class="mt-6 flex justify-end gap-3">
+                                <button type="button" @click="openModal = false"
+                                    class="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-xs font-semibold transition">
+                                    Batal
+                                </button>
+                                <button type="button" onclick="tambahKegiatan(); openModal=false"
+                                    class="px-4 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-xl text-xs font-semibold transition">
+                                    Simpan
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                    },
+                    <!-- Submit & Cancel Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-100">
+                        <button type="submit"
+                            class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-semibold px-6 py-2.5 rounded-xl transition shadow-xs justify-center">
+                            <i class="ph ph-floppy-disk text-base"></i>
+                            Simpan Event
+                        </button>
 
-                    // FIX UPLOAD GAMBAR
-                    images_upload_handler: function(blobInfo, progress) {
-                        return new Promise(function(resolve, reject) {
-                            const xhr = new XMLHttpRequest();
-                            xhr.open('POST', '{{ route('tinymce.upload') }}');
-                            xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-
-                            xhr.upload.onprogress = function(e) {
-                                progress(e.loaded / e.total * 100);
-                            };
-
-                            xhr.onload = function() {
-                                if (xhr.status === 200) {
-                                    const json = JSON.parse(xhr.responseText);
-                                    resolve(json.location);
-                                } else {
-                                    reject('HTTP Error: ' + xhr.status);
-                                }
-                            };
-
-                            const formData = new FormData();
-                            formData.append('file', blobInfo.blob());
-                            xhr.send(formData);
-                        });
-                    }
-                });
-            </script>
-
-
-            <!-- Script -->
-            <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-            <script>
-                new Sortable(document.getElementById("kegiatan-list"), {
-                    animation: 150,
-                    handle: ".kegiatan-item",
-                    ghostClass: "bg-yellow-100"
-                });
-
-                function tambahKegiatan() {
-                    let waktu = document.getElementById("modal-waktu").value;
-                    let kegiatan = document.getElementById("modal-kegiatan").value;
-
-                    if (waktu && kegiatan) {
-                        let container = document.getElementById("kegiatan-list");
-                        let div = document.createElement("div");
-                        div.classList.add("flex", "items-center", "gap-2", "kegiatan-item", "bg-gray-100", "p-2", "rounded-md",
-                            "cursor-move");
-
-                        div.innerHTML = `
-              <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 kegiatan-item bg-gray-100 p-2 rounded-md w-full">
-
-    <input type="time" name="kegiatan_waktu[]" value="${waktu}"
-        class="bg-gray-200 border rounded-md px-3 py-2 text-sm w-full sm:w-24">
-
-    <input type="text" name="kegiatan_nama[]" value="${kegiatan}"
-        class="bg-gray-200 border rounded-md px-3 py-2 text-sm w-full sm:w-80 break-words">
-
-    <button type="button" onclick="hapusKegiatan(this)"
-        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm w-full sm:w-auto">
-        Hapus
-    </button>
-
-</div>
-
-            `;
-
-                        container.appendChild(div);
-                        document.getElementById("modal-waktu").value = "";
-                        document.getElementById("modal-kegiatan").value = "";
-                    }
-                }
-
-                function hapusKegiatan(button) {
-                    button.closest(".kegiatan-item").remove();
-                }
-
-                // Upload gambar 
-                document.getElementById("uploadMedia").addEventListener("change", function(e) {
-                    let file = e.target.files[0];
-                    if (file) {
-                        let reader = new FileReader();
-                        reader.onload = function(event) {
-                            document.getElementById("previewImage").src = event.target.result;
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-
-                // Sinkronisasi tanggal mulai, akhir, dan penutupan
-                document.getElementById("tgl_mulai").addEventListener("change", function() {
-                    let tglMulai = this.value;
-                    let tglAkhir = document.getElementById("tgl_akhir");
-                    let pendaftaran = document.getElementById("penutupan_pendaftaran");
-
-                    if (tglMulai) {
-                        // batasi pendaftaran <= tgl_mulai
-                        pendaftaran.setAttribute("max", tglMulai);
-                        if (pendaftaran.value && pendaftaran.value > tglMulai) {
-                            pendaftaran.value = tglMulai;
-                        }
-
-                        // batasi tgl_akhir >= tgl_mulai
-                        tglAkhir.setAttribute("min", tglMulai);
-                        if (tglAkhir.value && tglAkhir.value < tglMulai) {
-                            tglAkhir.value = tglMulai;
-                        }
-                    } else {
-                        pendaftaran.removeAttribute("max");
-                        tglAkhir.removeAttribute("min");
-                    }
-                });
-
-                // Validasi jam (jam_mulai < jam_akhir)
-                document.getElementById("jam_mulai").addEventListener("change", validateJam);
-                document.getElementById("jam_akhir").addEventListener("change", validateJam);
-
-                function validateJam() {
-                    let jamMulai = document.getElementById("jam_mulai").value;
-                    let jamAkhir = document.getElementById("jam_akhir").value;
-
-                    if (jamMulai && jamAkhir && jamAkhir <= jamMulai) {
-                        alert("Jam akhir harus lebih besar dari jam mulai!");
-                        document.getElementById("jam_akhir").value = "";
-                    }
-                }
-            </script>
-
-            @include('admin.notif.modal_notif')
-            @include('admin.notif.modal_semua')
+                        <a href="{{ route('admin.eventform') }}"
+                           class="inline-flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold px-6 py-2.5 rounded-xl transition justify-center">
+                            <i class="ph ph-x text-base"></i>
+                            Batal
+                        </a>
+                    </div>
+                </div>
+            </form>
         </div>
-    </div>
+
+        <!-- TinyMCE -->
+        <script src="https://cdn.tiny.cloud/1/oqx873eo8a4800gwchmdyn357lbg0rvj9bxkryttzmw9uf7q/tinymce/8/tinymce.min.js"
+            referrerpolicy="origin"></script>
+
+        <script>
+            tinymce.init({
+                selector: '#editor',
+                height: 400,
+                menubar: false,
+                plugins: 'lists link image media code fullscreen mentions',
+                toolbar: 'undo redo | bold italic underline | bullist numlist | link image media | code fullscreen',
+                images_upload_handler: function(blobInfo, progress) {
+                    return new Promise(function(resolve, reject) {
+                        const xhr = new XMLHttpRequest();
+                        xhr.open('POST', '{{ route('tinymce.upload') }}');
+                        xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+                        xhr.upload.onprogress = function(e) {
+                            progress(e.loaded / e.total * 100);
+                        };
+                        xhr.onload = function() {
+                            if (xhr.status === 200) {
+                                const json = JSON.parse(xhr.responseText);
+                                resolve(json.location);
+                            } else {
+                                reject('HTTP Error: ' + xhr.status);
+                            }
+                        };
+                        const formData = new FormData();
+                        formData.append('file', blobInfo.blob());
+                        xhr.send(formData);
+                    });
+                }
+            });
+        </script>
+
+        <!-- Sortable and Event Form Script -->
+        <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+        <script>
+            new Sortable(document.getElementById("kegiatan-list"), {
+                animation: 150,
+                handle: ".kegiatan-item",
+                ghostClass: "bg-blue-50"
+            });
+
+            function tambahKegiatan() {
+                let waktu = document.getElementById("modal-waktu").value;
+                let kegiatan = document.getElementById("modal-kegiatan").value;
+
+                if (waktu && kegiatan) {
+                    let container = document.getElementById("kegiatan-list");
+                    let div = document.createElement("div");
+                    div.classList.add("flex", "items-center", "gap-2", "kegiatan-item", "bg-slate-50", "p-2.5", "rounded-xl",
+                        "border", "border-slate-200/80", "cursor-move");
+
+                    div.innerHTML = `
+                        <i class="ph ph-dots-six-vertical text-slate-400"></i>
+                        <input type="time" name="kegiatan_waktu[]" value="${waktu}"
+                            class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs w-28">
+                        <input type="text" name="kegiatan_nama[]" value="${kegiatan}"
+                            class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs flex-1">
+                        <button type="button" onclick="hapusKegiatan(this)"
+                            class="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition">
+                            <i class="ph ph-trash text-sm"></i>
+                        </button>
+                    `;
+
+                    container.appendChild(div);
+                    document.getElementById("modal-waktu").value = "";
+                    document.getElementById("modal-kegiatan").value = "";
+                }
+            }
+
+            function hapusKegiatan(button) {
+                button.closest(".kegiatan-item").remove();
+            }
+
+            // Upload preview
+            document.getElementById("uploadMedia").addEventListener("change", function(e) {
+                let file = e.target.files[0];
+                if (file) {
+                    let reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById("previewImage").src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+
+            // Date validation sync
+            document.getElementById("tgl_mulai").addEventListener("change", function() {
+                let tglMulai = this.value;
+                let tglAkhir = document.getElementById("tgl_akhir");
+                let pendaftaran = document.getElementById("penutupan_pendaftaran");
+
+                if (tglMulai) {
+                    pendaftaran.setAttribute("max", tglMulai);
+                    if (pendaftaran.value && pendaftaran.value > tglMulai) {
+                        pendaftaran.value = tglMulai;
+                    }
+                    tglAkhir.setAttribute("min", tglMulai);
+                    if (tglAkhir.value && tglAkhir.value < tglMulai) {
+                        tglAkhir.value = tglMulai;
+                    }
+                } else {
+                    pendaftaran.removeAttribute("max");
+                    tglAkhir.removeAttribute("min");
+                }
+            });
+        </script>
+
+        @include('admin.notif.modal_notif')
+        @include('admin.notif.modal_semua')
+    </main>
 @endsection

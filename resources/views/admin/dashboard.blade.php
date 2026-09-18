@@ -1,6 +1,6 @@
-﻿@extends('admin.sidebar.index')
+@extends('admin.sidebar.index')
 @section('sidebaradmin')
-    <div class="p-4 sm:p-6 sm:ml-64 bg-slate-50 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- HEADER TOP BAR -->
         <header class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
@@ -11,35 +11,9 @@
                 <p class="text-xs font-semibold text-slate-500 mt-1">Selamat datang kembali, <span class="text-[#003d7a] font-bold">{{ Auth::user()->username }}</span>! Berikut ringkasan aktivitas sistem hari ini.</p>
             </div>
 
-            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
-                {{-- Tombol Notifikasi --}}
-                <button @click="openNotif = true" class="relative p-2.5 bg-slate-100 hover:bg-blue-50 hover:text-[#003d7a] rounded-xl text-slate-600 transition shadow-xs">
-                    <i class="ph ph-bell text-xl"></i>
-                    @if (isset($global_notifikasi_unread) && $global_notifikasi_unread > 0)
-                        <span id="notif-badge" class="absolute -top-1 -right-1 bg-rose-600 text-white text-[10px] font-extrabold px-1.5 py-0.5 rounded-full animate-pulse border-2 border-white">
-                            {{ $global_notifikasi_unread }}
-                        </span>
-                    @endif
-                </button>
-
-                {{-- Profil Admin Pill --}}
-                <div class="flex items-center gap-3 bg-slate-100/80 px-3.5 py-2 rounded-2xl border border-slate-200">
-                    @if (Auth::user()?->avatar)
-                        <img id="pu" class="w-9 h-9 object-cover rounded-xl profile-img border border-slate-200"
-                            src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
-                    @else
-                        <img id="pu" class="w-9 h-9 rounded-xl border border-slate-200"
-                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'Admin') }}&background=f97316&color=fff&size=128">
-                    @endif
-
-                    <div class="text-left">
-                        <div class="flex items-center gap-1.5">
-                            <span class="font-extrabold text-slate-800 text-xs leading-tight">{{ Auth::user()->username }}</span>
-                            <span class="bg-blue-100 text-[#003d7a] text-[10px] font-extrabold px-1.5 py-0.2 rounded-md">Admin</span>
-                        </div>
-                        <p class="text-slate-500 text-[11px] leading-tight mt-0.5">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
+            <div class="flex items-center gap-3 w-full md:w-auto justify-end">
+                @include('admin.components.notif_button')
+                @include('admin.components.user_badge_dropdown')
             </div>
         </header>
 
@@ -47,64 +21,74 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
 
             <!-- PERUSAHAAN -->
-            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Perusahaan</span>
+                    <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center">
+                        <i class="ph ph-buildings text-lg"></i>
+                    </div>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalPerusahaan }}</span>
-                    <i class="ph ph-buildings text-2xl text-slate-400"></i>
+                    <span class="text-xs font-medium text-slate-400">Terdaftar</span>
                 </div>
             </div>
 
             <!-- KANDIDAT -->
-            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Kandidat Aktif</span>
+                    <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+                        <i class="ph ph-user-check text-lg"></i>
+                    </div>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalKandidat }}</span>
-                    <i class="ph ph-user-check text-2xl text-slate-400"></i>
+                    <span class="text-xs font-medium text-slate-400">Siap Kerja</span>
                 </div>
             </div>
 
             <!-- NON KANDIDAT -->
-            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pelamar / Public</span>
+                    <div class="w-8 h-8 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
+                        <i class="ph ph-users text-lg"></i>
+                    </div>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalNonKandidat }}</span>
-                    <i class="ph ph-users text-2xl text-slate-400"></i>
+                    <span class="text-xs font-medium text-slate-400">Pengguna</span>
                 </div>
             </div>
 
             <!-- LOWONGAN -->
-            <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-xs hover:border-slate-300 transition duration-200">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:border-slate-300 transition duration-200">
                 <div class="flex items-center justify-between mb-3">
                     <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lowongan Kerja</span>
+                    <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                        <i class="ph ph-briefcase text-lg"></i>
+                    </div>
                 </div>
                 <div class="flex items-baseline justify-between">
                     <span class="text-3xl font-extrabold text-slate-900">{{ $totalLowongan }}</span>
-                    <i class="ph ph-briefcase text-2xl text-slate-400"></i>
+                    <span class="text-xs font-medium text-slate-400">Tersedia</span>
                 </div>
             </div>
 
         </div>
 
-
-
         <!-- DUA KOLOM AKTIVITAS TERBARU -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
 
             <!-- KOLOM KIRI (2 SPAN): LOWONGAN TERBARU -->
-            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5">
+            <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5">
                 <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                     <div>
                         <h3 class="text-base font-extrabold text-slate-900">Lowongan Terbaru Terbit</h3>
-                        <p class="text-xs text-slate-500 font-medium">Data lowongan kerja yang baru saja terpasang</p>
+                        <p class="text-xs text-slate-500 font-medium">Data lowongan kerja yang baru saja dipublikasikan</p>
                     </div>
-                    <a href="{{ route('admin.perusahaan') }}" class="text-xs font-bold text-[#003d7a] hover:text-[#003d7a] flex items-center gap-1">
+                    <a href="{{ route('admin.perusahaan') }}" class="text-xs font-bold text-[#00509d] hover:text-[#003d7a] flex items-center gap-1 transition">
                         Lihat Semua <i class="ph ph-arrow-right"></i>
                     </a>
                 </div>
@@ -129,25 +113,26 @@
                                         {{ $lowongan->perusahaan->nama_perusahaan ?? '-' }}
                                     </td>
                                     <td class="px-4 py-3">
-                                        <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 font-bold rounded-md text-[11px]">
+                                        <span class="px-2.5 py-0.5 bg-slate-100 text-slate-700 font-semibold rounded-lg text-xs">
                                             {{ $lowongan->jenis ?? 'Full Time' }}
                                         </span>
                                     </td>
                                     <td class="px-4 py-3">
                                         @if (($lowongan->status ?? 'buka') === 'tutup')
-                                            <span class="px-2.5 py-0.5 bg-rose-100 text-rose-700 font-bold rounded-full text-[10px]">
-                                                ðŸ”’ Ditutup
+                                            <span class="inline-flex items-center px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200/60 font-semibold rounded-full text-xs">
+                                                <i class="ph ph-lock-key mr-1"></i> Ditutup
                                             </span>
                                         @else
-                                            <span class="px-2.5 py-0.5 bg-emerald-100 text-emerald-700 font-bold rounded-full text-[10px]">
-                                                ðŸŸ¢ Aktif
+                                            <span class="inline-flex items-center px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-semibold rounded-full text-xs">
+                                                <i class="ph ph-check-circle mr-1"></i> Aktif
                                             </span>
                                         @endif
                                     </td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="px-4 py-6 text-center text-slate-400 font-medium">
+                                    <td colspan="4" class="px-4 py-8 text-center text-slate-400 font-medium">
+                                        <i class="ph ph-briefcase text-3xl mb-1 block"></i>
                                         Belum ada data lowongan terbaru.
                                     </td>
                                 </tr>
@@ -158,7 +143,7 @@
             </div>
 
             <!-- KOLOM KANAN (1 SPAN): PERUSAHAAN BARU TERDAFTAR -->
-            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5">
+            <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5">
                 <div class="flex items-center justify-between mb-4 border-b border-slate-100 pb-3">
                     <div>
                         <h3 class="text-base font-extrabold text-slate-900">Perusahaan Baru</h3>
@@ -166,16 +151,18 @@
                     </div>
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-3">
                     @forelse ($latestPerusahaans ?? [] as $perusahaan)
                         <div class="flex items-center gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition border border-transparent hover:border-slate-200">
                             @if ($perusahaan->img_profile)
-                                <img src="{{ asset('storage/' . $perusahaan->img_profile) }}" class="w-10 h-10 object-cover rounded-xl border border-slate-200" alt="Logo">
+                                <img src="{{ asset('storage/' . $perusahaan->img_profile) }}" class="w-10 h-10 object-contain rounded-xl border border-slate-200 p-0.5 bg-white flex-shrink-0" alt="Logo">
                             @else
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($perusahaan->nama_perusahaan ?? 'P') }}&background=f97316&color=fff&size=128" class="w-10 h-10 object-cover rounded-xl border border-slate-200" alt="Logo">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00509d] to-[#0077b6] text-white font-bold flex items-center justify-center text-sm flex-shrink-0 shadow-xs">
+                                    {{ strtoupper(substr($perusahaan->nama_perusahaan ?? 'P', 0, 1)) }}
+                                </div>
                             @endif
 
-                            <div class="overflow-hidden">
+                            <div class="overflow-hidden flex-1">
                                 <h4 class="text-xs font-extrabold text-slate-800 truncate">{{ $perusahaan->nama_perusahaan }}</h4>
                                 <p class="text-[11px] text-slate-500 font-medium truncate">{{ $perusahaan->jenis_perusahaan ?? 'Industri Umum' }}</p>
                             </div>
@@ -191,6 +178,5 @@
         @include('admin.notif.modal_notif')
         @include('admin.notif.modal_semua')
 
-    </div>
+    </main>
 @endsection
-
