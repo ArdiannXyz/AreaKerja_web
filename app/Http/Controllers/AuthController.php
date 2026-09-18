@@ -13,6 +13,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -350,15 +351,84 @@ class AuthController extends Controller
         $notifikasiCash = CatatanCash::where('status', 'menunggu_verifikasi')->orWhere('status', 'pending')->get();
         $notifCount = $notifikasiCash->count();
 
+        // Data 6 bulan terakhir untuk tren omset dan transaksi koin
+        $chartMonths = [];
+        $chartOmset = [];
+        $chartKoin = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $year = $date->year;
+            $month = $date->month;
+            $monthName = $date->translatedFormat('M Y');
+
+            $chartMonths[] = $monthName;
+
+            // Omset cash bulan ini (status diterima / sukses)
+            $omsetBulan = CatatanCash::whereIn('status', ['diterima', 'sukses'])
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->sum('total');
+            $chartOmset[] = (int) $omsetBulan;
+
+            // Transaksi koin bulan ini
+            $koinBulan = CatatanKoin::whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->sum(DB::raw('ABS(total)'));
+            $chartKoin[] = (int) $koinBulan;
+        }
+
+        // Distribusi Metode Pembayaran / Sumber Dana
+        $paymentMethods = CatatanCash::with('bank')
+            ->select('daftar_bank_id', 'sumberDana', DB::raw('count(*) as count'), DB::raw('sum(total) as total_amount'))
+            ->whereIn('status', ['diterima', 'sukses'])
+            ->groupBy('daftar_bank_id', 'sumberDana')
+            ->get();
+
+        $paymentLabels = [];
+        $paymentCounts = [];
+        $paymentTotals = [];
+
+        foreach ($paymentMethods as $pm) {
+            $label = $pm->bank->nama_bank ?? ($pm->sumberDana ?? 'Transfer Bank');
+            $paymentLabels[] = $label;
+            $paymentCounts[] = (int) $pm->count;
+            $paymentTotals[] = (int) $pm->total_amount;
+        }
+
+        if (empty($paymentLabels)) {
+            $paymentLabels = ['BCA', 'BNI', 'Mandiri', 'QRIS'];
+            $paymentCounts = [0, 0, 0, 0];
+            $paymentTotals = [0, 0, 0, 0];
+        }
+
+        // Status counts
+        $countDiterima = CatatanCash::whereIn('status', ['diterima', 'sukses'])->count();
+        $countMenunggu = CatatanCash::where('status', 'menunggu_verifikasi')->count();
+        $countPending = CatatanCash::where('status', 'pending')->count();
+        $countDitolak = CatatanCash::where('status', 'ditolak')->count();
+        $totalNominalMenunggu = CatatanCash::where('status', 'menunggu_verifikasi')->sum('total');
+
         return view('finance.dashboard', [
-            'totalOmset'         => $totalOmset,
-            'totalTransaksiKoin' => $totalTransaksiKoin,
-            'cash'               => $cash,
-            'koin'               => $koin,
-            'cashTerbaru'        => $cashTerbaru,
-            'koinTerbaru'        => $koinTerbaru,
-            'notifikasiCash'     => $notifikasiCash,
-            'notifCount'         => $notifCount,
+            'totalOmset'           => $totalOmset,
+            'totalTransaksiKoin'   => $totalTransaksiKoin,
+            'cash'                 => $cash,
+            'koin'                 => $koin,
+            'cashTerbaru'          => $cashTerbaru,
+            'koinTerbaru'          => $koinTerbaru,
+            'notifikasiCash'       => $notifikasiCash,
+            'notifCount'           => $notifCount,
+            'chartMonths'          => $chartMonths,
+            'chartOmset'           => $chartOmset,
+            'chartKoin'            => $chartKoin,
+            'paymentLabels'        => $paymentLabels,
+            'paymentCounts'        => $paymentCounts,
+            'paymentTotals'        => $paymentTotals,
+            'countDiterima'        => $countDiterima,
+            'countMenunggu'        => $countMenunggu,
+            'countPending'         => $countPending,
+            'countDitolak'         => $countDitolak,
+            'totalNominalMenunggu' => $totalNominalMenunggu,
         ]);
     }
 
