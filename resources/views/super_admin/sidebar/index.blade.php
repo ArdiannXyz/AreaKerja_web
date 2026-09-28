@@ -3,9 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Mobile App Viewport: viewport-fit=cover untuk support notch iPhone -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Mobile web app meta tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#00509d">
+
     <title>Super Admin</title>
 
     @vite('resources/css/app.css')
@@ -23,8 +30,111 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* ================================================================
+           LAYOUT FOUNDATION: DESKTOP SIDEBAR KIRI & MOBILE NAVBAR BAWAH
+           - Desktop (≥ 640px): Sidebar tetap di KIRI, tidak ada bottom nav
+           - Mobile (< 640px) : Navigasi DIBAWAH SEMUA (Bottom Nav + Bottom Sheet), tidak ada sidebar kiri
+        ================================================================ */
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html, body {
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            background-color: #f8fafc;
+        }
+
+        /* === MOBILE (< 640px) ===
+           Navigasi DIBAWAH SEMUA:
+           - Sidebar kiri DIMATIKAN TOTAL (tidak ada drawer / tidak menyergap scroll)
+           - Mobile top bar DIMATIKAN (tidak dobel header / scroll bisa full ke atas)
+           - Bottom Nav & Bottom Sheet AKTIF
+           - Padding bawah untuk memberi ruang Bottom Nav */
+        @media (max-width: 639px) {
+            #logo-sidebar {
+                display: none !important;
+            }
+            #mobile-top-bar {
+                display: none !important;
+            }
+            #bottom-nav {
+                display: flex !important;
+            }
+            body {
+                padding-top: 0 !important;
+                padding-bottom: 72px !important;
+                padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+        }
+
+        /* === DESKTOP (≥ 640px) ===
+           Navigasi TETAP DI KIRI:
+           - Sidebar kiri TAMPIL & SELALU BISA DIKLIK / SCROLL
+           - Bottom Nav & Mobile Menu Sheet DIMATIKAN
+           - Tidak ada padding tambahan pada body */
+        @media (min-width: 640px) {
+            #logo-sidebar {
+                display: block !important;
+                pointer-events: auto !important;
+                touch-action: auto !important;
+            }
+            #bottom-nav,
+            #mobile-menu-sheet,
+            #mobile-top-bar {
+                display: none !important;
+            }
+            body {
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+            }
+        }
+
+        /* Sidebar scrollbar tipis di desktop */
+        #logo-sidebar::-webkit-scrollbar { width: 4px; }
+        #logo-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.25);
+            border-radius: 99px;
+        }
+
+        /* Bottom Nav shadow & safe area */
+        #bottom-nav {
+            z-index: 9999 !important;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* Tap effects */
+        a, button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .tap-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .tap-effect::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: currentColor;
+            opacity: 0;
+            border-radius: inherit;
+            transition: opacity 0.15s;
+        }
+        .tap-effect:active::after {
+            opacity: 0.08;
         }
     </style>
     <style>
@@ -103,34 +213,24 @@
 </head>
 
 <body>
-    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
-        type="button"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 hover:text-white rounded-lg md:hidden hover:bg-[#00509d] focus:outline-none focus:ring-2 focus:ring-[#00509d] dark:text-gray-400 dark:hover:bg-[#00509d] dark:focus:ring-[#00509d] transition duration-300">
-        <span class="sr-only">Open sidebar</span>
-        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg">
-            <path clip-rule="evenodd" fill-rule="evenodd"
-                d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
-            </path>
-        </svg>
-    </button>
-
-    <div class="flex">
+    <!-- Layout wrapper: sidebar fixed, main content block with sm:ml-64 -->
+    <div class="min-h-screen bg-slate-50/70">
         <!-- Sidebar -->
         <aside id="logo-sidebar"
-            class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"
+            class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto overflow-x-hidden"
             aria-label="Sidebar">
-            <div class="min-h-screen w-64 bg-[#00509d] text-white overflow-y-auto">
-                <!-- Logo -->
-                <div class="px-4 py-2">
-                    <div class="inline-flex items-center gap-2 border-b-2 border-blue-300 pb-2">
-                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-8 h-8 object-contain">
-                        <p class="text-base font-semibold">areakerja.com</p>
+            <div class="min-h-screen w-64 bg-[#00509d] text-white flex flex-col pb-6">
+                <div>
+                    <!-- Logo -->
+                    <div class="px-4 py-4 border-b border-blue-400/30">
+                        <a href="{{ route('superadmin.dashboard') }}" class="inline-flex items-center gap-2.5">
+                            <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-8 h-8 object-contain">
+                            <span class="text-base font-semibold tracking-tight text-white leading-none self-center">areakerja.com</span>
+                        </a>
                     </div>
-                </div>
 
-                <!-- Menu -->
-                <nav class="flex-1 px-4 text-sm">
+                    <!-- Menu -->
+                    <nav class="flex-1 px-4 text-sm">
                     <div class="font-bold mb-3 ml-3">Umum</div>
                     <div
                         class="{{ request()->is('super_admin/dashboard*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
@@ -278,11 +378,206 @@
                         </a>
                     </div>
                 </nav>
+                </div>
             </div>
         </aside>
         @yield('sidebarsuperadmin')
+    </div>
 
-        <!-- Modal overlay -->
+    <!-- Bottom Navigation Bar — hanya tampil di mobile (< 640px) -->
+    <nav id="bottom-nav" class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-1 flex items-stretch justify-around shadow-[0_-2px_12px_rgba(0,0,0,0.10)]" style="z-index:9999; height:64px;">
+
+        {{-- 1. Dashboard --}}
+        @php $isDashboard = request()->is('super_admin/dashboard*'); @endphp
+        <a href="{{ route('superadmin.dashboard') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isDashboard ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isDashboard ? 'ph-fill ph-squares-four' : 'ph-squares-four' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isDashboard ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Beranda</span>
+            @if($isDashboard)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 2. Pelamar --}}
+        @php $isPelamar = request()->is('super_admin/pelamar*') || request()->is('super_admin/kandidat*') || request()->is('super_admin/non-kandidat*') || request()->is('super_admin/calon-kandidat*'); @endphp
+        <a href="{{ route('superadmin.pelamar') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isPelamar ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isPelamar ? 'ph-fill ph-users' : 'ph-users' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isPelamar ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Pelamar</span>
+            @if($isPelamar)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 3. Perusahaan --}}
+        @php $isPerusahaan = request()->is('super_admin/perusahaan*') || request()->is('super_admin/tambah/perusahaan*') || request()->is('super_admin/lowongan*') || request()->is('super_admin/recruitment*') || request()->is('super_admin/talent*') || request()->is('super_admin/panggilan*'); @endphp
+        <a href="{{ route('superadmin.perusahaan') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isPerusahaan ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isPerusahaan ? 'ph-fill ph-buildings' : 'ph-buildings' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isPerusahaan ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Perusahaan</span>
+            @if($isPerusahaan)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 4. Finance --}}
+        @php $isFinance = request()->is('super_admin/paket/harga*') || request()->is('super_admin/laporan*') || request()->is('super_admin/update/harga*'); @endphp
+        <a href="{{ route('superadmin.paket-harga') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isFinance ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isFinance ? 'ph-fill ph-wallet' : 'ph-wallet' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isFinance ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Finance</span>
+            @if($isFinance)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 5. Menu --}}
+        <button onclick="openMobileMenuSheet()"
+                type="button"
+                class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl text-slate-400 hover:text-[#00509d] focus:outline-none">
+            <i class="ph ph-list text-[22px] leading-none"></i>
+            <span class="text-[10px] font-medium leading-none tracking-tight">Menu</span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Bottom Sheet (Muncul dari BAWAH) -->
+    <div id="mobile-menu-sheet" class="hidden fixed inset-0 z-[10000] flex flex-col justify-end" aria-modal="true" role="dialog">
+        <!-- Backdrop -->
+        <div id="mobile-menu-backdrop" onclick="closeMobileMenuSheet()" class="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+
+        <!-- Sheet Panel -->
+        <div id="mobile-menu-panel" class="relative w-full max-h-[85vh] bg-white rounded-t-3xl shadow-2xl flex flex-col transform translate-y-full transition-transform duration-300 ease-out z-10 overflow-hidden">
+            <!-- Drag Indicator -->
+            <div class="pt-3 pb-1 flex justify-center cursor-pointer" onclick="closeMobileMenuSheet()">
+                <div class="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+            </div>
+
+            <!-- Header Panel: Info Super Admin & Tombol Tutup -->
+            <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    @if (optional(Auth::user()->superadmin)->img_profile)
+                        <img class="w-10 h-10 rounded-full object-cover border border-slate-200"
+                            src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
+                    @elseif (Auth::user()->avatar)
+                        <img class="w-10 h-10 rounded-full object-cover border border-slate-200"
+                            src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
+                    @else
+                        <img class="w-10 h-10 rounded-full border border-slate-200"
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'SA') }}&background=00509d&color=fff&size=64"
+                            alt="Avatar">
+                    @endif
+                    <div>
+                        <p class="text-sm font-bold text-slate-800 leading-tight">{{ optional(Auth::user()->superadmin)->nama_lengkap ?: (Auth::user()->username ?? 'Super Admin') }}</p>
+                        <p class="text-[11px] text-[#00509d] font-semibold">Super Admin &bull; {{ Auth::user()->email }}</p>
+                    </div>
+                </div>
+                <button onclick="closeMobileMenuSheet()" type="button" class="p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition active:scale-95" aria-label="Tutup Menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Menu Grid List (Scrollable dari bawah) -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 overscroll-contain">
+                <!-- Kategori 1: Navigasi Utama -->
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Navigasi Utama</p>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <a href="{{ route('superadmin.dashboard') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/dashboard*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-squares-four"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Dashboard</span>
+                        </a>
+                        <a href="{{ route('superadmin.pelamar') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/pelamar*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-users"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Pelamar</span>
+                        </a>
+                        <a href="{{ route('superadmin.perusahaan') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/perusahaan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-buildings"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Perusahaan</span>
+                        </a>
+                        <a href="{{ route('superadmin.paket-harga') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/paket/harga*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-wallet"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Finance</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kategori 2: Fitur & Konten -->
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Fitur & Konten</p>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <a href="{{ route('superadmin.manajemen.lowongan.gold') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/manajemen/lowongan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-wrench"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Lowongan</span>
+                        </a>
+                        <a href="{{ route('superadmin.freeze') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/freeze*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-snowflake"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Freeze</span>
+                        </a>
+                        <a href="{{ route('superadmin.tips-kerja') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/tips/kerja*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-lightbulb"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Tips Kerja</span>
+                        </a>
+                        <a href="{{ route('superadmin.eventform') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/event*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-calendar-star"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Event</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kategori 3: Pengaturan Akun & Sistem -->
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Akun & Sistem</p>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <a href="{{ route('superadmin.add.user') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/add/user*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-user-gear"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Kelola Akun</span>
+                        </a>
+                        <a href="{{ route('superadmin.email-subs.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/email-subs*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-envelope"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Email</span>
+                        </a>
+                        <a href="{{ route('superadmin.social.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/social-links*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-link"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Link Header</span>
+                        </a>
+                        <a href="{{ route('superadmin.profile') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/profile*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-user"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Profil</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tombol Logout -->
+                <div class="pt-2">
+                    <button onclick="closeMobileMenuSheet(); openModal();" type="button"
+                        class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-red-50 text-red-600 font-semibold text-xs hover:bg-red-100 transition active:scale-98">
+                        <i class="ph ph-sign-out text-base"></i>
+                        <span>Keluar dari Akun</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal overlay -->
         <div id="successModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50">
             <!-- Konten Modal -->
             <div class="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6 text-center">
@@ -359,6 +654,51 @@
                     modal.classList.add("hidden");
                 }
             }
+        </script>
+
+        <script>
+            // ===== MOBILE MENU BOTTOM SHEET HANDLER =====
+            function openMobileMenuSheet() {
+                const sheet = document.getElementById('mobile-menu-sheet');
+                const backdrop = document.getElementById('mobile-menu-backdrop');
+                const panel = document.getElementById('mobile-menu-panel');
+                if (!sheet || !backdrop || !panel) return;
+
+                sheet.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+
+                requestAnimationFrame(() => {
+                    backdrop.classList.remove('opacity-0');
+                    backdrop.classList.add('opacity-100');
+                    panel.classList.remove('translate-y-full');
+                    panel.classList.add('translate-y-0');
+                });
+            }
+
+            function closeMobileMenuSheet() {
+                const sheet = document.getElementById('mobile-menu-sheet');
+                const backdrop = document.getElementById('mobile-menu-backdrop');
+                const panel = document.getElementById('mobile-menu-panel');
+                if (!sheet || !backdrop || !panel) return;
+
+                backdrop.classList.remove('opacity-100');
+                backdrop.classList.add('opacity-0');
+                panel.classList.remove('translate-y-0');
+                panel.classList.add('translate-y-full');
+
+                setTimeout(() => {
+                    sheet.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+
+            // Tutup bottom sheet jika tekan Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeMobileMenuSheet();
+                    closeModal();
+                }
+            });
         </script>
 
         <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>

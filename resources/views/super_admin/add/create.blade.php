@@ -1,30 +1,35 @@
 @extends('super_admin.sidebar.index')
 
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-gray-50/50 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-6 sm:ml-64 bg-gray-50/50" x-data="{ openNotif: false, openAllNotif: false }">
         {{-- Topbar Header --}}
-        <div class="flex justify-between items-center mb-8 flex-col sm:flex-row gap-4 sm:gap-0 border-b border-gray-100 pb-5">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('superadmin.add.user') }}"
-                    class="p-2 rounded-xl border border-gray-200 hover:bg-gray-100 text-gray-600 transition duration-150">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
-                </a>
-                <div>
-                    <h1 class="text-2xl font-bold text-gray-800">Tambah Pengguna Baru</h1>
-                    <p class="text-xs text-gray-500 mt-0.5">Daftarkan akun baru untuk Admin, Finance, Perusahaan, atau Pelamar</p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('superadmin.add.user') }}"
+                        class="p-2 rounded-xl border border-gray-200 hover:bg-gray-100 text-gray-600 transition duration-150">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+                        </svg>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-bold text-gray-800">Tambah Pengguna Baru</h1>
+                        <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Daftarkan akun baru untuk Admin, Finance, Perusahaan, atau Pelamar</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
                 </div>
             </div>
 
-            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
                 @include('super_admin.components.notif_button')
 
                 {{-- User Badge Dropdown --}}
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
         {{-- Alerts --}}
         @if ($errors->any())

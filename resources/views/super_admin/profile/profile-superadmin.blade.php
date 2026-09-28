@@ -1,20 +1,20 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen"
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70"
         x-data="{ openNotif: false, openAllNotif: false }">
 
         {{-- Header --}}
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
-            <div>
-                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">Profil Super Admin</h1>
-                <p class="text-xs text-slate-400 mt-0.5">Informasi dan pengaturan akun Anda</p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight">Profil Super Admin</h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Informasi dan pengaturan akun Anda</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
-                <a href="{{ route('superadmin.edit.profile') }}"
-                   class="inline-flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-[#00509d] hover:text-white hover:border-[#00509d] text-xs font-semibold px-3.5 py-2 rounded-xl transition">
-                    <i class="ph ph-pencil-simple text-sm"></i>
-                    Edit Profil
-                </a>
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>

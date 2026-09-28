@@ -1,14 +1,19 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 min-w-0 max-w-full p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
-            <div>
-                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">Event</h1>
-                <p class="text-xs text-slate-400 mt-0.5">Kelola semua event dan webinar yang ada di platform AreaKerja</p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight">Event</h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola semua event dan webinar yang ada di platform AreaKerja</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>
@@ -16,10 +21,10 @@
 
         <!-- Toolbar -->
         <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-4 mb-6">
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+            <div class="flex items-center justify-between gap-2.5 sm:gap-3">
 
                 <!-- Search -->
-                <div class="relative w-full md:w-80" x-data="{
+                <div class="relative flex-1 min-w-0 sm:w-80 sm:flex-initial" x-data="{
                     open: false,
                     query: '{{ request('q') }}',
                     recommendations: [

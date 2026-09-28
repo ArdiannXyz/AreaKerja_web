@@ -1,6 +1,6 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <div class="p-2 sm:ml-64 bg-white min-h-screen font-sans overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+    <div class="p-2 sm:ml-64 bg-white font-sans overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
         <!-- Konten utama -->
         <main class="flex-1 p-4 sm:p-8 md:p-20 bg-white font-sans text-gray-900">
             <!-- Header -->

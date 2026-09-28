@@ -1,6 +1,6 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-[#f8fafc] min-h-screen overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-[#f8fafc] overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
 
         {{-- TOP NAVIGATION & ADMIN USER BAR --}}
         <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 pb-4 border-b border-slate-200">

@@ -1,7 +1,7 @@
 @extends('super_admin.sidebar.index')
 
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" 
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" 
           x-data="{ openNotif: false, openAllNotif: false, tab: 'adminFinance', searchAdmin: '', searchPerusahaan: '' }">
         
         <!-- Header -->

@@ -1,16 +1,22 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-<main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+<main class="flex-1 min-w-0 max-w-full p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
     {{-- Header Bar --}}
-    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
-        <div>
-            <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">Data Perusahaan</h1>
-            <p class="text-xs text-slate-400 mt-0.5">
-                Kelola dan verifikasi seluruh mitra perusahaan yang terdaftar di platform AreaKerja
-            </p>
+    {{-- Header Bar --}}
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <div class="w-full sm:w-auto flex items-center justify-between">
+            <div>
+                <h1 class="text-base sm:text-xl font-bold text-slate-800 tracking-tight">Data Perusahaan</h1>
+                <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+                    Kelola dan verifikasi seluruh mitra perusahaan
+                </p>
+            </div>
+            <div class="sm:hidden flex items-center gap-2">
+                @include('super_admin.components.notif_button')
+            </div>
         </div>
-        <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+        <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
             @include('super_admin.components.notif_button')
             @include('super_admin.components.user_badge_dropdown')
         </div>
@@ -69,10 +75,10 @@
 
     {{-- Toolbar: Search + Filter + Actions --}}
     <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-4 mb-5">
-        <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+        <div class="flex items-center justify-between gap-2.5 sm:gap-3">
 
             {{-- Search --}}
-            <div class="relative w-full md:w-96" x-data="{
+            <div class="relative flex-1 min-w-0 md:w-80 lg:w-96 md:flex-initial" x-data="{
                 open: false,
                 query: '{{ $search ?? '' }}',
                 recommendations: [
@@ -165,7 +171,7 @@
             {{-- Action Buttons --}}
             <div class="flex items-center gap-2 flex-shrink-0">
                 {{-- Filter Tab Links --}}
-                <div class="hidden sm:flex items-center h-10 gap-1 bg-slate-100 rounded-xl p-1 text-xs font-semibold">
+                <div class="hidden md:flex items-center h-10 gap-1 bg-slate-100 rounded-xl p-1 text-xs font-semibold">
                     <a href="{{ route('superadmin.perusahaan', array_merge(request()->except('status'), [])) }}" 
                        class="h-full flex items-center px-3.5 rounded-lg transition {{ !request('status') ? 'bg-white text-[#00509d] shadow-xs' : 'text-slate-500 hover:text-slate-800' }}">
                         Semua
