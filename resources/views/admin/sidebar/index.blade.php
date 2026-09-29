@@ -393,12 +393,6 @@
                             </div>
                             <span class="text-[11px] leading-tight">Profil</span>
                         </a>
-                        <a href="{{ route('admin.edit.profile') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/edit/profile*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
-                            <div class="w-11 h-11 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl shadow-xs">
-                                <i class="ph ph-note-pencil"></i>
-                            </div>
-                            <span class="text-[11px] leading-tight">Edit Profil</span>
-                        </a>
                     </div>
                 </div>
 

@@ -179,15 +179,6 @@
                                 Laporan Transaksi
                             </a>
                         </div>
-
-                        <div class="font-bold ml-3 mb-3 mt-4 text-blue-200/90 text-xs uppercase tracking-wider">Akun</div>
-                        <div class="{{ request()->is('finance/profile*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md mb-1.5">
-                            <a href="{{ route('finance.profile') }}"
-                                class="flex font-semibold items-center gap-2.5 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-200">
-                                <i class="{{ request()->is('finance/profile*') ? 'ph-fill ph-user-circle' : 'ph ph-user-circle' }} text-lg"></i>
-                                Profil Saya
-                            </a>
-                        </div>
                     </nav>
                 </div>
             </div>
