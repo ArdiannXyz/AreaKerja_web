@@ -64,6 +64,110 @@
             </div>
         </section>
 
+        {{-- ADVERTISEMENT CAROUSEL / BANNER --}}
+        @if(isset($activeAds) && $activeAds->count() > 0)
+            <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6" 
+                 x-data="{
+                    activeSlide: 0,
+                    totalSlides: {{ $activeAds->count() }},
+                    autoplayTimer: null,
+                    startAutoplay() {
+                        if (this.totalSlides > 1) {
+                            this.autoplayTimer = setInterval(() => {
+                                this.nextSlide();
+                            }, 5000);
+                        }
+                    },
+                    stopAutoplay() {
+                        if (this.autoplayTimer) clearInterval(this.autoplayTimer);
+                    },
+                    nextSlide() {
+                        this.activeSlide = (this.activeSlide + 1) % this.totalSlides;
+                    },
+                    prevSlide() {
+                        this.activeSlide = (this.activeSlide - 1 + this.totalSlides) % this.totalSlides;
+                    }
+                 }"
+                 x-init="startAutoplay()"
+                 @mouseenter="stopAutoplay()"
+                 @mouseleave="startAutoplay()">
+                
+                <div class="relative w-full overflow-hidden rounded-2xl shadow-sm border border-slate-200/80 bg-slate-900 group">
+                    <div class="relative w-full h-44 sm:h-56 md:h-72 lg:h-80">
+                        @foreach($activeAds as $index => $ad)
+                            <div x-show="activeSlide === {{ $index }}"
+                                 x-transition:enter="transition ease-out duration-500 transform"
+                                 x-transition:enter-start="opacity-0 translate-x-12 scale-98"
+                                 x-transition:enter-end="opacity-100 translate-x-0 scale-100"
+                                 x-transition:leave="transition ease-in duration-300 transform absolute inset-0"
+                                 x-transition:leave-start="opacity-100 translate-x-0 scale-100"
+                                 x-transition:leave-end="opacity-0 -translate-x-12 scale-98"
+                                 class="w-full h-full">
+                                
+                                <a href="{{ route('iklan.click', $ad->id) }}" target="_blank" rel="noopener noreferrer" class="block w-full h-full relative cursor-pointer group/item">
+                                    <img src="{{ $ad->banner_url }}" 
+                                         alt="{{ $ad->judul_iklan }}" 
+                                         class="w-full h-full object-cover object-center group-hover/item:scale-[1.02] transition-transform duration-700 ease-out">
+                                    
+                                    {{-- Dark gradient bottom overlay for readability --}}
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
+
+                                    {{-- Badge Perusahaan --}}
+                                    @if($ad->perusahaan)
+                                        <div class="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2">
+                                            <span class="bg-black/50 backdrop-blur-md text-white/90 border border-white/10 text-[10px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full shadow-sm">
+                                                {{ $ad->perusahaan->nama_perusahaan }}
+                                            </span>
+                                        </div>
+                                    @endif
+
+                                    {{-- Banner Info Title & Call-to-action button --}}
+                                    <div class="absolute bottom-3 left-3 right-3 sm:bottom-5 sm:left-6 sm:right-6 flex items-end justify-between gap-4">
+                                        <div class="max-w-xl">
+                                            <h4 class="text-white text-sm sm:text-lg md:text-xl font-bold tracking-tight line-clamp-1 drop-shadow-md">
+                                                {{ $ad->judul_iklan }}
+                                            </h4>
+                                            <p class="text-white/80 text-xs hidden sm:block mt-0.5 line-clamp-1">
+                                                Klik untuk melihat penawaran menarik dari {{ $ad->perusahaan->nama_perusahaan ?? 'iklan ini' }}
+                                            </p>
+                                        </div>
+
+                                        <span class="inline-flex items-center gap-1.5 bg-white text-slate-900 font-bold text-xs sm:text-sm px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-lg hover:bg-slate-100 transition shrink-0">
+                                            Kunjungi <i class="ph ph-arrow-square-out text-sm"></i>
+                                        </span>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    {{-- Navigation Arrows (if > 1 slide) --}}
+                    @if($activeAds->count() > 1)
+                        <button @click="prevSlide()" 
+                                aria-label="Previous Slide"
+                                class="absolute left-2.5 sm:left-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105 cursor-pointer z-10">
+                            <i class="ph ph-caret-left text-lg sm:text-xl"></i>
+                        </button>
+                        <button @click="nextSlide()" 
+                                aria-label="Next Slide"
+                                class="absolute right-2.5 sm:right-4 top-1/2 -translate-y-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 hover:bg-black/70 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-105 cursor-pointer z-10">
+                            <i class="ph ph-caret-right text-lg sm:text-xl"></i>
+                        </button>
+
+                        {{-- Pagination Dots --}}
+                        <div class="absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10">
+                            @foreach($activeAds as $index => $ad)
+                                <button @click="activeSlide = {{ $index }}"
+                                        aria-label="Go to slide {{ $index + 1 }}"
+                                        :class="activeSlide === {{ $index }} ? 'w-5 sm:w-6 bg-white' : 'w-1.5 sm:w-2 bg-white/50 hover:bg-white/80'"
+                                        class="h-1.5 sm:h-2 rounded-full transition-all duration-300 cursor-pointer"></button>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
+
         <!-- Tabs Section -->
         <div x-data="{ tab: 'umpan' }" class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-16">
 

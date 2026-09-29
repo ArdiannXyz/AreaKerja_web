@@ -109,11 +109,17 @@ class AuthController extends Controller
             ->distinct()
             ->pluck('jenis');
 
+        $activeAds = \App\Models\Iklan::active()->with('perusahaan')->latest()->get();
+        if ($activeAds->isNotEmpty()) {
+            \App\Models\Iklan::whereIn('id', $activeAds->pluck('id'))->increment('total_views');
+        }
+
         return view('non-user.home', [
             "Data"         => $Data,
             "KategoriList" => $KategoriList,
             "kategori"     => $kategori,
             "jenisList"    => $jenisList,
+            "activeAds"    => $activeAds,
         ]);
     }
 
@@ -253,12 +259,46 @@ class AuthController extends Controller
             (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000, 'icon' => 'bit3.png'],
         ]);
 
+        // IDs semua lowongan milik perusahaan ini
+        $allLowonganIds = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)->pluck('id');
+
+        // Total pelamar yang masuk
+        $totalPelamar = PelamarLowongan::whereIn('lowongan_id', $allLowonganIds)->count();
+
+        // Total lowongan aktif (published & belum expired)
+        $totalLowonganAktif = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
+            ->whereNotNull('published_at')
+            ->whereDate('expired_at', '>=', now())
+            ->count();
+
+        // Total iklan aktif
+        $totalIklanAktif = \App\Models\Iklan::where('perusahaan_id', $perusahaan->id)
+            ->where('status', 'aktif')
+            ->count();
+
+        // Data grafik pelamar per bulan (6 bulan terakhir)
+        $chartLabels = [];
+        $chartData   = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i);
+            $chartLabels[] = $month->translatedFormat('M Y');
+            $chartData[] = PelamarLowongan::whereIn('lowongan_id', $allLowonganIds)
+                ->whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->count();
+        }
+
         return view('perusahaan.dashboard', [
-            'hargaPembayarans' => $hargaPembayarans,
-            'daftarBank'       => DaftarBank::all(),
-            'lowongans'        => $lowongans,
-            'perusahaan'       => $perusahaan,
-            'events'           => $events
+            'hargaPembayarans'  => $hargaPembayarans,
+            'daftarBank'        => DaftarBank::all(),
+            'lowongans'         => $lowongans,
+            'perusahaan'        => $perusahaan,
+            'events'            => $events,
+            'totalPelamar'      => $totalPelamar,
+            'totalLowonganAktif'=> $totalLowonganAktif,
+            'totalIklanAktif'   => $totalIklanAktif,
+            'chartLabels'       => $chartLabels,
+            'chartData'         => $chartData,
         ]);
     }
 

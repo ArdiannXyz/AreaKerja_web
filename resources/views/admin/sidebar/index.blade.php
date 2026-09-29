@@ -303,6 +303,13 @@
                         Event
                     </a>
                 </li>
+                <li class="{{ request()->is('admin/iklan*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md">
+                    <a href="{{ route('admin.iklan.index') }}"
+                        class="flex font-semibold items-center mb-2 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
+                        <i class="ph ph-megaphone text-xl"></i>
+                        Moderasi Iklan
+                    </a>
+                </li>
                 <li>
                     <form id="logout" action="" method="POST">
                         @csrf

@@ -484,13 +484,13 @@
 
 <body x-data="{ openNotif: false, openAllNotif: false, openMenu: false }">
     {{-- navbar --}}
-    <header class="bg-white text-slate-800 border-b border-slate-100 shadow-sm fixed top-0 left-0 w-full z-50 transition-all duration-200">
+    <header style="background-color: #00509d;" class="text-white border-b border-blue-800 shadow-sm fixed top-0 left-0 w-full z-50 transition-all duration-200">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
 
             <!-- Logo & Hamburger (Kiri) -->
             <div class="flex items-center gap-3 shrink-0">
-                <!-- Hamburger Button (HANYA HP < 768px) -->
-                <button @click="openMenu = !openMenu" type="button" class="flex md:hidden p-1.5 rounded-lg text-[#00509d] hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-[#00509d]" aria-label="Toggle Menu">
+                <!-- Hamburger Button (HANYA LAYAR < lg) -->
+                <button @click="openMenu = !openMenu" type="button" class="flex lg:hidden p-1.5 rounded-lg text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white" aria-label="Toggle Menu">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" class="w-7 h-7">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -500,35 +500,35 @@
 
                 <!-- Logo -->
                 <a href="{{ route('perusahaan.dashboard') }}" class="flex items-center gap-2 sm:gap-2.5">
-                    <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Areakerja Logo" class="h-7 sm:h-8 lg:h-9 object-contain">
-                    <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#00509d] tracking-tight">areakerja.com</span>
+                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                    <span class="font-bold text-base sm:text-lg lg:text-[21px] text-white tracking-tight">areakerja.com</span>
                 </a>
             </div>
 
-            <!-- Menu Desktop & Laptop (Tengah) - Tampil di layar >= 768px -->
-            <nav class="hidden md:flex items-center font-semibold text-xs sm:text-sm lg:text-[15px] text-[#00509d] gap-4 sm:gap-6 lg:gap-7 xl:gap-10 ml-6 sm:ml-8 lg:ml-12 xl:ml-16 mr-auto">
+            <!-- Menu Desktop & Laptop (Tengah) - Tampil di layar >= lg -->
+            <nav class="hidden lg:flex items-center font-semibold text-xs lg:text-[14px] xl:text-[15px] text-white gap-3 lg:gap-5 xl:gap-8 ml-4 lg:ml-7 xl:ml-10 mr-auto">
                 <a href="{{ route('perusahaan.dashboard') }}"
-                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.dashboard') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.dashboard') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Beranda
                 </a>
                 <a href="{{ route('perusahaan.berlangganan') }}"
-                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.berlangganan*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.berlangganan*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Berlangganan
                 </a>
                 <a href="{{ route('talent-hunter.index') }}"
-                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('talent-hunter.index*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('talent-hunter.index*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Talent Hunter
                 </a>
                 <a href="{{ route('perusahaan.kandidat.ak') }}"
-                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Kandidat
                 </a>
                 <a href="{{ route('paket.form') }}"
-                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('paket.form*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('paket.form*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Pasang Lowongan
                 </a>
                 <a href="{{ route('perusahaan.event.index') }}"
-                    class="hover:text-[#003d7a] transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.event.index*') ? 'font-bold underline underline-offset-8 decoration-2' : '' }}">
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.event.index*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Event
                 </a>
             </nav>
@@ -536,19 +536,19 @@
             <!-- Aksi (Kanan) -->
             <div class="flex items-center gap-3 sm:gap-4">
                 {{-- Notifikasi --}}
-                <button @click="openNotif = true" class="relative p-2 rounded-full hover:bg-blue-50 transition text-[#00509d]">
+                <button @click="openNotif = true" class="relative p-2 rounded-full hover:bg-white/20 transition text-white">
                     <!-- Icon Lonceng -->
                     <svg width="24" height="25" viewBox="0 0 24 25" fill="none"
                         xmlns="http://www.w3.org/2000/svg">
                         <path
                             d="M23.4955 17.1131C23.3918 17.006 23.29 16.8989 23.1901 16.7955C21.8162 15.3699 20.9851 14.5096 20.9851 10.474C20.9851 8.38475 20.4024 6.67047 19.254 5.38475C18.4072 4.43493 17.2626 3.7144 15.7539 3.1819C15.7344 3.17263 15.7171 3.16048 15.7027 3.146C15.16 1.58708 13.675 0.542969 12.0002 0.542969C10.3253 0.542969 8.84094 1.58708 8.29828 3.1444C8.28379 3.15834 8.2667 3.17011 8.24769 3.17922C4.72691 4.42261 3.01586 6.80815 3.01586 10.4724C3.01586 14.5096 2.18593 15.3699 0.810843 16.7939C0.710927 16.8973 0.609138 17.0023 0.505476 17.1115C0.237702 17.3886 0.0680456 17.7256 0.0165842 18.0828C-0.0348772 18.4399 0.0340108 18.8023 0.215096 19.1269C0.600396 19.8233 1.42158 20.2556 2.35891 20.2556H21.6483C22.5812 20.2556 23.3968 19.8239 23.7833 19.1306C23.9652 18.8059 24.0347 18.4433 23.9837 18.0857C23.9327 17.7282 23.7633 17.3906 23.4955 17.1131ZM12.0002 24.543C12.9025 24.5423 13.7879 24.3322 14.5623 23.9349C15.3368 23.5375 15.9714 22.9677 16.3989 22.286C16.4191 22.2533 16.429 22.2167 16.4278 22.1798C16.4266 22.1429 16.4143 22.1068 16.392 22.0752C16.3698 22.0435 16.3384 22.0173 16.3008 21.9992C16.2633 21.981 16.221 21.9715 16.1779 21.9715H7.82368C7.78054 21.9714 7.7381 21.9809 7.70049 21.999C7.66288 22.0171 7.63138 22.0433 7.60906 22.0749C7.58674 22.1066 7.57435 22.1427 7.57311 22.1797C7.57188 22.2167 7.58182 22.2533 7.60199 22.286C8.02946 22.9677 8.664 23.5374 9.43832 23.9347C10.2126 24.3321 11.0979 24.5422 12.0002 24.543Z"
-                            fill="#00509d" />
+                            fill="white" />
                     </svg>
 
                     <!-- Badge angka merah -->
                     @if ($global_notifikasi_unread > 0)
                         <span id="notif-badge"
-                            class="notif-badge absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
+                            class="notif-badge absolute -top-0.5 -right-0.5 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
                             {{ $global_notifikasi_unread }}
                         </span>
                     @endif
@@ -626,6 +626,14 @@
                                 </li>
 
                                 <li>
+                                    <a href="{{ route('perusahaan.iklan.index') }}"
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-megaphone mr-2 text-[#00509d] text-lg"></i>
+                                        Iklan Saya
+                                    </a>
+                                </li>
+
+                                <li>
                                     <a href="{{ route('syarat.ketentuan') }}"
                                         class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
                                         <i class="ph ph-file-text mr-2 text-[#00509d] text-lg"></i>
@@ -655,9 +663,9 @@
                     </div>
                 @endauth
 
-                {{-- Menu Mobile Dropdown (Hanya HP < 768px) --}}
+                {{-- Menu Mobile Dropdown (Hanya Layar < lg) --}}
                 <div x-show="openMenu" x-transition x-cloak @click.outside="openMenu = false"
-                    class="flex flex-col absolute top-full left-0 w-full bg-white text-slate-800 border-t border-slate-100 py-4 shadow-xl z-40 md:hidden">
+                    class="flex flex-col absolute top-full left-0 w-full bg-white text-slate-800 border-t border-slate-100 py-4 shadow-xl z-40 lg:hidden">
 
                     <a href="{{ route('perusahaan.dashboard') }}"
                         class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.dashboard') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
@@ -678,6 +686,10 @@
                     <a href="{{ route('paket.form') }}"
                         class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('paket.form*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Pasang Lowongan
+                    </a>
+                    <a href="{{ route('perusahaan.iklan.index') }}"
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.iklan*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
+                        Pasang Iklan
                     </a>
                     <a href="{{ route('perusahaan.event.index') }}"
                         class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.event.index*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
@@ -995,6 +1007,59 @@
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://unpkg.com/intro.js/minified/intro.min.js"></script>
+
+    {{-- Mobile Bottom Navigation Bar (Perusahaan Role) --}}
+    <nav class="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200/80 shadow-[0_-2px_10px_rgba(0,0,0,0.06)] lg:hidden">
+        <div class="flex items-center justify-around h-16 px-1">
+
+            {{-- Beranda --}}
+            <a href="{{ route('perusahaan.dashboard') }}" class="flex flex-col items-center justify-center gap-0.5 w-full h-full">
+                <div class="flex items-center justify-center w-11 h-11 transition-all {{ request()->routeIs('perusahaan.dashboard') ? 'bg-[#c1dcfd] rounded-2xl' : '' }}">
+                    <i class="ph ph-house text-2xl {{ request()->routeIs('perusahaan.dashboard') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
+                </div>
+                <span class="text-[10px] font-semibold {{ request()->routeIs('perusahaan.dashboard') ? 'text-[#00509d]' : 'text-slate-500' }}">Beranda</span>
+            </a>
+
+            {{-- Lowongan --}}
+            <a href="{{ route('lowongan.saya.perusahaan') }}" class="flex flex-col items-center justify-center gap-0.5 w-full h-full">
+                <div class="flex items-center justify-center w-11 h-11 transition-all {{ request()->routeIs('lowongan.saya.perusahaan*') ? 'bg-[#c1dcfd] rounded-2xl' : '' }}">
+                    <i class="ph ph-briefcase text-2xl {{ request()->routeIs('lowongan.saya.perusahaan*') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
+                </div>
+                <span class="text-[10px] font-semibold {{ request()->routeIs('lowongan.saya.perusahaan*') ? 'text-[#00509d]' : 'text-slate-500' }}">Lowongan</span>
+            </a>
+
+            {{-- Kandidat --}}
+            <a href="{{ route('perusahaan.kandidat.ak') }}" class="flex flex-col items-center justify-center gap-0.5 w-full h-full">
+                <div class="flex items-center justify-center w-11 h-11 transition-all {{ request()->routeIs('perusahaan.kandidat*') ? 'bg-[#c1dcfd] rounded-2xl' : '' }}">
+                    <i class="ph ph-users text-2xl {{ request()->routeIs('perusahaan.kandidat*') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
+                </div>
+                <span class="text-[10px] font-semibold {{ request()->routeIs('perusahaan.kandidat*') ? 'text-[#00509d]' : 'text-slate-500' }}">Kandidat</span>
+            </a>
+
+            {{-- Iklan --}}
+            <a href="{{ route('perusahaan.iklan.index') }}" class="flex flex-col items-center justify-center gap-0.5 w-full h-full">
+                <div class="flex items-center justify-center w-11 h-11 transition-all {{ request()->routeIs('perusahaan.iklan*') ? 'bg-[#c1dcfd] rounded-2xl' : '' }}">
+                    <i class="ph ph-megaphone text-2xl {{ request()->routeIs('perusahaan.iklan*') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
+                </div>
+                <span class="text-[10px] font-semibold {{ request()->routeIs('perusahaan.iklan*') ? 'text-[#00509d]' : 'text-slate-500' }}">Iklan</span>
+            </a>
+
+            {{-- Profil --}}
+            <a href="{{ route('profile.perusahaan') }}" class="flex flex-col items-center justify-center gap-0.5 w-full h-full">
+                <div class="flex items-center justify-center w-11 h-11 transition-all {{ request()->routeIs('profile.perusahaan*') ? 'bg-[#c1dcfd] rounded-2xl' : '' }}">
+                    <i class="ph ph-user-circle text-2xl {{ request()->routeIs('profile.perusahaan*') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
+                </div>
+                <span class="text-[10px] font-semibold {{ request()->routeIs('profile.perusahaan*') ? 'text-[#00509d]' : 'text-slate-500' }}">Profil</span>
+            </a>
+
+        </div>
+    </nav>
+
+    <style>
+        @media (max-width: 1023px) {
+            body { padding-bottom: 64px; }
+        }
+    </style>
 
 </body>
 

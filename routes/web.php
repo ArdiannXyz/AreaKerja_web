@@ -28,9 +28,14 @@ use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TalentHunterController;
 use App\Http\Controllers\TipsKerjaController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\IklanPerusahaanController;
+use App\Http\Controllers\IklanAdminController;
 use App\Http\Controllers\VerifikasiPerusahaanController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+
+// TRACKING KLIK IKLAN HOMEPAGE
+Route::get('/iklan/{id}/click', [IklanPerusahaanController::class, 'handleClick'])->name('iklan.click');
 
 // OAUTH SOCIAL AUTHENTICATION (Google, Facebook, LinkedIn)
 Route::controller(SocialAuthController::class)->group(function () {
@@ -531,6 +536,13 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::post('/perusahaan/approve/{id}', 'approve')->name('admin.perusahaan.approve');
         Route::post('/perusahaan/reject/{id}', 'reject')->name('admin.perusahaan.reject');
     });
+
+    //MODERASI IKLAN CONTROLLER
+    Route::controller(IklanAdminController::class)->group(function () {
+        Route::get('/iklan', 'index')->name('admin.iklan.index');
+        Route::post('/iklan/{id}/approve', 'approve')->name('admin.iklan.approve');
+        Route::post('/iklan/{id}/reject', 'reject')->name('admin.iklan.reject');
+    });
 });
 /**---------------------------------------- END ADMIN PREFIX -------------------------------------*/
 
@@ -864,6 +876,13 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
 
         //berlangganan
         Route::get('/berlangganan', 'halLangganan')->name('perusahaan.berlangganan');
+
+        //IKLAN PERUSAHAAN
+        Route::controller(IklanPerusahaanController::class)->group(function () {
+            Route::get('/iklan', 'index')->name('perusahaan.iklan.index');
+            Route::get('/iklan/pasang', 'create')->name('perusahaan.iklan.create');
+            Route::post('/iklan/pasang', 'store')->name('perusahaan.iklan.store');
+        });
 
         //Kandidat Saya
         Route::get('/recruitment/kandidat-saya', 'kandidatSaya')->name('perusahaan.kandidat.saya');
