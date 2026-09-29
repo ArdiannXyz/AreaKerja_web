@@ -225,11 +225,17 @@ class PelamarController extends Controller
             ->distinct()
             ->pluck('jenis');
 
+        $activeAds = \App\Models\Iklan::active()->with('perusahaan')->latest()->get();
+        if ($activeAds->isNotEmpty()) {
+            \App\Models\Iklan::whereIn('id', $activeAds->pluck('id'))->increment('total_views');
+        }
+
         return view('non-user.home', [
             "Data" => $Data,
             "KategoriList" => $KategoriList,
             "kategori" => $kategori,
             "jenisList" => $jenisList,
+            "activeAds" => $activeAds,
         ]);
     }
 
