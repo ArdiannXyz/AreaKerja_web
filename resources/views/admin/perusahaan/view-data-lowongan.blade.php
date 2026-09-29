@@ -3,20 +3,25 @@
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
-            <div class="flex items-center gap-3 flex-1">
-                <a href="{{ route('admin.perusahaan.detail', $lowongan->perusahaan_id) }}"
-                   class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0">
-                    <i class="ph ph-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <p class="text-xs text-slate-400">Perusahaan / Detail Perusahaan /
-                        <span class="text-slate-500 font-medium">{{ $lowongan->nama }}</span>
-                    </p>
-                    <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Detail Lowongan</h1>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('admin.perusahaan.detail', $lowongan->perusahaan_id) }}"
+                       class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0"
+                       title="Kembali">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Detail Lowongan</h1>
+                        <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Perusahaan / Detail Perusahaan / {{ $lowongan->nama }}</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('admin.components.notif_button')
                 </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('admin.components.notif_button')
                 @include('admin.components.user_badge_dropdown')
             </div>

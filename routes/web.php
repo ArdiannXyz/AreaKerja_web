@@ -372,6 +372,16 @@ Route::prefix('finance')->middleware('auth', 'role:finance', 'CheckUserStatus')-
 
     //FINANCE CONTROLLER
     Route::controller(FinanceController::class)->group(function () {
+        //profile finance
+        Route::get('/profile', 'profile_finance')->name('finance.profile');
+        Route::get('/edit/profile', 'edit_profile_finance')->name('finance.edit.profile');
+        Route::put('/update/profile/{user}', 'update_profile_finance')->name('finance.update.profile');
+        Route::delete('/delete/profile/{user}', 'destroy_profile_finance')->name('finance.destroy.profile');
+
+        //provinsi kota kecamatan
+        Route::get('/get-kota/{provinsi_id}', 'getKotaFinance')->name('finance.get.kota');
+        Route::get('/get-kecamatan/{kota_id}', 'getKecamatanFinance')->name('finance.get.kecamatan');
+
         //OMSET PERUSAHAAN PERBULAN
         Route::get('/omset', 'omset_perusahaan')->name('finance.omset');
         Route::get('/finance/omset/unduh', 'unduh_omset')->name('finance.omset.unduh');

@@ -75,15 +75,93 @@ class User extends Authenticatable
 
     public function getFinanceAttribute()
     {
+        $financeRecord = null;
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('finances')) {
+                $financeRecord = \Illuminate\Support\Facades\DB::table('finances')->where('user_id', $this->id)->first();
+            }
+        } catch (\Throwable $e) {}
+
+        $provinsi_id  = $financeRecord->provinsi_id ?? null;
+        $kota_id      = $financeRecord->kota_id ?? null;
+        $kecamatan_id = $financeRecord->kecamatan_id ?? null;
+        $desa         = $financeRecord->desa ?? null;
+        $kode_pos     = $financeRecord->kode_pos ?? null;
+        $detail_alamat = $financeRecord->detail_alamat ?? null;
+        $img_profile  = $financeRecord->img_profile ?? $this->avatar ?? null;
+        $nama_lengkap = $financeRecord->nama_lengkap ?? $this->nama_lengkap ?? $this->username;
+
+        $provinsi  = null;
+        $kota      = null;
+        $kecamatan = null;
+
+        if ($provinsi_id) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('provinsis')) {
+                    $provinsi = \Illuminate\Support\Facades\DB::table('provinsis')->where('id', $provinsi_id)->first();
+                }
+            } catch (\Throwable $e) {}
+
+            if (!$provinsi && file_exists(database_path('data/provinces.json'))) {
+                $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+                $found = collect($json)->firstWhere('id', (string)$provinsi_id);
+                if ($found) {
+                    $provinsi = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
+                }
+            }
+        }
+
+        if ($kota_id) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('kotas')) {
+                    $kota = \Illuminate\Support\Facades\DB::table('kotas')->where('id', $kota_id)->first();
+                }
+            } catch (\Throwable $e) {}
+
+            if (!$kota && file_exists(database_path('data/regencies.json'))) {
+                $json = json_decode(file_get_contents(database_path('data/regencies.json')), true);
+                $found = collect($json)->firstWhere('id', (string)$kota_id);
+                if ($found) {
+                    $kota = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
+                }
+            }
+        }
+
+        if ($kecamatan_id) {
+            try {
+                if (\Illuminate\Support\Facades\Schema::hasTable('kecamatans')) {
+                    $kecamatan = \Illuminate\Support\Facades\DB::table('kecamatans')->where('id', $kecamatan_id)->first();
+                }
+            } catch (\Throwable $e) {}
+
+            if (!$kecamatan && file_exists(database_path('data/districts.json'))) {
+                $json = json_decode(file_get_contents(database_path('data/districts.json')), true);
+                $found = collect($json)->firstWhere('id', (string)$kecamatan_id);
+                if ($found) {
+                    $kecamatan = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
+                }
+            }
+        }
+
         return (object)[
             'id'           => $this->id,
-            'img_profile'  => $this->avatar ?? null,
-            'nama'         => $this->nama_lengkap ?? $this->username,
-            'nama_lengkap' => $this->nama_lengkap ?? $this->username,
+            'img_profile'  => $img_profile,
+            'nama'         => $nama_lengkap,
+            'nama_lengkap' => $nama_lengkap,
             'email'        => $this->email,
             'telepon'      => $this->telepon ?? '',
+            'provinsi_id'  => $provinsi_id,
+            'kota_id'      => $kota_id,
+            'kecamatan_id' => $kecamatan_id,
+            'provinsi'     => $provinsi,
+            'kota'         => $kota,
+            'kecamatan'    => $kecamatan,
+            'desa'         => $desa,
+            'kode_pos'     => $kode_pos,
+            'detail_alamat'=> $detail_alamat,
         ];
     }
+
 
     public function getAdminAttribute()
     {

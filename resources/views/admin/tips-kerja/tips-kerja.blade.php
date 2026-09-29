@@ -2,15 +2,20 @@
 @section('sidebaradmin')
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
         {{-- Topbar Header --}}
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div>
-                <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                    <i class="ph ph-lightbulb text-[#00509d] text-2xl"></i> Tips Kerja
-                </h1>
-                <p class="text-xs font-semibold text-slate-500 mt-1">Kelola artikel panduan karir, tips kerja, dan publikasi</p>
+        <!-- HEADER TOP BAR -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
+                        <i class="ph ph-lightbulb text-[#00509d] text-lg sm:text-2xl"></i> Tips Kerja
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola artikel panduan karir, tips kerja, dan publikasi</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('admin.components.notif_button')
+                </div>
             </div>
-
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('admin.components.notif_button')
                 @include('admin.components.user_badge_dropdown')
             </div>
@@ -58,11 +63,6 @@
                             autocomplete="off"
                             class="flex-1 px-2.5 py-1.5 text-xs bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400"
                             style="border: none !important; outline: none !important; box-shadow: none !important;">
-                        <button type="button" onclick="document.getElementById('search_input').value=''; searchTable();"
-                            class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2 flex-shrink-0 transition cursor-pointer"
-                            title="Hapus pencarian">
-                            <i class="ph ph-x text-[10px]"></i>
-                        </button>
                     </div>
 
                     <a href="{{ route('admin.tips-kerja.createForm') }}"

@@ -27,12 +27,17 @@
           x-data="{ openNotif: false, openAllNotif: false, tab: '{{ $activeTab ?? 'gold' }}' }">
 
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm w-full">
-            <div>
-                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">Manajemen Lowongan</h1>
-                <p class="text-xs text-slate-400 mt-0.5">Konfigurasi batas durasi dan benefit untuk setiap paket lowongan</p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm w-full">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight">Manajemen Lowongan</h1>
+                    <p class="text-xs text-slate-400 mt-0.5">Konfigurasi batas durasi dan benefit untuk setiap paket lowongan</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>

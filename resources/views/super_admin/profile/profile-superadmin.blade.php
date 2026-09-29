@@ -163,15 +163,16 @@
                         value="{{ Auth::user()->superadmin->detail_alamat ?: '-' }}" disabled>
                 </div>
 
-                {{-- Button Edit --}}
-                <div class="md:col-span-2 flex justify-center mt-2">
-                    <a href="{{ route('superadmin.edit.profile') }}"
-                        class="bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-medium px-10 py-2.5 rounded-lg transition duration-200">
-                        Edit
-                    </a>
-                </div>
-
             </div>
+
+            {{-- Edit Profil Button --}}
+            <div class="flex justify-end pt-6 border-t border-slate-100 mt-6">
+                <a href="{{ route('superadmin.edit.profile') }}"
+                   class="inline-flex items-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-xs px-6 py-2.5 rounded-xl shadow-xs transition">
+                    <i class="ph ph-pencil-simple text-sm"></i> Edit Profil
+                </a>
+            </div>
+
         </div>
 
         @include('super_admin.notif.modal_notif')
