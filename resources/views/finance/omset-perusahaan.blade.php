@@ -1,6 +1,6 @@
 @extends('finance.sidebar.index')
 @section('sidebar')
-    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6">
+    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen bg-slate-50/70">
 
         <!-- ================= TOP NAVBAR & HEADER ================= -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
@@ -75,22 +75,50 @@
             </div>
 
             <div class="flex items-center gap-2.5 w-full sm:w-auto">
-                <form method="GET" action="{{ route('finance.omset') }}" class="flex items-center gap-2 m-0 p-0 grow sm:grow-0">
-                    <div class="relative grow sm:grow-0">
-                        <select name="periode" onchange="this.form.submit()"
-                            class="h-10 w-full sm:w-auto appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-xl px-4 pr-10 focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] cursor-pointer shadow-2xs">
-                            <option value="current" {{ $periodeDipilih == 'current' ? 'selected' : '' }}>Bulan Ini</option>
-                            <option value="1" {{ $periodeDipilih == '1' ? 'selected' : '' }}>1 Bulan Terakhir</option>
-                            <option value="3" {{ $periodeDipilih == '3' ? 'selected' : '' }}>3 Bulan Terakhir</option>
-                            <option value="5" {{ $periodeDipilih == '5' ? 'selected' : '' }}>5 Bulan Terakhir</option>
-                            <option value="7" {{ $periodeDipilih == '7' ? 'selected' : '' }}>7 Bulan Terakhir</option>
-                            <option value="9" {{ $periodeDipilih == '9' ? 'selected' : '' }}>9 Bulan Terakhir</option>
-                            <option value="12" {{ $periodeDipilih == '12' ? 'selected' : '' }}>12 Bulan Terakhir (1 Tahun)</option>
-                            <option value="24" {{ $periodeDipilih == '24' ? 'selected' : '' }}>24 Bulan Terakhir (2 Tahun)</option>
-                        </select>
-                        <i class="ph ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs font-bold"></i>
+                <div x-data="{
+                    open: false,
+                    selected: '{{ $periodeDipilih }}',
+                    options: [
+                        { value: 'current', label: 'Bulan Ini' },
+                        { value: '1',  label: '1 Bulan Terakhir' },
+                        { value: '3',  label: '3 Bulan Terakhir' },
+                        { value: '5',  label: '5 Bulan Terakhir' },
+                        { value: '7',  label: '7 Bulan Terakhir' },
+                        { value: '9',  label: '9 Bulan Terakhir' },
+                        { value: '12', label: '12 Bulan Terakhir (1 Tahun)' },
+                        { value: '24', label: '24 Bulan Terakhir (2 Tahun)' }
+                    ],
+                    get label() {
+                        return this.options.find(o => o.value === this.selected)?.label ?? 'Pilih Periode';
+                    },
+                    choose(val) {
+                        this.selected = val;
+                        this.open = false;
+                        window.location.href = '{{ route('finance.omset') }}?periode=' + val;
+                    }
+                }" class="relative grow sm:grow-0" @click.outside="open = false">
+                    <button type="button" @click="open = !open"
+                        class="h-10 w-full sm:w-auto flex items-center justify-between gap-3 bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-xl px-4 pr-4 focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] cursor-pointer shadow-2xs min-w-[160px]">
+                        <span x-text="label"></span>
+                        <i class="ph ph-caret-down text-slate-400 text-xs transition-transform duration-200" :class="open ? 'rotate-180' : ''"></i>
+                    </button>
+                    <div x-show="open" x-cloak
+                        x-transition:enter="transition ease-out duration-100"
+                        x-transition:enter-start="opacity-0 scale-95"
+                        x-transition:enter-end="opacity-100 scale-100"
+                        x-transition:leave="transition ease-in duration-75"
+                        x-transition:leave-start="opacity-100 scale-100"
+                        x-transition:leave-end="opacity-0 scale-95"
+                        class="absolute left-0 sm:left-auto sm:right-0 mt-1 w-52 bg-white border border-slate-100 rounded-xl shadow-xl z-50 py-1 overflow-hidden">
+                        <template x-for="opt in options" :key="opt.value">
+                            <button type="button" @click="choose(opt.value)"
+                                :class="selected === opt.value ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700 hover:bg-slate-50'"
+                                class="w-full text-left px-4 py-2 text-xs font-semibold transition">
+                                <span x-text="opt.label"></span>
+                            </button>
+                        </template>
                     </div>
-                </form>
+                </div>
 
                 <a href="{{ route('finance.omset.unduh', ['periode' => $periodeDipilih]) }}"
                     class="h-10 inline-flex items-center justify-center gap-2 px-4 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl transition shadow-2xs shrink-0 whitespace-nowrap">
@@ -299,5 +327,19 @@
             });
         </script>
     @endif
+
+@push('styles')
+<style>
+    /* Hapus native arrow select di semua browser */
+    select[name="periode"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    select[name="periode"]::-ms-expand {
+        display: none;
+    }
+</style>
+@endpush
 @endsection
 

@@ -210,6 +210,14 @@
         }
     </style>
 
+    {{-- NProgress Page Transition --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css">
+    <style>
+        #nprogress .bar { background: #00509d !important; height: 3px !important; }
+        #nprogress .peg { box-shadow: 0 0 10px #00509d, 0 0 5px #00509d !important; }
+        #nprogress .spinner-icon { border-top-color: #00509d !important; border-left-color: #00509d !important; }
+    </style>
+
 </head>
 
 <body>
@@ -704,6 +712,29 @@
         <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
         @stack('scripts')
+
+        {{-- NProgress Page Transition --}}
+        <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+        <script>
+            NProgress.configure({ showSpinner: false, speed: 400, minimum: 0.1 });
+            document.addEventListener('DOMContentLoaded', function () {
+                NProgress.done();
+            });
+            document.addEventListener('click', function (e) {
+                const link = e.target.closest('a');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript') || link.target === '_blank') return;
+                if (link.hasAttribute('data-no-progress')) return;
+                NProgress.start();
+            });
+            document.addEventListener('submit', function () {
+                NProgress.start();
+            });
+            window.addEventListener('pageshow', function () {
+                NProgress.done();
+            });
+        </script>
 </body>
 
 </html>

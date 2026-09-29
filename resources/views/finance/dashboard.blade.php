@@ -1,6 +1,6 @@
 @extends('finance.sidebar.index')
 @section('sidebar')
-    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6">
+    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen bg-slate-50/70">
 
         <!-- ================= TOP NAVBAR & HEADER ================= -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">

@@ -1,6 +1,6 @@
 @extends('finance.sidebar.index')
 @section('sidebar')
-    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6" 
+    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen bg-slate-50/70" 
          x-data="{ 
             openBukti: false, 
             openDetailCash: false,
@@ -68,15 +68,15 @@
                 <table class="w-full text-left text-xs sm:text-sm min-w-[900px]">
                     <thead class="bg-slate-50/80 text-slate-600 font-bold border-b border-slate-100">
                         <tr>
-                            <th class="px-4 py-3.5 text-center w-12">No</th>
-                            <th class="px-4 py-3.5">No. Referensi</th>
-                            <th class="px-4 py-3.5">Jenis Pesanan</th>
-                            <th class="px-4 py-3.5">Pelanggan</th>
-                            <th class="px-4 py-3.5">Sumber Pembayaran</th>
-                            <th class="px-4 py-3.5 text-right">Nominal / Koin</th>
-                            <th class="px-4 py-3.5 text-center">Bukti</th>
-                            <th class="px-4 py-3.5 text-center">Status</th>
-                            <th class="px-4 py-3.5 text-center">Aksi</th>
+                            <th class="px-4 py-3.5 text-center w-12 whitespace-nowrap align-middle">No</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">No. Referensi</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">Jenis Pesanan</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">Pelanggan</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">Sumber Pembayaran</th>
+                            <th class="px-4 py-3.5 text-right whitespace-nowrap align-middle">Nominal / Koin</th>
+                            <th class="px-4 py-3.5 text-center whitespace-nowrap align-middle">Bukti</th>
+                            <th class="px-4 py-3.5 text-center whitespace-nowrap align-middle">Status</th>
+                            <th class="px-4 py-3.5 text-center whitespace-nowrap align-middle">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -222,14 +222,14 @@
                 <table class="w-full text-left text-xs sm:text-sm min-w-[850px]">
                     <thead class="bg-slate-50/80 text-slate-600 font-bold border-b border-slate-100">
                         <tr>
-                            <th class="px-4 py-3.5 text-center w-12">No</th>
-                            <th class="px-4 py-3.5">No. Referensi</th>
-                            <th class="px-4 py-3.5">Jenis Transaksi / Pesanan</th>
-                            <th class="px-4 py-3.5">Nama Akun</th>
-                            <th class="px-4 py-3.5">Sumber Dana</th>
-                            <th class="px-4 py-3.5 text-right">Jumlah Koin</th>
-                            <th class="px-4 py-3.5">Tanggal</th>
-                            <th class="px-4 py-3.5 text-center">Aksi</th>
+                            <th class="px-4 py-3.5 text-center w-12 whitespace-nowrap align-middle">No</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">No. Referensi</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">Jenis Transaksi / Pesanan</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">Nama Akun</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">Sumber Dana</th>
+                            <th class="px-4 py-3.5 text-right whitespace-nowrap align-middle">Jumlah Koin</th>
+                            <th class="px-4 py-3.5 whitespace-nowrap align-middle">Tanggal</th>
+                            <th class="px-4 py-3.5 text-center whitespace-nowrap align-middle">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
