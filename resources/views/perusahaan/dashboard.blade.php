@@ -1,313 +1,359 @@
-    @extends('layouts.index-perusahaan')
-    @section('content')
-        <div class="w-full mx-auto bg-white p-6 pb-8 mt-20">
-            <!-- Header -->
-            <h2 class="text-lg text-[#00509d] font-semibold">Dashboard</h2>
-            <h1 class="text-2xl font-semibold mt-1 mb-4">Selamat Datang di Area Kerja <br>
-                <span class="text-[#00509d] font-bold">{{ $perusahaan->nama_perusahaan }}</span>
-            </h1>
+@extends('layouts.index-perusahaan')
+@section('content')
 
-            <!-- Grid utama -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+<div class="w-full mx-auto bg-slate-50 min-h-screen pb-10 mt-20">
 
-                <!-- === Lowongan Saya === -->
-                <div class="bg-[#00509d] text-white p-7 rounded-xl shadow lg:col-span-2">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-xl font-semibold">Lowongan Saya</h3>
-                        <a href="{{ route('lowongan.saya.perusahaan') }}"
-                            class="border-2 border-white bg-[#00509d] text-white px-4 py-1 rounded-md text-lg font-semibold hover:bg-white/20 transition duration-300">
-                            Kelola Lowongan
-                        </a>
+    {{-- ===== HERO HEADER ===== --}}
+    <div style="background-color: #00509d;" class="px-6 py-8 shadow-md">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <p class="text-sm font-medium mb-1" style="color: #bfdbfe;">Selamat Datang di Area Kerja 👋</p>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white">{{ $perusahaan->nama_perusahaan }}</h1>
+                <p class="text-sm mt-1" style="color: #93c5fd;">Kelola rekrutmen Anda dengan mudah dan efisien</p>
+            </div>
+            <div class="flex items-center gap-3 rounded-2xl px-5 py-3 w-fit" style="background: rgba(255,255,255,0.15);">
+                <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-9 h-9">
+                <div>
+                    <p class="text-xs" style="color: #bfdbfe;">Saldo Koin</p>
+                    <p class="text-white text-2xl font-bold leading-none">{{ number_format($perusahaan->koin_perusahaan ?? 0) }}</p>
+                </div>
+                <button onclick="toggleModal()"
+                    class="ml-2 text-white text-xs font-semibold px-3 py-2 rounded-xl transition flex items-center gap-1"
+                    style="background: #22c55e;">
+                    <i class="ph ph-plus-circle text-base"></i> Top Up
+                </button>
+            </div>
+        </div>
+    </div>
 
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+
+        {{-- ===== KPI STAT CARDS ===== --}}
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+
+            {{-- Total Lowongan Aktif --}}
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <i class="ph ph-briefcase text-2xl text-[#00509d]"></i>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-xs font-medium">Lowongan Aktif</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $totalLowonganAktif }}</p>
+                </div>
+            </div>
+
+            {{-- Total Pelamar --}}
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+                    <i class="ph ph-users text-2xl text-green-600"></i>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-xs font-medium">Total Pelamar</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $totalPelamar }}</p>
+                </div>
+            </div>
+
+            {{-- Iklan Aktif --}}
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <i class="ph ph-megaphone text-2xl text-[#00509d]"></i>
+                </div>
+                <div>
+                    <p class="text-slate-500 text-xs font-medium">Iklan Aktif</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ $totalIklanAktif }}</p>
+                </div>
+            </div>
+
+            {{-- Saldo Koin --}}
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                    <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-7 h-7">
+                </div>
+                <div>
+                    <p class="text-slate-500 text-xs font-medium">Saldo Koin</p>
+                    <p class="text-2xl font-bold text-slate-800">{{ number_format($perusahaan->koin_perusahaan ?? 0) }}</p>
+                </div>
+            </div>
+
+        </div>
+
+        {{-- ===== GRAFIK + AKSI CEPAT ===== --}}
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            {{-- Grafik Pelamar 6 Bulan --}}
+            <div class="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
+                <div class="flex items-center justify-between mb-5">
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-800">Tren Pelamar</h3>
+                        <p class="text-slate-400 text-xs mt-0.5">6 bulan terakhir</p>
                     </div>
+                    <div class="bg-blue-50 text-[#00509d] text-xs font-semibold px-3 py-1.5 rounded-lg">
+                        Total: {{ array_sum($chartData) }}
+                    </div>
+                </div>
+                <canvas id="pelamarChart" height="130"></canvas>
+            </div>
 
-                    @php
-                        $publish = $lowongans->filter(fn($l) => !is_null($l->published_at));
-                        $draft = $lowongans->filter(fn($l) => is_null($l->published_at));
-                    @endphp
-
-                    @if ($lowongans->isEmpty())
-                        <!-- Jika BELUM ADA lowongan -->
-                        <div class="bg-white rounded-lg flex justify-between items-center px-4 py-3">
-
-                            <span class="text-black font-semibold">Lowongan Belum Terpasang</span>
-                            <a href="{{ route('lowongan.saya.perusahaan') }}"
-                                class="border border-[#00509d] text-[#00509d] px-3 py-1 rounded-md text-sm font-medium hover:bg-blue-50 transition">
-                                Tambah Lowongan
-                            </a>
+            {{-- Aksi Cepat --}}
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-semibold text-slate-800 mb-1">Aksi Cepat</h3>
+                    <p class="text-slate-400 text-xs mb-5">Navigasi ke fitur utama</p>
+                </div>
+                <div class="space-y-3">
+                    <a href="{{ route('lowongan.saya.perusahaan') }}"
+                        class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-[#00509d] hover:bg-blue-50 transition group">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 group-hover:bg-[#00509d] flex items-center justify-center transition">
+                            <i class="ph ph-briefcase text-lg text-[#00509d] group-hover:text-white transition"></i>
                         </div>
-
-                        <!-- Tombol Top Up Koin -->
-                        <div class="bg-white rounded-xl mt-4 px-4 py-2 text-green-700 inline-block">
-                            <div class="max-w-2xl mx-auto flex justify-end">
-                                <div class="flex items-center gap-6 bg-white px-2 py-1">
-                                    <!-- Coin + jumlah + teks -->
-                                    <div class="flex flex-col items-center">
-                                        <span class="flex items-center">
-                                            <p class="text-yellow-500 font-semibold text-4xl">
-                                                {{ $perusahaan->koin_perusahaan ?? 0 }}
-                                            </p>
-                                            <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-8 h-8 ml-4">
-                                        </span>
-                                        <button onclick="toggleModal()"
-                                            class="flex items-center text-green-600 text-sm font-medium">
-                                            <p class="mr-2">Top Up Koin</p>
-                                            <!-- icon + -->
-                                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                <mask id="mask0_614_15612" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="22" height="22">
-                                                    <rect x="0.53125" y="0.722656" width="20.4918" height="20.4918"
-                                                        fill="url(#pattern0_614_15612)" />
-                                                </mask>
-                                                <g mask="url(#mask0_614_15612)">
-                                                    <rect x="0.773438" y="0.96875" width="20" height="20"
-                                                        fill="#42BB72" />
-                                                </g>
-                                                <defs>
-                                                    <pattern id="pattern0_614_15612" patternContentUnits="objectBoundingBox"
-                                                        width="1" height="1">
-                                                        <use xlink:href="#image0_614_15612" transform="scale(0.0104167)" />
-                                                    </pattern>
-                                                    <image id="image0_614_15612" width="96" height="96"
-                                                        preserveAspectRatio="none"
-                                                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABmJLR0QA/wD/AP+gvaeTAAAEhUlEQVR4nO2dz48URRTHP47ouCPIL1kJRBc9AAdNIF6JhkVMjEwg/uJEOHhBvUDgjyASJRIve9UbBxU5GvGCePRHlMCGRUPWFQPyQxDwsnCoISyrs/W6q6pf9fT7JN/Mpabn9fdNdXV3Vb8GwzAMwzAMwzCaxgPaAXgYBtYDa2ZoGHgUWNz7BPgHuNz7/BMYB04Bp4HvgQuVRl2A3BLQATYDo8BG4FnCY7wN/Awc6+kr4GbgNgeKFrABGAOu4gxLqRvAYaALPFjB/mXLI8C7wFnSm95PE8A7vVgaQwfYB0yhZ/xsTQF7e7ENNF3gV/QN76dJ4M1ke6/IKuAo+gZLdQQYSeKEAtuAS+ibWlRXge0J/KiMNvAR+kaGaqy3L7ViKfAd+ubF0rfAkqgOJWQF8BP6psXWSeCpiD4lYS1wDn2zUulcbx+zZCXwG/ompdYkGZ4hLcV1UW1zqtI47qZgFrQZrAFXqhNkcnb0MfpmaOlQBP+CeAN9E7T1erCLJVkFXBEEOOi6jNKg/GWJYAdVRwK9LMy2SIEPkrpBjhagg+75vg+tuM4CQ4L47qNV9AvAe2R4IZIBTwO7Uv9IG/gd3a7uQzO2PyjYC4r2gLdxN9uM/2c5sDPVxlvoTqDXoQfcxk30i5fSFOkBL+KOc8bcPAO8IG1cJAE7isfSWMReSbvKEG6AWVgqnLj4YpYcplLzN2488K7Ak/aAl8nD/LrwGLBJ0lCagNHysTSWjZJG0gSINmbch+hPKxkDhoHzwrZVUIcxAGAaeAK4OFcjSQ9YTz7m14kWsE7SyMea8Fgai9c7S0BaoiRgdYRAmoo3AfMEG1keIZCZpB5PYjzSFAuvd5IesCBCIE3F650lIC1REjA/QiBNJUoCjIRIEnA9eRSDyzVfA0kCvBsx+mIJUCZKAs5HCGQmuc8Jx8TrnSQB4xECaSqnfQ0kCfBuxOiLJUAZr3eS+ybLcDV4cpkTqNOEzDDw11yNJD3gAq7ejlGMH/GYD/Ir4WNhsTQSkWeWgHR8I2lkC7PSEH1h1k3gs5CIGsZhhHXpitwN/bRcLI0kiVct3NJr7eXfPrTjO0Oi5enTwAcF2jeVAyQch+wRpbk1RcEKjEVnxP4FPiz4nSbxPnAr9Y900K186EMrrglKPKZallcq2KG6aUuQoyWwUgX39Hmgl6UYwRWq0N55bV1CsZZcF3d6qm2ClqaB14JdDOQQ+kZo6WAE/4Jp4+pqaptRtY4DD0fwLwoLcRMQ2qZUpV/IsJBrk8pWZlvAtQmFW7N/YmgFg3k4Ogk8GdGnpCzB1dXUNi2WjpPhMd/HQ8B+6n+dMEZGZztl2Ep9X+DwVgI/VBihXveOviDjM50QuuRRdaufJoBXk+19JnSAPejPrM3UJLCbCu/n50Ab9xI1zYn+CVypySyqoGvyPO6FPxdJb/oV4BPgJTJYcKwewCyGcJWmRnt6jvAnOadx77S5+zLPr6lg3lZKbgmYzeO4cjmrcbc57r7OdgGwiHvPMF/H/bOv8d/X2f6Ap2aPYRiGYRiGYRhGldwBFK9RwjpRCLwAAAAASUVORK5CYII=" />
-                                                </defs>
-                                            </svg>
-
-                                        </button>
-                                    </div>
-                                </div>
-
-                            </div>
-
+                        <div>
+                            <p class="text-sm font-semibold text-slate-700">Kelola Lowongan</p>
+                            <p class="text-xs text-slate-400">Tambah & atur lowongan kerja</p>
                         </div>
-                    @elseif ($publish->isEmpty() && $draft->isNotEmpty())
-                        <!-- Jika SUDAH ADA lowongan tapi BELUM publish -->
-                        <div class="bg-white rounded-lg flex justify-between items-center px-4 py-3">
-                            <span class="text-black font-semibold">Lowongan masih draft / belum publish</span>
-                            <a href="{{ route('lowongan.saya.perusahaan') }}"
-                                class="border border-[#00509d] text-[#00509d] px-3 py-1 rounded-md text-sm font-medium hover:bg-blue-50 transition">
-                                Kelola Lowongan
-                            </a>
+                        <i class="ph ph-caret-right text-slate-300 ml-auto group-hover:text-[#00509d] transition"></i>
+                    </a>
+
+                    <a href="{{ route('perusahaan.kandidat.ak') }}"
+                        class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-green-500 hover:bg-green-50 transition group">
+                        <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-500 flex items-center justify-center transition">
+                            <i class="ph ph-magnifying-glass text-lg text-green-600 group-hover:text-white transition"></i>
                         </div>
-
-                        <div class="bg-white rounded-xl mt-4 px-4 py-2 text-green-700 inline-block">
-                            <div class="max-w-2xl mx-auto flex justify-end">
-                                <div class="flex items-center gap-6 bg-white px-2 py-1">
-                                    <!-- Coin + jumlah + teks -->
-                                    <div class="flex flex-col items-center">
-                                        <span class="flex items-center">
-                                            <p class="text-yellow-500 font-semibold text-4xl">
-                                                {{ $perusahaan->koin_perusahaan ?? 0 }}
-                                            </p>
-                                            <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-8 h-8 ml-4">
-                                        </span>
-                                        <button onclick="toggleModal()"
-                                            class="flex items-center text-green-600 text-sm font-medium">
-                                            <p class="mr-2">Top Up Koin</p>
-                                            <!-- icon + -->
-                                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                xmlns:xlink="http://www.w3.org/1999/xlink">
-                                                <mask id="mask0_614_15612" style="mask-type:alpha"
-                                                    maskUnits="userSpaceOnUse" x="0" y="0" width="22" height="22">
-                                                    <rect x="0.53125" y="0.722656" width="20.4918" height="20.4918"
-                                                        fill="url(#pattern0_614_15612)" />
-                                                </mask>
-                                                <g mask="url(#mask0_614_15612)">
-                                                    <rect x="0.773438" y="0.96875" width="20" height="20"
-                                                        fill="#42BB72" />
-                                                </g>
-                                                <defs>
-                                                    <pattern id="pattern0_614_15612" patternContentUnits="objectBoundingBox"
-                                                        width="1" height="1">
-                                                        <use xlink:href="#image0_614_15612" transform="scale(0.0104167)" />
-                                                    </pattern>
-                                                    <image id="image0_614_15612" width="96" height="96"
-                                                        preserveAspectRatio="none"
-                                                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABmJLR0QA/wD/AP+gvaeTAAAEhUlEQVR4nO2dz48URRTHP47ouCPIL1kJRBc9AAdNIF6JhkVMjEwg/uJEOHhBvUDgjyASJRIve9UbBxU5GvGCePRHlMCGRUPWFQPyQxDwsnCoISyrs/W6q6pf9fT7JN/Mpabn9fdNdXV3Vb8GwzAMwzAMwzCaxgPaAXgYBtYDa2ZoGHgUWNz7BPgHuNz7/BMYB04Bp4HvgQuVRl2A3BLQATYDo8BG4FnCY7wN/Awc6+kr4GbgNgeKFrABGAOu4gxLqRvAYaALPFjB/mXLI8C7wFnSm95PE8A7vVgaQwfYB0yhZ/xsTQF7e7ENNF3gV/QN76dJ4M1ke6/IKuAo+gZLdQQYSeKEAtuAS+ibWlRXge0J/KiMNvAR+kaGaqy3L7ViKfAd+ubF0rfAkqgOJWQF8BP6psXWSeCpiD4lYS1wDn2zUulcbx+zZCXwG/ompdYkGZ4hLcV1UW1zqtI47qZgFrQZrAFXqhNkcnb0MfpmaOlQBP+CeAN9E7T1erCLJVkFXBEEOOi6jNKg/GWJYAdVRwK9LMy2SIEPkrpBjhagg+75vg+tuM4CQ4L47qNV9AvAe2R4IZIBTwO7Uv9IG/gd3a7uQzO2PyjYC4r2gLdxN9uM/2c5sDPVxlvoTqDXoQfcxk30i5fSFOkBL+KOc8bcPAO8IG1cJAE7isfSWMReSbvKEG6AWVgqnLj4YpYcplLzN2488K7Ak/aAl8nD/LrwGLBJ0lCagNHysTSWjZJG0gSINmbch+hPKxkDhoHzwrZVUIcxAGAaeAK4OFcjSQ9YTz7m14kWsE7SyMea8Fgai9c7S0BaoiRgdYRAmoo3AfMEG1keIZCZpB5PYjzSFAuvd5IesCBCIE3F650lIC1REjA/QiBNJUoCjIRIEnA9eRSDyzVfA0kCvBsx+mIJUCZKAs5HCGQmuc8Jx8TrnSQB4xECaSqnfQ0kCfBuxOiLJUAZr3eS+ybLcDV4cpkTqNOEzDDw11yNJD3gAq7ejlGMH/GYD/Ir4WNhsTQSkWeWgHR8I2lkC7PSEH1h1k3gs5CIGsZhhHXpitwN/bRcLI0kiVct3NJr7eXfPrTjO0Oi5enTwAcF2jeVAyQch+wRpbk1RcEKjEVnxP4FPiz4nSbxPnAr9Y900K186EMrrglKPKZallcq2KG6aUuQoyWwUgX39Hmgl6UYwRWq0N55bV1CsZZcF3d6qm2ClqaB14JdDOQQ+kZo6WAE/4Jp4+pqaptRtY4DD0fwLwoLcRMQ2qZUpV/IsJBrk8pWZlvAtQmFW7N/YmgFg3k4Ogk8GdGnpCzB1dXUNi2WjpPhMd/HQ8B+6n+dMEZGZztl2Ep9X+DwVgI/VBihXveOviDjM50QuuRRdaufJoBXk+19JnSAPejPrM3UJLCbCu/n50Ab9xI1zYn+CVypySyqoGvyPO6FPxdJb/oV4BPgJTJYcKwewCyGcJWmRnt6jvAnOadx77S5+zLPr6lg3lZKbgmYzeO4cjmrcbc57r7OdgGwiHvPMF/H/bOv8d/X2f6Ap2aPYRiGYRiGYRhGldwBFK9RwjpRCLwAAAAASUVORK5CYII=" />
-                                                </defs>
-                                            </svg>
-
-                                        </button>
-                                    </div>
-                                </div>
-
-                            </div>
-
+                        <div>
+                            <p class="text-sm font-semibold text-slate-700">Cari Kandidat</p>
+                            <p class="text-xs text-slate-400">Temukan kandidat terbaik</p>
                         </div>
-                    @else
-                        <!-- Jika SUDAH ADA yang DIPUBLISH -->
-                        <div class="space-y-4">
-                            @foreach ($lowongans as $lowongan)
-                                @if ($lowongan->published_at)
-                                    <div
-                                        class="bg-white rounded-lg p-5 flex flex-col lg:flex-row lg:items-center justify-between shadow-sm gap-4">
-                                        <div class="flex items-center gap-4">
-                                            <img src="{{ asset('storage/' . $lowongan->perusahaan->img_profile) }}"
-                                                alt="logo" class="w-12 h-12 rounded-full">
-                                            <div>
+                        <i class="ph ph-caret-right text-slate-300 ml-auto group-hover:text-green-500 transition"></i>
+                    </a>
 
-                                                <h4 class="font-semibold text-gray-500">{{ $perusahaan->nama_perusahaan }}
-                                                </h4>
-                                                <p class="text-black font-medium">{{ $lowongan->nama }} -
-                                                    {{ $lowongan->jenis }}</p>
-                                                <p class="text-gray-500 text-sm mb-2">{{ $lowongan->alamat }}</p>
-                                                <p
-                                                    class="text-gray-700 text-sm bg-gray-300 px-2 py-1 inline-block rounded">
-                                                    Rp. {{ number_format($lowongan->gaji_awal, 0, ',', '.') }} â€“
-                                                    Rp. {{ number_format($lowongan->gaji_akhir, 0, ',', '.') }} per bulan
-                                                </p>
-                                                <p class="text-xs text-gray-400 mt-2">
-                                                    Aktif {{ $lowongan->created_at->diffForHumans() }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="flex items-center gap-3 mt-3 md:mt-0">
-                                            @php
-                                                $paket = strtolower($lowongan->paket->nama ?? '');
-
-                                                $paketStyle = match ($paket) {
-                                                    'gold' => 'border-yellow-500 bg-yellow-100 text-yellow-600',
-                                                    'silver' => 'border-gray-400 bg-gray-100 text-gray-500',
-                                                    'bronze' => 'border-amber-600 bg-amber-100 text-amber-700',
-                                                    default => 'border-gray-300 text-gray-500',
-                                                };
-                                            @endphp
-
-                                            <span class="px-3 py-1.5 border-2 rounded-md text-sm {{ $paketStyle }}">
-                                                {{ ucfirst($lowongan->paket->nama ?? '-') }}
-                                            </span>
-
-                                            <a href="{{ route('perusahaan.pelamar', $lowongan->slug) }}"
-                                                class="bg-[#00509d] hover:bg-[#003d7a] text-white px-4 py-2 rounded-md text-sm font-medium transition">
-                                                Lihat Pelamar
-                                            </a>
-                                        </div>
-                                    </div>
-                                @endif
-                            @endforeach
+                    <a href="{{ route('perusahaan.kandidat.saya') }}"
+                        class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-[#00509d] hover:bg-blue-50 transition group">
+                        <div class="w-10 h-10 rounded-lg bg-blue-50 group-hover:bg-[#00509d] flex items-center justify-center transition">
+                            <i class="ph ph-users text-lg text-[#00509d] group-hover:text-white transition"></i>
                         </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-700">Kandidat Saya</p>
+                            <p class="text-xs text-slate-400">Kandidat yang disimpan</p>
+                        </div>
+                        <i class="ph ph-caret-right text-slate-300 ml-auto group-hover:text-[#00509d] transition"></i>
+                    </a>
 
-                        {{-- <!-- Tombol cari kandidat -->
-                        <div class="text-center mt-6">
-                            <a href="#"
-                                class="bg-white text-[#00509d] border border-[#00509d] px-5 py-2 rounded-md font-medium hover:bg-blue-50 transition">
-                                Cari Kandidat
-                            </a>
-                        </div> --}}
-                    @endif
+                    <a href="{{ route('perusahaan.iklan.index') }}"
+                        class="flex items-center gap-3 p-3 rounded-xl border border-slate-100 hover:border-green-500 hover:bg-green-50 transition group">
+                        <div class="w-10 h-10 rounded-lg bg-green-50 group-hover:bg-green-500 flex items-center justify-center transition">
+                            <i class="ph ph-megaphone text-lg text-green-600 group-hover:text-white transition"></i>
+                        </div>
+                        <div>
+                            <p class="text-sm font-semibold text-slate-700">Iklan Saya</p>
+                            <p class="text-xs text-slate-400">Kelola kampanye iklan</p>
+                        </div>
+                        <i class="ph ph-caret-right text-slate-300 ml-auto group-hover:text-green-500 transition"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
 
+        {{-- ===== LOWONGAN AKTIF ===== --}}
+        @php
+            $publish = $lowongans->filter(fn($l) => !is_null($l->published_at));
+            $draft   = $lowongans->filter(fn($l) => is_null($l->published_at));
+        @endphp
+
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-6 py-4 border-b border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center">
+                        <i class="ph ph-briefcase text-lg text-[#00509d]"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-semibold text-slate-800">Lowongan Saya</h3>
+                        <p class="text-xs text-slate-400">Lowongan aktif & draft</p>
+                    </div>
+                </div>
+                <a href="{{ route('lowongan.saya.perusahaan') }}"
+                    class="text-sm font-semibold text-[#00509d] hover:text-[#003d7a] flex items-center gap-1 transition">
+                    Kelola <i class="ph ph-arrow-right"></i>
+                </a>
+            </div>
+
+            {{-- Content --}}
+            @if ($lowongans->isEmpty())
+                <div class="flex flex-col items-center justify-center py-14 text-center px-6">
+                    <div class="w-16 h-16 rounded-full bg-blue-50 flex items-center justify-center mb-4">
+                        <i class="ph ph-briefcase text-3xl text-[#00509d]"></i>
+                    </div>
+                    <p class="text-slate-600 font-semibold mb-1">Belum Ada Lowongan</p>
+                    <p class="text-slate-400 text-sm mb-4">Mulai pasang lowongan untuk menemukan kandidat terbaik</p>
+                    <a href="{{ route('lowongan.saya.perusahaan') }}"
+                        class="bg-[#00509d] hover:bg-[#003d7a] text-white px-5 py-2 rounded-xl text-sm font-semibold transition">
+                        + Pasang Lowongan
+                    </a>
                 </div>
 
-                <!-- === Kandidat Saya === -->
-                <div class="bg-[#00509d] rounded-2xl p-8 flex flex-col w-full">
+            @elseif ($publish->isEmpty() && $draft->isNotEmpty())
+                <div class="flex flex-col items-center justify-center py-14 text-center px-6">
+                    <div class="w-16 h-16 rounded-full bg-yellow-50 flex items-center justify-center mb-4">
+                        <i class="ph ph-clock text-3xl text-yellow-500"></i>
+                    </div>
+                    <p class="text-slate-600 font-semibold mb-1">Lowongan Masih Draft</p>
+                    <p class="text-slate-400 text-sm mb-4">Publish lowongan agar bisa dilihat oleh pelamar</p>
+                    <a href="{{ route('lowongan.saya.perusahaan') }}"
+                        class="bg-[#00509d] hover:bg-[#003d7a] text-white px-5 py-2 rounded-xl text-sm font-semibold transition">
+                        Kelola Lowongan
+                    </a>
+                </div>
 
-                    <div>
-                        @if ($publish->isNotEmpty())
-                            <h2 class="text-xl font-semibold text-white mb-6">Koin Saya</h2>
-                            <!-- Tampilkan saldo koin -->
-                            <div class="mb-6">
-                                <div class="flex flex-col items-center">
-                                    <span class="flex items-center">
-                                        <p class="text-yellow-300  font-semibold text-4xl">
-                                            {{ $perusahaan->koin_perusahaan ?? 0 }}
-                                        </p>
-                                        <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-8 h-8 ml-3">
+            @else
+                <div class="divide-y divide-slate-100">
+                    @foreach ($lowongans as $lowongan)
+                        @if ($lowongan->published_at)
+                            @php
+                                $paket = strtolower($lowongan->paket->nama ?? '');
+                                $paketStyle = match ($paket) {
+                                    'gold'   => 'bg-yellow-50 text-yellow-700 border-yellow-300',
+                                    'silver' => 'bg-slate-50 text-slate-600 border-slate-300',
+                                    'bronze' => 'bg-amber-50 text-amber-700 border-amber-300',
+                                    default  => 'bg-slate-50 text-slate-500 border-slate-200',
+                                };
+                            @endphp
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-slate-50 transition">
+                                <div class="flex items-center gap-4">
+                                    <img src="{{ asset('storage/' . $lowongan->perusahaan->img_profile) }}"
+                                        alt="logo" class="w-11 h-11 rounded-xl object-cover border border-slate-100 flex-shrink-0">
+                                    <div>
+                                        <p class="font-semibold text-slate-800 text-sm">{{ $lowongan->nama }}</p>
+                                        <p class="text-slate-500 text-xs">{{ $lowongan->jenis }} · {{ $lowongan->alamat }}</p>
+                                        <div class="flex items-center gap-2 mt-1.5">
+                                            <span class="text-xs bg-slate-100 text-slate-600 px-2 py-0.5 rounded-full">
+                                                Rp {{ number_format($lowongan->gaji_awal, 0, ',', '.') }} – {{ number_format($lowongan->gaji_akhir, 0, ',', '.') }}
+                                            </span>
+                                            <span class="text-xs text-slate-400">· {{ $lowongan->created_at->diffForHumans() }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2 ml-15 sm:ml-0">
+                                    <span class="text-xs px-2.5 py-1 rounded-lg border font-medium {{ $paketStyle }}">
+                                        {{ ucfirst($lowongan->paket->nama ?? '-') }}
                                     </span>
-                                    <button onclick="toggleModal()"
-                                        class="flex items-center mt-2 text-white font-medium hover:text-yellow-200">
-                                        <p class="mr-2">Top Up Koin</p>
-                                        <svg width="20" height="20" viewBox="0 0 22 22" fill="none"
-                                            xmlns="http://www.w3.org/2000/svg">
-                                            <rect x="0.5" y="0.5" width="20" height="20" rx="10"
-                                                fill="#42BB72" />
-                                            <path d="M11 6V16M6 11H16" stroke="white" stroke-width="2"
-                                                stroke-linecap="round" />
-                                        </svg>
-                                    </button>
+                                    <a href="{{ route('perusahaan.pelamar', $lowongan->slug) }}"
+                                        class="bg-[#00509d] hover:bg-[#003d7a] text-white text-xs px-4 py-2 rounded-xl font-semibold transition whitespace-nowrap">
+                                        Lihat Pelamar
+                                    </a>
                                 </div>
                             </div>
                         @endif
-                    </div>
-
-                    <div class="border-t border-[#00509d] my-2"></div>
-
-                    <div class="flex flex-col">
-                        <h2 class="text-xl font-semibold text-white mb-4 mt-5">Kandidat Saya</h2>
-                        <!-- Tombol Lihat Kandidat -->
-                        <a href="{{ route('perusahaan.kandidat.saya') }}"
-                            class="w-48 mx-auto py-2 mb-4 border border-white text-white font-semibold rounded-lg hover:bg-white/10 transition">
-                            <span class="ml-[40px]">Lihat Kandidat</span>
-                        </a>
-
-                        <!-- Tombol Cari Kandidat -->
-                        <a href="{{ route('perusahaan.kandidat.ak') }}"
-                            class="w-48 mx-auto py-2 bg-white text-black font-semibold rounded-lg hover:bg-gray-100 transition">
-                            <span class="ml-[40px]">Cari Kandidat</span>
-                        </a>
-                    </div>
+                    @endforeach
                 </div>
+            @endif
+        </div>
 
-
+        {{-- ===== TENTANG AREA KERJA ===== --}}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100">
+                <h3 class="text-base font-semibold text-slate-800">Tentang Area Kerja</h3>
+                <p class="text-xs text-slate-400 mt-0.5">Platform rekrutmen modern untuk perusahaan Anda</p>
             </div>
-
-            <h1 class="text-center text-3xl text-[#00509d] font-bold mt-8 mb-4">Tentang Area Kerja</h1>
-            <!-- === Bagian Bawah === -->
-            <div class="grid md:grid-cols-2 gap-8 mb-4 items-center">
-                <!-- Gambar -->
-                <div class="flex justify-center">
-                    <img src="{{ asset('images/nari.jpg') }}" alt="Illustrasi" class="w-full max-w-md object-contain">
+            <div class="grid md:grid-cols-2 gap-0">
+                <div class="flex justify-center items-center p-6">
+                    <img src="{{ asset('images/nari.jpg') }}" alt="Ilustrasi"
+                        class="w-full max-w-xs object-contain rounded-xl">
                 </div>
-                <!-- 3 Card kecil -->
-                <div class="grid lg:grid-cols-2 gap-6 max-w-5xl mx-auto items-center">
-                    <!-- Card 1 -->
-                    <div class="bg-[#00509d] text-white p-6 rounded-lg flex flex-col justify-center shadow">
-                        <div class="flex items-center space-x-3 mb-3">
-                            <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-7 h-7 object-contain">
-                            <div>
-                                <p class="font-bold text-lg">01</p>
-                                <p class="text-sm">Mencari Lowongan</p>
-                            </div>
+                <div class="p-6 grid sm:grid-cols-1 gap-4">
+                    <div class="flex gap-4 p-4 rounded-xl bg-[#00509d] text-white">
+                        <div class="w-9 h-9 rounded-lg bg-white/20 flex items-center justify-center flex-shrink-0">
+                            <span class="font-bold text-sm">01</span>
                         </div>
-                        <p class="text-sm leading-relaxed">
-                            Area Kerja membantu pencari kerja menemukan posisi sesuai keahlian dan minat mereka.
-                        </p>
+                        <div>
+                            <p class="font-semibold text-sm mb-1">Cari Kandidat Terbaik</p>
+                            <p class="text-blue-100 text-xs leading-relaxed">Area Kerja membantu Anda menemukan kandidat yang sesuai dengan kebutuhan posisi perusahaan.</p>
+                        </div>
                     </div>
-
-                    <!-- Card 2 & 3 -->
-                    <div class="flex flex-col gap-6">
-                        <div class="border-2 border-[#00509d] rounded-lg p-6 text-[#00509d] shadow-sm">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="logo" class="w-7 h-7 object-contain">
-                                <div>
-                                    <p class="font-bold text-lg">02</p>
-                                    <p class="text-sm">Lowongan Terbaru</p>
-                                </div>
-                            </div>
-                            <p class="text-sm leading-relaxed">
-                                Temukan berbagai lowongan terbaru yang selalu diperbarui setiap hari.
-                            </p>
+                    <div class="flex gap-4 p-4 rounded-xl border-2 border-[#00509d] text-[#00509d]">
+                        <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                            <span class="font-bold text-sm">02</span>
                         </div>
-
-                        <div class="border-2 border-[#00509d] rounded-lg p-6 text-[#00509d] shadow-sm">
-                            <div class="flex items-center space-x-3 mb-3">
-                                <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="logo" class="w-7 h-7 object-contain">
-                                <div>
-                                    <p class="font-bold text-lg">03</p>
-                                    <p class="text-sm">Pasti Cocok</p>
-                                </div>
-                            </div>
-                            <p class="text-sm leading-relaxed">
-                                Kandidat yang mendaftar sudah siap kerja secara mental maupun skill.
-                            </p>
+                        <div>
+                            <p class="font-semibold text-sm mb-1">Lowongan Selalu Terbaru</p>
+                            <p class="text-slate-500 text-xs leading-relaxed">Sistem diperbarui setiap hari agar kandidat selalu mendapat informasi lowongan terkini dari Anda.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4 p-4 rounded-xl border-2 border-[#00509d] text-[#00509d]">
+                        <div class="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center flex-shrink-0">
+                            <span class="font-bold text-sm">03</span>
+                        </div>
+                        <div>
+                            <p class="font-semibold text-sm mb-1">Kandidat Siap Kerja</p>
+                            <p class="text-slate-500 text-xs leading-relaxed">Kandidat di Area Kerja sudah terverifikasi dan siap bekerja secara mental maupun keahlian.</p>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-        @include('layouts.footer')
-    @endsection
+
+    </div>
+</div>
+
+{{-- Chart.js CDN --}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+    const ctx = document.getElementById('pelamarChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 220);
+    gradient.addColorStop(0, 'rgba(0, 80, 157, 0.18)');
+    gradient.addColorStop(1, 'rgba(0, 80, 157, 0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: {!! json_encode($chartLabels) !!},
+            datasets: [{
+                label: 'Pelamar',
+                data: {!! json_encode($chartData) !!},
+                borderColor: '#00509d',
+                backgroundColor: gradient,
+                borderWidth: 2.5,
+                pointBackgroundColor: '#00509d',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+                tension: 0.4,
+                fill: true,
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    backgroundColor: '#00509d',
+                    titleColor: '#fff',
+                    bodyColor: '#c1dcfd',
+                    padding: 10,
+                    cornerRadius: 10,
+                    callbacks: {
+                        label: (ctx) => ` ${ctx.parsed.y} pelamar`
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { color: '#94a3b8', font: { size: 11 } }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        color: '#94a3b8',
+                        font: { size: 11 },
+                        stepSize: 1,
+                        precision: 0
+                    },
+                    grid: { color: '#f1f5f9' }
+                }
+            }
+        }
+    });
+</script>
+
+@include('layouts.footer')
+@endsection
