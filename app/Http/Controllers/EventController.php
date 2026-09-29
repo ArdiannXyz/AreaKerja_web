@@ -211,6 +211,17 @@ class EventController extends Controller
     // ==========================================
     // ADMIN / SUPER ADMIN METHODS
     // ==========================================
+    private function isSuperAdmin(Request $request = null): bool
+    {
+        if (Auth::check() && in_array(Auth::user()->role, ['super_admin', 'superadmin'])) {
+            return true;
+        }
+        if ($request && $request->is('super_admin*')) {
+            return true;
+        }
+        return request()->is('super_admin*');
+    }
+
     public function index(Request $request)
     {
         $this->ensureTableAndData();
@@ -227,7 +238,7 @@ class EventController extends Controller
 
         $events = $query->paginate(10)->withQueryString();
 
-        $isSuperAdmin = Auth::check() && Auth::user()->role === 'superadmin';
+        $isSuperAdmin = $this->isSuperAdmin($request);
 
         if ($isSuperAdmin && view()->exists('super_admin.event.home')) {
             return view('super_admin.event.home', compact('events'));
@@ -237,7 +248,7 @@ class EventController extends Controller
 
     public function createForm()
     {
-        $isSuperAdmin = Auth::check() && Auth::user()->role === 'superadmin';
+        $isSuperAdmin = $this->isSuperAdmin();
 
         if ($isSuperAdmin && view()->exists('super_admin.event.buat')) {
             return view('super_admin.event.buat');
@@ -269,7 +280,7 @@ class EventController extends Controller
 
         Event::create($validated);
 
-        $route = (Auth::check() && Auth::user()->role === 'superadmin') ? 'superadmin.eventform' : 'admin.eventform';
+        $route = $this->isSuperAdmin($request) ? 'superadmin.eventform' : 'admin.eventform';
         return redirect()->route($route)->with('success', 'Event berhasil disimpan.');
     }
 
@@ -278,7 +289,7 @@ class EventController extends Controller
         $this->ensureTableAndData();
         $event = Event::with('kegiatan')->findOrFail($id);
 
-        $isSuperAdmin = Auth::check() && Auth::user()->role === 'superadmin';
+        $isSuperAdmin = $this->isSuperAdmin();
 
         if ($isSuperAdmin && view()->exists('super_admin.event.edit')) {
             return view('super_admin.event.edit', compact('event'));
@@ -312,7 +323,7 @@ class EventController extends Controller
 
         $event->update($validated);
 
-        $route = (Auth::check() && Auth::user()->role === 'superadmin') ? 'superadmin.eventform' : 'admin.eventform';
+        $route = $this->isSuperAdmin($request) ? 'superadmin.eventform' : 'admin.eventform';
         return redirect()->route($route)->with('success', 'Event berhasil diperbarui.');
     }
 
@@ -322,7 +333,7 @@ class EventController extends Controller
         $event = Event::findOrFail($id);
         $event->delete();
 
-        $route = (Auth::check() && Auth::user()->role === 'superadmin') ? 'superadmin.eventform' : 'admin.eventform';
+        $route = $this->isSuperAdmin() ? 'superadmin.eventform' : 'admin.eventform';
         return redirect()->route($route)->with('success', 'Event berhasil dihapus.');
     }
 
@@ -331,7 +342,7 @@ class EventController extends Controller
         $this->ensureTableAndData();
         $event = Event::with('kegiatan')->findOrFail($id);
 
-        $isSuperAdmin = Auth::check() && Auth::user()->role === 'superadmin';
+        $isSuperAdmin = $this->isSuperAdmin();
 
         if ($isSuperAdmin) {
             if (view()->exists('super_admin.event.view')) {

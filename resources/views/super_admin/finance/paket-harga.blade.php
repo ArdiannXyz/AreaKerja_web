@@ -1,6 +1,6 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-gray-50/50 min-h-screen" 
+    <main class="flex-1 min-w-0 max-w-full p-4 sm:p-6 sm:ml-64 bg-gray-50/50" 
         x-data="{ 
             openNotif: false, 
             openAllNotif: false,
@@ -8,22 +8,27 @@
         }">
 
         {{-- Topbar Header --}}
-        <div class="flex justify-between items-center mb-6 flex-col sm:flex-row gap-4 sm:gap-0 border-b border-gray-100 pb-5">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800">
-                    Finance & Keuangan
-                </h1>
-                <p class="text-sm text-gray-500 mt-1">Kelola paket harga, riwayat transaksi, dan laporan pendapatan</p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-bold text-slate-800 tracking-tight">
+                        Finance & Keuangan
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola paket harga, riwayat transaksi, dan laporan pendapatan</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
             </div>
 
-            <div class="flex items-center gap-4 w-full sm:w-auto justify-between sm:justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
                 @include('super_admin.components.notif_button')
 
                 {{-- User Badge Dropdown --}}
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
         {{-- Navigasi Tab Modern --}}
         <div class="flex items-center justify-between gap-4 mb-6 flex-wrap">

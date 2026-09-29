@@ -1,20 +1,25 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <!-- Main Content -->
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 w-full min-w-0 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header Top Bar -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
-            <div>
-                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">
-                    Dashboard
-                </h1>
-                <p class="text-xs text-slate-400 mt-0.5">
-                    Selamat datang kembali, <span class="text-[#00509d] font-semibold">{{ Auth::user()->username ?? 'Super Admin' }}</span> &mdash; {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}
-                </p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-bold text-slate-800 tracking-tight">
+                        Dashboard
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+                        <span class="hidden sm:inline">Selamat datang kembali, </span><span class="text-[#00509d] font-semibold">{{ Auth::user()->username ?? 'Super Admin' }}</span> &mdash; {{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}
+                    </p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
             </div>
 
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
                 @include('super_admin.components.notif_button')
 
@@ -29,39 +34,39 @@
             $greeting = $hour < 11 ? 'Selamat Pagi' : ($hour < 15 ? 'Selamat Siang' : ($hour < 18 ? 'Selamat Sore' : 'Selamat Malam'));
             $adminName = Auth::user()->nama_lengkap ?? (Auth::user()->username ?? 'Super Admin');
         @endphp
-        <div class="relative overflow-hidden rounded-2xl bg-[#00509d] text-white p-6 sm:p-8 mb-6">
+        <div class="relative overflow-hidden rounded-2xl bg-[#00509d] text-white p-5 sm:p-8 mb-4 sm:mb-6 shadow-sm">
             <!-- Decorative subtle circles -->
             <div class="absolute right-0 top-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/4 pointer-events-none"></div>
             <div class="absolute right-48 bottom-0 w-40 h-40 bg-black/10 rounded-full translate-y-1/2 pointer-events-none"></div>
 
             <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="max-w-xl">
-                    <p class="text-white/60 text-xs font-medium mb-1.5 uppercase tracking-widest">
+                    <p class="text-white/60 text-[11px] sm:text-xs font-semibold mb-1 uppercase tracking-widest">
                         {{ \Carbon\Carbon::now()->translatedFormat('l, d F Y') }}
                     </p>
-                    <h2 class="text-xl sm:text-2xl font-semibold text-white leading-snug">
-                        {{ $greeting }}, <span class="font-bold">{{ $adminName }}</span> 👋
+                    <h2 class="text-lg sm:text-2xl font-bold text-white leading-snug">
+                        {{ $greeting }}, <span class="font-extrabold">{{ $adminName }}</span> 👋
                     </h2>
-                    <p class="text-white/65 text-xs sm:text-sm mt-2 leading-relaxed max-w-lg">
+                    <p class="text-white/75 text-xs sm:text-sm mt-1.5 leading-relaxed max-w-lg">
                         Pantau dan kelola seluruh ekosistem talenta, mitra perusahaan, serta aktivitas sistem dari satu tempat.
                     </p>
 
-                    <!-- CTA Buttons -->
-                    <div class="flex flex-wrap items-center gap-2 mt-5">
+                    <!-- CTA Buttons (Mobile App Style) -->
+                    <div class="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 mt-4 sm:mt-5">
                         <a href="{{ route('superadmin.add.user') }}"
-                           class="inline-flex items-center gap-1.5 bg-white text-[#00509d] hover:bg-blue-50 font-semibold text-xs px-4 py-2.5 rounded-lg transition duration-200">
-                            <i class="ph ph-user-plus text-sm"></i>
-                            Tambah Akun
+                           class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 bg-white text-[#00509d] hover:bg-blue-50 font-bold text-[11px] sm:text-xs px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl transition duration-200 active:scale-95 text-center shadow-xs">
+                            <i class="ph ph-user-plus text-base sm:text-sm"></i>
+                            <span>Tambah Akun</span>
                         </a>
                         <a href="{{ route('superadmin.pelamar') }}"
-                           class="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white font-medium text-xs px-4 py-2.5 rounded-lg border border-white/20 transition duration-200">
-                            <i class="ph ph-users text-sm"></i>
-                            Data Pelamar
+                           class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 bg-white/15 hover:bg-white/25 text-white font-medium text-[11px] sm:text-xs px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-white/20 transition duration-200 active:scale-95 text-center">
+                            <i class="ph ph-users text-base sm:text-sm"></i>
+                            <span>Data Pelamar</span>
                         </a>
                         <a href="{{ route('superadmin.perusahaan') }}"
-                           class="inline-flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white font-medium text-xs px-4 py-2.5 rounded-lg border border-white/20 transition duration-200">
-                            <i class="ph ph-buildings text-sm"></i>
-                            Data Perusahaan
+                           class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 bg-white/15 hover:bg-white/25 text-white font-medium text-[11px] sm:text-xs px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-white/20 transition duration-200 active:scale-95 text-center">
+                            <i class="ph ph-buildings text-base sm:text-sm"></i>
+                            <span>Perusahaan</span>
                         </a>
                     </div>
                 </div>
@@ -85,116 +90,126 @@
             </div>
         </div>
 
-        <!-- 5 Executive Metric Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
+        <!-- 5 Executive Metric Cards (Mobile 2-Columns App Grid) -->
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4 mb-4 sm:mb-6">
 
             <!-- Card 1: Pelamar -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition duration-200">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Pelamar Terdaftar</span>
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center">
-                        <i class="ph ph-users text-xl font-bold"></i>
+            <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2 sm:mb-3">
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Pelamar</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-users text-lg sm:text-xl font-bold"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2 sm:mb-3">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalPelamar) }}</span>
+                        @if($growthPelamar >= 0)
+                            <span class="inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 w-fit">
+                                <i class="ph ph-trend-up"></i> +{{ $growthPelamar }}%
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-rose-50 text-rose-700 w-fit">
+                                <i class="ph ph-trend-down"></i> {{ $growthPelamar }}%
+                            </span>
+                        @endif
                     </div>
                 </div>
-                <div class="flex items-baseline justify-between mb-3">
-                    <span class="text-3xl font-extrabold text-slate-900">{{ number_format($totalPelamar) }}</span>
-                    @if($growthPelamar >= 0)
-                        <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-                            <i class="ph ph-trend-up"></i> +{{ $growthPelamar }}%
-                        </span>
-                    @else
-                        <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">
-                            <i class="ph ph-trend-down"></i> {{ $growthPelamar }}%
-                        </span>
-                    @endif
-                </div>
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <div class="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
                     <span>Kandidat: <strong class="text-slate-800">{{ $totalKandidatAktif }}</strong></span>
-                    <span>Umum: <strong class="text-slate-800">{{ $totalPelamarReguler }}</strong></span>
+                    <span class="hidden min-[380px]:inline">Umum: <strong class="text-slate-800">{{ $totalPelamarReguler }}</strong></span>
                 </div>
             </div>
 
             <!-- Card 2: Perusahaan -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition duration-200">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Mitra Perusahaan</span>
-                    <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
-                        <i class="ph ph-buildings text-xl font-bold"></i>
+            <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2 sm:mb-3">
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Perusahaan</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-buildings text-lg sm:text-xl font-bold"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2 sm:mb-3">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalPerusahaan) }}</span>
+                        @if($growthPerusahaan >= 0)
+                            <span class="inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 w-fit">
+                                <i class="ph ph-trend-up"></i> +{{ $growthPerusahaan }}%
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-rose-50 text-rose-700 w-fit">
+                                <i class="ph ph-trend-down"></i> {{ $growthPerusahaan }}%
+                            </span>
+                        @endif
                     </div>
                 </div>
-                <div class="flex items-baseline justify-between mb-3">
-                    <span class="text-3xl font-extrabold text-slate-900">{{ number_format($totalPerusahaan) }}</span>
-                    @if($growthPerusahaan >= 0)
-                        <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-                            <i class="ph ph-trend-up"></i> +{{ $growthPerusahaan }}%
-                        </span>
-                    @else
-                        <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700">
-                            <i class="ph ph-trend-down"></i> {{ $growthPerusahaan }}%
-                        </span>
-                    @endif
-                </div>
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <div class="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
                     <span>Disetujui: <strong class="text-emerald-600">{{ $perusahaanApproved }}</strong></span>
-                    <span>Pending: <strong class="text-amber-600">{{ $perusahaanPending }}</strong></span>
+                    <span class="hidden min-[380px]:inline">Pending: <strong class="text-amber-600">{{ $perusahaanPending }}</strong></span>
                 </div>
             </div>
 
             <!-- Card 3: Lowongan Kerja -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition duration-200">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Lowongan Kerja</span>
-                    <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
-                        <i class="ph ph-briefcase text-xl font-bold"></i>
+            <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2 sm:mb-3">
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Lowongan</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-briefcase text-lg sm:text-xl font-bold"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2 sm:mb-3">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalLowongan) }}</span>
+                        <span class="inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 w-fit">
+                            {{ $lowonganBuka }} Buka
+                        </span>
                     </div>
                 </div>
-                <div class="flex items-baseline justify-between mb-3">
-                    <span class="text-3xl font-extrabold text-slate-900">{{ number_format($totalLowongan) }}</span>
-                    <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
-                        {{ $lowonganBuka }} Buka
-                    </span>
-                </div>
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+                <div class="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
                     <span>Aktif: <strong class="text-emerald-600">{{ $lowonganBuka }}</strong></span>
-                    <span>Ditutup: <strong class="text-slate-600">{{ $lowonganTutup }}</strong></span>
+                    <span>Tutup: <strong class="text-slate-600">{{ $lowonganTutup }}</strong></span>
                 </div>
             </div>
 
             <!-- Card 4: Staff & Admin -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition duration-200">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Manajemen Staff</span>
-                    <div class="w-10 h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center">
-                        <i class="ph ph-shield-check text-xl font-bold"></i>
+            <div class="bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2 sm:mb-3">
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider truncate">Tim Admin</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-violet-50 text-violet-600 flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-shield-check text-lg sm:text-xl font-bold"></i>
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-baseline justify-between gap-1 mb-2 sm:mb-3">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalAdmin + $totalSuperAdmin) }}</span>
+                        <span class="inline-flex items-center gap-0.5 text-[10px] sm:text-[11px] font-bold px-1.5 py-0.5 rounded-full bg-violet-50 text-violet-700 w-fit">
+                            Team
+                        </span>
                     </div>
                 </div>
-                <div class="flex items-baseline justify-between mb-3">
-                    <span class="text-3xl font-extrabold text-slate-900">{{ number_format($totalAdmin + $totalSuperAdmin) }}</span>
-                    <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full bg-violet-50 text-violet-700">
-                        Admin Team
-                    </span>
-                </div>
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-                    <span>Super Admin: <strong class="text-slate-800">{{ $totalSuperAdmin }}</strong></span>
+                <div class="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px] text-slate-500">
+                    <span>SA: <strong class="text-slate-800">{{ $totalSuperAdmin }}</strong></span>
                     <span>Admin: <strong class="text-slate-800">{{ $totalAdmin }}</strong></span>
                 </div>
             </div>
 
-            <!-- Card 5: Akun Freeze & Keamanan -->
-            <div class="bg-white rounded-2xl p-5 border border-slate-200/80 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition duration-200">
-                <div class="flex items-center justify-between mb-3">
-                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Status Keamanan</span>
-                    <div class="w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center">
-                        <i class="ph ph-lock-key text-xl font-bold"></i>
+            <!-- Card 5: Akun Freeze & Keamanan (Spans 2 cols on mobile) -->
+            <div class="col-span-2 lg:col-span-1 bg-white rounded-2xl p-3.5 sm:p-5 border border-slate-200/80 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2 sm:mb-3">
+                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 uppercase tracking-wider">Status Keamanan</span>
+                        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center flex-shrink-0">
+                            <i class="ph ph-lock-key text-lg sm:text-xl font-bold"></i>
+                        </div>
+                    </div>
+                    <div class="flex items-baseline justify-between gap-1 mb-2 sm:mb-3">
+                        <span class="text-2xl sm:text-3xl font-extrabold text-slate-900">{{ number_format($totalFreeze) }}</span>
+                        <span class="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold px-2 py-0.5 rounded-full {{ $totalFreeze > 0 ? 'bg-rose-50 text-rose-700' : 'bg-slate-100 text-slate-600' }}">
+                            {{ $totalFreeze > 0 ? $totalFreeze . ' Akun Freeze' : 'Aman' }}
+                        </span>
                     </div>
                 </div>
-                <div class="flex items-baseline justify-between mb-3">
-                    <span class="text-3xl font-extrabold text-slate-900">{{ number_format($totalFreeze) }}</span>
-                    <span class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full {{ $totalFreeze > 0 ? 'bg-rose-50 text-rose-700' : 'bg-slate-100 text-slate-600' }}">
-                        Akun Freeze
-                    </span>
-                </div>
-                <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px]">
+                <div class="pt-2 sm:pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] sm:text-[11px]">
                     <span class="text-slate-500">Total User: <strong class="text-slate-800">{{ $totalUsers }}</strong></span>
                     <a href="{{ route('superadmin.freeze') }}" class="text-[#00509d] hover:underline font-bold flex items-center gap-0.5">
                         Kelola <i class="ph ph-arrow-right"></i>
@@ -326,7 +341,7 @@
                 </div>
 
                 <!-- ApexChart Container -->
-                <div id="registrationTrendChart" class="w-full h-72"></div>
+                <div id="registrationTrendChart" class="w-full h-72" style="touch-action: pan-y !important;"></div>
             </div>
 
             <!-- Chart 2: Komposisi Kategori Pelamar (1 Span) -->
@@ -340,7 +355,7 @@
                     </div>
 
                     <!-- Donut Chart Container -->
-                    <div id="talentDonutChart" class="w-full h-56 flex items-center justify-center"></div>
+                    <div id="talentDonutChart" class="w-full h-56 flex items-center justify-center" style="touch-action: pan-y !important;"></div>
                 </div>
 
                 <!-- Quick Legend / Breakdown -->
@@ -385,7 +400,57 @@
                     </a>
                 </div>
 
-                <div class="overflow-x-auto">
+                {{-- Mobile App Card List (sm:hidden) --}}
+                <div class="block sm:hidden divide-y divide-slate-100">
+                    @forelse ($latestLowongans as $lowongan)
+                        <div class="py-3 flex flex-col gap-2">
+                            <div class="flex items-start justify-between gap-2">
+                                <div>
+                                    <h4 class="font-bold text-slate-900 text-xs leading-snug">{{ $lowongan->nama }}</h4>
+                                    <p class="text-[11px] text-slate-600 font-medium">{{ $lowongan->perusahaan->nama_perusahaan ?? '-' }}</p>
+                                </div>
+                                <span class="text-[10px] text-slate-400 whitespace-nowrap">
+                                    {{ $lowongan->created_at ? $lowongan->created_at->diffForHumans() : '-' }}
+                                </span>
+                            </div>
+
+                            <div class="flex flex-wrap items-center gap-1.5 text-[10px]">
+                                <span class="px-2 py-0.5 bg-blue-50 text-[#00509d] font-bold rounded-md">
+                                    {{ $lowongan->jenis ?? 'Full Time' }}
+                                </span>
+                                <span class="px-2 py-0.5 bg-slate-100 text-slate-600 font-medium rounded-md">
+                                    {{ $lowongan->kategori ?? 'Umum' }}
+                                </span>
+                                @if(($lowongan->status ?? 'buka') === 'buka')
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold bg-emerald-50 text-emerald-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Buka
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md font-bold bg-rose-50 text-rose-700">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Tutup
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="flex items-center justify-between pt-1">
+                                <span class="text-xs font-bold text-slate-800">
+                                    {{ $lowongan->label_gaji ?? ( 'Rp ' . number_format((float)($lowongan->gaji_awal ?? 0), 0, ',', '.') ) }}
+                                </span>
+                                <a href="{{ route('superadmin.lowongan.detail', ['perusahaan' => $lowongan->perusahaan_id ?? 1, 'lowongan' => $lowongan->id]) }}" 
+                                   class="inline-flex items-center gap-1 text-[11px] font-bold text-[#00509d] bg-blue-50 hover:bg-blue-100 px-2.5 py-1 rounded-lg transition active:scale-95">
+                                    Detail <i class="ph ph-arrow-right text-xs"></i>
+                                </a>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="py-6 text-center text-slate-400 text-xs">
+                            Belum ada lowongan kerja.
+                        </div>
+                    @endforelse
+                </div>
+
+                {{-- Desktop Table View (hidden sm:block) --}}
+                <div class="hidden sm:block overflow-x-auto">
                     <table class="w-full text-xs text-left">
                         <thead class="bg-slate-50 text-slate-500 font-bold uppercase border-b border-slate-200">
                             <tr>

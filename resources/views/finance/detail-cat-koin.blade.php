@@ -1,28 +1,38 @@
 @extends('finance.sidebar.index')
 @section('sidebar')
-    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6" 
+    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen bg-slate-50/70" 
          x-data="{ openCashModal: false, openKoinModal: false, detailCash: {}, detailKoin: {} }" 
          x-cloak>
 
         <!-- Top Header & Breadcrumb -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200/80">
-            <div class="flex items-center gap-3 flex-1">
-                <a href="{{ route('finance.catatan') }}"
-                   class="w-10 h-10 rounded-2xl bg-white border border-slate-200/80 hover:bg-blue-50/50 hover:border-[#00509d]/40 flex items-center justify-center text-slate-600 transition shadow-2xs">
-                    <i class="ph ph-arrow-left text-lg font-bold"></i>
-                </a>
-                <div>
-                    <div class="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-                        <a href="{{ route('finance.dashboard') }}" class="hover:text-[#00509d]">Finance</a>
-                        <span>/</span>
-                        <a href="{{ route('finance.catatan') }}" class="hover:text-[#00509d]">Catatan Transaksi</a>
-                        <span>/</span>
-                        <span class="text-slate-600 font-semibold">Semua Riwayat Lengkap</span>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('finance.catatan') }}"
+                       class="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-blue-50/50 hover:border-[#00509d]/40 flex items-center justify-center text-slate-600 transition shadow-2xs">
+                        <i class="ph ph-arrow-left text-lg font-bold"></i>
+                    </a>
+                    <div>
+                        <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
+                            <a href="{{ route('finance.dashboard') }}" class="hover:text-[#00509d]">Finance</a>
+                            <span>/</span>
+                            <a href="{{ route('finance.catatan') }}" class="hover:text-[#00509d]">Catatan</a>
+                            <span>/</span>
+                            <span class="text-slate-600 font-semibold">Riwayat</span>
+                        </div>
+                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight mt-0.5">Semua Riwayat Transaksi</h1>
                     </div>
-                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">Semua Riwayat Transaksi</h1>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('finance.components.notif_button')
                 </div>
             </div>
+            <div class="hidden sm:flex items-center gap-3">
+                @include('finance.components.notif_button')
+                @include('finance.components.user_badge_dropdown')
+            </div>
         </header>
+
 
         <div class="space-y-8">
 

@@ -62,7 +62,7 @@
     };
 @endphp
 
-<main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+<main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
     {{-- Top Navigation & Header Bar --}}
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
@@ -83,7 +83,7 @@
             </h1>
         </div>
 
-        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-between sm:justify-end">
+        <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
             <div class="flex items-center gap-2">
                 <a href="{{ route('superadmin.add.user') }}"
                    class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition duration-150">

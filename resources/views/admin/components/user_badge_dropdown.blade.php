@@ -2,7 +2,7 @@
     Komponen: User Badge Dropdown untuk Admin Topbar
     Usage: @include('admin.components.user_badge_dropdown')
 --}}
-<div class="relative" x-data="{ openUserMenu: false }">
+<div class="relative hidden sm:block" x-data="{ openUserMenu: false }">
     {{-- Trigger Badge --}}
     <button @click="openUserMenu = !openUserMenu"
         class="flex items-center gap-2 bg-white border border-gray-300 shadow-sm rounded-2xl px-3 py-1.5 transition hover:border-[#00509d] focus:outline-none"

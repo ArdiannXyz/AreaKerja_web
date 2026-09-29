@@ -1,6 +1,6 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-gray-50 overflow-y-auto min-h-screen" x-data="{ 
+    <main class="flex-1 p-6 sm:ml-64 bg-gray-50 overflow-y-auto" x-data="{ 
         openNotif: false,
         openDeleteModal: false,
         search: '',
@@ -57,20 +57,23 @@
         }
     }">
         <!-- Topbar Header -->
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-900 tracking-tight">Email Subscribers</h1>
-                <p class="text-sm text-gray-500 mt-1">Kelola daftar email newsletter dan pelanggan berita lowongan AreaKerja</p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-2xl font-bold text-gray-900 tracking-tight">Email Subscribers</h1>
+                    <p class="text-xs sm:text-sm text-gray-500 mt-1">Kelola daftar email newsletter dan pelanggan berita lowongan AreaKerja</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
             </div>
-
-            <div class="flex items-center gap-3 self-end md:self-auto">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
                 @include('super_admin.components.notif_button')
-
                 {{-- User Badge Dropdown --}}
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
         @if (session('success'))
             <div class="mb-6 p-4 bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-xl flex items-center gap-3 text-sm shadow-sm animate-fade-in">

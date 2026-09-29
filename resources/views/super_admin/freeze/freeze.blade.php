@@ -1,16 +1,21 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
-            <div>
-                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">Akun Freeze</h1>
-                <p class="text-xs text-slate-400 mt-0.5">
-                    Kelola dan pantau status akun yang dibekukan atau dibanned
-                </p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight">Akun Freeze</h1>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+                        Kelola dan pantau status akun yang dibekukan atau dibanned
+                    </p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>
@@ -130,17 +135,17 @@
         <!-- Data Table -->
         <div class="bg-white rounded-2xl border border-slate-100 shadow-xs overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left">
+                <table class="w-full text-sm text-left min-w-[750px]">
                     <thead class="bg-slate-50 border-b border-slate-100">
                         <tr class="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                            <th class="px-5 py-3.5 w-12 text-center">No</th>
-                            <th class="px-5 py-3.5">Username</th>
-                            <th class="px-5 py-3.5">Email</th>
-                            <th class="px-5 py-3.5">Role</th>
-                            <th class="px-5 py-3.5">Telepon</th>
-                            <th class="px-5 py-3.5">Alamat</th>
-                            <th class="px-5 py-3.5 text-center">Status</th>
-                            <th class="px-5 py-3.5 text-center">Aksi</th>
+                            <th class="px-3.5 py-3 w-10 text-center">No</th>
+                            <th class="px-3.5 py-3">Username</th>
+                            <th class="px-3.5 py-3">Email</th>
+                            <th class="px-3.5 py-3">Role</th>
+                            <th class="px-3.5 py-3">Telepon</th>
+                            <th class="px-3.5 py-3">Alamat</th>
+                            <th class="px-3.5 py-3 text-center">Status</th>
+                            <th class="px-3.5 py-3 text-center min-w-[70px]">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -165,11 +170,11 @@
                                 }
                             @endphp
                             <tr class="hover:bg-slate-50/60 transition duration-150">
-                                <td class="px-5 py-3.5 text-center text-slate-400 text-xs font-medium">{{ $i + 1 }}</td>
-                                <td class="px-5 py-3.5 font-medium text-slate-800">{{ $d->username }}</td>
-                                <td class="px-5 py-3.5 text-slate-600 text-xs">{{ $d->email }}</td>
-                                <td class="px-5 py-3.5">
-                                    <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
+                                <td class="px-3.5 py-3 text-center text-slate-400 text-xs font-medium">{{ $i + 1 }}</td>
+                                <td class="px-3.5 py-3 font-medium text-slate-800">{{ $d->username }}</td>
+                                <td class="px-3.5 py-3 text-slate-600 text-xs">{{ $d->email }}</td>
+                                <td class="px-3.5 py-3">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-semibold
                                         {{ in_array($d->role, ['superadmin', 'super_admin']) ? 'bg-purple-100 text-purple-700' : 
                                            ($d->role === 'finance' ? 'bg-amber-100 text-amber-700' : 
                                            ($d->role === 'perusahaan' ? 'bg-emerald-100 text-emerald-700' : 
@@ -177,7 +182,7 @@
                                         {{ ucfirst($d->role) }}
                                     </span>
                                 </td>
-                                <td class="px-5 py-3.5 text-slate-600 text-xs">
+                                <td class="px-3.5 py-3 text-slate-600 text-xs">
                                     @if ($d->role == 'pelamar')
                                         {{ $d->pelamar->telepon_pelamar ?? '-' }}
                                     @elseif ($d->role == 'perusahaan')
@@ -186,19 +191,19 @@
                                         -
                                     @endif
                                 </td>
-                                <td class="px-5 py-3.5 text-slate-500 text-xs max-w-[160px] truncate">{{ $provinsi }}</td>
-                                <td class="px-5 py-3.5 text-center">
+                                <td class="px-3.5 py-3 text-slate-500 text-xs max-w-[140px] truncate">{{ $provinsi }}</td>
+                                <td class="px-3.5 py-3 text-center">
                                     @if ($d->status == 0)
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold bg-emerald-100 text-emerald-700">
                                             <i class="ph ph-check-circle"></i> Aktif
                                         </span>
                                     @else
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-rose-100 text-rose-700">
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-xs font-semibold bg-rose-100 text-rose-700">
                                             <i class="ph ph-prohibit"></i> Banned
                                         </span>
                                     @endif
                                 </td>
-                                <td class="px-5 py-3.5 text-center">
+                                <td class="px-3.5 py-3 text-center whitespace-nowrap">
                                     <a href="{{ route('superadmin.detail.freeze', $d->id) }}"
                                        title="Lihat Detail"
                                        class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 hover:bg-[#00509d] text-slate-600 hover:text-white transition">

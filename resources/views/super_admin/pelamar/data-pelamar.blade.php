@@ -1,16 +1,18 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-[#f8fafc] min-h-screen overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-[#f8fafc] overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
 
         {{-- TOP NAVIGATION & ADMIN USER BAR --}}
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 pb-4 border-b border-slate-200">
+        <div class="flex justify-between items-center mb-4 sm:mb-6 gap-3 pb-3 sm:pb-4 border-b border-slate-200">
             <div>
-                <h1 class="text-2xl font-bold text-slate-800 tracking-tight">Data Kandidat</h1>
-                <p class="text-xs text-slate-500 mt-0.5">Kelola seluruh data pelamar, calon kandidat, dan kandidat aktif</p>
+                <h1 class="text-lg sm:text-2xl font-bold text-slate-800 tracking-tight">Data Kandidat</h1>
+                <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Kelola seluruh data pelamar & kandidat aktif</p>
             </div>
-            <div class="flex items-center gap-3 self-end sm:self-auto">
+            <div class="flex items-center gap-2 sm:gap-3">
                 @include('super_admin.components.notif_button')
-                @include('super_admin.components.user_badge_dropdown')
+                <div class="hidden sm:block">
+                    @include('super_admin.components.user_badge_dropdown')
+                </div>
             </div>
         </div>
 
@@ -143,9 +145,9 @@
             </div>
         </div>
 
-        {{-- STATS SUMMARY CARDS --}}
-        <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3">
+        {{-- STATS SUMMARY CARDS (Mobile Friendly) --}}
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-4 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
@@ -153,10 +155,10 @@
                 </div>
                 <div>
                     <p class="text-xs text-slate-500 font-medium">Kandidat Aktif</p>
-                    <p class="text-xl font-bold text-slate-900">{{ $kandidat->count() }}</p>
+                    <p class="text-lg sm:text-xl font-bold text-slate-900">{{ $kandidat->count() }}</p>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-4 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -164,10 +166,10 @@
                 </div>
                 <div>
                     <p class="text-xs text-slate-500 font-medium">Total Pelamar</p>
-                    <p class="text-xl font-bold text-slate-900">{{ $nonKandidat->count() }}</p>
+                    <p class="text-lg sm:text-xl font-bold text-slate-900">{{ $nonKandidat->count() }}</p>
                 </div>
             </div>
-            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex items-center gap-3">
+            <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-4 flex items-center gap-3">
                 <div class="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -175,7 +177,7 @@
                 </div>
                 <div>
                     <p class="text-xs text-slate-500 font-medium">Calon Kandidat</p>
-                    <p class="text-xl font-bold text-slate-900">{{ $calonKandidat->count() }}</p>
+                    <p class="text-lg sm:text-xl font-bold text-slate-900">{{ $calonKandidat->count() }}</p>
                 </div>
             </div>
         </div>

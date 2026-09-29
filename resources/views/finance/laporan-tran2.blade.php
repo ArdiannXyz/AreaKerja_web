@@ -1,33 +1,39 @@
 @extends('finance.sidebar.index')
 @section('sidebar')
-    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6">
-
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen">
         <!-- Top Header & Breadcrumb -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-slate-200/80">
-            <div class="flex items-center gap-3 flex-1">
-                <a href="{{ route('finance.laporan') }}"
-                   class="w-10 h-10 rounded-2xl bg-white border border-slate-200/80 hover:bg-blue-50/50 hover:border-[#00509d]/40 flex items-center justify-center text-slate-600 transition shadow-2xs">
-                    <i class="ph ph-arrow-left text-lg font-bold"></i>
-                </a>
-                <div>
-                    <div class="flex items-center gap-1.5 text-xs text-slate-400 font-medium">
-                        <a href="{{ route('finance.dashboard') }}" class="hover:text-[#00509d]">Finance</a>
-                        <span>/</span>
-                        <a href="{{ route('finance.laporan') }}" class="hover:text-[#00509d]">Laporan Transaksi</a>
-                        <span>/</span>
-                        <span class="text-slate-600 font-semibold">Rincian {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</span>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('finance.laporan') }}"
+                       class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0"
+                       title="Kembali">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Rincian Laporan Transaksi Harian</h1>
+                        <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Rincian {{ \Carbon\Carbon::parse($tanggal)->translatedFormat('d F Y') }}</p>
                     </div>
-                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mt-0.5">
-                        Rincian Laporan Transaksi Harian
-                    </h1>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    <a href="{{ route('finance.laporan.unduh', ['tanggal' => $tanggal]) }}"
+                        class="inline-flex items-center p-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-xs"
+                        title="Unduh PDF">
+                        <i class="ph ph-download-simple text-base"></i>
+                    </a>
+                    @include('finance.components.notif_button')
                 </div>
             </div>
 
-            <a href="{{ route('finance.laporan.unduh', ['tanggal' => $tanggal]) }}"
-                class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl transition shadow-xs">
-                <i class="ph-bold ph-download-simple text-base"></i>
-                <span>Unduh Salinan PDF</span>
-            </a>
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
+                <a href="{{ route('finance.laporan.unduh', ['tanggal' => $tanggal]) }}"
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-xs">
+                    <i class="ph ph-download-simple text-base"></i>
+                    <span>Unduh PDF</span>
+                </a>
+                @include('finance.components.notif_button')
+                @include('finance.components.user_badge_dropdown')
+            </div>
         </header>
 
         <!-- Company & Meta Header Card -->
@@ -155,6 +161,6 @@
             </div>
         </div>
 
-    </div>
+    </main>
 @endsection
 

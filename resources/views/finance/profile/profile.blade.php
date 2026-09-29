@@ -1,5 +1,5 @@
-@extends('admin.sidebar.index')
-@section('sidebaradmin')
+@extends('finance.sidebar.index')
+@section('sidebar')
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         {{-- Header Top Bar --}}
@@ -7,17 +7,17 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
-                        <i class="ph ph-user text-[#00509d] text-lg sm:text-2xl"></i> Profil Admin
+                        <i class="ph ph-user text-[#00509d] text-lg sm:text-2xl"></i> Profil Finance
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Informasi akun dan data administrator Anda</p>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Informasi akun dan data finance Anda</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
-                    @include('admin.components.notif_button')
+                    @include('finance.components.notif_button')
                 </div>
             </div>
             <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
-                @include('admin.components.notif_button')
-                @include('admin.components.user_badge_dropdown')
+                @include('finance.components.notif_button')
+                @include('finance.components.user_badge_dropdown')
             </div>
         </header>
 
@@ -35,7 +35,7 @@
             {{-- Avatar & Basic Info --}}
             <div class="flex flex-col sm:flex-row items-center gap-5 pb-6 border-b border-slate-100 mb-6 text-center sm:text-left">
                 @php
-                    $profileImg = Auth::user()->avatar ?? (Auth::user()->admin?->img_profile ?? null);
+                    $profileImg = Auth::user()->avatar ?? (Auth::user()->finance?->img_profile ?? null);
                 @endphp
 
                 @if ($profileImg)
@@ -43,17 +43,17 @@
                         src="{{ asset('storage/' . $profileImg) }}" alt="Profile Photo">
                 @else
                     <div class="w-20 h-20 rounded-2xl bg-gradient-to-tr from-[#00509d] to-[#003d7a] flex items-center justify-center text-white font-bold text-2xl shadow-xs">
-                        {{ strtoupper(substr(Auth::user()->username ?? 'A', 0, 2)) }}
+                        {{ strtoupper(substr(Auth::user()->username ?? 'FN', 0, 2)) }}
                     </div>
                 @endif
 
                 <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-center sm:justify-start gap-2">
                         <h2 class="font-bold text-lg text-slate-900 truncate">
-                            {{ Auth::user()->admin?->nama_lengkap ?: Auth::user()->username }}
+                            {{ Auth::user()->finance?->nama_lengkap ?: Auth::user()->username }}
                         </h2>
                         <span class="inline-flex items-center px-2 py-0.5 bg-blue-50 text-[#00509d] font-bold text-[10px] rounded-lg border border-blue-100">
-                            Administrator
+                            Finance
                         </span>
                     </div>
                     <p class="text-xs font-semibold text-slate-500 mt-1 flex items-center justify-center sm:justify-start gap-1.5">
@@ -91,7 +91,7 @@
                 {{-- Row 2: Nama Lengkap --}}
                 <div>
                     <label class="block mb-1.5 text-xs font-bold text-slate-600 uppercase tracking-wider">Nama Lengkap</label>
-                    <input type="text" value="{{ Auth::user()->admin?->nama_lengkap ?? '-' }}" disabled readonly
+                    <input type="text" value="{{ Auth::user()->finance?->nama_lengkap ?? '-' }}" disabled readonly
                         class="w-full border border-slate-200 bg-slate-50 text-slate-700 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                 </div>
 
@@ -106,21 +106,21 @@
                         <div>
                             <label class="block mb-1 text-xs font-semibold text-slate-500">Provinsi</label>
                             <input type="text" disabled readonly
-                                value="{{ Auth::user()->admin?->provinsi?->nama ?? 'Belum Dilengkapi' }}"
+                                value="{{ Auth::user()->finance?->provinsi?->nama ?? 'Belum Dilengkapi' }}"
                                 class="w-full border border-slate-200 bg-slate-50 text-slate-700 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                         </div>
 
                         <div>
                             <label class="block mb-1 text-xs font-semibold text-slate-500">Kota / Kabupaten</label>
                             <input type="text" disabled readonly
-                                value="{{ Auth::user()->admin?->kota?->nama ?? 'Belum Dilengkapi' }}"
+                                value="{{ Auth::user()->finance?->kota?->nama ?? 'Belum Dilengkapi' }}"
                                 class="w-full border border-slate-200 bg-slate-50 text-slate-700 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                         </div>
 
                         <div>
                             <label class="block mb-1 text-xs font-semibold text-slate-500">Kecamatan</label>
                             <input type="text" disabled readonly
-                                value="{{ Auth::user()->admin?->kecamatan?->nama ?? 'Belum Dilengkapi' }}"
+                                value="{{ Auth::user()->finance?->kecamatan?->nama ?? 'Belum Dilengkapi' }}"
                                 class="w-full border border-slate-200 bg-slate-50 text-slate-700 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                         </div>
                     </div>
@@ -129,13 +129,13 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label class="block mb-1 text-xs font-semibold text-slate-500">Desa / Kelurahan</label>
-                            <input type="text" disabled readonly value="{{ Auth::user()->admin?->desa ?? '-' }}"
+                            <input type="text" disabled readonly value="{{ Auth::user()->finance?->desa ?? '-' }}"
                                 class="w-full border border-slate-200 bg-slate-50 text-slate-700 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                         </div>
 
                         <div>
                             <label class="block mb-1 text-xs font-semibold text-slate-500">Kode Pos</label>
-                            <input type="text" disabled readonly value="{{ Auth::user()->admin?->kode_pos ?? '-' }}"
+                            <input type="text" disabled readonly value="{{ Auth::user()->finance?->kode_pos ?? '-' }}"
                                 class="w-full border border-slate-200 bg-slate-50 text-slate-700 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                         </div>
                     </div>
@@ -143,7 +143,7 @@
                     {{-- Alamat Lengkap --}}
                     <div>
                         <label class="block mb-1 text-xs font-semibold text-slate-500">Alamat Lengkap</label>
-                        <input type="text" disabled readonly value="{{ Auth::user()->admin?->detail_alamat ?? '-' }}"
+                        <input type="text" disabled readonly value="{{ Auth::user()->finance?->detail_alamat ?? '-' }}"
                             class="w-full border border-slate-200 bg-slate-50 text-slate-700 rounded-xl px-4 py-2.5 text-xs font-semibold cursor-not-allowed select-none">
                     </div>
                 </div>
@@ -152,7 +152,7 @@
 
             {{-- Edit Profil Button --}}
             <div class="flex justify-end pt-6 border-t border-slate-100 mt-6">
-                <a href="{{ route('admin.edit.profile') }}"
+                <a href="{{ route('finance.edit.profile') }}"
                    class="inline-flex items-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-xs px-6 py-2.5 rounded-xl shadow-xs transition">
                     <i class="ph ph-pencil-simple text-sm"></i> Edit Profil
                 </a>
@@ -160,7 +160,5 @@
 
         </div>
 
-        @include('admin.notif.modal_notif')
-        @include('admin.notif.modal_semua')
     </main>
 @endsection

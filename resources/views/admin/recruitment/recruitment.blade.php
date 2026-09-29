@@ -3,21 +3,26 @@
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- HEADER TOP BAR -->
-        <header class="w-full flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-8 bg-white p-5 rounded-2xl border border-slate-200/80 shadow-xs">
-            <div class="flex items-center gap-3">
-                <a href="{{ route('admin.recruitment.perusahaan') }}"
-                   class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0"
-                   title="Kembali ke Perusahaan Recruitment">
-                    <i class="ph ph-arrow-left text-base"></i>
-                </a>
-                <div>
-                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <i class="ph ph-users text-[#00509d] text-2xl"></i> Recruitment - {{ $perusahaan->nama_perusahaan }}
-                    </h1>
-                    <p class="text-xs font-semibold text-slate-500 mt-1">Daftar kandidat yang telah direkrut oleh perusahaan ini</p>
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('admin.recruitment.perusahaan') }}"
+                       class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0"
+                       title="Kembali ke Perusahaan Recruitment">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
+                            <i class="ph ph-users text-[#00509d] text-lg sm:text-2xl"></i> Recruitment - {{ $perusahaan->nama_perusahaan }}
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Daftar kandidat yang telah direkrut oleh perusahaan ini</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('admin.components.notif_button')
                 </div>
             </div>
-            <div class="flex items-center gap-4 w-full md:w-auto justify-end">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('admin.components.notif_button')
                 @include('admin.components.user_badge_dropdown')
             </div>
@@ -134,7 +139,7 @@
         <!-- Table Card -->
         <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-sm">
+                <table class="w-full min-w-[700px] text-left border-collapse text-sm">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-500 uppercase tracking-wider">
                             <th class="px-5 py-4 text-center w-16">ID</th>

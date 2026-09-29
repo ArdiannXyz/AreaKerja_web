@@ -39,12 +39,29 @@ class ManajemenLowonganController extends Controller
         return view('super_admin.manajemenlowongan.settinglowongangold', $data);
     }
 
+    private function calculateBatasListing(Request $request): int
+    {
+        if ($request->filled('durasi_nilai')) {
+            $nilai = max(1, (int) $request->durasi_nilai);
+            $satuan = $request->input('durasi_satuan', 'hari');
+            $multiplier = match ($satuan) {
+                'minggu' => 7,
+                'bulan'  => 30,
+                'tahun'  => 365,
+                default  => 1,
+            };
+            return $nilai * $multiplier;
+        }
+
+        return max(1, (int) $request->input('batas_listing', 30));
+    }
+
     public function updateGold(Request $request)
     {
         $paket = PaketLowongan::where('nama', 'Gold')->firstOrFail();
 
         $paket->update([
-            'batas_listing' => $request->batas_listing,
+            'batas_listing' => $this->calculateBatasListing($request),
             'benefit' => $request->benefit,
         ]);
 
@@ -56,7 +73,7 @@ class ManajemenLowonganController extends Controller
         $paket = PaketLowongan::where('nama', 'Silver')->firstOrFail();
 
         $paket->update([
-            'batas_listing' => $request->batas_listing,
+            'batas_listing' => $this->calculateBatasListing($request),
             'benefit' => $request->benefit,
         ]);
 
@@ -68,7 +85,7 @@ class ManajemenLowonganController extends Controller
         $paket = PaketLowongan::where('nama', 'Bronze')->firstOrFail();
 
         $paket->update([
-            'batas_listing' => $request->batas_listing,
+            'batas_listing' => $this->calculateBatasListing($request),
             'benefit' => $request->benefit,
         ]);
 
