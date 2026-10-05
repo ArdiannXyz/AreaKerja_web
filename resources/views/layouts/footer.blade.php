@@ -227,10 +227,11 @@
             {{-- COL 1: Brand --}}
             <div class="lg:col-span-2 xl:col-span-2 space-y-5 pr-4">
                 {{-- Logo --}}
-                <a href="{{ route('beranda') }}" class="inline-block" aria-label="AreaKerja Beranda">
+                <a href="{{ route('beranda') }}" class="inline-flex items-center gap-2.5" aria-label="AreaKerja Beranda">
                     <img src="{{ asset('images/logo_area_kerja_putih.png') }}"
                          alt="AreaKerja Logo"
-                         class="h-5 w-auto object-contain">
+                         class="h-7 w-auto object-contain">
+                    <span class="font-bold text-xl text-white tracking-tight">areakerja.com</span>
                 </a>
 
                 {{-- Tagline --}}
@@ -381,13 +382,14 @@
         <div class="lg:hidden">
 
             {{-- Brand --}}
-            <div class="flex items-start gap-4 mb-8">
-                <a href="{{ route('beranda') }}" aria-label="AreaKerja Beranda">
+            <div class="space-y-3 mb-8">
+                <a href="{{ route('beranda') }}" class="inline-flex items-center gap-2.5" aria-label="AreaKerja Beranda">
                     <img src="{{ asset('images/logo_area_kerja_putih.png') }}"
                          alt="AreaKerja Logo"
-                         class="h-5 w-auto object-contain">
+                         class="h-6 w-auto object-contain">
+                    <span class="font-bold text-lg text-white tracking-tight">areakerja.com</span>
                 </a>
-                <p class="text-white/65 text-xs leading-relaxed mt-0.5">
+                <p class="text-white/65 text-xs leading-relaxed">
                     Temukan peluang kerja yang tepat dan bangun kariermu bersama AreaKerja.
                 </p>
             </div>

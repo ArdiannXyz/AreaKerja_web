@@ -69,10 +69,11 @@
 
             {{-- COL 1: Brand --}}
             <div class="col-span-2 md:col-span-4 lg:col-span-2 space-y-5 pr-4">
-                <a href="{{ route('perusahaan.dashboard') }}" class="inline-block" aria-label="Dashboard Perusahaan">
+                <a href="{{ route('perusahaan.dashboard') }}" class="inline-flex items-center gap-2.5" aria-label="Dashboard Perusahaan">
                     <img src="{{ asset('images/logo_area_kerja_putih.png') }}"
                          alt="AreaKerja Logo"
                          class="h-7 w-auto object-contain">
+                    <span class="font-bold text-xl text-white tracking-tight">areakerja.com</span>
                 </a>
                 <p class="text-white/70 text-sm leading-relaxed max-w-xs">
                     Kelola lowongan, temukan kandidat terbaik, dan kembangkan tim Anda bersama AreaKerja.
