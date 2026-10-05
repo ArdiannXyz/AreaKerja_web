@@ -15,6 +15,7 @@ use App\Http\Controllers\LupaPasswordController;
 use App\Http\Controllers\ManajemenLowonganController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\PelamarLowonganController;
+use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PembeliKandidatController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\PengalamanOrgController;
@@ -407,6 +408,14 @@ Route::prefix('finance')->middleware('auth', 'role:finance', 'CheckUserStatus')-
         //unduh omset pdf
         Route::get('/page/unduh/omset', 'pageUnduhOmset')->name('finance.omset.unduh.pdf');
     });
+
+    //METODE PEMBAYARAN / REKENING BANK
+    Route::controller(PembayaranController::class)->group(function () {
+        Route::get('/bank', 'index')->name('finance.bank.index');
+        Route::post('/bank', 'store')->name('finance.bank.store');
+        Route::put('/bank/{id}', 'update')->name('finance.bank.update');
+        Route::delete('/bank/{id}', 'destroy')->name('finance.bank.destroy');
+    });
 });
 /**---------------------------------------- END FINANCE PREFIX -------------------------------------*/
 
@@ -458,13 +467,13 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/kandidat', 'halKandidat')->name('admin.kandidat');
         Route::get('/kandidat/{id}', 'detailKandidat')->name('admin.detail.kandidat');
 
-        //finance
-        Route::get('/finance', 'koinHal')->name('admin.finance');
-        Route::get('/finance/koin/detail/{id}', function ($id) {
-            $data = App\Models\CatatanKoin::findOrFail($id);
-            return response()->json($data);
-        })->name('admin.finance.koin.detail');
-        Route::get('/finance/tunai', 'cashHal')->name('admin.finance.cash');
+        //finance redirect (urusan transaksi & keuangan terpusat di role finance)
+        Route::get('/finance', function () {
+            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
+        })->name('admin.finance');
+        Route::get('/finance/tunai', function () {
+            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
+        })->name('admin.finance.cash');
 
         //provinsi kota kecamatan
         Route::get('/get-kota/{provinsi_id}', 'getKota')->name('admin.get.kota')->middleware('auth');
