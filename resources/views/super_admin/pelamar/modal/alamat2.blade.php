@@ -1,4 +1,4 @@
-<!-- Main modal -->
+﻿<!-- Main modal -->
 <div id="create_alamatmodal2" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -31,20 +31,20 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Label</label>
                         <input type="text" name="label"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 mb-3"
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3"
                             required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Desa</label>
                         <input type="text" name="desa"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 mb-3"
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3"
                             required>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Kecamatan</label>
                         <input type="text" name="kecamatan"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 mb-3"
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3"
                             required>
                     </div>
 
@@ -52,30 +52,30 @@
                         <div>
                             <label class="block text-sm font-medium text-gray-900 mb-1">Kota/Kabupaten</label>
                             <input type="text" name="kota"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 mb-3"
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3"
                                 required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-900 mb-1">Provinsi</label>
                             <input type="text" name="provinsi"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 mb-3">
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-900 mb-1">Kode Pos</label>
                             <input type="text" name="kode_pos"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 mb-3">
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Detaik Alamat</label>
                         <textarea name="detail" rows="4"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 mb-3"></textarea>
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 mb-3"></textarea>
                     </div>
 
                     <div class="flex justify-end">
                         <button type="submit"
-                            class="bg-orange-500 font-medium hover:bg-orange-600 text-white px-5 py-2 rounded-lg shadow-md transition">
+                            class="bg-blue-700 font-medium hover:bg-blue-800 text-white px-5 py-2 rounded-lg shadow-md transition">
                             Simpan
                         </button>
                     </div>

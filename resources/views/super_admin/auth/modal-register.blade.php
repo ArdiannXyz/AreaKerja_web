@@ -1,4 +1,4 @@
-<!-- Modal -->
+﻿<!-- Modal -->
 <div id="super_admin_regisModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50">
     <!-- Konten Modal -->
     <div class="relative bg-white rounded-2xl shadow-lg w-[90%] max-w-md p-8 text-center animate-fadeIn">
@@ -25,7 +25,7 @@
         <!-- Tombol aksi -->
         <div class="flex justify-center gap-6">
             <button onclick="location.href = '{{ url('super_admin/login') }}'"
-                class="px-6 py-2 bg-orange-500 text-white rounded-full font-medium shadow hover:bg-orange-600">
+                class="px-6 py-2 bg-blue-700 text-white rounded-full font-medium shadow hover:bg-blue-800">
                 Masuk
             </button>
         </div>

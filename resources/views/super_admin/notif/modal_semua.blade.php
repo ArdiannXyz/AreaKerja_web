@@ -1,4 +1,4 @@
-<!-- Modal Semua Notifikasi -->
+﻿<!-- Modal Semua Notifikasi -->
 <div x-data="notifHandler()" x-cloak x-show="openAllNotif"
     class="fixed inset-0 z-50 flex items-start justify-center p-2 sm:p-4 bg-black/30" @click.self="openAllNotif = false">
 
@@ -39,7 +39,7 @@
         <!-- Footer -->
         <div class="p-3 border-t flex justify-between items-center">
 
-            <button @click="hapusSemuaBaca()" class="text-xs sm:text-sm text-orange-600 hover:underline">
+            <button @click="hapusSemuaBaca()" class="text-xs sm:text-sm text-blue-800 hover:underline">
                 Hapus Semua Dibaca
             </button>
 

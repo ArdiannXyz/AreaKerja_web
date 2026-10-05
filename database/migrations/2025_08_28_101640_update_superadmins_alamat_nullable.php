@@ -19,13 +19,15 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::table('superadmins', function (Blueprint $table) {
-            $table->string('provinsi')->change();
-            $table->string('kota')->change();
-            $table->string('kecamatan')->change();
-            $table->string('desa')->change();
-            $table->string('kode_pos')->change();
-            $table->string('detail_alamat')->change();
-        });
+        if (Schema::hasTable('superadmins')) {
+            Schema::table('superadmins', function (Blueprint $table) {
+                $table->string('provinsi')->change();
+                $table->string('kota')->change();
+                $table->string('kecamatan')->change();
+                $table->string('desa')->change();
+                $table->string('kode_pos')->change();
+                $table->string('detail_alamat')->change();
+            });
+        }
     }
 };

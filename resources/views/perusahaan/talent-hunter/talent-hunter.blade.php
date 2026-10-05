@@ -14,12 +14,12 @@
                 <p class="text-sm mt-4">Daftarkan perusahaan anda dan biar kami</p>
                 <p class="text-sm"> yang mencarikan kandidat yang cocok untuk anda</p><br>
                 <button id="btnDaftarTH">
-                    <span class="bg-orange-500 hover:bg-orange-600 text-sm px-8 py-2 rounded-lg">Daftar</span>
+                    <span class="bg-[#00509d] hover:bg-[#003d7a] text-sm px-8 py-2 rounded-lg">Daftar</span>
                 </button>
             </div>
         </section>
     </div>
-    <section class="w-full text-white py-20" style="background: linear-gradient(to right, orange, #ff7b00)">
+    <section class="w-full text-white py-20 bg-[#00509d]">
         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center px-6">
 
             <div class="flex justify-center">
@@ -73,158 +73,180 @@
                 </div>
                 <!-- Modal Konfirmasi Pembelian -->
                 <div id="modalBeli"
-                    class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition">
-                    <div class="bg-white rounded-2xl shadow-xl p-8 w-[420px] scale-[0.85] sm:scale-100 animate-[fadeIn_0.2s_ease-out]">
-
+                    class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 transition-all">
+                    <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-md border border-slate-100 text-center animate-fadeIn relative">
                         <!-- Icon -->
-                        <div
-                            class="w-16 h-16 bg-green-100 text-green-600 flex items-center justify-center rounded-full mx-auto mb-4">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" viewBox="0 0 24 24"
-                                fill="currentColor">
-                                <path
-                                    d="M12 1.5A10.5 10.5 0 1022.5 12 10.513 10.513 0 0012 1.5zm3.712 9.03l-4.2 4.2a.75.75 0 01-1.06 0l-2.1-2.1a.75.75 0 111.06-1.06l1.57 1.57 3.67-3.67a.75.75 0 111.06 1.06z" />
-                            </svg>
+                        <div class="w-16 h-16 bg-blue-50 text-[#00509d] border-2 border-blue-100 flex items-center justify-center rounded-2xl mx-auto mb-4">
+                            <i class="ph ph-shopping-cart-simple text-3xl font-bold"></i>
                         </div>
 
-                        <h2 class="text-xl font-bold text-gray-800 text-center mb-2">Konfirmasi Pembelian</h2>
-                        <p class="text-gray-600 text-center mb-6">Harga paket Talent Hunter:</p>
+                        <h2 class="text-xl font-extrabold text-slate-900 mb-1">Konfirmasi Pembelian</h2>
+                        <p class="text-xs text-slate-500 mb-6">Biaya layanan Talent Hunter:</p>
 
-                        <div class="text-3xl font-bold text-orange-500 text-center mb-6">
-                            <span id="hargaTH"></span> <span class="text-lg text-gray-500">koin</span>
+                        <div class="bg-blue-50/50 border border-blue-100 rounded-2xl py-4 px-6 mb-6">
+                            <div class="text-3xl font-extrabold text-[#00509d]">
+                                <span id="hargaTH">500</span> <span class="text-base font-bold text-slate-500">Koin</span>
+                            </div>
                         </div>
 
-                        <div class="flex gap-3">
-                            <button id="btnConfirmBeli"
-                                class="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold transition">
-                                Beli Sekarang
-                            </button>
+                        <div class="flex items-center gap-3">
                             <button onclick="closeModal('modalBeli')"
-                                class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 py-2.5 rounded-lg font-semibold transition">
+                                class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
                                 Batal
+                            </button>
+                            <button id="btnConfirmBeli"
+                                class="w-1/2 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold rounded-xl text-sm shadow-sm transition">
+                                Beli Sekarang
                             </button>
                         </div>
                     </div>
                 </div>
 
-
                 <!-- Modal Form Talent Hunter -->
                 <div id="modalFormTH"
-                    class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 px-4">
-       <div class="bg-white rounded-2xl shadow-xl p-8 
-            w-[500px] max-w-full
-            scale-[0.85] md:scale-100
-            max-h-[90vh] overflow-y-auto
-            animate-fadeIn relative">
+                    class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 transition-all">
+                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] border border-slate-100 animate-fadeIn relative">
 
-
-
-
-                        <!-- Close -->
-                        <button onclick="document.getElementById('modalFormTH').classList.add('hidden')"
-                            class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 transition text-xl">
-                            ✕
-                        </button>
-
-                        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Form Talent Hunter</h2>
-
-                        <form id="formTalentHunter" class="space-y-4">
-
-                            <!-- Alamat -->
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Alamat</label>
-                                <input type="text" name="alamat"
-                                    class="w-full border rounded-lg px-3 py-2 text-gray-800 bg-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
-                                    placeholder="Masukkan alamat">
-                            </div>
-
-                            <!-- Posisi -->
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Posisi</label>
-                                <input type="text" name="posisi"
-                                    class="w-full border rounded-lg px-3 py-2 text-gray-800 bg-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
-                                    placeholder="Contoh: HR, Recruiter">
-                            </div>
-
-                            <!-- Pengalaman -->
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Pengalaman Kerja</label>
-                                <input type="text" name="pengalaman_kerja"
-                                    class="w-full border rounded-lg px-3 py-2 text-gray-800 bg-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
-                                    placeholder="Contoh: 2 tahun">
-                            </div>
-
-                            <!-- Gender -->
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Gender</label>
-                                <select name="gender"
-                                    class="w-full border rounded-lg px-3 py-2 text-gray-800 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-                                    <option value="">Pilih Gender</option>
-                                    <option value="Laki-laki">Laki-laki</option>
-                                    <option value="Perempuan">Perempuan</option>
-                                </select>
-                            </div>
-
-                            <!-- Gaji -->
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <div>
-                                    <label class="text-sm font-medium text-gray-600">Gaji Awal</label>
-                                    <input type="text" id="gaji_awal_display"
-                                        class="w-full border rounded-lg px-3 py-2 text-gray-800 bg-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
-                                        placeholder="Rp 4.000.000">
-                                    <input type="hidden" name="gaji_awal" id="gaji_awal">
+                        <!-- Modal Header -->
+                        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50 shrink-0">
+                            <div class="flex items-center gap-2.5">
+                                <div class="w-9 h-9 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center shrink-0">
+                                    <i class="ph ph-briefcase text-lg font-bold"></i>
                                 </div>
-
                                 <div>
-                                    <label class="text-sm font-medium text-gray-600">Gaji Akhir</label>
-                                    <input type="text" id="gaji_akhir_display"
-                                        class="w-full border rounded-lg px-3 py-2 text-gray-800 bg-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
-                                        placeholder="Rp 8.000.000">
-                                    <input type="hidden" name="gaji_akhir" id="gaji_akhir">
+                                    <h2 class="text-base font-extrabold text-slate-900">Form Talent Hunter</h2>
+                                    <p class="text-[11px] text-slate-500">Lengkapi kriteria kandidat yang dicari perusahaan</p>
                                 </div>
                             </div>
-
-                            <!-- Deskripsi -->
-                            <div>
-                                <label class="text-sm font-medium text-gray-600">Deskripsi</label>
-                                <textarea name="deskripsi"
-                                    class="w-full border rounded-lg px-3 py-2 h-24 text-gray-800 bg-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 outline-none"
-                                    placeholder="Tuliskan deskripsi..."></textarea>
-                            </div>
-
-                            <!-- Button -->
-                            <button type="submit"
-                                class="w-full bg-orange-600 text-white py-2 rounded-lg hover:bg-orange-400 transition font-semibold shadow">
-                                Simpan
+                            <button onclick="closeModal('modalFormTH')"
+                                class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition">
+                                <i class="ph ph-x font-bold text-sm"></i>
                             </button>
-                        </form>
+                        </div>
+
+                        <!-- Modal Body (Scrollable with nice spacing) -->
+                        <div class="p-6 overflow-y-auto space-y-4">
+                            <form id="formTalentHunter" class="space-y-4">
+
+                                <!-- Alamat -->
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                        Alamat Penempatan / Kantor <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" name="alamat" required
+                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                                        placeholder="Masukkan alamat atau kota penempatan">
+                                </div>
+
+                                <!-- Posisi -->
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                        Posisi yang Dibutuhkan <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" name="posisi" required
+                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                                        placeholder="Contoh: HR Specialist, Fullstack Developer">
+                                </div>
+
+                                <!-- Pengalaman Kerja -->
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                        Pengalaman Kerja <span class="text-rose-500">*</span>
+                                    </label>
+                                    <input type="text" name="pengalaman_kerja" required
+                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                                        placeholder="Contoh: Minimal 1-2 tahun / Fresh Graduate">
+                                </div>
+
+                                <!-- Gender -->
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                        Kriteria Gender <span class="text-rose-500">*</span>
+                                    </label>
+                                    <select name="gender" required
+                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition cursor-pointer">
+                                        <option value="">Pilih Gender</option>
+                                        <option value="Semua Gender">Semua Gender</option>
+                                        <option value="Laki-laki">Laki-laki</option>
+                                        <option value="Perempuan">Perempuan</option>
+                                    </select>
+                                </div>
+
+                                <!-- Gaji -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                            Gaji Awal (Min) <span class="text-rose-500">*</span>
+                                        </label>
+                                        <input type="text" id="gaji_awal_display" required
+                                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                                            placeholder="Rp 4.000.000">
+                                        <input type="hidden" name="gaji_awal" id="gaji_awal">
+                                    </div>
+
+                                    <div>
+                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                            Gaji Akhir (Maks) <span class="text-rose-500">*</span>
+                                        </label>
+                                        <input type="text" id="gaji_akhir_display" required
+                                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                                            placeholder="Rp 8.000.000">
+                                        <input type="hidden" name="gaji_akhir" id="gaji_akhir">
+                                    </div>
+                                </div>
+
+                                <!-- Deskripsi -->
+                                <div>
+                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                                        Deskripsi & Kualifikasi Tambahan
+                                    </label>
+                                    <textarea name="deskripsi" rows="3"
+                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl p-3.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition resize-none leading-relaxed"
+                                        placeholder="Tuliskan skill khusus atau deskripsi pekerjaan yang diinginkan..."></textarea>
+                                </div>
+
+                                <!-- Button -->
+                                <div class="pt-2">
+                                    <button type="submit"
+                                        class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                                        <span>Lanjutkan Pembelian</span>
+                                        <i class="ph ph-arrow-right font-bold text-base"></i>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Modal Koin Tidak Cukup -->
-                <div id="modalKoinKurang" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-50">
-                    <div class="bg-white rounded-2xl shadow-lg p-4 sm:p-6 px-4 w-full max-w-[400px] scale-[0.85] sm:scale-100 transform-gpu relative text-center">
+                <div id="modalKoinKurang" class="fixed inset-0 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs z-50 p-4">
+                    <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-md border border-slate-100 relative text-center animate-fadeIn">
                         <button onclick="closeModal('modalKoinKurang')"
-                            class="absolute top-3 right-3 text-gray-500 text-2xl">&times;</button>
-                        <h2 class="text-lg font-bold text-red-600 mb-3">Koin Tidak Cukup</h2>
-                        <p class="text-gray-600 mb-4">Saldo koin perusahaan kamu tidak mencukupi untuk membeli Talent
-                            Hunter.</p>
+                            class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
+                            <i class="ph ph-x font-bold"></i>
+                        </button>
+                        <div class="w-14 h-14 bg-rose-50 text-rose-600 border border-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                            <i class="ph ph-warning-circle text-3xl font-bold"></i>
+                        </div>
+                        <h2 class="text-lg font-extrabold text-slate-900 mb-1.5">Koin Tidak Cukup</h2>
+                        <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+                            Saldo koin perusahaan Anda saat ini belum mencukupi untuk menggunakan layanan Talent Hunter.
+                        </p>
                         <!-- Koin Saya -->
-                        <div class="mb-6">
-                            <p class="text-gray-700 text-sm mb-1">Koin saya :</p>
-                            <div
-                                class="flex items-center justify-between bg-orange-50 border border-orange-200 rounded-lg px-4 py-2">
-                                <div class="flex items-center gap-2">
-                                    <img src="/images/coin.png" alt="coin" class="w-6 h-6">
-                                    <p class="font-bold text-orange-500 text-lg">
-                                        {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }}</p>
+                        <div class="mb-6 bg-slate-50 border border-slate-200 rounded-2xl p-4">
+                            <div class="flex items-center justify-between">
+                                <div class="text-left">
+                                    <span class="text-[11px] font-bold text-slate-400 uppercase">Saldo Koin Anda</span>
+                                    <div class="flex items-center gap-2 mt-0.5">
+                                        <img src="/images/coin.png" alt="coin" class="w-5 h-5">
+                                        <p class="font-extrabold text-[#00509d] text-lg">
+                                            {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }}
+                                        </p>
+                                    </div>
                                 </div>
-                                <button onclick="toggleModal()"
-                                    class="flex items-center text-green-600 text-xs font-semibold hover:underline">
-                                    <span class="mr-1">Top Up Koin</span>
-                                    <svg width="18" height="18" viewBox="0 0 22 22" fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
-                                        <rect x="0.773" y="0.968" width="20" height="20" fill="#42BB72" />
-                                    </svg>
+                                <button onclick="closeModal('modalKoinKurang'); toggleModal()"
+                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-xs">
+                                    <i class="ph ph-plus-circle font-bold"></i> Top Up Koin
                                 </button>
                             </div>
                         </div>
@@ -233,58 +255,80 @@
             </div>
     </section>
 
-    <!-- ================= MODAL STEP 1 ================= -->
-    @include('perusahaan.modal-topup.step1')
-    <!-- ================= MODAL STEP 2 ================= -->
-    @include('perusahaan.modal-topup.step2')
-    <!-- ================= MODAL STEP 3 ================= -->
-    @include('perusahaan.modal-topup.step3')
-
     <!-- Benefit Talent Hunter -->
-    <section class="bg-white py-12">
-        <div class="text-center py-10">
+    <section class="bg-white py-14 px-6">
+        <div class="max-w-4xl mx-auto text-center">
             <!-- Judul -->
-            <h2 class="text-2xl font-bold text-orange-600">Benefit Talent Hunter</h2>
-            <div class="w-20 h-1 bg-orange-500 mx-auto my-2"></div>
+            <h2 class="text-2xl font-bold text-[#003d7a]">Benefit Talent Hunter</h2>
+            <div class="w-20 h-1 bg-[#00509d] mx-auto my-3 rounded-full"></div>
 
-            <!-- Atas: 2 item -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 max-w-3xl mx-auto">
-                <!-- Kandidat -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/jam.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-orange-500">Kandidat</h3>
-                    <p class="text-sm text-orange-500">Mendapatkan kandidat sesuai kebutuhan perusahaan dan posisi yang
-                        ditujukan.</p>
+            <!-- Grid 4 item -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12 mt-10">
+                <!-- 1. Kandidat -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="9" cy="7" r="4"></circle>
+                            <circle cx="19" cy="11" r="2"></circle>
+                            <path d="M19 8v1"></path>
+                            <path d="M19 13v1"></path>
+                            <path d="M16 11h1"></path>
+                            <path d="M21 11h1"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Kandidat</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Mendapatkan kandidat sesuai kebutuhan perusahaan dan posisi yang ditujukan.
+                    </p>
                 </div>
 
-                <!-- Siap Kerja -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/komputer.jpg') }}" class="w-12 h-12 mb-2" />
-                    <h3 class="font-bold text-orange-500">Siap Kerja</h3>
-                    <p class="text-sm text-orange-500">Kandidat yang didapatkan dipastikan siap kerja dengan perusahaan
-                        yang
-                        direkomendasikan.</p>
+                <!-- 2. Siap Kerja -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                            <line x1="8" y1="21" x2="16" y2="21"></line>
+                            <line x1="12" y1="17" x2="12" y2="21"></line>
+                            <path d="m9 10 2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Siap Kerja</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Kandidat yang didapatkan dipastikan siap kerja dengan perusahaan yang direkomendasikan.
+                    </p>
+                </div>
+
+                <!-- 3. Memudahkan -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"></path>
+                            <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"></path>
+                            <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"></path>
+                            <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Memudahkan</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Mempermudah perusahaan dalam penyaringan dan seleksi kandidat.
+                    </p>
+                </div>
+
+                <!-- 4. Perlindungan & Garansi -->
+                <div class="flex flex-col items-center text-center">
+                    <div class="w-14 h-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center mb-3 text-[#00509d]">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                            <path d="m9 12 2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-[#00509d] text-lg mb-1">Perlindungan Garansi</h3>
+                    <p class="text-sm text-gray-600 max-w-xs leading-relaxed">
+                        Jaminan penggantian kandidat baru jika tidak cocok dengan spesifikasi perusahaan.
+                    </p>
                 </div>
             </div>
-
-            <!-- Bawah: 2 item -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-10 max-w-3xl mx-auto">
-                <!-- Memudahkan -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/roket.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-orange-500">Memudahkan</h3>
-                    <p class="text-sm text-orange-500">Mempermudah perusahaan dalam penyaringan kandidat.</p>
-                </div>
-
-                <!-- Jaminan -->
-                <div class="flex flex-col items-center">
-                    <img src="{{ asset('images/roket.png') }}" class="w-12 h-12 mb-3" />
-                    <h3 class="font-bold text-orange-500">Jaminan</h3>
-                    <p class="text-sm text-orange-500">Jaminan ganti kandidat baru jika tidak cocok dengan spesifikasi
-                        perusahaan.</p>
-                </div>
-            </div>
-            {{-- @include('perusahaan.modal-talent') --}}
         </div>
     </section>
     {{-- AUTO RUPIAH --}}
@@ -314,13 +358,13 @@
     <script>
         let formDataTH = null; // GLOBAL (dipakai submit & beli)
 
-        // 1️⃣ Klik Daftar Talent Hunter → buka form
-        document.getElementById('btnDaftarTH').addEventListener('click', function() {
+        // 1. Klik Daftar Talent Hunter -> buka form
+        document.getElementById('btnDaftarTH')?.addEventListener('click', function() {
             openModal('modalFormTH');
         });
 
-        // 2️⃣ Submit Form TH → JANGAN SIMPAN KE DB
-        document.getElementById('formTalentHunter').addEventListener('submit', function(e) {
+        // 2. Submit Form TH -> Validasi dan Tampilkan Konfirmasi Pembelian
+        document.getElementById('formTalentHunter')?.addEventListener('submit', function(e) {
             e.preventDefault();
 
             formDataTH = new FormData(this); // simpan data sementara
@@ -333,59 +377,86 @@
 
                     closeModal('modalFormTH');
                     openModal('modalBeli');
+                })
+                .catch(() => {
+                    closeModal('modalFormTH');
+                    openModal('modalBeli');
                 });
         });
 
-        // 3️⃣ Klik KONFIRMASI BELI → BARU PROSES DB
-        document.getElementById('btnConfirmBeli').addEventListener('click', async function() {
-
+        // 3. Klik KONFIRMASI BELI -> Simpan ke Database
+        document.getElementById('btnConfirmBeli')?.addEventListener('click', async function() {
             if (!formDataTH) {
-                alert("Form belum diisi!");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian',
+                    text: 'Formulir belum diisi!'
+                });
                 return;
             }
 
             formDataTH.append('_token', '{{ csrf_token() }}');
 
-            const res = await fetch('{{ route('talent-hunter.store') }}', {
-                method: 'POST',
-                body: formDataTH
-            });
-
-            const result = await res.json();
-
-            if (result.success) {
-
-                closeModal('modalBeli');
-
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Pembelian Berhasil!',
-                    text: result.message,
-                    timer: 1500,
-                    showConfirmButton: false
+            try {
+                const res = await fetch('{{ route('talent-hunter.store') }}', {
+                    method: 'POST',
+                    body: formDataTH
                 });
 
-                setTimeout(() => {
-                    window.location.href = result.redirect_url;
-                }, 1500);
+                const result = await res.json();
 
-            } else {
+                if (result.success) {
+                    closeModal('modalBeli');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Pembelian Berhasil!',
+                        text: result.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = result.redirect_url;
+                    }, 1500);
+
+                } else {
+                    closeModal('modalBeli');
+
+                    if (result.message && result.message.toLowerCase().includes('koin')) {
+                        openModal('modalKoinKurang');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal!',
+                            text: result.message
+                        });
+                    }
+                }
+            } catch (err) {
+                console.error(err);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Gagal!',
-                    text: result.message
+                    title: 'Kesalahan Sistem',
+                    text: 'Terjadi kesalahan saat memproses data. Silakan coba lagi.'
                 });
             }
         });
 
         function openModal(id) {
-            document.getElementById(id).classList.remove('hidden');
-            document.getElementById(id).classList.add('flex');
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.remove('hidden');
+                el.classList.add('flex');
+            }
         }
 
         function closeModal(id) {
-            document.getElementById(id).classList.add('hidden');
-            document.getElementById(id).classList.remove('flex');
+            const el = document.getElementById(id);
+            if (el) {
+                el.classList.add('hidden');
+                el.classList.remove('flex');
+            }
         }
     </script>
 
@@ -449,13 +520,13 @@
         }
 
         function goToStep(step) {
-            // ✅ Validasi sebelum pindah step
+            // âœ… Validasi sebelum pindah step
             if (step === 2 && !selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih paket koin terlebih dahulu!',
-                    confirmButtonColor: '#f97316' // warna tombol orange
+                    confirmButtonColor: '#00509d' // warna tombol orange
                 });
                 return;
             }
@@ -464,7 +535,7 @@
                     icon: 'warning',
                     title: 'Oops...',
                     text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                    confirmButtonColor: '#f97316'
+                    confirmButtonColor: '#00509d'
                 });
                 return;
             }
@@ -481,7 +552,7 @@
                 const biayaAdmin = 2000;
                 const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
 
-                // 🔑 Buat No Transaksi random unik
+                // ðŸ”‘ Buat No Transaksi random unik
                 const randomPart = Math.floor(Math.random() * 1000000);
                 const noTransaksi = "TRX" + Date.now() + randomPart;
 
@@ -495,7 +566,7 @@
         }
 
 
-        // 🔑 Update status tombol (disable/enable)
+        // ðŸ”‘ Update status tombol (disable/enable)
         function updateButtons() {
             // Step 1: tombol konfirmasi paket
             const btnStep1 = document.querySelector('#modalStep1 button');
@@ -523,9 +594,9 @@
 
                     // Highlight kartu terpilih
                     document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });
@@ -538,9 +609,9 @@
 
                     // Highlight bank terpilih
                     document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-orange-500');
+                        w.classList.remove('ring-2', 'ring-[#00509d]');
                     });
-                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-orange-500');
+                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
 
                     updateButtons();
                 });
@@ -549,3 +620,4 @@
     </script>
     @include('layouts.footer')
 @endsection
+

@@ -17,11 +17,11 @@ class TipsKerjaController extends Controller
         return view('admin.tips-kerja.tips-kerja', [
             "title"     =>   "Tips Kerja",
             "all"       =>    TipsKerja::count(),
-            "terbit"    =>    Tipskerja::where('status', 'terbit')->count(),
-            "noterbit"  =>    Tipskerja::where('status', 'belum terbit')->count(),
-            "sudah_terbit"  =>    Tipskerja::where('status', 'terbit')->get(),
-            "belum_terbit"  =>    Tipskerja::where('status', 'belum terbit')->get(),
-            "semua"     => Tipskerja::orderBy('created_at', 'desc')->get(),
+            "terbit"    =>    TipsKerja::where('status', 'terbit')->count(),
+            "noterbit"  =>    TipsKerja::where('status', 'belum terbit')->count(),
+            "sudah_terbit"  =>    TipsKerja::where('status', 'terbit')->get(),
+            "belum_terbit"  =>    TipsKerja::where('status', 'belum terbit')->get(),
+            "semua"     => TipsKerja::orderBy('created_at', 'desc')->get(),
         ]);
     }
 
@@ -249,11 +249,11 @@ class TipsKerjaController extends Controller
         return view('super_admin.tips-kerja.tips-kerja', [
             "title"     =>   "Tips Kerja",
             "all"       =>    TipsKerja::count(),
-            "terbit"    =>    Tipskerja::where('status', 'terbit')->count(),
-            "noterbit"  =>    Tipskerja::where('status', 'belum terbit')->count(),
-            "sudah_terbit"  =>    Tipskerja::where('status', 'terbit')->get(),
-            "belum_terbit"  =>    Tipskerja::where('status', 'belum terbit')->get(),
-            "semua"     => Tipskerja::orderBy('created_at', 'desc')->get(),
+            "terbit"    =>    TipsKerja::where('status', 'terbit')->count(),
+            "noterbit"  =>    TipsKerja::where('status', 'belum terbit')->count(),
+            "sudah_terbit"  =>    TipsKerja::where('status', 'terbit')->get(),
+            "belum_terbit"  =>    TipsKerja::where('status', 'belum terbit')->get(),
+            "semua"     => TipsKerja::orderBy('created_at', 'desc')->get(),
         ]);
     }
 

@@ -1,4 +1,4 @@
-
+﻿
 <div class="p-4 sm:ml-64 border rounded-lg shadow">
     {{-- riwayat transaksi --}}
     <div class="mb-8">
@@ -6,7 +6,7 @@
         <div class="rounded-2xl overflow-hidden">
             <table class="w-full text-sm">
                 <thead>
-                    <tr class="bg-orange-500 text-white">
+                    <tr class="bg-blue-700 text-white">
                         <th class="px-4 py-2 text-left">No</th>
                         <th class="px-4 py-2 text-left">No. Refrensi</th>
                         <th class="px-4 py-2 text-left">Jenis</th>
@@ -26,7 +26,7 @@
                         <td class="px-4 py-2">AppleCorp.</td>
                         <td class="px-4 py-2">Koin AreaKerja</td>
                         <td class="px-4 py-2">Rp. 10.000</td>
-                        <td class="px-4 py-2 text-orange-500"><i class="fa-solid fa-file-lines">detail</i></td>
+                        <td class="px-4 py-2 text-blue-700"><i class="fa-solid fa-file-lines">detail</i></td>
                         <td class="px-4 py-2 text-green-600 font-semibold">Sukses</td>
                     </tr>
                     <tr class="border-t">
@@ -36,7 +36,7 @@
                         <td class="px-4 py-2">AppleCorp.</td>
                         <td class="px-4 py-2">Koin AreaKerja</td>
                         <td class="px-4 py-2">Rp. 10.000</td>
-                        <td class="px-4 py-2 text-orange-500"><i class="fa-solid fa-file-lines">detail</i></td>
+                        <td class="px-4 py-2 text-blue-700"><i class="fa-solid fa-file-lines">detail</i></td>
                         <td class="px-4 py-2 text-green-600 font-semibold">Sukses</td>
                     </tr>
                 </tbody>
@@ -49,7 +49,7 @@
             <div class="rounded-2xl overflow-hidden">
                 <table class="w-full text-sm">
                     <thead>
-                        <tr class="bg-orange-500 text-white">
+                        <tr class="bg-blue-700 text-white">
                             <th class="px-4 py-2 text-left">No</th>
                             <th class="px-4 py-2 text-left">No. Refrensi</th>
                             <th class="px-4 py-2 text-left">Jenis</th>
@@ -69,7 +69,7 @@
                             <td class="px-4 py-2">AppleCorp.</td>
                             <td class="px-4 py-2">Koin AreaKerja</td>
                             <td class="px-4 py-2">10 Koin</td>
-                            <td class="px-4 py-2 text-orange-500"><i class="fa-solid fa-file-lines">detail</i></td>
+                            <td class="px-4 py-2 text-blue-700"><i class="fa-solid fa-file-lines">detail</i></td>
                             <td class="px-4 py-2 text-green-600 font-semibold">Sukses</td>
                         </tr>
                         <tr class="border-t">
@@ -79,7 +79,7 @@
                             <td class="px-4 py-2">AppleCorp.</td>
                             <td class="px-4 py-2">Koin AreaKerja</td>
                             <td class="px-4 py-2">10 Koin</td>
-                            <td class="px-4 py-2 text-orange-500"><i class="fa-solid fa-file-lines">detail</i></td>
+                            <td class="px-4 py-2 text-blue-700"><i class="fa-solid fa-file-lines">detail</i></td>
                             <td class="px-4 py-2 text-green-600 font-semibold">Sukses</td>
                         </tr>
                     </tbody>

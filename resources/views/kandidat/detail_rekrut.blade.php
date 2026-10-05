@@ -1,4 +1,4 @@
-@extends('layouts.index')
+﻿@extends('layouts.index')
 
 @section('content')
     <div class="bg-gray-50 mt-16">
@@ -30,7 +30,7 @@
                         </div>
                     </div>
 
-                    <p class="text-orange-600 font-medium">
+                    <p class="text-[#003d7a] font-medium">
                         Rp. {{ number_format($tawaran->lowonganPerusahaan->gaji_awal, 0, ',', '.') }} -
                         Rp. {{ number_format($tawaran->lowonganPerusahaan->gaji_akhir, 0, ',', '.') }} per bulan
                     </p>
@@ -89,9 +89,9 @@
                                     <form action="{{ route('simpan-lowongan.destroy', $lowongan->id) }}" method="POST">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-2 rounded-md bg-orange-100 hover:bg-orange-200 transition"
+                                        <button type="submit" class="p-2 rounded-md bg-blue-100 hover:bg-blue-200 transition"
                                             title="Hapus dari Simpan">
-                                            <i class="ph-fill ph-bookmark text-2xl text-orange-500"></i>
+                                            <i class="ph-fill ph-bookmark text-2xl text-[#00509d]"></i>
                                         </button>
                                     </form>
                                 @endif
@@ -190,7 +190,7 @@
                         alert('Terjadi kesalahan koneksi.');
                     });
                 "
-                                class="w-full sm:w-auto bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600">
+                                class="w-full sm:w-auto bg-[#00509d] text-white px-4 py-2 rounded-lg hover:bg-[#003d7a]">
                                 Ya, Terima
                             </button>
                         </div>
@@ -228,16 +228,16 @@
                         <h2 class="text-lg font-semibold mb-4 text-gray-800">Pilih Alasan Penolakan</h2>
                         <form id="form-penolakan" class="space-y-2.5">
                             @foreach (config('alasan_penolakan') as $alasan)
-                                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-gray-200 hover:border-orange-500 hover:bg-orange-50 transition cursor-pointer">
+                                <label class="flex items-center gap-3 p-3 rounded-xl border-2 border-gray-200 hover:border-[#00509d] hover:bg-blue-50 transition cursor-pointer">
                                     <input type="radio" name="alasan_penolakan" value="{{ $alasan }}"
-                                        class="w-5 h-5 text-orange-500 border-2 border-gray-400 focus:ring-orange-500 accent-orange-500 cursor-pointer flex-shrink-0">
+                                        class="w-5 h-5 text-[#00509d] border-2 border-gray-400 focus:ring-[#00509d] accent-[#00509d] cursor-pointer flex-shrink-0">
                                     <span class="text-sm font-medium text-gray-800">{{ $alasan }}</span>
                                 </label>
                             @endforeach
                             <div class="pt-2">
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Lainnya</label>
                                 <textarea name="alasan_penolakan_custom" rows="3" placeholder="Tuliskan alasan penolakan lainnya..."
-                                    class="w-full border-2 border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-orange-500 focus:ring-1 focus:ring-orange-500"></textarea>
+                                    class="w-full border-2 border-gray-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-[#00509d] focus:ring-1 focus:ring-[#00509d]"></textarea>
                             </div>
                         </form>
                         <div class="flex justify-end gap-3 mt-5">
@@ -316,7 +316,7 @@
                         <h2 class="text-lg font-semibold mb-3 text-gray-800">
                             Anda telah menolak tawaran dari
                             <br>
-                            <b class="text-orange-600">{{ $tawaran->lowonganPerusahaan->perusahaan->nama_perusahaan ?? 'Perusahaan' }}</b>
+                            <b class="text-[#003d7a]">{{ $tawaran->lowonganPerusahaan->perusahaan->nama_perusahaan ?? 'Perusahaan' }}</b>
                         </h2>
 
                         <img src="{{ asset('images/orang.png') }}" alt="Success"
@@ -327,7 +327,7 @@
                         </p>
 
                         <button @click="showTolakSuccess = false; location.reload();"
-                            class="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 rounded-lg transition">
+                            class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold py-2 rounded-lg transition">
                             Tutup
                         </button>
                     </div>
@@ -343,7 +343,7 @@
                     <h2 class="font-semibold">
                         Lowongan {{ $tawaran->lowonganPerusahaan->perusahaan->nama_perusahaan }} Lainnya
                     </h2>
-                    {{-- <a href="#" class="text-orange-600 text-sm font-medium">Lihat semua</a> --}}
+                    {{-- <a href="#" class="text-[#003d7a] text-sm font-medium">Lihat semua</a> --}}
                 </div>
 
                 <div class="bg-white rounded-lg shadow p-4 space-y-4">
@@ -378,3 +378,5 @@
 
     @include('layouts.footer')
 @endsection
+
+

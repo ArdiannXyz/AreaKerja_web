@@ -10,7 +10,7 @@
                         src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
                 @else
                     <img id="pp" class="w-20 h-20 object-contain mb-3"
-                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                         alt="">
                 @endif
                 <div>
@@ -27,7 +27,7 @@
                 <div class="flex items-center justify-between flex-wrap gap-3">
                     <div class="flex items-center gap-3">
                         <h2 class="font-semibold text-gray-800 text-lg">Alamat Perusahaan</h2>
-                        <span class="text-xs font-semibold px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full">
+                        <span class="text-xs font-semibold px-2.5 py-1 bg-blue-100 text-[#003d7a] rounded-full">
                             {{ $alamatCount }}/5 Alamat
                         </span>
                     </div>
@@ -68,12 +68,12 @@
                         </ul>
                     </div>
                 @endif
-                <hr class="border border-orange-500 mt-3 mb-2"/>
+                <hr class="border border-[#00509d] mt-3 mb-2"/>
                 @php
                     $hasUtama = $alamat_perusahaan->where('utama', true)->isNotEmpty();
                 @endphp
                 @if (!$hasUtama)
-                    <span class="text-sm text-orange-500 font-medium">Untuk Melengkapi Profile Silahkan Jadikan Salah Satu Alamat Sebagai Alamat Utama</span>
+                    <span class="text-sm text-[#00509d] font-medium">Untuk Melengkapi Profile Silahkan Jadikan Salah Satu Alamat Sebagai Alamat Utama</span>
                 @endif
             </div>
 
@@ -81,12 +81,12 @@
             <div class="px-0 sm:px-12">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 max-w-5xl">
                     @foreach ($alamat_perusahaan as $almtp)
-                      <div class="border {{ $almtp->utama ? 'border-orange-500 bg-orange-50/20' : 'border-gray-300 bg-white' }} rounded-xl p-4 sm:p-6 shadow-xs relative flex flex-col justify-between">
+                      <div class="border {{ $almtp->utama ? 'border-[#00509d] bg-blue-50/20' : 'border-gray-300 bg-white' }} rounded-xl p-4 sm:p-6 shadow-xs relative flex flex-col justify-between">
                             <div>
                                 <div class="flex items-center justify-between gap-2">
-                                    <h3 class="font-bold text-base {{ $almtp->utama ? 'text-[#ff7a00]' : 'text-gray-800' }}">{{ $almtp->label }}</h3>
+                                    <h3 class="font-bold text-base {{ $almtp->utama ? 'text-[#00509d]' : 'text-gray-800' }}">{{ $almtp->label }}</h3>
                                     @if ($almtp->utama)
-                                        <span class="bg-orange-500 text-white text-xs font-semibold px-2.5 py-0.5 rounded-full shadow-xs">Utama</span>
+                                        <span class="bg-[#00509d] text-white text-xs font-semibold px-2.5 py-0.5 rounded-full shadow-xs">Utama</span>
                                     @endif
                                 </div>
 
@@ -155,11 +155,11 @@
 
                     @if ($alamatCount < 5)
                         <!-- Card Tambah Alamat Baru -->
-                        <a href="{{ route('form.alamat.perusahaan') }}" class="border-2 border-dashed border-slate-300 hover:border-orange-500 bg-slate-50/50 hover:bg-orange-50/20 rounded-xl p-6 flex flex-col items-center justify-center text-center group transition min-h-[180px]">
-                            <div class="w-10 h-10 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mb-2 group-hover:scale-110 transition">
+                        <a href="{{ route('form.alamat.perusahaan') }}" class="border-2 border-dashed border-slate-300 hover:border-[#00509d] bg-slate-50/50 hover:bg-blue-50/20 rounded-xl p-6 flex flex-col items-center justify-center text-center group transition min-h-[180px]">
+                            <div class="w-10 h-10 rounded-full bg-blue-100 text-[#003d7a] flex items-center justify-center mb-2 group-hover:scale-110 transition">
                                 <i class="ph ph-plus text-xl font-bold"></i>
                             </div>
-                            <span class="text-sm font-bold text-slate-800 group-hover:text-orange-600 transition">Tambah Alamat Baru</span>
+                            <span class="text-sm font-bold text-slate-800 group-hover:text-[#003d7a] transition">Tambah Alamat Baru</span>
                             <span class="text-xs text-slate-500 mt-0.5">Tersisa {{ 5 - $alamatCount }} slot alamat</span>
                         </a>
                     @endif
@@ -175,7 +175,7 @@
                         src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
                 @else
                     <img id="pp" class="w-20 h-20 object-contain mb-3"
-                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                         alt="">
                 @endif
                 <div>
@@ -198,11 +198,11 @@
                         Kembali
                     </a>
                 </div>
-                <hr class="border border-orange-500 mt-3 " />
+                <hr class="border border-[#00509d] mt-3 " />
             </div>
 
             <!-- Box Alamat -->
-            <div class="mt-6 px-0 sm:px-12 border border-orange-400 rounded-md p-6 w-[500px]">
+            <div class="mt-6 px-0 sm:px-12 border border-[#00509d] rounded-md p-6 w-[500px]">
                 <div class="flex items-center text-gray-400 space-x-2 mb-6">
                     <span class="font-medium">Alamat Kosong</span>
                     <!-- Icon dokumen -->
@@ -218,7 +218,7 @@
                         <i class="ph ph-arrow-left"></i> Kembali
                     </a>
                     <a href="{{ route('form.alamat.perusahaan') }}"
-                        class="block w-max bg-orange-500 text-white px-4 py-1.5 rounded-md text-sm hover:bg-orange-600 transition">
+                        class="block w-max bg-[#00509d] text-white px-4 py-1.5 rounded-md text-sm hover:bg-[#003d7a] transition">
                         Tambah Alamat
                     </a>
                 </div>
@@ -227,3 +227,4 @@
     @endif
     @include('layouts.footer')
 @endsection
+

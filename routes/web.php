@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AlamatPelamarController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CatatanCashController;
 use App\Http\Controllers\CVController;
@@ -23,25 +22,26 @@ use App\Http\Controllers\PerusahaanController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShareLowonganController;
 use App\Http\Controllers\SkillController;
+use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TalentHunterController;
 use App\Http\Controllers\TipsKerjaController;
-use App\Http\Controllers\SocialAuthController;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\IklanPerusahaanController;
+use App\Http\Controllers\IklanAdminController;
+use App\Http\Controllers\VerifikasiPerusahaanController;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+
+// TRACKING KLIK IKLAN HOMEPAGE
+Route::get('/iklan/{id}/click', [IklanPerusahaanController::class, 'handleClick'])->name('iklan.click');
 
 // OAUTH SOCIAL AUTHENTICATION (Google, Facebook, LinkedIn)
 Route::controller(SocialAuthController::class)->group(function () {
     Route::get('/auth/{provider}/redirect', 'redirect')->name('social.redirect');
     Route::get('/auth/{provider}/callback', 'callback')->name('social.callback');
 });
-
-use App\Http\Controllers\VerifikasiPerusahaanController;
-use GuzzleHttp\Middleware;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
 
 /*
 |--------------------------------------------------------------------------
@@ -377,6 +377,16 @@ Route::prefix('finance')->middleware('auth', 'role:finance', 'CheckUserStatus')-
 
     //FINANCE CONTROLLER
     Route::controller(FinanceController::class)->group(function () {
+        //profile finance
+        Route::get('/profile', 'profile_finance')->name('finance.profile');
+        Route::get('/edit/profile', 'edit_profile_finance')->name('finance.edit.profile');
+        Route::put('/update/profile/{user}', 'update_profile_finance')->name('finance.update.profile');
+        Route::delete('/delete/profile/{user}', 'destroy_profile_finance')->name('finance.destroy.profile');
+
+        //provinsi kota kecamatan
+        Route::get('/get-kota/{provinsi_id}', 'getKotaFinance')->name('finance.get.kota');
+        Route::get('/get-kecamatan/{kota_id}', 'getKecamatanFinance')->name('finance.get.kecamatan');
+
         //OMSET PERUSAHAAN PERBULAN
         Route::get('/omset', 'omset_perusahaan')->name('finance.omset');
         Route::get('/finance/omset/unduh', 'unduh_omset')->name('finance.omset.unduh');
@@ -536,6 +546,13 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::post('/perusahaan/approve/{id}', 'approve')->name('admin.perusahaan.approve');
         Route::post('/perusahaan/reject/{id}', 'reject')->name('admin.perusahaan.reject');
     });
+
+    //MODERASI IKLAN CONTROLLER
+    Route::controller(IklanAdminController::class)->group(function () {
+        Route::get('/iklan', 'index')->name('admin.iklan.index');
+        Route::post('/iklan/{id}/approve', 'approve')->name('admin.iklan.approve');
+        Route::post('/iklan/{id}/reject', 'reject')->name('admin.iklan.reject');
+    });
 });
 /**---------------------------------------- END ADMIN PREFIX -------------------------------------*/
 
@@ -673,7 +690,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::get('/event/{event}', 'detail_event')->name('superadmin.detail.event');
         Route::get('/event/{event}/edit', 'edit_event')->name('superadmin.edit.event');
         Route::delete('/delete/event/{event}', 'destroy_event')->name('superadmin.event.destroy');
-        Route::put('/events/status/{event}', 'updateStatus')->name('event.updateStatus');
+        Route::put('/events/status/{event}', 'updateStatus')->name('superadmin.event.updateStatus');
     });
 
 
@@ -762,7 +779,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::get('/manajemen/lowongan/bronze', 'bronze')->name('superadmin.manajemen.lowongan.bronze')->middleware('auth');
 
         Route::post('/manajemen/lowongan/gold/update', 'updateGold')->name('superadmin.manajemen.lowongan.gold.update')->middleware('auth');
-        Route::post('/manajemen/lowongan/silver/update', 'updatSilver')->name('superadmin.manajemen.lowongan.silver.update')->middleware('auth');
+        Route::post('/manajemen/lowongan/silver/update', 'updateSilver')->name('superadmin.manajemen.lowongan.silver.update')->middleware('auth');
         Route::post('/manajemen/lowongan/bronze/update', 'updateBronze')->name('superadmin.manajemen.lowongan.bronze.update')->middleware('auth');
     });
 
@@ -869,6 +886,13 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
 
         //berlangganan
         Route::get('/berlangganan', 'halLangganan')->name('perusahaan.berlangganan');
+
+        //IKLAN PERUSAHAAN
+        Route::controller(IklanPerusahaanController::class)->group(function () {
+            Route::get('/iklan', 'index')->name('perusahaan.iklan.index');
+            Route::get('/iklan/pasang', 'create')->name('perusahaan.iklan.create');
+            Route::post('/iklan/pasang', 'store')->name('perusahaan.iklan.store');
+        });
 
         //Kandidat Saya
         Route::get('/recruitment/kandidat-saya', 'kandidatSaya')->name('perusahaan.kandidat.saya');

@@ -1,21 +1,62 @@
 @extends('finance.sidebar.index')
 @section('sidebar')
-    <div class="p-4 sm:ml-64" x-data="{ openCashModal: false, openKoinModal: false, detailCash: {}, detailKoin: {} }" x-cloak>
+    <div class="sm:ml-64 p-4 sm:p-6 lg:p-8 space-y-6 min-h-screen bg-slate-50/70" 
+         x-data="{ openCashModal: false, openKoinModal: false, detailCash: {}, detailKoin: {} }" 
+         x-cloak>
 
-        <header class="w-full flex items-center justify-between px-6 py-3">
-            <p class="font-semibold text-2xl">Catatan Transaksi</p>
+        <!-- Top Header & Breadcrumb -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('finance.catatan') }}"
+                       class="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-blue-50/50 hover:border-[#00509d]/40 flex items-center justify-center text-slate-600 transition shadow-2xs">
+                        <i class="ph ph-arrow-left text-lg font-bold"></i>
+                    </a>
+                    <div>
+                        <div class="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium">
+                            <a href="{{ route('finance.dashboard') }}" class="hover:text-[#00509d]">Finance</a>
+                            <span>/</span>
+                            <a href="{{ route('finance.catatan') }}" class="hover:text-[#00509d]">Catatan</a>
+                            <span>/</span>
+                            <span class="text-slate-600 font-semibold">Riwayat</span>
+                        </div>
+                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight mt-0.5">Semua Riwayat Transaksi</h1>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('finance.components.notif_button')
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center gap-3">
+                @include('finance.components.notif_button')
+                @include('finance.components.user_badge_dropdown')
+            </div>
         </header>
 
-        <div class="p-4">
+
+        <div class="space-y-8">
 
             {{-- ====================== TABEL CATATAN KOIN ====================== --}}
-            <div class="mb-12">
-                <h2 class="text-lg font-semibold mb-2">Riwayat Koin</h2>
+            <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#00509d] border border-blue-100 flex items-center justify-center text-lg shrink-0 font-bold">
+                            <i class="ph-fill ph-coins"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-extrabold text-slate-900">Seluruh Riwayat Mutasi Koin</h2>
+                            <p class="text-xs text-slate-500">Daftar lengkap transaksi koin masuk & keluar</p>
+                        </div>
+                    </div>
+                    <span class="px-3 py-1 bg-slate-100 text-slate-600 text-xs font-bold rounded-xl">
+                        {{ $catatanKoins->count() }} Data
+                    </span>
+                </div>
 
                 <div class="rounded-2xl overflow-hidden border overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm min-w-[800px]">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-[#00509d] text-white">
                                 <th class="px-4 py-2 text-left">No</th>
                                 <th class="px-4 py-2 text-left">No. Referensi</th>
                                 <th class="px-4 py-2 text-left">User</th>
@@ -72,7 +113,7 @@
                 <div class="rounded-2xl overflow-hidden border overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm min-w-[900px]">
                         <thead>
-                            <tr class="bg-orange-500 text-white">
+                            <tr class="bg-[#00509d] text-white">
                                 <th class="px-4 py-2 text-left">No</th>
                                 <th class="px-4 py-2 text-left">No. Referensi</th>
                                 <th class="px-4 py-2 text-left">User</th>
@@ -139,8 +180,8 @@
                     <h2 class="text-xl font-semibold text-center mb-6">Transaksi Koin</h2>
 
                     <div class="flex justify-center mb-6">
-                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-orange-100 flex items-center justify-center">
-                            <svg class="w-7 h-7 sm:w-8 sm:h-8 text-orange-500" fill="none" stroke="currentColor"
+                        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                            <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#00509d]" fill="none" stroke="currentColor"
                                 stroke-width="2" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                             </svg>
@@ -199,8 +240,8 @@
                     <div class="flex justify-center mb-6">
                         <template x-if="detailCash.status == 'Diterima'">
                             <div
-                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-orange-100 flex items-center justify-center">
-                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-orange-500" fill="none" stroke="currentColor"
+                                class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-100 flex items-center justify-center">
+                                <svg class="w-7 h-7 sm:w-8 sm:h-8 text-[#00509d]" fill="none" stroke="currentColor"
                                     stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                 </svg>
@@ -254,7 +295,7 @@
                         <div class="flex justify-between items-center">
                             <span class="font-semibold">Status</span>
                             <span
-                                :class="detailCash.status == 'Diterima' ? 'bg-orange-500' :
+                                :class="detailCash.status == 'Diterima' ? 'bg-[#00509d]' :
                                     (detailCash.status == 'Ditolak' ? 'bg-red-500' : 'bg-gray-500')"
                                 class="text-white text-xs px-3 py-1 rounded-full" x-text="detailCash.status"></span>
                         </div>
@@ -315,3 +356,4 @@
 
     <script src="//unpkg.com/alpinejs" defer></script>
 @endsection
+

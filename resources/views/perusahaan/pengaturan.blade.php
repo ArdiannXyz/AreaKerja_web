@@ -11,7 +11,7 @@
                         src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Profile">
                 @else
                     <img id="pp" class="w-32 h-32 object-contain mb-3"
-                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
+                        src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=00509d&color=fff&size=128"
                         alt="">
                 @endif
                 <div>
@@ -50,7 +50,7 @@
             <div class="mt-2 space-y-8">
                 <!-- Ganti Password -->
                 <button onclick="document.getElementById('passwordForm').classList.toggle('hidden')"
-                    class="w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg text-left px-5">
+                    class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white py-3 rounded-lg text-left px-5">
                     Ganti Password
                 </button>
                 <!-- Form Ganti Password (hidden default) -->
@@ -61,30 +61,30 @@
                     <div>
                         <label class="block text-sm font-medium">Kata Sandi Lama</label>
                         <input type="password" name="old_password" required
-                            class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-orange-500">
+                            class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-[#00509d]">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium">Kata Sandi Baru</label>
                         <input type="password" name="new_password" required
-                            class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-orange-500">
+                            class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-[#00509d]">
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium">Konfirmasi Kata Sandi Baru</label>
                         <input type="password" name="new_password_confirmation" required
-                            class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-orange-500">
+                            class="mt-1 w-full border px-3 py-2 rounded focus:ring-2 focus:ring-[#00509d]">
                     </div>
 
                     <button type="submit"
-                        class="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded-lg font-medium">
+                        class="w-full bg-[#003d7a] hover:bg-[#003d7a] text-white py-2 rounded-lg font-medium">
                         Simpan Password
                     </button>
                 </form>
 
                 <!-- Ganti Email -->
                 <a href="{{ route('email.ubah') }}"
-                    class="block w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-lg text-left px-5">
+                    class="block w-full bg-[#00509d] hover:bg-[#003d7a] text-white py-3 rounded-lg text-left px-5">
                     Ganti Email
                 </a>
 
@@ -94,3 +94,4 @@
 
     @include('layouts.footer')
 @endsection
+

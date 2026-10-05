@@ -3,9 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Mobile App Viewport: viewport-fit=cover untuk support notch iPhone -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <!-- Mobile web app meta tags -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="theme-color" content="#00509d">
+
     <title>Super Admin</title>
 
     @vite('resources/css/app.css')
@@ -13,16 +20,121 @@
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css" />
     <link rel="stylesheet" type="text/css"
         href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/fill/style.css" />
-    <link rel="icon" sizes="512x512" type="image/png" href="{{ asset('images/logoarea.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('images/logo_area_kerja_favicon.png') }}?v=6">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=6">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
     <script src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        /* ================================================================
+           LAYOUT FOUNDATION: DESKTOP SIDEBAR KIRI & MOBILE NAVBAR BAWAH
+           - Desktop (≥ 640px): Sidebar tetap di KIRI, tidak ada bottom nav
+           - Mobile (< 640px) : Navigasi DIBAWAH SEMUA (Bottom Nav + Bottom Sheet), tidak ada sidebar kiri
+        ================================================================ */
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        html, body {
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Poppins', sans-serif;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
+            background-color: #f8fafc;
+        }
+
+        /* === MOBILE (< 640px) ===
+           Navigasi DIBAWAH SEMUA:
+           - Sidebar kiri DIMATIKAN TOTAL (tidak ada drawer / tidak menyergap scroll)
+           - Mobile top bar DIMATIKAN (tidak dobel header / scroll bisa full ke atas)
+           - Bottom Nav & Bottom Sheet AKTIF
+           - Padding bawah untuk memberi ruang Bottom Nav */
+        @media (max-width: 639px) {
+            #logo-sidebar {
+                display: none !important;
+            }
+            #mobile-top-bar {
+                display: none !important;
+            }
+            #bottom-nav {
+                display: flex !important;
+            }
+            body {
+                padding-top: 0 !important;
+                padding-bottom: 72px !important;
+                padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+            }
+        }
+
+        /* === DESKTOP (≥ 640px) ===
+           Navigasi TETAP DI KIRI:
+           - Sidebar kiri TAMPIL & SELALU BISA DIKLIK / SCROLL
+           - Bottom Nav & Mobile Menu Sheet DIMATIKAN
+           - Tidak ada padding tambahan pada body */
+        @media (min-width: 640px) {
+            #logo-sidebar {
+                display: block !important;
+                pointer-events: auto !important;
+                touch-action: auto !important;
+            }
+            #bottom-nav,
+            #mobile-menu-sheet,
+            #mobile-top-bar {
+                display: none !important;
+            }
+            body {
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+            }
+        }
+
+        /* Sidebar scrollbar tipis di desktop */
+        #logo-sidebar::-webkit-scrollbar { width: 4px; }
+        #logo-sidebar::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.25);
+            border-radius: 99px;
+        }
+
+        /* Bottom Nav shadow & safe area */
+        #bottom-nav {
+            z-index: 9999 !important;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* Tap effects */
+        a, button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .tap-effect {
+            position: relative;
+            overflow: hidden;
+        }
+        .tap-effect::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: currentColor;
+            opacity: 0;
+            border-radius: inherit;
+            transition: opacity 0.15s;
+        }
+        .tap-effect:active::after {
+            opacity: 0.08;
         }
     </style>
     <style>
@@ -44,7 +156,7 @@
             margin-bottom: 1rem;
         }
 
-        /* LIST — supaya BULLET hitam muncul */
+        /* LIST â€” supaya BULLET hitam muncul */
         .tinymce-content ul,
         .tinymce-content ul li {
             list-style-type: disc !important;
@@ -98,42 +210,40 @@
         }
     </style>
 
+    {{-- NProgress Page Transition --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.css">
+    <style>
+        #nprogress .bar { background: #00509d !important; height: 3px !important; }
+        #nprogress .peg { box-shadow: 0 0 10px #00509d, 0 0 5px #00509d !important; }
+        #nprogress .spinner-icon { border-top-color: #00509d !important; border-left-color: #00509d !important; }
+    </style>
+
 </head>
 
 <body>
-    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
-        type="button"
-        class="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 hover:text-white rounded-lg md:hidden hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-400 dark:text-gray-400 dark:hover:bg-orange-500 dark:focus:ring-orange-400 transition duration-300">
-        <span class="sr-only">Open sidebar</span>
-        <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg">
-            <path clip-rule="evenodd" fill-rule="evenodd"
-                d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
-            </path>
-        </svg>
-    </button>
-
-    <div class="flex">
+    <!-- Layout wrapper: sidebar fixed, main content block with sm:ml-64 -->
+    <div class="min-h-screen bg-slate-50/70">
         <!-- Sidebar -->
         <aside id="logo-sidebar"
-            class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto"
+            class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0 overflow-y-auto overflow-x-hidden"
             aria-label="Sidebar">
-            <div class="min-h-screen w-64 bg-orange-600 text-white overflow-y-auto">
-                <!-- Logo -->
-                <div class="px-4 py-2">
-                    <div class="inline-flex items-center gap-1 border-b-2 border-orange-300">
-                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-14 h-14">
-                        <p class="text-xl font-semibold">areakerja.com</p>
+            <div class="min-h-screen w-64 bg-[#00509d] text-white flex flex-col pb-6">
+                <div>
+                    <!-- Logo -->
+                    <div class="px-4 py-4 border-b border-blue-400/30">
+                        <a href="{{ route('superadmin.dashboard') }}" class="inline-flex items-center gap-2.5">
+                            <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="logo" class="w-8 h-8 object-contain">
+                            <span class="text-base font-semibold tracking-tight text-white leading-none self-center">areakerja.com</span>
+                        </a>
                     </div>
-                </div>
 
-                <!-- Menu -->
-                <nav class="flex-1 px-4 text-sm">
+                    <!-- Menu -->
+                    <nav class="flex-1 px-4 text-sm">
                     <div class="font-bold mb-3 ml-3">Umum</div>
                     <div
-                        class="{{ request()->is('super_admin/dashboard') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/dashboard*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.dashboard') }}"
-                            class="flex font-semibold items-center mb-4 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-4 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="15" height="16" viewBox="0 0 15 16" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -146,9 +256,9 @@
 
                     <div class="font-bold ml-3 mb-3">Super Admin</div>
                     <div
-                        class="{{ request()->is('super_admin/pelamar') || request()->is('super_admin/pelamar/tambah/kandidat') || request()->is('super_admin/kandidat/1') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/pelamar*') || request()->is('super_admin/kandidat*') || request()->is('super_admin/non-kandidat*') || request()->is('super_admin/calon-kandidat*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.pelamar') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -162,9 +272,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/perusahaan') || request()->is('super_admin/tambah/perusahaan') ? 'bg-white text-orange-500' : '' }} rounded-md">
-                        <a href={{ route('superadmin.perusahaan') }}
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                        class="{{ request()->is('super_admin/perusahaan*') || request()->is('super_admin/tambah/perusahaan*') || request()->is('super_admin/lowongan*') || request()->is('super_admin/recruitment*') || request()->is('super_admin/talent*') || request()->is('super_admin/panggilan*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.perusahaan') }}"
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -181,9 +291,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/paket/harga') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/paket/harga*') || request()->is('super_admin/laporan*') || request()->is('super_admin/update/harga*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.paket-harga') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="21" fill="none"
                                 viewBox="0 0 20 21" stroke="currentColor" stroke-width="2" class="text-inherit">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -193,9 +303,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/freeze') || request()->is('super_admin/detail/freeze') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/freeze*') || request()->is('super_admin/detail/freeze*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.freeze') }}"
-                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="14" height="17" viewBox="0 0 14 17" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -206,9 +316,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/tips/kerja') ? 'bg-white text-orange-500' : '' }} rounded-md">
-                        <a href="/super_admin/tips/kerja"
-                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                        class="{{ request()->is('super_admin/tips/kerja*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.tips-kerja') }}"
+                            class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -219,9 +329,9 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/event') ? 'bg-white text-orange-500' : '' }} rounded-md">
-                        <a href="/super_admin/event"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                        class="{{ request()->is('super_admin/event*') || request()->is('super_admin/events*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.eventform') }}"
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="20" height="21" viewBox="0 0 20 21" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -233,18 +343,18 @@
                     </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Lowongan</div>
                     <div
-                        class="{{ request()->is('super_admin/manajemen/lowongan/gold') ||  request()->is('super_admin/manajemen/lowongan/silver') ||  request()->is('super_admin/manajemen/lowongan/bronze') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/manajemen/lowongan*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.manajemen.lowongan.gold') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-1 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-1 transition duration-300">
                             <i class="ph ph-wrench text-2xl"></i>
                             Setting Lowongan
                         </a>
                     </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Akun</div>
                     <div
-                        class="{{ request()->is('super_admin/add/user') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/add/user*') || request()->is('super_admin/edit/user*') || request()->is('super_admin/detail/user*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.add.user') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -255,17 +365,17 @@
                         </a>
                     </div>
                     <div
-                        class="{{ request()->is('super_admin/email-subs') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class="{{ request()->is('super_admin/email-subs*') || request()->is('super_admin/email-subscribers*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.email-subs.index') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <i class="ph ph-envelope"></i>
                             Email
                         </a>
                     </div>
                     <div
-                        class=" {{ request()->is('super_admin/social-links') ? 'bg-white text-orange-500' : '' }} rounded-md">
+                        class=" {{ request()->is('super_admin/social-links*') || request()->is('super_admin/header-image*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.social.index') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
@@ -275,40 +385,207 @@
                             Link & Header
                         </a>
                     </div>
-                    <div
-                        class="{{ request()->is('super_admin/pengaturan') ? 'bg-white text-orange-500' : '' }} rounded-md">
-                        <a href="/super_admin/pengaturan"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-orange-500 rounded-md px-3 py-2 transition duration-300">
-                            <svg width="16" height="17" viewBox="0 0 16 17" fill="currentColor"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path
-                                    d="M14.9094 9.28404C14.9423 9.02804 14.967 8.77204 14.967 8.50004C14.967 8.22804 14.9423 7.97204 14.9094 7.71604L16.6448 6.39604C16.8011 6.27604 16.8422 6.06004 16.7435 5.88404L15.0986 3.11604C15.0501 3.0335 14.973 2.97045 14.8811 2.9382C14.7891 2.90595 14.6884 2.9066 14.5969 2.94004L12.549 3.74004C12.1214 3.42004 11.6608 3.15604 11.1591 2.95604L10.8466 0.836037C10.833 0.741911 10.7845 0.655846 10.7103 0.593986C10.6361 0.532127 10.5413 0.498722 10.4436 0.500037H7.15381C6.9482 0.500037 6.77548 0.644038 6.75081 0.836037L6.43828 2.95604C5.93659 3.15604 5.47602 3.42804 5.04835 3.74004L3.00047 2.94004C2.95278 2.9243 2.90279 2.9162 2.85243 2.91604C2.71262 2.91604 2.5728 2.98804 2.49878 3.11604L0.853896 5.88404C0.746979 6.06004 0.796325 6.27604 0.952589 6.39604L2.68794 7.71604C2.65505 7.97204 2.63037 8.23604 2.63037 8.50004C2.63037 8.76404 2.65505 9.02804 2.68794 9.28404L0.952589 10.604C0.796325 10.724 0.755203 10.94 0.853896 11.116L2.49878 13.884C2.54727 13.9666 2.62438 14.0296 2.71632 14.0619C2.80825 14.0941 2.90899 14.0935 3.00047 14.06L5.04835 13.26C5.47602 13.58 5.93659 13.844 6.43828 14.044L6.75081 16.164C6.77548 16.356 6.9482 16.5 7.15381 16.5H10.4436C10.6492 16.5 10.8219 16.356 10.8466 16.164L11.1591 14.044C11.6608 13.844 12.1214 13.572 12.549 13.26L14.5969 14.06C14.6463 14.076 14.6956 14.084 14.745 14.084C14.8848 14.084 15.0246 14.012 15.0986 13.884L16.7435 11.116C16.8422 10.94 16.8011 10.724 16.6448 10.604L14.9094 9.28404ZM13.281 7.91604C13.3139 8.16404 13.3221 8.33204 13.3221 8.50004C13.3221 8.66804 13.3057 8.84404 13.281 9.08404L13.1659 9.98804L13.8978 10.548L14.7861 11.22L14.2104 12.188L13.1659 11.78L12.3105 11.444L11.5703 11.988C11.2167 12.244 10.8795 12.436 10.5423 12.572L9.67048 12.916L9.53889 13.82L9.3744 14.9H8.22298L8.06672 13.82L7.93513 12.916L7.06334 12.572C6.70969 12.428 6.38071 12.244 6.05173 12.004L5.30331 11.444L4.43152 11.788L3.38702 12.196L2.81131 11.228L3.69955 10.556L4.43152 9.99604L4.31638 9.09204C4.29171 8.84404 4.27526 8.66004 4.27526 8.50004C4.27526 8.34004 4.29171 8.15604 4.31638 7.91604L4.43152 7.01204L3.69955 6.45204L2.81131 5.78004L3.38702 4.81204L4.43152 5.22004L5.28686 5.55604L6.02706 5.01204C6.38071 4.75604 6.71791 4.56404 7.05511 4.42804L7.9269 4.08404L8.05849 3.18004L8.22298 2.10004H9.36618L9.52244 3.18004L9.65403 4.08404L10.5258 4.42804C10.8795 4.57204 11.2084 4.75604 11.5374 4.99604L12.2858 5.55604L13.1576 5.21204L14.2021 4.80404L14.7778 5.77204L13.8978 6.45204L13.1659 7.01204L13.281 7.91604ZM8.79869 5.30004C6.98109 5.30004 5.50892 6.73204 5.50892 8.50004C5.50892 10.268 6.98109 11.7 8.79869 11.7C10.6163 11.7 12.0885 10.268 12.0885 8.50004C12.0885 6.73204 10.6163 5.30004 8.79869 5.30004ZM8.79869 10.1C7.894 10.1 7.15381 9.38004 7.15381 8.50004C7.15381 7.62004 7.894 6.90004 8.79869 6.90004C9.70338 6.90004 10.4436 7.62004 10.4436 8.50004C10.4436 9.38004 9.70338 10.1 8.79869 10.1Z"
-                                    fill="currentColor" />
-                            </svg>
-                            Pengaturan
-                        </a>
-                    </div>
-                    <div>
-                        <form id="logout" action="" method="POST">
-                            @csrf
-                            <button onclick="openModal()"
-                                class="flex font-semibold text-white items-center gap-2 mb-4 rounded-md px-3 py-2 transition duration-300">
-                                <svg width="18" height="19" viewBox="0 0 18 19" fill="none"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        d="M14 5.1709L12.59 6.5809L14.17 8.1709H6V10.1709H14.17L12.59 11.7509L14 13.1709L18 9.1709L14 5.1709ZM2 2.1709H9V0.170898H2C0.9 0.170898 0 1.0709 0 2.1709V16.1709C0 17.2709 0.9 18.1709 2 18.1709H9V16.1709H2V2.1709Z"
-                                        fill="currentColor" />
-                                </svg>
-                                Keluar
-                            </button>
-                        </form>
-                    </div>
                 </nav>
+                </div>
             </div>
         </aside>
         @yield('sidebarsuperadmin')
+    </div>
 
-        <!-- Modal overlay -->
+    <!-- Bottom Navigation Bar — hanya tampil di mobile (< 640px) -->
+    <nav id="bottom-nav" class="sm:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 px-1 flex items-stretch justify-around shadow-[0_-2px_12px_rgba(0,0,0,0.10)]" style="z-index:9999; height:64px;">
+
+        {{-- 1. Dashboard --}}
+        @php $isDashboard = request()->is('super_admin/dashboard*'); @endphp
+        <a href="{{ route('superadmin.dashboard') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isDashboard ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isDashboard ? 'ph-fill ph-squares-four' : 'ph-squares-four' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isDashboard ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Beranda</span>
+            @if($isDashboard)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 2. Pelamar --}}
+        @php $isPelamar = request()->is('super_admin/pelamar*') || request()->is('super_admin/kandidat*') || request()->is('super_admin/non-kandidat*') || request()->is('super_admin/calon-kandidat*'); @endphp
+        <a href="{{ route('superadmin.pelamar') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isPelamar ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isPelamar ? 'ph-fill ph-users' : 'ph-users' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isPelamar ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Pelamar</span>
+            @if($isPelamar)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 3. Perusahaan --}}
+        @php $isPerusahaan = request()->is('super_admin/perusahaan*') || request()->is('super_admin/tambah/perusahaan*') || request()->is('super_admin/lowongan*') || request()->is('super_admin/recruitment*') || request()->is('super_admin/talent*') || request()->is('super_admin/panggilan*'); @endphp
+        <a href="{{ route('superadmin.perusahaan') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isPerusahaan ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isPerusahaan ? 'ph-fill ph-buildings' : 'ph-buildings' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isPerusahaan ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Perusahaan</span>
+            @if($isPerusahaan)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 4. Finance --}}
+        @php $isFinance = request()->is('super_admin/paket/harga*') || request()->is('super_admin/laporan*') || request()->is('super_admin/update/harga*'); @endphp
+        <a href="{{ route('superadmin.paket-harga') }}"
+           class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isFinance ? 'text-[#00509d]' : 'text-slate-400' }}">
+            <i class="ph {{ $isFinance ? 'ph-fill ph-wallet' : 'ph-wallet' }} text-[22px] leading-none"></i>
+            <span class="text-[10px] {{ $isFinance ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Finance</span>
+            @if($isFinance)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
+        </a>
+
+        {{-- 5. Menu --}}
+        <button onclick="openMobileMenuSheet()"
+                type="button"
+                class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl text-slate-400 hover:text-[#00509d] focus:outline-none">
+            <i class="ph ph-list text-[22px] leading-none"></i>
+            <span class="text-[10px] font-medium leading-none tracking-tight">Menu</span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Bottom Sheet (Muncul dari BAWAH) -->
+    <div id="mobile-menu-sheet" class="hidden fixed inset-0 z-[10000] flex flex-col justify-end" aria-modal="true" role="dialog">
+        <!-- Backdrop -->
+        <div id="mobile-menu-backdrop" onclick="closeMobileMenuSheet()" class="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300 opacity-0"></div>
+
+        <!-- Sheet Panel -->
+        <div id="mobile-menu-panel" class="relative w-full max-h-[85vh] bg-white rounded-t-3xl shadow-2xl flex flex-col transform translate-y-full transition-transform duration-300 ease-out z-10 overflow-hidden">
+            <!-- Drag Indicator -->
+            <div class="pt-3 pb-1 flex justify-center cursor-pointer" onclick="closeMobileMenuSheet()">
+                <div class="w-12 h-1.5 bg-slate-300 rounded-full"></div>
+            </div>
+
+            <!-- Header Panel: Info Super Admin & Tombol Tutup -->
+            <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    @if (optional(Auth::user()->superadmin)->img_profile)
+                        <img class="w-10 h-10 rounded-full object-cover border border-slate-200"
+                            src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
+                    @elseif (Auth::user()->avatar)
+                        <img class="w-10 h-10 rounded-full object-cover border border-slate-200"
+                            src="{{ asset('storage/' . Auth::user()->avatar) }}" alt="Profile">
+                    @else
+                        <img class="w-10 h-10 rounded-full border border-slate-200"
+                            src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username ?? 'SA') }}&background=00509d&color=fff&size=64"
+                            alt="Avatar">
+                    @endif
+                    <div>
+                        <p class="text-sm font-bold text-slate-800 leading-tight">{{ optional(Auth::user()->superadmin)->nama_lengkap ?: (Auth::user()->username ?? 'Super Admin') }}</p>
+                        <p class="text-[11px] text-[#00509d] font-semibold">Super Admin &bull; {{ Auth::user()->email }}</p>
+                    </div>
+                </div>
+                <button onclick="closeMobileMenuSheet()" type="button" class="p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition active:scale-95" aria-label="Tutup Menu">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Menu Grid List (Scrollable dari bawah) -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-4 overscroll-contain">
+                <!-- Kategori 1: Navigasi Utama -->
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Navigasi Utama</p>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <a href="{{ route('superadmin.dashboard') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/dashboard*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-squares-four"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Dashboard</span>
+                        </a>
+                        <a href="{{ route('superadmin.pelamar') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/pelamar*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-users"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Pelamar</span>
+                        </a>
+                        <a href="{{ route('superadmin.perusahaan') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/perusahaan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-buildings"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Perusahaan</span>
+                        </a>
+                        <a href="{{ route('superadmin.paket-harga') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/paket/harga*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-wallet"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Finance</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kategori 2: Fitur & Konten -->
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Fitur & Konten</p>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <a href="{{ route('superadmin.manajemen.lowongan.gold') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/manajemen/lowongan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-wrench"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Lowongan</span>
+                        </a>
+                        <a href="{{ route('superadmin.freeze') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/freeze*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-snowflake"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Freeze</span>
+                        </a>
+                        <a href="{{ route('superadmin.tips-kerja') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/tips/kerja*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-lightbulb"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Tips Kerja</span>
+                        </a>
+                        <a href="{{ route('superadmin.eventform') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/event*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-calendar-star"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Event</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kategori 3: Pengaturan Akun & Sistem -->
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Akun & Sistem</p>
+                    <div class="grid grid-cols-4 gap-2 text-center">
+                        <a href="{{ route('superadmin.add.user') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/add/user*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-user-gear"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Kelola Akun</span>
+                        </a>
+                        <a href="{{ route('superadmin.email-subs.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/email-subs*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-envelope"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Email</span>
+                        </a>
+                        <a href="{{ route('superadmin.social.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/social-links*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-link"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Link Header</span>
+                        </a>
+                        <a href="{{ route('superadmin.profile') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/profile*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-user"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Profil</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Tombol Logout -->
+                <div class="pt-2">
+                    <button onclick="closeMobileMenuSheet(); openModal();" type="button"
+                        class="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-red-50 text-red-600 font-semibold text-xs hover:bg-red-100 transition active:scale-98">
+                        <i class="ph ph-sign-out text-base"></i>
+                        <span>Keluar dari Akun</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal overlay -->
         <div id="successModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50">
             <!-- Konten Modal -->
             <div class="relative bg-white rounded-xl shadow-lg w-[90%] max-w-sm p-6 text-center">
@@ -326,7 +603,7 @@
                     <form action="{{ route('logout_superadmin') }}" method="POST">
                         @csrf
                         <button id="goLogin"
-                            class="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-md font-medium">
+                            class="bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md font-medium">
                             Keluar
                         </button>
                     </form>
@@ -348,55 +625,117 @@
             window.csrf = "{{ csrf_token() }}";
         </script>
         <script src="{{ asset('js/super_admin.js') }}"></script>
-        @include('finance.sidebar.modal-logout')
         <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-        {{-- Preview gambar --}}
         <script>
-            document.getElementById('fileinputsuperadmin').addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    let reader = new FileReader();
-                    reader.onload = function(event) {
-                        // update foto besar (pasti ada)
-                        document.getElementById('pa').setAttribute('src', event.target.result);
-
-                        // update foto kecil (navbar) kalau memang ada
-                        const puImg = document.getElementById('pu');
-                        if (puImg) {
-                            puImg.setAttribute('src', event.target.result);
+            const _fileInput = document.getElementById('fileinputsuperadmin');
+            if (_fileInput) {
+                _fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (file) {
+                        let reader = new FileReader();
+                        reader.onload = function(event) {
+                            const paImg = document.getElementById('pa');
+                            if (paImg) paImg.setAttribute('src', event.target.result);
+                            const puImg = document.getElementById('pu');
+                            if (puImg) puImg.setAttribute('src', event.target.result);
                         }
+                        reader.readAsDataURL(file);
                     }
-                    reader.readAsDataURL(file);
+                });
+            }
+        </script>
+
+        <script>
+            // Fungsi global untuk modal konfirmasi keluar
+            function openModal() {
+                let modal = document.getElementById("successModal");
+                if (modal) {
+                    modal.classList.remove("hidden");
+                    modal.classList.add("flex");
+                }
+            }
+
+            function closeModal() {
+                let modal = document.getElementById("successModal");
+                if (modal) {
+                    modal.classList.remove("flex");
+                    modal.classList.add("hidden");
+                }
+            }
+        </script>
+
+        <script>
+            // ===== MOBILE MENU BOTTOM SHEET HANDLER =====
+            function openMobileMenuSheet() {
+                const sheet = document.getElementById('mobile-menu-sheet');
+                const backdrop = document.getElementById('mobile-menu-backdrop');
+                const panel = document.getElementById('mobile-menu-panel');
+                if (!sheet || !backdrop || !panel) return;
+
+                sheet.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+
+                requestAnimationFrame(() => {
+                    backdrop.classList.remove('opacity-0');
+                    backdrop.classList.add('opacity-100');
+                    panel.classList.remove('translate-y-full');
+                    panel.classList.add('translate-y-0');
+                });
+            }
+
+            function closeMobileMenuSheet() {
+                const sheet = document.getElementById('mobile-menu-sheet');
+                const backdrop = document.getElementById('mobile-menu-backdrop');
+                const panel = document.getElementById('mobile-menu-panel');
+                if (!sheet || !backdrop || !panel) return;
+
+                backdrop.classList.remove('opacity-100');
+                backdrop.classList.add('opacity-0');
+                panel.classList.remove('translate-y-0');
+                panel.classList.add('translate-y-full');
+
+                setTimeout(() => {
+                    sheet.classList.add('hidden');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+
+            // Tutup bottom sheet jika tekan Escape
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeMobileMenuSheet();
+                    closeModal();
                 }
             });
         </script>
 
-        <script>
-            // Buka modal saat klik tombol "Keluar"
-            document.querySelector('#logout button').addEventListener('click', function(e) {
-                e.preventDefault(); // jangan langsung submit
-                let modal = document.getElementById("successModal");
-                modal.classList.remove("hidden");
-                modal.classList.add("flex");
-            });
-
-            // Tombol batal → tutup modal
-            function closeModal() {
-                let modal = document.getElementById("successModal");
-                modal.classList.remove("flex");
-                modal.classList.add("hidden");
-            }
-
-            // Tombol "Keluar" di modal → submit form logout
-            document.getElementById("goLogin").addEventListener("click", function() {
-                document.getElementById("logout_admin").submit();
-            });
-        </script>
-
-        <script src="//unpkg.com/alpinejs" defer></script>
         <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
         @stack('scripts')
+
+        {{-- NProgress Page Transition --}}
+        <script src="https://cdn.jsdelivr.net/npm/nprogress@0.2.0/nprogress.min.js"></script>
+        <script>
+            NProgress.configure({ showSpinner: false, speed: 400, minimum: 0.1 });
+            document.addEventListener('DOMContentLoaded', function () {
+                NProgress.done();
+            });
+            document.addEventListener('click', function (e) {
+                const link = e.target.closest('a');
+                if (!link) return;
+                const href = link.getAttribute('href');
+                if (!href || href.startsWith('#') || href.startsWith('javascript') || link.target === '_blank') return;
+                if (link.hasAttribute('data-no-progress')) return;
+                NProgress.start();
+            });
+            document.addEventListener('submit', function () {
+                NProgress.start();
+            });
+            window.addEventListener('pageshow', function () {
+                NProgress.done();
+            });
+        </script>
 </body>
 
 </html>
+

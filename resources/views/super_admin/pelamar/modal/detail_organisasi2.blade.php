@@ -35,7 +35,7 @@
                                     xmlns="http://www.w3.org/2000/svg" class="mr-16">
                                     <path
                                         d="M9.83752 2.24357C10.0542 2.02693 10.0542 1.66587 9.83752 1.46034L8.5377 0.160524C8.33218 -0.0561123 7.97112 -0.0561123 7.75448 0.160524L6.7324 1.17705L8.81544 3.26009M0 7.915V9.99805H2.08304L8.22664 3.8489L6.14359 1.76586L0 7.915Z"
-                                        fill="#FA6601" />
+                                        fill="#00509d" />
                                 </svg>
                             </a>
                         </div>
@@ -55,7 +55,7 @@
             <div class="flex justify-end mr-6">
                 <button data-modal-target="create_organisasimodal2" data-modal-toggle="create_organisasimodal2"
                     data-modal-hide="show-org2" type="button"
-                    class="text-white bg-orange-500 hover:bg-orange-600 font-medium rounded-lg text-sm px-2 py-2 mb-4 ml-4 text-center">
+                    class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-2 py-2 mb-4 ml-4 text-center">
 
                     <svg width="12" height="12" viewBox="0 0 45 45" fill="none"
                         xmlns="http://www.w3.org/2000/svg">

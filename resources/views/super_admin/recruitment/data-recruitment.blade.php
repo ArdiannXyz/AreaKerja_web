@@ -10,69 +10,104 @@
             <!-- Notifikasi + Profil -->
             <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
                 <!-- Tombol Notifikasi -->
-                <button @click="openNotif = true" class="relative flex-shrink-0">
-                    <svg width="31" height="32" viewBox="0 0 31 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <g clip-path="url(#clip0_722_7956)">
-                            <path
-                                d="M23.076 14.9431L22.6747 12.7383L21.1101 13.0055L21.5756 15.5633C21.6168 15.7894 21.7387 15.9922 21.9146 16.127L24.4524 18.0732L24.6985 19.4255L7.4876 22.3654L7.24147 21.0131L8.93911 18.3434C9.05673 18.1585 9.09972 17.9276 9.05861 17.7015L8.43786 14.2911C8.21777 13.0934 8.29153 11.8668 8.65169 10.7352C9.01186 9.60353 9.64569 8.60691 10.4892 7.84595C11.3326 7.08499 12.3559 6.58665 13.4555 6.40126C14.5552 6.21586 15.6924 6.34997 16.7522 6.79004L16.4051 4.88278C15.595 4.65063 14.7612 4.55689 13.9346 4.605L13.6165 2.85717L12.0518 3.12444L12.37 4.87227C10.4802 5.41568 8.87215 6.70676 7.85685 8.49588C6.84155 10.285 6.49109 12.445 6.87324 14.5583L7.42973 17.6158L5.7321 20.2855C5.61447 20.4704 5.57149 20.7013 5.6126 20.9274L6.07815 23.4852C6.11931 23.7114 6.24121 23.9141 6.41702 24.049C6.59284 24.1838 6.80817 24.2396 7.01565 24.2042L12.4919 23.2688L12.647 24.1214C12.8528 25.252 13.4623 26.2659 14.3414 26.9401C15.2205 27.6142 16.2971 27.8934 17.3345 27.7162C18.3719 27.539 19.2851 26.9199 19.8732 25.9951C20.4612 25.0704 20.676 23.9157 20.4702 22.785L20.315 21.9324L25.7912 20.997C25.9987 20.9616 26.1813 20.8378 26.2989 20.6528C26.4165 20.4679 26.4595 20.2369 26.4183 20.0108L25.9528 17.453C25.9116 17.2269 25.7896 17.0241 25.6138 16.8894L23.076 14.9431ZM18.9055 23.0523C19.029 23.7307 18.9002 24.4235 18.5473 24.9784C18.1945 25.5332 17.6466 25.9047 17.0242 26.011C16.4017 26.1173 15.7557 25.9498 15.2283 25.5453C14.7008 25.1408 14.3351 24.5325 14.2117 23.8541L14.0565 23.0015L18.7504 22.1997L18.9055 23.0523Z"
-                                fill="black" />
-                        </g>
-                    </svg>
+                @include('super_admin.components.notif_button')
 
-                    @if ($global_notifikasi_unread > 0)
-                        <span id="notif-badge"
-                            class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
-                            {{ $global_notifikasi_unread }}
-                        </span>
-                    @endif
-                </button>
-
-                <!-- Profil -->
-                <div
-                    class="flex items-center gap-2 bg-white px-2 py-1 border border-gray-300 shadow-md rounded-2xl flex-shrink-0">
-                    <a href="{{ route('superadmin.profile') }}">
-                        @if (Auth::user()->role == 'super_admin' && Auth::user()->superadmin?->img_profile)
-                            <img class="w-10 h-10 object-cover rounded-full"
-                                src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
-                        @else
-                            <img class="w-10 h-10 rounded-full"
-                                src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->username) }}&background=random&color=fff&size=128"
-                                alt="">
-                        @endif
-                    </a>
-                    <div class="text-sm truncate max-w-[120px] sm:max-w-none">
-                        <span class="font-semibold truncate">{{ Auth::user()->username }}</span>
-                        <p class="text-gray-500 text-xs sm:text-sm truncate">{{ Auth::user()->email }}</p>
-                    </div>
-                </div>
+                {{-- User Badge Dropdown --}}
+                @include('super_admin.components.user_badge_dropdown')
             </div>
         </div>
 
-        <!-- Header -->
-        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-            <!-- Bagian kiri (kosong untuk sekarang, bisa diisi nanti) -->
-            <div class="flex items-center gap-4 w-full sm:w-auto">
-                <!-- Kosong, placeholder -->
-            </div>
+        <!-- Header + Search -->
+        <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-4 mb-6">
+            <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
 
-            <!-- Bagian search -->
-            <div class="w-full sm:w-auto">
-                <form action="" method="get"
-                    class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full">
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="nama/lowongan ..."
-                        class="border border-gray-500 rounded-lg px-4 py-2 w-full sm:w-72 focus:outline-none">
-                    <button
-                        class="bg-orange-500 hover:bg-orange-600 text-white font-medium px-4 sm:px-10 py-2 rounded-xl w-full sm:w-auto">
-                        Cari
-                    </button>
-                </form>
+                <div class="relative w-full md:w-96" x-data="{
+                    open: false,
+                    query: '{{ request('search') }}',
+                    recommendations: [
+                        { label: 'Jawa Timur', category: 'Wilayah', icon: 'ph-map-pin' },
+                        { label: 'Jawa Barat', category: 'Wilayah', icon: 'ph-map-pin' },
+                        { label: 'DKI Jakarta', category: 'Wilayah', icon: 'ph-map-pin' },
+                        { label: 'Diterima', category: 'Status', icon: 'ph-check-circle' },
+                        { label: 'Ditolak', category: 'Status', icon: 'ph-x-circle' },
+                        { label: 'Menunggu', category: 'Status', icon: 'ph-clock' },
+                    ],
+                    get filtered() {
+                        if (!this.query.trim()) return this.recommendations.slice(0, 4);
+                        return this.recommendations.filter(r =>
+                            r.label.toLowerCase().includes(this.query.toLowerCase()) ||
+                            r.category.toLowerCase().includes(this.query.toLowerCase())
+                        );
+                    },
+                    select(val) {
+                        this.query = val;
+                        this.open = false;
+                        $nextTick(() => { $refs.recruitmentSearchForm.submit(); });
+                    }
+                }" @click.outside="open = false">
+
+                    <form x-ref="recruitmentSearchForm" action="{{ route('superadmin.recruitment', $perusahaan->id) }}" method="get" autocomplete="off" class="flex items-center w-full">
+                        <div class="flex items-center w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition">
+                            <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
+                            <input type="text" name="search" x-model="query"
+                                @focus="open = true"
+                                @input="open = true"
+                                autocomplete="off"
+                                placeholder="Cari nama kandidat, lowongan..."
+                                class="flex-1 px-2.5 py-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
+                                style="border: none !important; outline: none !important; box-shadow: none !important;">
+                            <template x-if="query.length > 0">
+                                <a href="{{ route('superadmin.recruitment', $perusahaan->id) }}"
+                                   @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.recruitment', $perusahaan->id) }}';"
+                                   class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
+                                   title="Hapus pencarian">
+                                    <i class="ph ph-x text-[10px] font-bold"></i>
+                                </a>
+                            </template>
+                            <button type="submit" class="hidden"></button>
+                        </div>
+                    </form>
+
+                    <!-- Autocomplete Dropdown -->
+                    <div x-cloak x-show="open && filtered.length > 0"
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 -translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 -translate-y-1"
+                         class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-slate-100 shadow-xl p-2 z-50 max-h-72 overflow-y-auto">
+                        <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-50 mb-1">
+                            <span>Saran Pencarian</span>
+                            <i class="ph ph-sparkle text-[#00509d]"></i>
+                        </div>
+                        <ul class="space-y-0.5">
+                            <template x-for="(item, idx) in filtered" :key="idx">
+                                <li>
+                                    <button type="button" @click="select(item.label)"
+                                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-blue-50/70 hover:text-[#00509d] transition group">
+                                        <span class="flex items-center gap-2.5 text-xs text-slate-700 group-hover:text-[#00509d] font-medium">
+                                            <span class="w-6 h-6 rounded-lg bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-slate-500 group-hover:text-[#00509d] transition">
+                                                <i :class="'ph ' + item.icon" class="text-xs"></i>
+                                            </span>
+                                            <span x-text="item.label"></span>
+                                        </span>
+                                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 group-hover:bg-blue-100 text-slate-500 group-hover:text-[#00509d] font-medium"
+                                              x-text="item.category"></span>
+                                    </button>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
         </div>
 
         <!-- Table -->
         <div class="overflow-x-auto rounded-2xl border-2 border-gray-400">
             <table class="w-full min-w-[700px] text-left border-collapse">
-                <thead class="text-center bg-orange-500 text-white">
+                <thead class="text-center bg-blue-700 text-white">
                     <tr class="border-b-[2px] border-gray-300">
                         <th class="p-4 sm:p-7 font-medium">ID</th>
                         <th class="p-4 sm:p-7 font-medium">Nama Kandidat</th>
@@ -92,7 +127,7 @@
                             <td class="px-2 sm:px-4 py-2 break-words">{{ $r->pelamar->telepon_pelamar }}</td>
                             <td class="px-2 sm:px-4 py-2">
                                 <a href="{{ route('superadmin.recruitment.detail', $r->id) }}"
-                                    class="bg-orange-500 text-xs sm:text-sm text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg inline-block whitespace-nowrap">
+                                    class="bg-blue-700 text-xs sm:text-sm text-white px-3 sm:px-4 py-1 sm:py-2 rounded-lg inline-block whitespace-nowrap">
                                     View
                                 </a>
                             </td>

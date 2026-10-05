@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -59,7 +59,7 @@
                 <!-- Bagian Kanan -->
                 <div class=" flex items-center justify-center bg-white">
                     <div class="max-w-md w-full">
-                        <h2 class="text-2xl font-bold text-orange-600 mb-2">Lupa Kata Sandi</h2>
+                        <h2 class="text-2xl font-bold text-[#003d7a] mb-2">Lupa Kata Sandi</h2>
                         <p class="text-gray-600 text-sm mb-6">Masukan kata sandi anda.<br>kata sandi harus mengandung:
                         </p>
 
@@ -79,8 +79,8 @@
                                 <label class="block text-sm font-medium m-2">Kata Sandi Baru</label>
                                 <div class="relative">
                                     <input type="password" name="password" placeholder="Kata Sandi"
-                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500">
-                                    <span class="absolute right-3 top-2.5 text-gray-500 cursor-pointer">👁</span>
+                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-[#00509d]">
+                                    <span class="absolute right-3 top-2.5 text-gray-500 cursor-pointer">ðŸ‘</span>
                                 </div>
                             </div>
 
@@ -88,19 +88,19 @@
                                 <label class="block text-sm font-medium m-2">Konfirmasi Kata Sandi</label>
                                 <div class="relative">
                                     <input type="password" name="password_confirmation" placeholder="Kata Sandi"
-                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-orange-500">
-                                    <span class="absolute right-3 top-2.5 text-gray-500 cursor-pointer">👁</span>
+                                        class="w-full border-gray-500 border rounded-md px-4 py-2 focus:ring-2 focus:ring-[#00509d]">
+                                    <span class="absolute right-3 top-2.5 text-gray-500 cursor-pointer">ðŸ‘</span>
                                 </div>
                             </div>
 
                             <button type="submit"
-                                class="w-full bg-orange-500 text-white py-3 rounded-md hover:bg-orange-600 transition">
+                                class="w-full bg-[#00509d] text-white py-3 rounded-md hover:bg-[#003d7a] transition">
                                 Ulang Kata Sandi
                             </button>
                         </form>
 
                         <div class="text-center mt-4">
-                            <a href="#" class="text-orange-600 font-medium hover:underline">Kembali</a>
+                            <a href="#" class="text-[#003d7a] font-medium hover:underline">Kembali</a>
                         </div>
                     </div>
                 </div>
@@ -110,3 +110,4 @@
 </body>
 
 </html>
+

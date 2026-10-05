@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Login | Areakerja</title>
     @vite('resources/css/app.css')
-    <link rel="icon" sizes="512x512" type="image/png" href="{{ asset('images/logoarea.png') }}">
+    <link rel="icon" type="image/png" href="{{ asset('images/logo_area_kerja_biru.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -63,7 +63,7 @@
 
                 </div>
 
-                <p class="text-center text-orange-500 mb-6 mt-6 text-sm">kata sandi Anda akan diatur ulang melalui email
+                <p class="text-center text-blue-700 mb-6 mt-6 text-sm">kata sandi Anda akan diatur ulang melalui email
                 </p>
 
                 <!-- Form Login -->
@@ -71,15 +71,15 @@
                     <div>
                         <label for="username" class="block text-sm font-medium text-gray-700">E-mail</label>
                         <input type="e-mail" id="e-mail" name="email" placeholder="E-mail"
-                            class="mt-3 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
+                            class="mt-3 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-blue-700 focus:border-blue-700" />
                     </div>
                     <div class="flex justify-center">
                         <button type="submit"
-                            class=" bg-orange-500 text-white px-40 py-3 rounded font-small text-sm hover:bg-orange-600 transition">
+                            class=" bg-blue-700 text-white px-40 py-3 rounded font-small text-sm hover:bg-blue-800 transition">
                             Lanjutkan
                         </button>
                     </div>
-                    <a href="#" class="flex justify-center text-sm font-medium text-orange-500">Kembali</a>
+                    <a href="#" class="flex justify-center text-sm font-medium text-blue-700">Kembali</a>
                 </form>
             </div>
         </div>

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -18,7 +18,7 @@
             background:
             @php
 echo match($data->status) {
-                    'diterima' => 'linear-gradient(135deg,#f97316,#fb923c)',
+                    'diterima' => 'linear-gradient(135deg,#00509d,#fb923c)',
                     'ditolak'  => 'linear-gradient(135deg,#dc2626,#ef4444)',
                     default    => 'linear-gradient(135deg,#f59e0b,#fbbf24)',
                 }; @endphp;
@@ -31,11 +31,11 @@ echo match($data->status) {
 
             <h1 style="margin:0; font-size:22px; font-weight:600;">
                 @if ($data->status === 'diterima')
-                    📢 Konfirmasi Interview
+                    ðŸ“¢ Konfirmasi Interview
                 @elseif($data->status === 'ditolak')
-                    ❌ Lamaran Ditolak
+                    âŒ Lamaran Ditolak
                 @else
-                    ⏳ Status Lamaran
+                    â³ Status Lamaran
                 @endif
             </h1>
 
@@ -52,7 +52,7 @@ echo match($data->status) {
                 <p>
                     Selamat! Lamaran kamu untuk posisi
                     <b>{{ $lowongan->nama }}</b>
-                    telah <b style="color:#f97316;">DITERIMA</b>.
+                    telah <b style="color:#00509d;">DITERIMA</b>.
                 </p>
 
                 <!-- DETAIL INTERVIEW -->
@@ -66,17 +66,17 @@ echo match($data->status) {
                 ">
                     <table style="width:100%; border-collapse:collapse; font-size:14px;">
                         <tr>
-                            <td style="padding:6px 0; font-weight:600;">📅 Tanggal</td>
+                            <td style="padding:6px 0; font-weight:600;">ðŸ“… Tanggal</td>
                             <td>
                                 {{ \Carbon\Carbon::parse($konfirmasi['tanggal'])->translatedFormat('d F Y') }}
                             </td>
                         </tr>
                         <tr>
-                            <td style="padding:6px 0; font-weight:600;">⏰ Pukul</td>
+                            <td style="padding:6px 0; font-weight:600;">â° Pukul</td>
                             <td>{{ $konfirmasi['waktu'] }}</td>
                         </tr>
                         <tr>
-                            <td style="padding:6px 0; font-weight:600;">📍 Tempat</td>
+                            <td style="padding:6px 0; font-weight:600;">ðŸ“ Tempat</td>
                             <td>
                                 {{ $konfirmasi['tempat'] }}<br>
 
@@ -96,7 +96,7 @@ echo match($data->status) {
 
                         </tr>
                         <tr>
-                            <td style="padding:6px 0; font-weight:600;">🎯 Keperluan</td>
+                            <td style="padding:6px 0; font-weight:600;">ðŸŽ¯ Keperluan</td>
                             <td>Wawancara Kerja</td>
                         </tr>
                     </table>
@@ -111,7 +111,7 @@ echo match($data->status) {
                         border-radius:6px;
                         font-size:14px;
                     ">
-                        <b>📝 Catatan:</b><br>
+                        <b>ðŸ“ Catatan:</b><br>
                         {{ $konfirmasi['catatan'] }}
                     </div>
                 @endif
@@ -124,7 +124,7 @@ echo match($data->status) {
                     Mohon maaf, lamaran kamu dinyatakan <b>DITOLAK</b>.
                 </p>
                 <p>
-                    Jangan berkecil hati, semoga sukses di kesempatan berikutnya 🙏
+                    Jangan berkecil hati, semoga sukses di kesempatan berikutnya ðŸ™
                 </p>
             @else
                 <p style="color:#f59e0b;">
@@ -149,10 +149,11 @@ echo match($data->status) {
             font-size:12px;
             color:#999;
         ">
-            © {{ date('Y') }} areakerja.com
+            Â© {{ date('Y') }} areakerja.com
         </div>
     </div>
 
 </body>
 
 </html>
+

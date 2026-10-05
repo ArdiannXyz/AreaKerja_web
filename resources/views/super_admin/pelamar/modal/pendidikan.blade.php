@@ -1,4 +1,4 @@
-<!-- Main modal -->
+﻿<!-- Main modal -->
 <div id="create_pendidikanmodal" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -26,41 +26,41 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Pendidikan</label>
                         <input type="text" name="pendidikan"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                             required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Jurusan</label>
                         <input type="text" name="jurusan"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                             required>
                     </div>
 
                     <div>
                         <label class="block text-sm font-medium text-gray-900 mb-1">Asal Pendidikan</label>
                         <input name="asal_pendidikan" type="text"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"></input>
+                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"></input>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Awal</label>
                             <input type="number" name="tahun_awal"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
                                 required>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-900 mb-1">Tahun Akhir</label>
                             <input type="number" name="tahun_akhir"
-                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400">
+                                class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600">
                         </div>
                     </div>
 
 
                     <div class="flex justify-end">
                         <button type="submit"
-                            class="bg-orange-500 font-medium hover:bg-orange-600 text-white px-5 py-2 rounded-lg shadow-md transition">
+                            class="bg-blue-700 font-medium hover:bg-blue-800 text-white px-5 py-2 rounded-lg shadow-md transition">
                             Simpan
                         </button>
                     </div>

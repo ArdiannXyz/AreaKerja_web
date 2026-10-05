@@ -5,15 +5,274 @@ namespace App\Http\Controllers;
 use App\Helpers\BrowserPath;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
-use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Notifikasi;
+use App\Models\Pelamar;
+use App\Models\Perusahaan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Spatie\Browsershot\Browsershot;
 
 class FinanceController extends Controller
 {
+    // =============================================
+    // PROFILE FINANCE
+    // =============================================
+
+    public function profile_finance()
+    {
+        return view('finance.profile.profile');
+    }
+
+    public function edit_profile_finance($id = null)
+    {
+        $user = Auth::user();
+        $provinsis = collect();
+
+        try {
+            if (Schema::hasTable('provinsis')) {
+                $provinsis = DB::table('provinsis')->get();
+            }
+        } catch (\Throwable $e) {
+            $provinsis = collect();
+        }
+
+        if ($provinsis->isEmpty() && file_exists(database_path('data/provinces.json'))) {
+            $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+            $provinsis = collect($json)->map(function ($item) {
+                return (object)[
+                    'id'   => (string)$item['id'],
+                    'nama' => ucwords(strtolower($item['name'])),
+                ];
+            });
+        }
+
+        return view('finance.profile.edit-profile', [
+            'provinsis' => $provinsis,
+        ]);
+    }
+
+    private function loadJsonFileFinance($filepath)
+    {
+        if (!file_exists($filepath)) return [];
+        $content = file_get_contents($filepath);
+        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+        $content = trim($content);
+        $data = json_decode($content, true);
+        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
+            $content = iconv('UTF-8', 'UTF-8//IGNORE', $content);
+            $data = json_decode($content, true);
+        }
+        return $data ?? [];
+    }
+
+    public function getKotaFinance($provinsi_id)
+    {
+        $input = trim(urldecode((string)$provinsi_id));
+        if (empty($input)) return response()->json([]);
+
+        $regencies = $this->loadJsonFileFinance(database_path('data/regencies.json'));
+        $provinces = $this->loadJsonFileFinance(database_path('data/provinces.json'));
+        if (empty($regencies)) return response()->json([]);
+
+        $targetProvId = null;
+        foreach ($provinces as $p) {
+            $pId = trim((string)($p['id'] ?? ''));
+            $pName = trim((string)($p['name'] ?? ''));
+            if ($pId === $input || (is_numeric($input) && (int)$pId === (int)$input)
+                || strcasecmp($pName, $input) === 0
+                || str_contains(strtolower($pName), strtolower($input))) {
+                $targetProvId = $pId;
+                break;
+            }
+        }
+        if (!$targetProvId) $targetProvId = $input;
+
+        $kotas = collect($regencies)
+            ->filter(fn($item) =>
+                trim((string)($item['province_id'] ?? '')) === (string)$targetProvId
+                || (is_numeric($targetProvId) && (int)trim((string)($item['province_id'] ?? '')) === (int)$targetProvId)
+            )->values()
+            ->map(fn($item) => [
+                'id'          => (string)$item['id'],
+                'provinsi_id' => (string)$item['province_id'],
+                'nama'        => ucwords(strtolower($item['name'])),
+            ]);
+
+        return response()->json($kotas);
+    }
+
+    public function getKecamatanFinance($kota_id)
+    {
+        $input = trim(urldecode((string)$kota_id));
+        if (empty($input)) return response()->json([]);
+
+        $districts = $this->loadJsonFileFinance(database_path('data/districts.json'));
+        $regencies = $this->loadJsonFileFinance(database_path('data/regencies.json'));
+        if (empty($districts)) return response()->json([]);
+
+        $targetKotaId = null;
+        foreach ($regencies as $r) {
+            $rId = trim((string)($r['id'] ?? ''));
+            $rName = trim((string)($r['name'] ?? ''));
+            if ($rId === $input || (is_numeric($input) && (int)$rId === (int)$input)
+                || strcasecmp($rName, $input) === 0) {
+                $targetKotaId = $rId;
+                break;
+            }
+        }
+        if (!$targetKotaId) $targetKotaId = $input;
+
+        $kecamatans = collect($districts)
+            ->filter(fn($item) =>
+                trim((string)($item['regency_id'] ?? '')) === (string)$targetKotaId
+                || (is_numeric($targetKotaId) && (int)trim((string)($item['regency_id'] ?? '')) === (int)$targetKotaId)
+            )->values()
+            ->map(fn($item) => [
+                'id'      => (string)$item['id'],
+                'kota_id' => (string)$item['regency_id'],
+                'nama'    => ucwords(strtolower($item['name'])),
+            ]);
+
+        return response()->json($kecamatans);
+    }
+
+    public function update_profile_finance(Request $request, $id = null)
+    {
+        try {
+            $user = Auth::user();
+
+            $request->validate([
+                'username'     => 'required|string|unique:users,username,' . $user->id,
+                'nama_lengkap' => 'required|string',
+                'provinsi_id'  => 'required',
+                'kota_id'      => 'required',
+                'kecamatan_id' => 'required',
+            ], [
+                'username.required'     => 'Username wajib diisi.',
+                'username.unique'       => 'Username sudah digunakan oleh akun lain.',
+                'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
+                'provinsi_id.required'  => 'Provinsi wajib dipilih.',
+                'kota_id.required'      => 'Kota / Kabupaten wajib dipilih.',
+                'kecamatan_id.required' => 'Kecamatan wajib dipilih.',
+            ]);
+
+            $imagePath = null;
+            if ($request->hasFile('img_profile')) {
+                $imagePath = $request->file('img_profile')->store('images', 'public');
+                $user->avatar = $imagePath;
+            }
+
+            $user->username = $request->username;
+            $user->save();
+
+            if (Schema::hasTable('provinsis') && $request->provinsi_id) {
+                $provName = null;
+                if (file_exists(database_path('data/provinces.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->provinsi_id);
+                    if ($found) $provName = ucwords(strtolower($found['name']));
+                }
+                DB::table('provinsis')->updateOrInsert(
+                    ['id' => $request->provinsi_id],
+                    ['nama' => $provName ?? 'Provinsi ' . $request->provinsi_id, 'updated_at' => now()]
+                );
+            }
+
+            if (Schema::hasTable('kotas') && $request->kota_id) {
+                $kotaName = null;
+                if (file_exists(database_path('data/regencies.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/regencies.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->kota_id);
+                    if ($found) $kotaName = ucwords(strtolower($found['name']));
+                }
+                DB::table('kotas')->updateOrInsert(
+                    ['id' => $request->kota_id],
+                    ['provinsi_id' => $request->provinsi_id, 'nama' => $kotaName ?? 'Kota ' . $request->kota_id, 'updated_at' => now()]
+                );
+            }
+
+            if (Schema::hasTable('kecamatans') && $request->kecamatan_id) {
+                $kecName = null;
+                if (file_exists(database_path('data/districts.json'))) {
+                    $json = json_decode(file_get_contents(database_path('data/districts.json')), true);
+                    $found = collect($json)->firstWhere('id', (string)$request->kecamatan_id);
+                    if ($found) $kecName = ucwords(strtolower($found['name']));
+                }
+                DB::table('kecamatans')->updateOrInsert(
+                    ['id' => $request->kecamatan_id],
+                    ['kota_id' => $request->kota_id, 'nama' => $kecName ?? 'Kecamatan ' . $request->kecamatan_id, 'updated_at' => now()]
+                );
+            }
+
+            if (Schema::hasTable('finances')) {
+                $financeUpdate = [
+                    'nama_lengkap'  => $request->nama_lengkap,
+                    'provinsi_id'   => $request->provinsi_id,
+                    'kota_id'       => $request->kota_id,
+                    'kecamatan_id'  => $request->kecamatan_id,
+                    'desa'          => $request->desa,
+                    'kode_pos'      => $request->kode_pos,
+                    'detail_alamat' => $request->detail_alamat,
+                    'updated_at'    => now(),
+                ];
+                if ($imagePath) $financeUpdate['img_profile'] = $imagePath;
+
+                DB::table('finances')->updateOrInsert(
+                    ['user_id' => $user->id],
+                    $financeUpdate
+                );
+            }
+
+            try {
+                Notifikasi::create([
+                    'user_id'       => Auth::id(),
+                    'perusahaan_id' => null,
+                    'judul'         => 'Profil Berhasil Diperbarui',
+                    'pesan'         => 'Profil Finance Anda berhasil diperbarui.',
+                    'is_read'       => 0,
+                    'expired_at'    => now()->addDays(7),
+                ]);
+            } catch (\Throwable $e) {
+                // Notifikasi tidak wajib
+            }
+
+            return redirect()->route('finance.profile')->with('success', 'Profil Finance berhasil diperbarui');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
+        }
+    }
+
+    public function destroy_profile_finance($id = null)
+    {
+        $user = Auth::user();
+
+        if ($user->avatar && Storage::exists('public/' . $user->avatar)) {
+            Storage::delete('public/' . $user->avatar);
+        }
+
+        $user->avatar = null;
+        $user->save();
+
+        try {
+            if (Schema::hasTable('finances')) {
+                DB::table('finances')->where('user_id', $user->id)->update(['img_profile' => null]);
+            }
+        } catch (\Throwable $e) {
+            // fallback
+        }
+
+        return redirect()->route('finance.edit.profile')->with('success', 'Foto profil berhasil dihapus');
+    }
+
+    // =============================================
+    // END PROFILE FINANCE
+    // =============================================
+
     public function pageUnduhOmset()
     {
         return view('finance.page-unduh-omset');
@@ -23,9 +282,11 @@ class FinanceController extends Controller
     public function verifikasi($id, Request $request)
     {
         $transaksi = CatatanCash::findOrFail($id);
-        $perusahaan = $transaksi->user->perusahaan;
-        $paket = $transaksi->hargaPembayaran;
-        $pelamar = $transaksi->user->pelamar;
+
+        // Null check agar tidak crash jika user sudah dihapus
+        $perusahaan = $transaksi->user?->perusahaan ?? null;
+        $paket      = $transaksi->hargaPembayaran ?? null;
+        $pelamar    = $transaksi->user?->pelamar ?? null;
 
         if ($request->action == 'terima' && $transaksi->status !== 'diterima') {
             $transaksi->status = 'diterima';
@@ -155,12 +416,7 @@ class FinanceController extends Controller
         $omsetPerBulan = $cashData
             ->groupBy(fn($item) => Carbon::parse($item->created_at)->format('Y-m'))
             ->map(function ($group) {
-                $total = 0;
-                foreach ($group as $item) {
-                    if ($item->hargaPembayaran) {
-                        $total += $item->hargaPembayaran->harga;
-                    }
-                }
+                $total = $group->sum(fn($item) => (float)($item->total ?? ($item->hargaPembayaran?->harga ?? 0)));
 
                 $first = $group->first();
                 return [
@@ -170,8 +426,7 @@ class FinanceController extends Controller
                     'total' => $total,
                 ];
             })
-            ->sortByDesc('tahun')
-            ->sortByDesc('bulan')
+            ->sortByDesc(fn($item) => $item['tahun'] . '-' . str_pad($item['bulan'], 2, '0', STR_PAD_LEFT))
             ->values();
 
         $totalOmset = $omsetPerBulan->sum('total');
@@ -209,7 +464,7 @@ class FinanceController extends Controller
         $omsetPerBulan = $cashData
             ->groupBy(fn($item) => Carbon::parse($item->created_at)->format('Y-m'))
             ->map(function ($group) {
-                $total = $group->sum(fn($i) => $i->hargaPembayaran?->harga ?? 0);
+                $total = $group->sum(fn($i) => (float)($i->total ?? ($i->hargaPembayaran?->harga ?? 0)));
 
                 $first = $group->first();
 

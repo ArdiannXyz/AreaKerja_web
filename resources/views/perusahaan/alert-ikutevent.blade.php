@@ -1,10 +1,10 @@
-  <!-- Overlay Eventmodal -->
+﻿  <!-- Overlay Eventmodal -->
   <div id="eventmodal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
       <!-- Box Eventmodal -->
       <div class="bg-white w-[400px] rounded-xl shadow-lg overflow-hidden animate-fadeIn">
 
           <!-- Header -->
-          <div class="bg-orange-500 p-3 flex justify-center items-center">
+          <div class="bg-[#00509d] p-3 flex justify-center items-center">
               <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Logo" class="h-6">
               <span class="text-white font-semibold ml-2">areakerja.com</span>
               <!-- Ganti dengan logo asli -->
@@ -67,3 +67,4 @@
           animation: fadeIn 0.3s ease-out;
       }
   </style>
+

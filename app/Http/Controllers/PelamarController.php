@@ -124,6 +124,19 @@ class PelamarController extends Controller
 
     public function index(Request $request)
     {
+        if (Auth::check()) {
+            $role = Auth::user()->role;
+            if ($role === 'super_admin') {
+                return redirect()->route('superadmin.dashboard');
+            }
+            if ($role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            if ($role === 'finance') {
+                return redirect()->route('finance.dashboard');
+            }
+        }
+
         // Ambil kategori dari query string
         $kategori = $request->query('kategori');
 
@@ -212,11 +225,17 @@ class PelamarController extends Controller
             ->distinct()
             ->pluck('jenis');
 
+        $activeAds = \App\Models\Iklan::active()->with('perusahaan')->latest()->get();
+        if ($activeAds->isNotEmpty()) {
+            \App\Models\Iklan::whereIn('id', $activeAds->pluck('id'))->increment('total_views');
+        }
+
         return view('non-user.home', [
             "Data" => $Data,
             "KategoriList" => $KategoriList,
             "kategori" => $kategori,
             "jenisList" => $jenisList,
+            "activeAds" => $activeAds,
         ]);
     }
 
@@ -363,7 +382,7 @@ class PelamarController extends Controller
 
     public function editpendidikan(RiwayatPendidikan $riwayatpendidikan)
     {
-        return view('non-user.  .pendidikan.edit', ['DT' => $riwayatpendidikan]);
+        return view('non-user.profile.pendidikan.edit', ['DT' => $riwayatpendidikan]);
     }
 
     public function destroypendidikan(RiwayatPendidikan $riwayatpendidikan)
@@ -683,15 +702,15 @@ class PelamarController extends Controller
 
 
 
-    public function bacaSemua()
+    public function bacaSemua(Request $request)
     {
         $userId = auth()->id();
 
-        $updated = Notifikasi::where('user_id', $userId)
+        Notifikasi::where('user_id', $userId)
             ->where('is_read', 0)
             ->update(['is_read' => 1]);
 
-        dd($userId, $updated, Notifikasi::where('user_id', $userId)->get());
+        return response()->json(['success' => true]);
     }
 
 
@@ -830,13 +849,19 @@ class PelamarController extends Controller
     {
         $transaksi = CatatanCash::findOrFail($id);
 
-        if ($request->hasFile('bukti')) {
-            $path = $request->file('bukti')->store('bukti-transfer', 'public');
-            $transaksi->update([
-                'bukti' => $path,
-                'status' => 'menunggu_verifikasi',
-            ]);
-        }
+        $request->validate([
+            'bukti' => 'required|mimes:jpg,jpeg,png,pdf|max:5120',
+        ], [
+            'bukti.required' => 'Silakan pilih file bukti pembayaran terlebih dahulu.',
+            'bukti.mimes'    => 'Format file bukti pembayaran harus berupa JPG, JPEG, PNG, atau PDF.',
+            'bukti.max'      => 'Ukuran file bukti pembayaran maksimal 5MB.',
+        ]);
+
+        $path = $request->file('bukti')->store('bukti-transfer', 'public');
+        $transaksi->update([
+            'bukti'  => $path,
+            'status' => 'menunggu_verifikasi',
+        ]);
 
         return redirect()->route('kandidat.transaksi', $transaksi->id)
             ->with('success', 'Bukti transfer berhasil diupload.');

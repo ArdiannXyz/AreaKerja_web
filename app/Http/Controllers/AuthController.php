@@ -13,10 +13,17 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    /**
+     * @deprecated Method ini tidak dipakai oleh route manapun.
+     * Route login yang aktif adalah POST /loginproses → loginproses().
+     * Method ini tidak memiliki session regenerate, status check, maupun remember-me.
+     * Tidak dihapus untuk menghindari breaking change jika ada view lama yang masih merujuk ke sini.
+     */
     public function masuk(Request $request)
     {
         $valid = $request->validate([
@@ -44,6 +51,19 @@ class AuthController extends Controller
     // Pelamar / Home Publik
     public function beranda(Request $request)
     {
+        if (Auth::check()) {
+            $role = Auth::user()->role;
+            if ($role === 'super_admin') {
+                return redirect()->route('superadmin.dashboard');
+            }
+            if ($role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            if ($role === 'finance') {
+                return redirect()->route('finance.dashboard');
+            }
+        }
+
         // Ambil kategori dari query string
         $kategori = $request->query('kategori');
 
@@ -89,11 +109,17 @@ class AuthController extends Controller
             ->distinct()
             ->pluck('jenis');
 
+        $activeAds = \App\Models\Iklan::active()->with('perusahaan')->latest()->get();
+        if ($activeAds->isNotEmpty()) {
+            \App\Models\Iklan::whereIn('id', $activeAds->pluck('id'))->increment('total_views');
+        }
+
         return view('non-user.home', [
             "Data"         => $Data,
             "KategoriList" => $KategoriList,
             "kategori"     => $kategori,
             "jenisList"    => $jenisList,
+            "activeAds"    => $activeAds,
         ]);
     }
 
@@ -233,12 +259,46 @@ class AuthController extends Controller
             (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000, 'icon' => 'bit3.png'],
         ]);
 
+        // IDs semua lowongan milik perusahaan ini
+        $allLowonganIds = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)->pluck('id');
+
+        // Total pelamar yang masuk
+        $totalPelamar = PelamarLowongan::whereIn('lowongan_id', $allLowonganIds)->count();
+
+        // Total lowongan aktif (published & belum expired)
+        $totalLowonganAktif = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
+            ->whereNotNull('published_at')
+            ->whereDate('expired_at', '>=', now())
+            ->count();
+
+        // Total iklan aktif
+        $totalIklanAktif = \App\Models\Iklan::where('perusahaan_id', $perusahaan->id)
+            ->where('status', 'aktif')
+            ->count();
+
+        // Data grafik pelamar per bulan (6 bulan terakhir)
+        $chartLabels = [];
+        $chartData   = [];
+        for ($i = 5; $i >= 0; $i--) {
+            $month = Carbon::now()->subMonths($i);
+            $chartLabels[] = $month->translatedFormat('M Y');
+            $chartData[] = PelamarLowongan::whereIn('lowongan_id', $allLowonganIds)
+                ->whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->count();
+        }
+
         return view('perusahaan.dashboard', [
-            'hargaPembayarans' => $hargaPembayarans,
-            'daftarBank'       => DaftarBank::all(),
-            'lowongans'        => $lowongans,
-            'perusahaan'       => $perusahaan,
-            'events'           => $events
+            'hargaPembayarans'  => $hargaPembayarans,
+            'daftarBank'        => DaftarBank::all(),
+            'lowongans'         => $lowongans,
+            'perusahaan'        => $perusahaan,
+            'events'            => $events,
+            'totalPelamar'      => $totalPelamar,
+            'totalLowonganAktif'=> $totalLowonganAktif,
+            'totalIklanAktif'   => $totalIklanAktif,
+            'chartLabels'       => $chartLabels,
+            'chartData'         => $chartData,
         ]);
     }
 
@@ -331,15 +391,84 @@ class AuthController extends Controller
         $notifikasiCash = CatatanCash::where('status', 'menunggu_verifikasi')->orWhere('status', 'pending')->get();
         $notifCount = $notifikasiCash->count();
 
+        // Data 6 bulan terakhir untuk tren omset dan transaksi koin
+        $chartMonths = [];
+        $chartOmset = [];
+        $chartKoin = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $date = Carbon::now()->subMonths($i);
+            $year = $date->year;
+            $month = $date->month;
+            $monthName = $date->translatedFormat('M Y');
+
+            $chartMonths[] = $monthName;
+
+            // Omset cash bulan ini (status diterima / sukses)
+            $omsetBulan = CatatanCash::whereIn('status', ['diterima', 'sukses'])
+                ->whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->sum('total');
+            $chartOmset[] = (int) $omsetBulan;
+
+            // Transaksi koin bulan ini
+            $koinBulan = CatatanKoin::whereYear('created_at', $year)
+                ->whereMonth('created_at', $month)
+                ->sum(DB::raw('ABS(total)'));
+            $chartKoin[] = (int) $koinBulan;
+        }
+
+        // Distribusi Metode Pembayaran / Sumber Dana
+        $paymentMethods = CatatanCash::with('bank')
+            ->select('daftar_bank_id', 'sumberDana', DB::raw('count(*) as count'), DB::raw('sum(total) as total_amount'))
+            ->whereIn('status', ['diterima', 'sukses'])
+            ->groupBy('daftar_bank_id', 'sumberDana')
+            ->get();
+
+        $paymentLabels = [];
+        $paymentCounts = [];
+        $paymentTotals = [];
+
+        foreach ($paymentMethods as $pm) {
+            $label = $pm->bank->nama_bank ?? ($pm->sumberDana ?? 'Transfer Bank');
+            $paymentLabels[] = $label;
+            $paymentCounts[] = (int) $pm->count;
+            $paymentTotals[] = (int) $pm->total_amount;
+        }
+
+        if (empty($paymentLabels)) {
+            $paymentLabels = ['BCA', 'BNI', 'Mandiri', 'QRIS'];
+            $paymentCounts = [0, 0, 0, 0];
+            $paymentTotals = [0, 0, 0, 0];
+        }
+
+        // Status counts
+        $countDiterima = CatatanCash::whereIn('status', ['diterima', 'sukses'])->count();
+        $countMenunggu = CatatanCash::where('status', 'menunggu_verifikasi')->count();
+        $countPending = CatatanCash::where('status', 'pending')->count();
+        $countDitolak = CatatanCash::where('status', 'ditolak')->count();
+        $totalNominalMenunggu = CatatanCash::where('status', 'menunggu_verifikasi')->sum('total');
+
         return view('finance.dashboard', [
-            'totalOmset'         => $totalOmset,
-            'totalTransaksiKoin' => $totalTransaksiKoin,
-            'cash'               => $cash,
-            'koin'               => $koin,
-            'cashTerbaru'        => $cashTerbaru,
-            'koinTerbaru'        => $koinTerbaru,
-            'notifikasiCash'     => $notifikasiCash,
-            'notifCount'         => $notifCount,
+            'totalOmset'           => $totalOmset,
+            'totalTransaksiKoin'   => $totalTransaksiKoin,
+            'cash'                 => $cash,
+            'koin'                 => $koin,
+            'cashTerbaru'          => $cashTerbaru,
+            'koinTerbaru'          => $koinTerbaru,
+            'notifikasiCash'       => $notifikasiCash,
+            'notifCount'           => $notifCount,
+            'chartMonths'          => $chartMonths,
+            'chartOmset'           => $chartOmset,
+            'chartKoin'            => $chartKoin,
+            'paymentLabels'        => $paymentLabels,
+            'paymentCounts'        => $paymentCounts,
+            'paymentTotals'        => $paymentTotals,
+            'countDiterima'        => $countDiterima,
+            'countMenunggu'        => $countMenunggu,
+            'countPending'         => $countPending,
+            'countDitolak'         => $countDitolak,
+            'totalNominalMenunggu' => $totalNominalMenunggu,
         ]);
     }
 

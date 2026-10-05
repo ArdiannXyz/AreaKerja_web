@@ -14,8 +14,11 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('alasan_freeze_akun')->change(); // balik ke semula
-        });
+        if (Schema::hasTable('users') && Schema::hasColumn('users', 'alasan_freeze_akun')) {
+            \Illuminate\Support\Facades\DB::table('users')->whereNull('alasan_freeze_akun')->update(['alasan_freeze_akun' => '']);
+            Schema::table('users', function (Blueprint $table) {
+                $table->string('alasan_freeze_akun')->default('')->change();
+            });
+        }
     }
 };

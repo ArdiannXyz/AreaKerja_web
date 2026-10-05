@@ -1,4 +1,4 @@
- @extends('super_admin.sidebar.index')
+﻿ @extends('super_admin.sidebar.index')
  @section('sidebarsuperadmin')
      <div class="flex-1 p-6 sm:ml-64 bg-white overflow-x-auto">
          <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-8">
@@ -23,7 +23,7 @@
                  <div>
                      <label class="block text-sm font-semibold text-gray-700 mb-1">Skill</label>
                      <input type="text" name="skill" value="{{ old('skill', $DS->skill) }}"
-                         class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                         class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
                  </div>
 
                  <!-- Experience -->
@@ -31,12 +31,12 @@
                      <label class="block text-sm font-semibold text-gray-700 mb-1">Experience Level</label>
                      <input type="text"
                          name="experience_level"value="{{ old('experience_level', $DS->experience_level) }}"
-                         class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-orange-400 focus:outline-none">
+                         class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
                  </div>
                  <!-- Action -->
                  <div class="flex justify-between gap-4">
                      <button type="submit"
-                         class="px-5 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 shadow">
+                         class="px-5 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 shadow">
                          Simpan
                      </button>
                      @php
@@ -51,7 +51,7 @@
                      @endphp
 
                      <a href="{{ route('superadmin.pelamar.edit', ['kategori' => $kategori, 'id' => $DS->pelamar->id]) }}"
-                         class="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg text-center transition duration-300">
+                         class="bg-blue-700 hover:bg-blue-800 text-white px-6 py-2 rounded-lg text-center transition duration-300">
                          Batal
                      </a>
                  </div>

@@ -41,7 +41,7 @@
                                     @endif
                                 </div>
                                 <div class="flex items-center gap-2 shrink-0">
-                                    <a href="{{ route('organisasi.edit', $org->id) }}" class="p-1.5 text-amber-600 hover:bg-amber-50 rounded-lg transition" title="Edit">
+                                    <a href="{{ route('organisasi.edit', $org->id) }}" class="p-1.5 text-[#00509d] hover:bg-blue-50 rounded-lg transition" title="Edit">
                                         <i class="ph ph-pencil-simple text-lg"></i>
                                     </a>
                                     <form action="{{ route('organisasi.destroy', $org->id) }}" method="POST"
@@ -64,7 +64,7 @@
                 <div class="flex justify-end pt-4 border-t border-slate-100 mt-4">
                     <button data-modal-target="create_organisasimodal" data-modal-toggle="create_organisasimodal"
                         data-modal-hide="show-org" type="button"
-                        class="bg-orange-500 hover:bg-orange-600 text-white font-extrabold px-5 py-2 rounded-xl text-sm shadow-sm transition flex items-center gap-2">
+                        class="bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold px-5 py-2 rounded-xl text-sm shadow-sm transition flex items-center gap-2">
                         <i class="ph ph-plus font-bold"></i> Tambah Pengalaman Organisasi
                     </button>
                 </div>

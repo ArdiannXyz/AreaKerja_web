@@ -161,7 +161,7 @@ class PaymentApiController extends Controller
             'dari'           => $user->username,
             'sumberDana'     => $request->sumberDana ?? 'Transfer Bank / VA',
             'total'          => $request->total,
-            'status'         => 'Pending',
+            'status'         => 'pending',
             'expired_at'     => now()->addHours(24),
         ]);
 
@@ -173,7 +173,7 @@ class PaymentApiController extends Controller
                 'payment_instructions' => [
                     'no_referensi' => $refNumber,
                     'total'        => (int)$request->total,
-                    'status'       => 'Pending',
+                    'status'       => 'pending',
                     'expired_at'   => $transaction->expired_at->toIso8601String(),
                 ],
             ],
@@ -234,7 +234,7 @@ class PaymentApiController extends Controller
         }
 
         if (in_array($status, ['success', 'settlement', 'paid'])) {
-            $transaction->update(['status' => 'Berhasil']);
+            $transaction->update(['status' => 'diterima']);
 
             // Auto-credit coins if topup
             $coinsToAdd = $transaction->harga_pembayaran->jumlah_koin ?? 0;

@@ -1,8 +1,8 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-white min-h-screen p-4 sm:p-10 mt-20">
         <h2 class="text-xl font-semibold text-gray-800">Alamat Perusahaan</h2>
-        <hr class="border-t-2 border-orange-500 mt-1 mb-6" />
+        <hr class="border-t-2 border-[#00509d] mt-1 mb-6" />
 
         <form action="{{ route('alamat.store.perusahaan') }}" method="POST" class="px-0 sm:px-12 space-y-5 w-full max-w-4xl">
             @csrf
@@ -11,7 +11,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Nama Alamat</label>
                 <input type="text" name="label"
-                    class="w-full border border-orange-500 rounded-md px-4 py-3 focus:ring-1 focus:ring-orange-500"
+                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
                     placeholder="Contoh: Kantor Pusat">
             </div>
 
@@ -19,7 +19,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Kode Pos</label>
                 <input type="text" name="kode_pos"
-                    class="w-full border border-orange-500 rounded-md px-4 py-3 focus:ring-1 focus:ring-orange-500"
+                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
                     placeholder="Kode Pos">
             </div>
 
@@ -27,7 +27,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Desa</label>
                 <input type="text" name="desa"
-                    class="w-full border border-orange-500 rounded-md px-4 py-3 focus:ring-1 focus:ring-orange-500"
+                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
                     placeholder="Nama Desa">
             </div>
 
@@ -35,7 +35,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Provinsi</label>
                 <select name="provinsi_id" id="provinsi"
-                    class="w-full border border-orange-500 rounded-md px-4 py-3 focus:ring-1 focus:ring-orange-500">
+                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Pilih Provinsi</option>
                     @foreach ($provinsis as $provinsi)
                         <option value="{{ $provinsi->id }}">{{ $provinsi->nama }}</option>
@@ -47,7 +47,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Kota</label>
                 <select name="kota_id" id="kota"
-                    class="w-full border border-orange-500 rounded-md px-4 py-3 focus:ring-1 focus:ring-orange-500">
+                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Pilih Kota</option>
                 </select>
             </div>
@@ -56,7 +56,7 @@
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Kecamatan</label>
                 <select name="kecamatan_id" id="kecamatan"
-                    class="w-full border border-orange-500 rounded-md px-4 py-3 focus:ring-1 focus:ring-orange-500">
+                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Pilih Kecamatan</option>
                 </select>
             </div>
@@ -65,16 +65,16 @@
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Detail Alamat</label>
                 <textarea name="detail" rows="4"
-                    class="w-full border border-orange-500 rounded-md px-4 py-3 focus:ring-1 focus:ring-orange-500"
+                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
                     placeholder="Detail Alamat"></textarea>
             </div>
 
             <!-- Tombol -->
             <div class="flex flex-wrap justify-center gap-4">
                 <a href="{{ route('alamat.perusahaan') }}"
-                    class="px-6 py-2 border border-orange-500 text-orange-500 rounded-md hover:bg-orange-50">Batal</a>
+                    class="px-6 py-2 border border-[#00509d] text-[#00509d] rounded-md hover:bg-blue-50">Batal</a>
                 <button type="submit"
-                    class="px-6 py-2 bg-orange-500 text-white rounded-md hover:bg-orange-600">Simpan</button>
+                    class="px-6 py-2 bg-[#00509d] text-white rounded-md hover:bg-[#003d7a]">Simpan</button>
             </div>
         </form>
     </div>
@@ -123,3 +123,4 @@
 
     @include('layouts.footer')
 @endsection
+

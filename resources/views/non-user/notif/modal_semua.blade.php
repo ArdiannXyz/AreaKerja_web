@@ -1,56 +1,71 @@
 <!-- Modal Semua Notifikasi -->
 <div x-data="notifHandler()" x-cloak x-show="openAllNotif"
-    class="fixed inset-0 z-50 flex items-start justify-center p-2 sm:p-4 bg-black/30" @click.self="openAllNotif = false">
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 scale-95"
+    x-transition:enter-end="opacity-100 scale-100"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 scale-100"
+    x-transition:leave-end="opacity-0 scale-95"
+    class="fixed inset-0 z-50 flex items-start justify-center p-2 sm:p-4 bg-black/40 backdrop-blur-sm" @click.self="openAllNotif = false">
 
-    <div class="bg-white w-[85%] sm:w-full sm:max-w-lg rounded-xl shadow-lg overflow-hidden">
+    <div class="bg-white w-[90%] sm:w-full sm:max-w-lg rounded-2xl shadow-2xl border border-gray-100 overflow-hidden mt-14">
 
         <!-- Header -->
-        <div class="flex items-center justify-between px-3 sm:px-4 py-3 border-b">
-            <h2 class="font-semibold text-base sm:text-lg">Semua Notifikasi</h2>
-            <button @click="openAllNotif=false" class="text-xs sm:text-sm text-gray-500">Tutup</button>
+        <div class="flex items-center justify-between px-5 py-3.5 border-b border-gray-100 bg-gray-50/70">
+            <h2 class="font-bold text-base text-gray-800 flex items-center gap-2">
+                <i class="ph ph-bell text-[#00509d] text-lg"></i>
+                Semua Notifikasi
+            </h2>
+            <button @click="openAllNotif=false" class="text-gray-400 hover:text-gray-600 font-bold text-xl leading-none">&times;</button>
         </div>
 
         <!-- Semua Notifikasi -->
-        <div class="max-h-[300px] sm:max-h-[500px] overflow-y-auto">
-            @foreach (\App\Models\Notifikasi::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get() as $notif)
+        <div class="max-h-[340px] sm:max-h-[480px] overflow-y-auto divide-y divide-gray-100">
+            @forelse (\App\Models\Notifikasi::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get() as $notif)
                 <div data-id="{{ $notif->id }}"
                     onclick="markAsRead('{{ route('notifikasi.baca', $notif->id) }}', this)"
-                    class="notif-item cursor-pointer flex items-start gap-2 sm:gap-3 p-3 border-b 
-                    {{ $notif->is_read ? 'bg-gray-200' : 'bg-white' }}">
+                    class="notif-item cursor-pointer flex items-start justify-between gap-3 p-4 hover:bg-blue-50/50 transition duration-150 {{ $notif->is_read ? 'bg-gray-50/80 text-gray-600' : 'bg-white font-medium text-gray-900' }}">
 
                     @if ($notif->perusahaan && $notif->perusahaan->img_profile)
-                        <div class="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0">
+                        <div class="w-9 h-9 flex-shrink-0 mt-0.5">
                             <img src="{{ asset('storage/' . $notif->perusahaan->img_profile) }}"
-                                class="w-full h-full object-contain rounded">
+                                class="w-full h-full object-cover rounded-lg border border-gray-100">
                         </div>
                     @endif
 
-                    <div class="flex-1">
-                        <p class="text-xs sm:text-sm break-all leading-snug">{!! $notif->pesan !!}</p>
-                        <p class="text-[10px] sm:text-xs text-gray-400 mt-1">
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs sm:text-sm break-words leading-relaxed text-gray-800">{!! $notif->pesan !!}</p>
+                        <p class="text-[11px] text-gray-400 mt-1 flex items-center gap-1">
+                            <i class="ph ph-clock text-[11px]"></i>
                             {{ $notif->created_at->diffForHumans() }}
                         </p>
                     </div>
 
+                    <!-- Tombol Hapus Cepat -->
+                    <button @click.stop="hapus({{ $notif->id }}, $el)"
+                        class="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition shrink-0"
+                        title="Hapus notifikasi">
+                        <i class="ph ph-trash text-base"></i>
+                    </button>
+
                 </div>
-            @endforeach
+            @empty
+                <div class="p-8 text-center text-gray-400">
+                    <i class="ph ph-bell-slash text-3xl mb-2 text-gray-300"></i>
+                    <p class="text-xs sm:text-sm font-medium">Belum ada notifikasi yang tersimpan.</p>
+                </div>
+            @endforelse
         </div>
 
         <!-- Footer -->
-        <div class="p-3 border-t flex justify-between items-center">
-
-            <button @click="hapusSemuaBaca()" class="text-xs sm:text-sm text-orange-600 hover:underline">
-                Hapus Semua Dibaca
+        <div class="p-3.5 px-5 border-t border-gray-100 bg-gray-50/70 flex justify-between items-center text-xs">
+            <button @click="hapusSemuaBaca()" class="text-[#00509d] hover:text-[#003d7a] font-semibold transition hover:underline flex items-center gap-1">
+                <i class="ph ph-trash-simple text-sm"></i> Hapus Semua Dibaca
             </button>
 
-            <form action="{{ route('notifikasi.bacaSemua') }}" method="POST" target="hiddenFrameAll">
-                @csrf
-                <button type="submit" class="text-xs sm:text-sm text-blue-600 hover:underline">
-                    Tandai Semua Dibaca
-                </button>
-            </form>
+            <button type="button" @click="bacaSemua()" class="text-[#00509d] hover:text-[#003d7a] font-semibold transition hover:underline flex items-center gap-1">
+                <i class="ph ph-checks text-sm"></i> Tandai Semua Dibaca
+            </button>
         </div>
-
-        <iframe name="hiddenFrameAll" style="display:none;"></iframe>
     </div>
 </div>

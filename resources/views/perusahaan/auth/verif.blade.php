@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -56,7 +56,7 @@
         <!-- Kanan -->
         <div class="flex w-full md:w-4/2 bg-white items-center justify-center">
             <div class="w-full max-w-md p-8">
-                <h2 class="text-2xl font-bold text-center text-orange-600 mb-8">Verifikasi Akun</h2>
+                <h2 class="text-2xl font-bold text-center text-[#003d7a] mb-8">Verifikasi Akun</h2>
 
                 <!-- Login Sosial -->
                 <div class="flex justify-center space-x-2 mb-3">
@@ -73,7 +73,7 @@
                         <label for="username" class="block text-sm font-medium text-gray-700">E-mail</label>
                         <input type="email" id="email" name="email" placeholder="Email"
                             value="{{ old('email') }}"
-                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-orange-500 focus:border-orange-500" />
+                            class="mt-2 block w-full border border-gray-700 rounded-lg p-2.5 focus:ring-[#00509d] focus:border-[#00509d]" />
 
                         @error('email')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
@@ -82,11 +82,11 @@
                     </div>
                     <div class="flex justify-center">
                         <button type="submit"
-                            class=" bg-orange-500 text-white px-40 py-3 rounded font-small text-sm hover:bg-orange-600 transition">
+                            class=" bg-[#00509d] text-white px-40 py-3 rounded font-small text-sm hover:bg-[#003d7a] transition">
                             Lanjutkan
                         </button>
                     </div>
-                    <a href="{{ route('login_perusahaan') }}" class="flex justify-center text-sm text-orange-500">Kembali</a>
+                    <a href="{{ route('login_perusahaan') }}" class="flex justify-center text-sm text-[#00509d]">Kembali</a>
                 </form>
             </div>
         </div>
@@ -94,3 +94,4 @@
 </body>
 
 </html>
+

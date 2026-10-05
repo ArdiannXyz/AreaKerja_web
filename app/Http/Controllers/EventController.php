@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -132,13 +133,23 @@ class EventController extends Controller
             ->take(3)
             ->get();
 
-        $perusahaanList = \App\Models\Perusahaan::whereNotNull('nama_perusahaan')
-            ->take(8)
+        // Ambil hanya perusahaan yang tergabung/mendaftar di event ini
+        $joinedUserIds = \Illuminate\Support\Facades\DB::table('event_participants')
+            ->where('event_id', $event->id)
+            ->pluck('user_id');
+
+        $perusahaanList = \App\Models\Perusahaan::whereIn('user_id', $joinedUserIds)
+            ->whereNotNull('nama_perusahaan')
             ->get();
 
         $userId = auth()->id();
-        $registeredEvents = $userId ? session('registered_events_' . $userId, []) : [];
-        $isRegistered = $userId ? in_array($event->id, $registeredEvents) : false;
+        $isRegistered = false;
+        if ($userId) {
+            $isRegistered = \Illuminate\Support\Facades\DB::table('event_participants')
+                ->where('event_id', $event->id)
+                ->where('user_id', $userId)
+                ->exists();
+        }
         $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
 
         return view('non-user.event.show', compact('event', 'otherEvents', 'perusahaanList', 'isRegistered', 'isEnded'));
@@ -167,9 +178,29 @@ class EventController extends Controller
         }
 
         $userId = auth()->id();
-        $registered = session('registered_events_' . $userId, []);
-        $registered[] = (int)$event->id;
-        session(['registered_events_' . $userId => array_unique($registered)]);
+
+        // Cek jika sudah terdaftar di database
+        $alreadyRegistered = \Illuminate\Support\Facades\DB::table('event_participants')
+            ->where('event_id', $event->id)
+            ->where('user_id', $userId)
+            ->exists();
+
+        if ($alreadyRegistered) {
+            return response()->json([
+                'success' => false,
+                'already_registered' => true,
+                'message' => 'Anda sudah terdaftar pada event ini.'
+            ], 200);
+        }
+
+        // Simpan ke database
+        \Illuminate\Support\Facades\DB::table('event_participants')->insert([
+            'event_id' => $event->id,
+            'user_id' => $userId,
+            'status' => 'terdaftar',
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -180,12 +211,36 @@ class EventController extends Controller
     // ==========================================
     // ADMIN / SUPER ADMIN METHODS
     // ==========================================
+    private function isSuperAdmin(Request $request = null): bool
+    {
+        if (Auth::check() && in_array(Auth::user()->role, ['super_admin', 'superadmin'])) {
+            return true;
+        }
+        if ($request && $request->is('super_admin*')) {
+            return true;
+        }
+        return request()->is('super_admin*');
+    }
+
     public function index(Request $request)
     {
         $this->ensureTableAndData();
-        $events = Event::with('kegiatan')->latest()->paginate(10);
+        $query = Event::with('kegiatan')->latest();
 
-        if (view()->exists('super_admin.event.home')) {
+        if ($request->filled('q')) {
+            $q = $request->q;
+            $query->where(function ($w) use ($q) {
+                $w->where('title', 'like', "%{$q}%")
+                  ->orWhere('status', 'like', "%{$q}%")
+                  ->orWhere('lokasi', 'like', "%{$q}%");
+            });
+        }
+
+        $events = $query->paginate(10)->withQueryString();
+
+        $isSuperAdmin = $this->isSuperAdmin($request);
+
+        if ($isSuperAdmin && view()->exists('super_admin.event.home')) {
             return view('super_admin.event.home', compact('events'));
         }
         return view('admin.event.home', compact('events'));
@@ -193,7 +248,9 @@ class EventController extends Controller
 
     public function createForm()
     {
-        if (view()->exists('super_admin.event.buat')) {
+        $isSuperAdmin = $this->isSuperAdmin();
+
+        if ($isSuperAdmin && view()->exists('super_admin.event.buat')) {
             return view('super_admin.event.buat');
         }
         return view('admin.event.buat-event');
@@ -203,15 +260,28 @@ class EventController extends Controller
     {
         $this->ensureTableAndData();
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'status' => 'required|string',
-            'tgl_mulai' => 'required|date',
-            'tgl_akhir' => 'required|date',
+            'title'                  => 'required|string|max:255',
+            'status'                 => 'required|string|in:buka,tutup,draft',
+            'tgl_mulai'              => 'required|date',
+            'tgl_akhir'              => 'required|date|after_or_equal:tgl_mulai',
+            'kuota'                  => 'nullable|integer|min:1',
+            'image'                  => 'nullable|image|mimes:png,jpg,jpeg,webp|max:5120',
+            'content'                => 'nullable|string',
+            'jam_mulai'              => 'nullable|string|max:10',
+            'jam_akhir'              => 'nullable|string|max:10',
+            'lokasi'                 => 'nullable|string',
+            'link_form'              => 'nullable|url',
+            'penutupan_pendaftaran'  => 'nullable|date',
         ]);
 
-        Event::create($request->all());
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
 
-        return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil disimpan.');
+        Event::create($validated);
+
+        $route = $this->isSuperAdmin($request) ? 'superadmin.eventform' : 'admin.eventform';
+        return redirect()->route($route)->with('success', 'Event berhasil disimpan.');
     }
 
     public function edit_event($id)
@@ -219,7 +289,9 @@ class EventController extends Controller
         $this->ensureTableAndData();
         $event = Event::with('kegiatan')->findOrFail($id);
 
-        if (view()->exists('super_admin.event.edit')) {
+        $isSuperAdmin = $this->isSuperAdmin();
+
+        if ($isSuperAdmin && view()->exists('super_admin.event.edit')) {
             return view('super_admin.event.edit', compact('event'));
         }
         return view('admin.event.edit', compact('event'));
@@ -229,9 +301,30 @@ class EventController extends Controller
     {
         $this->ensureTableAndData();
         $event = Event::findOrFail($id);
-        $event->update($request->all());
 
-        return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil diperbarui.');
+        $validated = $request->validate([
+            'title'                  => 'required|string|max:255',
+            'status'                 => 'required|string|in:buka,tutup,draft',
+            'tgl_mulai'              => 'required|date',
+            'tgl_akhir'              => 'required|date|after_or_equal:tgl_mulai',
+            'kuota'                  => 'nullable|integer|min:1',
+            'image'                  => 'nullable|image|mimes:png,jpg,jpeg,webp|max:5120',
+            'content'                => 'nullable|string',
+            'jam_mulai'              => 'nullable|string|max:10',
+            'jam_akhir'              => 'nullable|string|max:10',
+            'lokasi'                 => 'nullable|string',
+            'link_form'              => 'nullable|url',
+            'penutupan_pendaftaran'  => 'nullable|date',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $validated['image'] = $request->file('image')->store('events', 'public');
+        }
+
+        $event->update($validated);
+
+        $route = $this->isSuperAdmin($request) ? 'superadmin.eventform' : 'admin.eventform';
+        return redirect()->route($route)->with('success', 'Event berhasil diperbarui.');
     }
 
     public function destroy_event($id)
@@ -240,7 +333,8 @@ class EventController extends Controller
         $event = Event::findOrFail($id);
         $event->delete();
 
-        return redirect()->route('superadmin.eventform')->with('success', 'Event berhasil dihapus.');
+        $route = $this->isSuperAdmin() ? 'superadmin.eventform' : 'admin.eventform';
+        return redirect()->route($route)->with('success', 'Event berhasil dihapus.');
     }
 
     public function detail_event($id)
@@ -248,8 +342,15 @@ class EventController extends Controller
         $this->ensureTableAndData();
         $event = Event::with('kegiatan')->findOrFail($id);
 
-        if (view()->exists('super_admin.event.detail')) {
-            return view('super_admin.event.detail', compact('event'));
+        $isSuperAdmin = $this->isSuperAdmin();
+
+        if ($isSuperAdmin) {
+            if (view()->exists('super_admin.event.view')) {
+                return view('super_admin.event.view', compact('event'));
+            }
+            if (view()->exists('super_admin.event.detail')) {
+                return view('super_admin.event.detail', compact('event'));
+            }
         }
         return view('admin.event.detail-event', compact('event'));
     }

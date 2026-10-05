@@ -1,4 +1,4 @@
-@extends('layouts.index-perusahaan')
+﻿@extends('layouts.index-perusahaan')
 @section('content')
     <!DOCTYPE html>
     <html lang="en">
@@ -15,7 +15,7 @@
         <!-- Header Buttons -->
         <div class="flex justify-center items-center px-8 py-4 mt-16">
             <button
-                class="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-xl text-medium">
+                class="flex items-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-xl text-medium">
                 Laporan Harian Pekerja
             </button>
         </div>
@@ -40,7 +40,7 @@
 
         <!-- Footer Button -->
         <div class="flex justify-end items-center px-6 py-5 ">
-            <button id="BtnLaporan" class="bg-orange-500 hover:bg-orange-600 text-white px-8 py-2 rounded-lg text-sm font-medium mr-4">
+            <button id="BtnLaporan" class="bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-2 rounded-lg text-sm font-medium mr-4">
                 Kirim Permintaan
             </button>
         </div><br>
@@ -80,3 +80,4 @@
     </script>
     @include('layouts.footer')
 @endsection
+

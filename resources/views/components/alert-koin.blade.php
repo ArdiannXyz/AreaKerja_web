@@ -1,4 +1,4 @@
-@props([
+﻿@props([
     'message' => 'Koin anda kurang silahkan Top Up terlebih dahulu.',
     'buttonText' => 'Top Up',
     'buttonLink' => '#',
@@ -17,8 +17,9 @@
 
         <!-- Tombol -->
         <a href="{{ $buttonLink }}"
-            class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-full transition">
+            class="bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold px-8 py-3 rounded-full transition">
             {{ $buttonText }}
         </a>
     </div>
 </div>
+

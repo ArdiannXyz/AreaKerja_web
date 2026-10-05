@@ -131,8 +131,11 @@ class Pelamar extends Model
     public function getAlamatPelamarAttribute()
     {
         try {
-            $addresses = $this->alamat_pelamar()->get();
-            if ($addresses->isNotEmpty()) {
+            $addresses = $this->relationLoaded('alamat_pelamar')
+                ? $this->getRelation('alamat_pelamar')
+                : $this->alamat_pelamar()->get();
+
+            if ($addresses && $addresses->isNotEmpty()) {
                 return $addresses;
             }
         } catch (\Throwable $e) {}

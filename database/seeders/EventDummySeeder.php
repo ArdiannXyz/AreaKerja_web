@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Schema;
 use App\Models\Event;
 use App\Models\KegiatanEvent;
 
@@ -10,8 +11,16 @@ class EventDummySeeder extends Seeder
 {
     public function run()
     {
-        KegiatanEvent::truncate();
+        if (!Schema::hasTable('events')) {
+            return;
+        }
+
+        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        if (Schema::hasTable('kegiatan_events')) {
+            KegiatanEvent::truncate();
+        }
         Event::truncate();
+        \Illuminate\Support\Facades\DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
         $e1 = Event::create([
             'status' => 'buka',

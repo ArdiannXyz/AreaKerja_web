@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -45,7 +45,7 @@
             <div class="w-full max-w-md p-8">
                 <div class="flex items-center justify-center">
                     <div class="max-w-md w-full px-8">
-                        <h2 class="text-2xl font-bold text-orange-500 mb-4">Verifikasi Akun</h2>
+                        <h2 class="text-2xl font-bold text-[#00509d] mb-4">Verifikasi Akun</h2>
                         <p class="text-gray-600 mb-4">
                             Silahkan verifikasi akun anda terlebih dahulu untuk bisa melakukan penggantian kata sandi
                         </p>
@@ -74,18 +74,18 @@
                             <p class="text-center text-gray-500">Belum menerima kode verifikasi melalui email?</p>
                             <p class="text-center mt-1">
                                 Kirim Ulang Kode Verifikasi
-                                <span id="countdown" class="text-orange-500 font-semibold">(00:45)</span>
+                                <span id="countdown" class="text-[#00509d] font-semibold">(00:45)</span>
                             </p>
 
                             <div class="flex justify-center mt-6">
                                 <button type="submit"
-                                    class="bg-orange-500 text-white px-40 py-3 rounded-lg font-small text-sm hover:bg-orange-600 transition">
+                                    class="bg-[#00509d] text-white px-40 py-3 rounded-lg font-small text-sm hover:bg-[#003d7a] transition">
                                     Lanjutkan
                                 </button>
                             </div>
                         </form>
 
-                        <p class="text-center font-semibold text-orange-500 hover:text-orange-600 mt-4">
+                        <p class="text-center font-semibold text-[#00509d] hover:text-[#003d7a] mt-4">
                             Ubah Email
                         </p>
                     </div>
@@ -118,14 +118,14 @@
         function startCountdown() {
             clearInterval(timer); // bersihkan timer lama
             countdownEl.classList.remove("text-blue-600", "cursor-pointer");
-            countdownEl.classList.add("text-orange-500");
+            countdownEl.classList.add("text-[#00509d]");
             countdownEl.style.pointerEvents = "none";
 
             timer = setInterval(() => {
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     countdownEl.textContent = "Kirim Ulang";
-                    countdownEl.classList.remove("text-orange-500");
+                    countdownEl.classList.remove("text-[#00509d]");
                     countdownEl.classList.add("text-blue-600", "cursor-pointer");
                     countdownEl.style.pointerEvents = "auto"; // aktifkan kembali klik
                 } else {
@@ -173,3 +173,4 @@
 </body>
 
 </html>
+
