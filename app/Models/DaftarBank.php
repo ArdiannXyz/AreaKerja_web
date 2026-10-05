@@ -13,6 +13,6 @@ class DaftarBank extends Model
 
     public function catatanCash()
     {
-        return $this->hasMany(CatatanCash::class);
+        return $this->hasMany(CatatanCash::class, 'daftar_bank_id');
     }
 }

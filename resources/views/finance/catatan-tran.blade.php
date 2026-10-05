@@ -18,7 +18,7 @@
                     <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
                         <i class="ph ph-receipt text-[#00509d] text-lg sm:text-2xl"></i> Catatan Transaksi
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola dan verifikasi catatan transaksi uang masuk (Cash) serta mutasi penggunaan Koin AreaKerja.</p>
+                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola dan verifikasi catatan transaksi pembayaran masuk (Bank, QRIS, Tunai) serta mutasi penggunaan Koin AreaKerja.</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('finance.components.notif_button')
@@ -47,8 +47,8 @@
                         <i class="ph-fill ph-receipt"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-extrabold text-slate-900">Riwayat Pembayaran Tunai (Cash)</h2>
-                        <p class="text-xs text-slate-500">Daftar transaksi top up koin masuk yang perlu diverifikasi & dicatat</p>
+                        <h2 class="text-base font-extrabold text-slate-900">Riwayat Pembayaran</h2>
+                        <p class="text-xs text-slate-500">Daftar transaksi pembayaran masuk yang perlu diverifikasi &amp; dicatat</p>
                     </div>
                 </div>
 
@@ -183,7 +183,7 @@
                             <tr>
                                 <td colspan="9" class="px-6 py-12 text-center text-slate-400">
                                     <i class="ph ph-receipt text-4xl mx-auto mb-2 text-slate-300"></i>
-                                    <p class="font-bold text-sm text-slate-600">Belum ada catatan transaksi tunai.</p>
+                                    <p class="font-bold text-sm text-slate-600">Belum ada catatan riwayat pembayaran.</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -383,7 +383,7 @@
                         <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center font-bold text-sm">
                             <i class="ph-fill ph-receipt"></i>
                         </div>
-                        <h3 class="text-base font-black text-slate-900">Rincian Transaksi Tunai</h3>
+                        <h3 class="text-base font-black text-slate-900">Rincian Transaksi Pembayaran</h3>
                     </div>
                     <button @click="openDetailCash = false" class="w-8 h-8 rounded-full bg-white hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition border border-slate-200">
                         <i class="ph ph-x font-bold"></i>
