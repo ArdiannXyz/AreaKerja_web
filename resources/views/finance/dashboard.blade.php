@@ -127,7 +127,7 @@
                     </div>
 
                     <!-- Donut Chart Container -->
-                    <div id="paymentMethodDonutChart" class="w-full h-56 flex items-center justify-center"></div>
+                    <div id="paymentMethodDonutChart" class="w-full flex items-center justify-center py-2"></div>
                 </div>
 
                 <!-- Quick Action Buttons -->
@@ -356,32 +356,46 @@
                 labels: paymentLabels.length > 0 ? paymentLabels : ['Belum ada data'],
                 chart: {
                     type: 'donut',
-                    height: 230,
+                    height: 250,
                     fontFamily: 'Poppins, sans-serif'
                 },
-                colors: ['#00509d', '#0284c7', '#0ea5e9', '#f59e0b', '#10b981', '#6366f1'],
+                stroke: {
+                    width: 2,
+                    colors: ['#ffffff']
+                },
+                colors: ['#00509d', '#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#64748b'],
                 dataLabels: { enabled: false },
                 legend: {
                     position: 'bottom',
-                    fontSize: '11px',
+                    horizontalAlign: 'center',
+                    fontSize: '12px',
                     fontWeight: 600,
-                    labels: { colors: '#475569' }
+                    itemMargin: {
+                        horizontal: 8,
+                        vertical: 4
+                    },
+                    labels: { colors: '#334155' }
                 },
                 plotOptions: {
                     pie: {
                         donut: {
-                            size: '72%',
+                            size: '70%',
                             labels: {
                                 show: true,
                                 total: {
                                     show: true,
                                     label: 'Total Trx',
-                                    fontSize: '12px',
+                                    fontSize: '11px',
                                     fontWeight: 700,
                                     color: '#64748b',
                                     formatter: function (w) {
                                         return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
                                     }
+                                },
+                                value: {
+                                    fontSize: '22px',
+                                    fontWeight: 800,
+                                    color: '#0f172a'
                                 }
                             }
                         }
@@ -390,8 +404,10 @@
                 tooltip: {
                     theme: 'light',
                     y: {
-                        formatter: function (val) {
-                            return val + ' Transaksi';
+                        formatter: function (val, opts) {
+                            const total = opts.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                            const percent = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                            return val + ' Transaksi (' + percent + '%)';
                         }
                     }
                 }

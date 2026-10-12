@@ -359,19 +359,39 @@
                 @if (session('success'))
                     <p class="text-green-300 mt-1.5 text-xs">{{ session('success') }}</p>
                 @endif
+                @if (session('info'))
+                    <p class="text-sky-300 mt-1.5 text-xs">{{ session('info') }}</p>
+                @endif
+                @if (session('error'))
+                    <p class="text-red-300 mt-1.5 text-xs">{{ session('error') }}</p>
+                @endif
                 <p class="text-white/35 text-[11px] mt-2">Gratis. Tanpa spam.</p>
             </div>
 
         </div>
 
         {{-- Newsletter feedback (desktop, below grid) --}}
-        @if ($errors->has('email') || session('success'))
+        @if ($errors->has('email') || session('success') || session('info') || session('error'))
         <div class="hidden lg:block mt-4">
             @error('email')
-                <p class="text-red-300 text-xs">{{ $message }}</p>
+                <div class="bg-red-500/20 border border-red-500/40 text-red-200 text-xs px-3 py-2 rounded-lg inline-block">
+                    {{ $message }}
+                </div>
             @enderror
             @if (session('success'))
-                <p class="text-green-300 text-xs">{{ session('success') }}</p>
+                <div class="bg-green-500/20 border border-green-500/40 text-green-200 text-xs px-3 py-2 rounded-lg inline-block">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('info'))
+                <div class="bg-blue-500/20 border border-blue-500/40 text-blue-200 text-xs px-3 py-2 rounded-lg inline-block">
+                    {{ session('info') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="bg-red-500/20 border border-red-500/40 text-red-200 text-xs px-3 py-2 rounded-lg inline-block">
+                    {{ session('error') }}
+                </div>
             @endif
         </div>
         @endif
@@ -482,6 +502,12 @@
                 @if (session('success'))
                     <p class="text-green-300 mt-1.5 text-xs">{{ session('success') }}</p>
                 @endif
+                @if (session('info'))
+                    <p class="text-sky-300 mt-1.5 text-xs">{{ session('info') }}</p>
+                @endif
+                @if (session('error'))
+                    <p class="text-red-300 mt-1.5 text-xs">{{ session('error') }}</p>
+                @endif
                 <p class="text-white/35 text-[11px] mt-2">Gratis. Tanpa spam.</p>
             </div>
 
@@ -552,4 +578,129 @@
 
         window.addEventListener('scroll', onScroll, { passive: true });
     })();
+
+    // Newsletter Subscription AJAX & Feedback Script
+    document.addEventListener('DOMContentLoaded', function () {
+        var forms = document.querySelectorAll('.ak-newsletter-form');
+        forms.forEach(function (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var input = form.querySelector('input[name="email"]');
+                var btn = form.querySelector('button[type="submit"]');
+                var email = input ? input.value.trim() : '';
+
+                if (!email) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Perhatian',
+                            text: 'Email wajib diisi.',
+                            confirmButtonColor: '#ff7a00'
+                        });
+                    }
+                    return;
+                }
+
+                var originalBtnText = btn ? btn.innerText : 'Daftar';
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerText = 'Memproses...';
+                }
+
+                var formData = new FormData(form);
+
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                })
+                .then(function (res) {
+                    return res.json().then(function (data) {
+                        return { ok: res.ok, status: res.status, data: data };
+                    });
+                })
+                .then(function (res) {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = originalBtnText;
+                    }
+
+                    var icon = res.data.status || (res.ok ? 'success' : 'error');
+                    var title = icon === 'success' ? 'Berhasil!' : (icon === 'info' ? 'Informasi' : 'Perhatian');
+                    var color = icon === 'success' ? '#ff7a00' : (icon === 'info' ? '#0054a6' : '#dc2626');
+
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: icon,
+                            title: title,
+                            text: res.data.message || 'Permintaan diproses.',
+                            confirmButtonColor: color
+                        });
+                    } else {
+                        alert(res.data.message);
+                    }
+
+                    if (res.ok && res.data.status === 'success') {
+                        input.value = '';
+                    }
+                })
+                .catch(function () {
+                    if (btn) {
+                        btn.disabled = false;
+                        btn.innerText = originalBtnText;
+                    }
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Terjadi Kesalahan',
+                            text: 'Gagal menghubungi server. Silakan coba lagi.',
+                            confirmButtonColor: '#dc2626'
+                        });
+                    }
+                });
+            });
+        });
+
+        // Flash message fallback popups for traditional redirects
+        @if (session('success'))
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    confirmButtonColor: '#ff7a00'
+                });
+            }
+        @elseif (session('info'))
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Informasi',
+                    text: "{{ session('info') }}",
+                    confirmButtonColor: '#0054a6'
+                });
+            }
+        @elseif (session('error'))
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal',
+                    text: "{{ session('error') }}",
+                    confirmButtonColor: '#dc2626'
+                });
+            }
+        @elseif ($errors->has('email'))
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian',
+                    text: "{{ $errors->first('email') }}",
+                    confirmButtonColor: '#ff7a00'
+                });
+            }
+        @endif
+    });
 </script>

@@ -100,142 +100,117 @@
         </div>
 
         <!-- TABEL MODERASI IKLAN -->
-        <div class="bg-white rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs sm:text-sm">
-                    <thead class="bg-slate-50/80 text-slate-600 font-bold border-b border-slate-100">
+        <!-- TABEL MODERASI IKLAN (TABLE FIXED 100% - PASTI PAS DI LAYAR) -->
+        <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
+            <div class="w-full overflow-hidden">
+                <table class="w-full table-fixed text-left text-xs text-slate-600">
+                    <thead class="bg-slate-50 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100">
                         <tr>
-                            <th class="px-6 py-4">Perusahaan</th>
-                            <th class="px-6 py-4">Banner & Materi</th>
-                            <th class="px-6 py-4">Paket & Koin</th>
-                            <th class="px-6 py-4 text-center">Status</th>
-                            <th class="px-6 py-4 text-center">Periode Tayang</th>
-                            <th class="px-6 py-4 text-right">Aksi Moderasi</th>
+                            <th class="w-[42%] px-4 py-3.5">Iklan & Perusahaan</th>
+                            <th class="w-[18%] px-3 py-3.5">Paket & Biaya</th>
+                            <th class="w-[20%] px-3 py-3.5">Status & Periode</th>
+                            <th class="w-[20%] px-4 py-3.5 text-right">Aksi Moderasi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-100">
+                    <tbody class="divide-y divide-slate-100 font-semibold">
                         @forelse ($iklans as $item)
-                            <tr class="hover:bg-blue-50/20 transition group">
-                                <!-- Perusahaan Info -->
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-[#00509d] flex items-center justify-center font-black text-sm shrink-0 overflow-hidden">
-                                            @if($item->perusahaan?->logo)
-                                                <img src="{{ asset('storage/' . $item->perusahaan->logo) }}" alt="Logo" class="w-full h-full object-cover">
-                                            @else
-                                                <i class="ph-fill ph-buildings text-lg"></i>
-                                            @endif
-                                        </div>
-                                        <div class="min-w-0">
-                                            <p class="font-extrabold text-slate-900 truncate max-w-xs">{{ $item->perusahaan?->nama_perusahaan ?? 'Perusahaan #' . $item->perusahaan_id }}</p>
-                                            <p class="text-[11px] text-slate-400 font-medium truncate">{{ $item->perusahaan?->email ?? '-' }}</p>
-                                        </div>
-                                    </div>
-                                </td>
-
-                                <!-- Banner & Judul -->
-                                <td class="px-6 py-4">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-24 h-12 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 relative group/img cursor-pointer"
-                                            onclick="openPreviewModal('{{ $item->banner_url }}', '{{ addslashes($item->judul_iklan) }}', '{{ addslashes($item->url_tujuan) }}')">
-                                            <img src="{{ $item->banner_url }}" alt="Banner" class="w-full h-full object-cover">
+                            <tr class="hover:bg-slate-50/70 transition">
+                                <!-- Iklan & Perusahaan -->
+                                <td class="px-4 py-3.5">
+                                    <div class="flex items-center gap-3 min-w-0">
+                                        <!-- Thumbnail Banner (Dapat diklik preview) -->
+                                        <div class="relative w-14 h-9 sm:w-16 sm:h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 cursor-pointer group/img shadow-2xs"
+                                            onclick="openPreviewModal('{{ $item->banner_url }}', '{{ addslashes($item->judul_iklan) }}', '{{ addslashes($item->url_tujuan) }}')"
+                                            title="Klik untuk melihat banner dan link tujuan">
+                                            <img src="{{ $item->banner_url }}" alt="Banner" class="w-full h-full object-cover group-hover/img:scale-105 transition duration-200">
                                             <div class="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition flex items-center justify-center text-white text-xs">
-                                                <i class="ph ph-magnifying-glass-plus text-base"></i>
+                                                <i class="ph ph-magnifying-glass-plus text-xs"></i>
                                             </div>
                                         </div>
-                                        <div class="min-w-0">
-                                            <p class="font-extrabold text-slate-800 truncate max-w-xs sm:max-w-sm">{{ $item->judul_iklan }}</p>
-                                            <a href="{{ $item->url_tujuan }}" target="_blank"
-                                                class="inline-flex items-center gap-1 text-[11px] text-[#00509d] hover:underline font-semibold mt-0.5 truncate max-w-xs">
-                                                <span>{{ Str::limit($item->url_tujuan, 35) }}</span>
-                                                <i class="ph ph-arrow-square-out text-xs"></i>
-                                            </a>
+                                        <div class="min-w-0 flex-1">
+                                            <p class="font-extrabold text-slate-900 truncate" title="{{ $item->judul_iklan }}">{{ $item->judul_iklan }}</p>
+                                            <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 font-medium truncate">
+                                                <i class="ph ph-buildings text-slate-400 shrink-0"></i>
+                                                <span class="truncate font-bold text-slate-700" title="{{ $item->perusahaan?->nama_perusahaan }}">{{ $item->perusahaan?->nama_perusahaan ?? 'Perusahaan #' . $item->perusahaan_id }}</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- Paket & Koin -->
-                                <td class="px-6 py-4">
-                                    <p class="font-extrabold text-slate-800">{{ $item->paket_nama }}</p>
-                                    <div class="flex items-center gap-1.5 mt-1 text-xs font-bold text-slate-500">
-                                        <span>{{ $item->durasi_hari }} Hari</span>
-                                        <span>•</span>
-                                        <span class="text-amber-600">{{ number_format($item->koin_terpotong, 0, ',', '.') }} Koin</span>
+                                <!-- Paket & Biaya -->
+                                <td class="px-3 py-3.5 whitespace-nowrap">
+                                    <p class="font-extrabold text-slate-800 text-xs">{{ $item->paket_nama ?? 'Paket Iklan' }}</p>
+                                    <div class="flex items-center gap-1 mt-0.5 text-[11px] font-bold">
+                                        <span class="text-slate-500">{{ $item->durasi_hari }} Hari</span>
+                                        <span class="text-slate-300">•</span>
+                                        <span class="text-amber-600 flex items-center gap-0.5">
+                                            <i class="ph-fill ph-coin text-xs"></i>
+                                            {{ number_format($item->koin_terpotong, 0, ',', '.') }} Koin
+                                        </span>
                                     </div>
                                 </td>
 
-                                <!-- Status Badge -->
-                                <td class="px-6 py-4 text-center">
+                                <!-- Status & Periode -->
+                                <td class="px-3 py-3.5 whitespace-nowrap">
                                     @if ($item->status === 'menunggu')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-50 text-amber-700 border border-amber-200 text-xs font-bold rounded-full">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-extrabold rounded-full">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                            <span>Menunggu</span>
+                                            <span>Menunggu Review</span>
                                         </span>
+                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">Diajukan: {{ $item->created_at->translatedFormat('d M Y') }}</p>
                                     @elseif ($item->status === 'aktif')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold rounded-full">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-extrabold rounded-full">
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                             <span>Aktif Tayang</span>
                                         </span>
+                                        @if ($item->tanggal_mulai && $item->tanggal_selesai)
+                                            <p class="text-[10px] text-emerald-600 mt-0.5 font-bold">
+                                                Sisa {{ $item->sisa_hari }} hari (s/d {{ $item->tanggal_selesai->translatedFormat('d M') }})
+                                            </p>
+                                        @endif
                                     @elseif ($item->status === 'ditolak')
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-rose-50 text-rose-700 border border-rose-200 text-xs font-bold rounded-full">
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-extrabold rounded-full">
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
                                             <span>Ditolak</span>
                                         </span>
-                                    @else
-                                        <span class="inline-flex items-center gap-1.5 px-3 py-1 bg-slate-100 text-slate-600 border border-slate-200 text-xs font-bold rounded-full">
-                                            <span>Selesai</span>
-                                        </span>
-                                    @endif
-
-                                    @if($item->status === 'ditolak' && $item->alasan_penolakan)
-                                        <p class="text-[10px] text-rose-600 font-medium mt-1 max-w-[140px] mx-auto truncate" title="{{ $item->alasan_penolakan }}">
-                                            "{{ $item->alasan_penolakan }}"
-                                        </p>
-                                    @endif
-                                </td>
-
-                                <!-- Periode Tayang -->
-                                <td class="px-6 py-4 text-center text-xs">
-                                    @if ($item->tanggal_mulai && $item->tanggal_selesai)
-                                        <p class="font-extrabold text-slate-800">
-                                            {{ $item->tanggal_mulai->translatedFormat('d M') }} - {{ $item->tanggal_selesai->translatedFormat('d M Y') }}
-                                        </p>
-                                        @if($item->status === 'aktif')
-                                            <span class="inline-block mt-0.5 text-[11px] font-bold text-emerald-600">
-                                                Sisa {{ $item->sisa_hari }} hari
-                                            </span>
+                                        @if($item->alasan_penolakan)
+                                            <p class="text-[10px] text-rose-600 font-medium mt-0.5 truncate" title="{{ $item->alasan_penolakan }}">
+                                                "{{ $item->alasan_penolakan }}"
+                                            </p>
                                         @endif
                                     @else
-                                        <span class="text-slate-400 font-medium">-</span>
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-extrabold rounded-full">
+                                            <span>Selesai</span>
+                                        </span>
+                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->views }} views • {{ $item->clicks }} klik</p>
                                     @endif
                                 </td>
 
                                 <!-- Aksi Moderasi -->
-                                <td class="px-6 py-4 text-right">
-                                    <div class="flex items-center justify-end gap-2">
+                                <td class="px-4 py-3.5 text-right whitespace-nowrap">
+                                    <div class="flex items-center justify-end gap-1.5">
                                         <!-- Tombol Preview -->
                                         <button type="button" onclick="openPreviewModal('{{ $item->banner_url }}', '{{ addslashes($item->judul_iklan) }}', '{{ addslashes($item->url_tujuan) }}')"
-                                            class="p-2 rounded-xl bg-slate-100 hover:bg-[#00509d] text-slate-600 hover:text-white transition shadow-2xs"
-                                            title="Lihat Banner">
-                                            <i class="ph ph-eye text-base"></i>
+                                            class="p-1.5 rounded-xl bg-slate-100 hover:bg-[#00509d] text-slate-600 hover:text-white transition shadow-2xs"
+                                            title="Lihat Banner & Link Tujuan">
+                                            <i class="ph ph-eye text-sm"></i>
                                         </button>
 
                                         @if ($item->status === 'menunggu')
                                             <!-- Approve Form -->
-                                            <form action="{{ route('admin.iklan.approve', $item->id) }}" method="POST"
-                                                onsubmit="return confirm('Apakah Anda yakin menyetujui iklan ini? Iklan akan langsung tayang di Homepage selama {{ $item->durasi_hari }} hari.')">
+                                            <form id="approveForm{{ $item->id }}" action="{{ route('admin.iklan.approve', $item->id) }}" method="POST">
                                                 @csrf
-                                                <button type="submit"
-                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-2xs">
-                                                    <i class="ph-bold ph-check"></i>
+                                                <button type="button" onclick="confirmApprove('approveForm{{ $item->id }}', '{{ addslashes($item->judul_iklan) }}', '{{ $item->durasi_hari }}')"
+                                                    class="inline-flex items-center gap-1 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl transition shadow-2xs active:scale-95">
+                                                    <i class="ph-bold ph-check text-xs"></i>
                                                     <span>Setujui</span>
                                                 </button>
                                             </form>
 
                                             <!-- Reject Trigger -->
                                             <button type="button" onclick="openRejectModal('{{ $item->id }}', '{{ addslashes($item->judul_iklan) }}', '{{ $item->koin_terpotong }}', '{{ addslashes($item->perusahaan?->nama_perusahaan ?? '') }}')"
-                                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition shadow-2xs">
-                                                <i class="ph-bold ph-x"></i>
+                                                class="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl transition shadow-2xs active:scale-95">
+                                                <i class="ph-bold ph-x text-xs"></i>
                                                 <span>Tolak</span>
                                             </button>
                                         @endif
@@ -244,7 +219,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-16 text-center text-slate-400">
+                                <td colspan="4" class="px-6 py-16 text-center text-slate-400">
                                     <i class="ph ph-megaphone text-4xl text-slate-300 mx-auto mb-2"></i>
                                     <p class="font-extrabold text-sm text-slate-700">Tidak ada data iklan pada kategori ini.</p>
                                     <p class="text-xs text-slate-400 mt-0.5">Pengajuan iklan dari perusahaan akan ditampilkan di sini.</p>
@@ -266,17 +241,17 @@
 
     <!-- ================= MODAL PREVIEW BANNER ================= -->
     <div id="adminBannerModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl p-6 relative border border-slate-100">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl p-6 relative border border-slate-100">
             <button onclick="closePreviewModal()"
                 class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
-                <i class="ph ph-x font-bold"></i>
+                <i class="ph ph-x text-sm font-bold"></i>
             </button>
 
             <h3 id="adminModalTitle" class="text-base font-extrabold text-slate-900 mb-1 pr-8 truncate"></h3>
-            <p class="text-xs text-slate-500 mb-4">Link Tujuan: <a id="adminModalLink" href="#" target="_blank" class="text-[#00509d] underline font-bold truncate inline-block max-w-md align-middle"></a></p>
+            <p class="text-xs text-slate-500 mb-3">Link Tujuan: <a id="adminModalLink" href="#" target="_blank" class="text-[#00509d] underline font-bold truncate inline-block max-w-sm align-middle"></a></p>
 
-            <div class="w-full rounded-2xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner">
-                <img id="adminModalImg" src="" alt="Banner Preview" class="w-full h-auto object-contain max-h-[350px]">
+            <div class="w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shadow-inner">
+                <img id="adminModalImg" src="" alt="Banner Preview" class="w-full h-auto object-contain max-h-[300px]">
             </div>
 
             <div class="mt-5 flex justify-end">
@@ -290,14 +265,14 @@
 
     <!-- ================= MODAL REJECT IKLAN & REFUND ================= -->
     <div id="adminRejectModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-7 relative border border-slate-100">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative border border-slate-100">
             <button onclick="closeRejectModal()"
                 class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
-                <i class="ph ph-x font-bold"></i>
+                <i class="ph ph-x text-sm font-bold"></i>
             </button>
 
-            <div class="flex items-center gap-3 mb-4">
-                <div class="w-10 h-10 rounded-2xl bg-rose-50 text-rose-600 flex items-center justify-center text-xl shrink-0">
+            <div class="flex items-center gap-3 mb-3.5">
+                <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-lg shrink-0">
                     <i class="ph-fill ph-warning-circle"></i>
                 </div>
                 <div>
@@ -306,29 +281,29 @@
                 </div>
             </div>
 
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 mb-4">
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-800 mb-3.5">
                 <p class="font-bold">⚠️ Perhatian:</p>
-                <p class="mt-0.5">Saldo <span id="rejectKoinNominal" class="font-black"></span> Koin milik <span id="rejectPerusahaanNama" class="font-bold"></span> akan otomatis dikembalikan ke akun mereka.</p>
+                <p class="mt-0.5">Saldo <span id="rejectKoinNominal" class="font-black"></span> Koin milik <span id="rejectPerusahaanNama" class="font-bold"></span> otomatis dikembalikan ke akun mereka.</p>
             </div>
 
             <form id="rejectForm" method="POST" action="">
                 @csrf
-                <div class="mb-4">
-                    <label for="alasan_penolakan" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
+                <div class="mb-3.5">
+                    <label for="alasan_penolakan" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-1.5">
                         Alasan Penolakan <span class="text-rose-500">*</span>
                     </label>
                     <textarea name="alasan_penolakan" id="alasan_penolakan" rows="3" required
-                        placeholder="Cth: Gambar banner tidak sesuai rasio atau mengandung konten yang tidak diizinkan..."
-                        class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold rounded-2xl p-3.5 focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-2xs"></textarea>
+                        placeholder="Tuliskan alasan penolakan iklan secara jelas..."
+                        class="w-full bg-slate-50 border border-slate-200 text-slate-900 text-xs font-semibold rounded-xl p-3 focus:outline-none focus:ring-2 focus:ring-rose-500 shadow-2xs"></textarea>
                 </div>
 
                 <div class="flex items-center justify-end gap-2">
                     <button type="button" onclick="closeRejectModal()"
-                        class="px-4 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
+                        class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition">
                         Batal
                     </button>
                     <button type="submit"
-                        class="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition shadow-xs">
+                        class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl transition shadow-xs">
                         Tolak & Refund Koin
                     </button>
                 </div>
@@ -336,7 +311,9 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Modal Preview Banner
         function openPreviewModal(url, title, link) {
             document.getElementById('adminModalImg').src = url;
             document.getElementById('adminModalTitle').innerText = title;
@@ -352,6 +329,7 @@
             if (m) m.style.display = 'none';
         }
 
+        // Modal Tolak Iklan
         function openRejectModal(id, title, koin, perusahaan) {
             document.getElementById('rejectForm').action = "/admin/iklan/" + id + "/reject";
             document.getElementById('rejectKoinNominal').innerText = Number(koin).toLocaleString('id-ID');
@@ -365,5 +343,108 @@
             const m = document.getElementById('adminRejectModal');
             if (m) m.style.display = 'none';
         }
+
+        // Konfirmasi SweetAlert2 untuk ACC / Setujui Iklan (Ukuran Medium Pas)
+        function confirmApprove(formId, judul, durasi) {
+            Swal.fire({
+                title: 'Setujui Iklan Ini?',
+                html: `<p class="text-sm text-slate-600">Apakah Anda yakin ingin menyetujui iklan <b>"${judul}"</b>?</p><p class="text-xs text-slate-400 mt-2">Iklan akan langsung aktif tayang di Homepage selama <b>${durasi} hari</b>.</p>`,
+                icon: 'question',
+                showCancelButton: true,
+                width: '410px',
+                padding: '1.5rem',
+                confirmButtonColor: '#059669',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: '<i class="ph-bold ph-check mr-1"></i> Ya, Setujui',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-3xl shadow-2xl font-sans',
+                    title: 'text-base font-extrabold text-slate-800 m-0',
+                    htmlContainer: 'text-sm text-slate-500 m-0 pt-1.5',
+                    confirmButton: 'rounded-xl px-4 py-2.5 text-xs font-bold shadow-xs',
+                    cancelButton: 'rounded-xl px-4 py-2.5 text-xs font-bold'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire({
+                        title: 'Memproses...',
+                        text: 'Sedang mengaktifkan iklan',
+                        width: '320px',
+                        padding: '1.25rem',
+                        allowOutsideClick: false,
+                        customClass: {
+                            popup: 'rounded-2xl font-sans',
+                            title: 'text-sm font-bold text-slate-700'
+                        },
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    document.getElementById(formId).submit();
+                }
+            });
+        }
+
+        // Flash Alert Messages (Ukuran Medium Pas)
+        @if(session('success'))
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: "{{ session('success') }}",
+                    width: '380px',
+                    padding: '1.5rem',
+                    confirmButtonColor: '#00509d',
+                    confirmButtonText: 'Oke',
+                    customClass: {
+                        popup: 'rounded-3xl shadow-2xl font-sans',
+                        title: 'text-base font-extrabold text-slate-800',
+                        htmlContainer: 'text-sm text-slate-600',
+                        confirmButton: 'rounded-xl px-5 py-2 text-xs font-bold'
+                    }
+                });
+            });
+        @endif
+
+        @if(session('error'))
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: "{{ session('error') }}",
+                    width: '380px',
+                    padding: '1.5rem',
+                    confirmButtonColor: '#e11d48',
+                    confirmButtonText: 'Tutup',
+                    customClass: {
+                        popup: 'rounded-3xl shadow-2xl font-sans',
+                        title: 'text-base font-extrabold text-slate-800',
+                        htmlContainer: 'text-sm text-slate-600',
+                        confirmButton: 'rounded-xl px-5 py-2 text-xs font-bold'
+                    }
+                });
+            });
+        @endif
+
+        @if(session('info'))
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Informasi',
+                    text: "{{ session('info') }}",
+                    width: '380px',
+                    padding: '1.5rem',
+                    confirmButtonColor: '#00509d',
+                    confirmButtonText: 'Mengerti',
+                    customClass: {
+                        popup: 'rounded-3xl shadow-2xl font-sans',
+                        title: 'text-base font-extrabold text-slate-800',
+                        htmlContainer: 'text-sm text-slate-600',
+                        confirmButton: 'rounded-xl px-5 py-2 text-xs font-bold'
+                    }
+                });
+            });
+        @endif
     </script>
 @endsection

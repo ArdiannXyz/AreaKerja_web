@@ -160,6 +160,7 @@ class PelamarController extends Controller
         }
 
         $Data = LowonganPerusahaan::with('perusahaan')
+            ->whereHas('perusahaan')
             ->whereNotNull('published_at')
             ->where('status', '!=', 'tutup')
             ->where(function ($q) {

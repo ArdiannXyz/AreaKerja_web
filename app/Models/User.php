@@ -25,6 +25,11 @@ class User extends Authenticatable
         'status',
         'alasan_freeze_akun',
         'fcm_token',
+        'google_id',
+        'facebook_id',
+        'github_id',
+        'linkedin_id',
+        'avatar_social',
     ];
 
     protected $hidden = [

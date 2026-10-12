@@ -27,6 +27,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
     <script src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         *, *::before, *::after {
@@ -41,6 +42,16 @@
             min-height: 100%;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE dan Edge */
+        }
+
+        /* Chrome, Safari, Opera */
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            height: 0px;
         }
 
         body {
@@ -248,6 +259,14 @@
                                 <span>Event</span>
                             </a>
                         </div>
+
+                        <div class="{{ request()->is('admin/iklan*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md mb-1.5">
+                            <a href="{{ route('admin.iklan.index') }}"
+                                class="flex font-semibold items-center gap-2.5 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-200">
+                                <i class="{{ request()->is('admin/iklan*') ? 'ph-fill ph-megaphone' : 'ph ph-megaphone' }} text-lg"></i>
+                                <span>Moderasi Iklan</span>
+                            </a>
+                        </div>
                     </nav>
                 </div>
             </div>
@@ -382,6 +401,12 @@
                                 <i class="ph ph-calendar-star"></i>
                             </div>
                             <span class="text-[11px] leading-tight">Event</span>
+                        </a>
+                        <a href="{{ route('admin.iklan.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/iklan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-megaphone"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Iklan</span>
                         </a>
                         <a href="{{ route('admin.profile') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/profile*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
                             <div class="w-11 h-11 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl shadow-xs">

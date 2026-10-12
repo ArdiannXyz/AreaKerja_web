@@ -87,7 +87,7 @@
                     <div class="flex items-center space-x-2">
                         <input type="text" name="gaji_awal" value="{{ $data->gaji_awal }}"
                             class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
-                        <span class="text-gray-500">â€“</span>
+                        <span class="text-gray-500">-</span>
                         <input type="text" name="gaji_akhir" value="{{ $data->gaji_akhir }}"
                             class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
                     </div>
@@ -145,10 +145,10 @@
                         <label class="block font-medium mb-1">Status Pendaftaran</label>
                         <select name="status" class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
                             <option value="buka" {{ old('status', $data->status ?? 'buka') == 'buka' ? 'selected' : '' }}>
-                                ðŸŸ¢ Buka Pendaftaran (Aktif)
+                                Buka Pendaftaran (Aktif)
                             </option>
                             <option value="tutup" {{ old('status', $data->status ?? 'buka') == 'tutup' ? 'selected' : '' }}>
-                                ðŸ”’ Tutup Pendaftaran (Kuota Full)
+                                Tutup Pendaftaran (Kuota Full)
                             </option>
                         </select>
                     </div>

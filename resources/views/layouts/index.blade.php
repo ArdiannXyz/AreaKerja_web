@@ -30,6 +30,19 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <style>
+        html, body {
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            height: 0px;
+        }
+    </style>
+
     <script>
         // Global Notification Functions
         const notifToast = Swal.mixin({
@@ -538,11 +551,11 @@
                 <!-- Logo -->
                 <a href="{{ route('beranda') }}" class="flex items-center gap-2 sm:gap-2.5">
                     @if ($isBeranda)
-                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-6 sm:h-7 md:h-8 object-contain">
-                        <span class="font-bold text-lg sm:text-xl md:text-2xl text-white tracking-tight">areakerja.com</span>
+                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-white tracking-tight">areakerja.com</span>
                     @else
-                        <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Areakerja Logo" class="h-6 sm:h-7 md:h-8 object-contain">
-                        <span class="font-bold text-lg sm:text-xl md:text-2xl text-[#00509d] tracking-tight">areakerja.com</span>
+                        <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#00509d] tracking-tight">areakerja.com</span>
                     @endif
                 </a>
             </div>
@@ -613,9 +626,9 @@
 
                     <!-- Drawer Header -->
                     <div class="flex items-center justify-between pb-3 border-b-2 border-[#00509d]">
-                        <a href="{{ route('beranda') }}" class="flex items-center gap-2.5">
-                            <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Logo" class="h-9 w-auto object-contain">
-                            <span class="font-bold text-xl text-[#00509d] tracking-tight">areakerja.com</span>
+                        <a href="{{ route('beranda') }}" class="flex items-center gap-2 sm:gap-2.5">
+                            <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                            <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#00509d] tracking-tight">areakerja.com</span>
                         </a>
                         <button @click="openMenu = false" class="text-[#00509d] hover:text-[#003d7a] p-1 text-2xl font-bold transition">
                             <i class="ph ph-x"></i>

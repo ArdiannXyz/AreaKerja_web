@@ -3,3 +3,34 @@
 @tailwind components;
 @tailwind utilities;
 @import "flowbite";
+
+/* =========================================================
+   HILANGKAN SCROLLBAR GLOBAL (VISUAL SAJA)
+   - overflow-x: hidden TIDAK dipakai di body agar tabel horizontal
+     tetap bisa di-scroll menggunakan overflow-x: auto pada wrapper-nya
+   - Gunakan class .no-scrollbar pada container tabel/scroll horizontal
+   ========================================================= */
+
+/* Sembunyikan scrollbar visual secara global di Firefox & IE/Edge */
+html, body {
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE dan Edge */
+}
+
+/* Chrome, Safari, Opera — sembunyikan semua scrollbar default */
+::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+    height: 0px;
+}
+
+/* Utilitas .no-scrollbar untuk container scroll horizontal (tabel, dll) */
+@layer utilities {
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+    .no-scrollbar {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+}
