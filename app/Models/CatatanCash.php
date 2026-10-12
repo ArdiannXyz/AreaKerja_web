@@ -35,21 +35,26 @@ class CatatanCash extends Model
 
     public function getHargaPembayaranAttribute()
     {
-        $jumlahKoin = 100;
+        $pesananLower = strtolower($this->pesanan ?? '');
+        $isTopUp = str_contains($pesananLower, 'koin') || str_contains($pesananLower, 'top up');
 
-        if (!empty($this->pesanan) && preg_match('/(\d+)\s*koin/i', $this->pesanan, $matches)) {
-            $jumlahKoin = (int) $matches[1];
-        } elseif ($this->total >= 500000) {
-            $jumlahKoin = 1000;
-        } elseif ($this->total >= 100000) {
+        $jumlahKoin = 0;
+        if ($isTopUp) {
             $jumlahKoin = 100;
-        } elseif ($this->total >= 10000) {
-            $jumlahKoin = 10;
+            if (preg_match('/(\d+)\s*koin/i', $this->pesanan ?? '', $matches)) {
+                $jumlahKoin = (int) $matches[1];
+            } elseif ($this->total >= 500000) {
+                $jumlahKoin = 1000;
+            } elseif ($this->total >= 100000) {
+                $jumlahKoin = 100;
+            } elseif ($this->total >= 10000) {
+                $jumlahKoin = 10;
+            }
         }
 
         return (object)[
             'id'          => 1,
-            'nama'        => $this->pesanan ?? 'Top Up Koin Area Kerja',
+            'nama'        => $this->pesanan ?? ($isTopUp ? 'Top Up Koin Area Kerja' : 'Pembayaran'),
             'harga'       => $this->total ?? 100000,
             'jumlah_koin' => $jumlahKoin,
         ];

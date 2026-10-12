@@ -325,14 +325,14 @@
                             Akun Freeze
                         </a>
                     </div>
-                    <div
+<div
                         class="{{ request()->is('super_admin/tips/kerja*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.tips-kerja') }}"
                             class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
                             <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"
                                 xmlns="http://www.w3.org/2000/svg">
                                 <path
-                                    d="M9.0725 0.499911L9.17833 0.60081L11.6783 3.18795H13.8333C14.2538 3.18781 14.6588 3.35215 14.9671 3.64803C15.2754 3.9439 15.4643 4.34944 15.4958 4.78335L15.5 4.91271V13.5365C15.4999 13.9715 15.341 14.3904 15.0551 14.7093C14.7692 15.0282 14.3775 15.2235 13.9583 15.2561L13.8333 15.2613H2.16667C1.74619 15.2614 1.34119 15.0971 1.03288 14.8012C0.724559 14.5053 0.535703 14.0998 0.504167 13.6659L0.5 13.5365V4.91271C0.499867 4.47757 0.658672 4.05846 0.944581 3.7394C1.23049 3.42034 1.62237 3.2249 2.04167 3.19226L2.16667 3.18795H4.32167L6.82167 0.60081C7.09945 0.313377 7.46641 0.136718 7.8578 0.102005C8.24918 0.067293 8.63984 0.176759 8.96083 0.411086L9.0725 0.499911ZM13.8333 4.91271H2.16667V13.5365H13.8333V4.91271ZM6.33333 10.087C6.55435 10.087 6.76631 10.1778 6.92259 10.3396C7.07887 10.5013 7.16667 10.7207 7.16667 10.9494C7.16667 11.1781 7.07887 11.3974 6.92259 11.5592C6.76631 11.7209 6.55435 11.8117 6.33333 11.8117H4.66667C4.44565 11.8117 4.23369 11.7209 4.07741 11.5592C3.92113 11.3974 3.83333 11.1781 3.83333 10.9494C3.83333 10.7207 3.92113 10.5013 4.07741 10.3396C4.23369 10.1778 4.44565 10.087 4.66667 10.087H6.33333ZM9.66667 6.63747C9.87907 6.63771 10.0834 6.72188 10.2378 6.87277C10.3923 7.02366 10.4852 7.22988 10.4976 7.44931C10.5101 7.66873 10.4411 7.8848 10.3048 8.05335C10.1685 8.22191 9.97508 8.33023 9.76417 8.35619L9.66667 8.36223H4.66667C4.45427 8.36198 4.24997 8.27782 4.09553 8.12693C3.94108 7.97604 3.84814 7.76981 3.83569 7.55039C3.82324 7.33096 3.89223 7.1149 4.02855 6.94635C4.16488 6.77779 4.35825 6.66947 4.56917 6.64351L4.66667 6.63747H9.66667ZM8 1.82021L6.67833 3.18795H9.32167L8 1.82021Z"
+                                    d="M9.0725 0.499911L9.17833 0.60081L11.6783 3.18795H13.8333C14.2538 3.18781 14.6588 3.35215 14.9671 3.64803C15.2754 3.9439 15.4643 4.34944 15.4958 4.78335L15.5 4.91271V13.5365C15.4999 13.9715 15.341 14.3904 15.0551 14.7093C14.7692 15.0282 14.3775 15.2235 13.9583 15.2561L13.8333 15.2613H2.16667C1.74619 15.2614 1.34119 15.0971 1.03288 14.8012C0.724559 14.5053 0.535703 14.0998 0.504167 13.6659L0.5 13.5365C0.499867 4.47757 0.658672 4.05846 0.944581 3.7394C1.23049 3.42034 1.62237 3.2249 2.04167 3.19226L2.16667 3.18795H4.32167L6.82167 0.60081C7.09945 0.313377 7.46641 0.136718 7.8578 0.102005C8.24918 0.067293 8.63984 0.176759 8.96083 0.411086L9.0725 0.499911ZM13.8333 4.91271H2.16667V13.5365H13.8333V4.91271ZM6.33333 10.087C6.55435 10.087 6.76631 10.1778 6.92259 10.3396C7.07887 10.5013 7.16667 10.7207 7.16667 10.9494C7.16667 11.1781 7.07887 11.3974 6.92259 11.5592C6.76631 11.7209 6.55435 11.8117 6.33333 11.8117H4.66667C4.44565 11.8117 4.23369 11.7209 4.07741 11.5592C3.92113 11.3974 3.83333 11.1781 3.83333 10.9494C3.83333 10.7207 3.92113 10.5013 4.07741 10.3396C4.23369 10.1778 4.44565 10.087 4.66667 10.087H6.33333ZM9.66667 6.63747C9.87907 6.63771 10.0834 6.72188 10.2378 6.87277C10.3923 7.02366 10.4852 7.22988 10.4976 7.44931C10.5101 7.66873 10.4411 7.8848 10.3048 8.05335C10.1685 8.22191 9.97508 8.33023 9.76417 8.35619L9.66667 8.36223H4.66667C4.45427 8.36198 4.24997 8.27782 4.09553 8.12693C3.94108 7.97604 3.84814 7.76981 3.83569 7.55039C3.82324 7.33096 3.89223 7.1149 4.02855 6.94635C4.16488 6.77779 4.35825 6.66947 4.56917 6.64351L4.66667 6.63747H9.66667ZM8 1.82021L6.67833 3.18795H9.32167L8 1.82021Z"
                                     fill="currentColor" />
                             </svg>
                             Tips Kerja
@@ -545,7 +545,7 @@
                             </div>
                             <span class="text-[11px] leading-tight">Freeze</span>
                         </a>
-                        <a href="{{ route('superadmin.tips-kerja') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/tips/kerja*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+<a href="{{ route('superadmin.tips-kerja') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/tips/kerja*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
                             <div class="w-11 h-11 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl shadow-xs">
                                 <i class="ph ph-lightbulb"></i>
                             </div>
@@ -758,7 +758,99 @@
             window.addEventListener('pageshow', function () {
                 NProgress.done();
             });
-        </script>
+    {{-- Global Alert & Notification System (SweetAlert2) --}}
+    <script>
+        if (typeof Swal !== 'undefined') {
+            const defaultSwal = Swal.mixin({
+                width: 'min(90vw, 360px)',
+                customClass: {
+                    popup: '!rounded-2xl !p-6 shadow-2xl border border-slate-100',
+                    title: '!text-base font-bold text-slate-800 !pt-0',
+                    htmlContainer: '!text-xs text-slate-600 !mt-1.5 leading-relaxed',
+                    actions: '!gap-2 !mt-4 w-full !justify-center',
+                    confirmButton: '!px-4 !py-2 !rounded-xl !text-xs !font-semibold transition',
+                    cancelButton: '!px-4 !py-2 !rounded-xl !text-xs !font-semibold transition'
+                },
+                confirmButtonColor: '#00509d',
+                cancelButtonColor: '#94a3b8',
+                reverseButtons: true,
+                focusCancel: true
+            });
+            window.Swal = defaultSwal;
+
+            // Flash Session Auto Toast
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: {!! json_encode(session('success')) !!},
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: {!! json_encode(session('error')) !!},
+                    timer: 3500,
+                    showConfirmButton: true,
+                    confirmButtonColor: '#ef4444'
+                });
+            @endif
+
+            @if(session('warning'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian',
+                    text: {!! json_encode(session('warning')) !!},
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+            @endif
+
+            @if(session('info'))
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Informasi',
+                    text: {!! json_encode(session('info')) !!},
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            // Intercept legacy native confirm() on forms
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('form[onsubmit*="confirm("]').forEach(form => {
+                    const onsubmitAttr = form.getAttribute('onsubmit');
+                    const match = onsubmitAttr.match(/confirm\s*\(\s*['"`](.*?)['"`]\s*\)/);
+                    if (match) {
+                        const confirmMsg = match[1];
+                        form.removeAttribute('onsubmit');
+                        form.addEventListener('submit', function(e) {
+                            if (form.dataset.confirmed === 'true') return;
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Konfirmasi',
+                                text: confirmMsg,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Ya, Lanjutkan',
+                                cancelButtonText: 'Batal',
+                                confirmButtonColor: '#ef4444'
+                            }).then(result => {
+                                if (result.isConfirmed) {
+                                    form.dataset.confirmed = 'true';
+                                    form.submit();
+                                }
+                            });
+                        });
+                    }
+                });
+            });
+        }
+    </script>
 </body>
 
 </html>

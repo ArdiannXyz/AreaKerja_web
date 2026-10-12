@@ -131,14 +131,18 @@
                 </div>
 
                 <!-- Quick Action Buttons -->
-                <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+                <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2">
                     <a href="{{ route('finance.catatan') }}"
-                        class="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-[#00509d] font-bold text-[11px] rounded-xl text-center transition">
-                        Verifikasi Transaksi
+                        class="px-2 py-2 bg-blue-50 hover:bg-blue-100 text-[#00509d] font-bold text-[10px] sm:text-[11px] rounded-xl text-center transition">
+                        Verifikasi Trx
                     </a>
                     <a href="{{ route('finance.omset') }}"
-                        class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-xl text-center transition">
+                        class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] sm:text-[11px] rounded-xl text-center transition">
                         Rekap Omset
+                    </a>
+                    <a href="{{ route('finance.bank.index') }}"
+                        class="px-2 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold text-[10px] sm:text-[11px] rounded-xl text-center transition">
+                        Kelola Bank
                     </a>
                 </div>
             </div>

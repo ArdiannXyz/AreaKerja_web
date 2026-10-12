@@ -283,48 +283,89 @@ class FinanceController extends Controller
     {
         $transaksi = CatatanCash::findOrFail($id);
 
-        // Null check agar tidak crash jika user sudah dihapus
         $perusahaan = $transaksi->user?->perusahaan ?? null;
-        $paket      = $transaksi->hargaPembayaran ?? null;
         $pelamar    = $transaksi->user?->pelamar ?? null;
+        $paket      = $transaksi->hargaPembayaran ?? null;
+
+        $pesananLower = strtolower($transaksi->pesanan ?? '');
+        $isPendaftaranKandidat = str_contains($pesananLower, 'kandidat') || ($pelamar !== null && $perusahaan === null);
+        $isTopUpKoin = str_contains($pesananLower, 'koin') || str_contains($pesananLower, 'top up') || ($perusahaan !== null);
 
         if ($request->action == 'terima' && $transaksi->status !== 'diterima') {
             $transaksi->status = 'diterima';
             $transaksi->save();
 
-            // Kalau transaksi TOP UP → tambah koin
-            if ($paket && $paket->jumlah_koin > 0) {
-                $perusahaan->koin_perusahaan += $paket->jumlah_koin;
-                $perusahaan->save();
-            } else {
-                // Kalau transaksi PENDAFTARAN KANDIDAT → ubah kategori jadi calon kandidat
-                if ($pelamar) {
-                    $pelamar->kategori = 'calon kandidat';
-                    $pelamar->save();
+            // 1. Transaksi TOP UP KOIN PERUSAHAAN
+            if ($isTopUpKoin && $perusahaan) {
+                $jumlahKoin = (int)($paket->jumlah_koin ?? 100);
+                if ($jumlahKoin > 0) {
+                    $perusahaan->koin_perusahaan += $jumlahKoin;
+                    $perusahaan->save();
+
+                    // Catat ke catatan_koins jika belum ada
+                    try {
+                        CatatanKoin::firstOrCreate(
+                            ['no_referensi' => $transaksi->no_referensi],
+                            [
+                                'user_id'      => $transaksi->user_id,
+                                'pesanan'      => 'Top Up ' . $jumlahKoin . ' Koin',
+                                'dari'         => $perusahaan->nama_perusahaan ?? $transaksi->dari,
+                                'sumber_dana'  => 'Top Up Cash (' . ($transaksi->sumberDana ?? 'Transfer Bank') . ')',
+                                'total'        => $jumlahKoin,
+                            ]
+                        );
+                    } catch (\Throwable $e) {}
                 }
             }
-        } elseif ($request->action == 'tolak' && $transaksi->status === 'diterima') {
+
+            // 2. Transaksi PENDAFTARAN KANDIDAT PELAMAR
+            if ($isPendaftaranKandidat && $pelamar) {
+                $pelamar->kategori = 'calon kandidat';
+                $pelamar->save();
+            }
+
+            // Kirim notifikasi sukses
+            try {
+                Notifikasi::create([
+                    'user_id'       => $transaksi->user_id,
+                    'perusahaan_id' => $perusahaan?->id,
+                    'judul'         => 'Pembayaran Diverifikasi',
+                    'pesan'         => 'Pembayaran untuk pesanan "' . $transaksi->pesanan . '" berhasil diverifikasi dan diterima.',
+                    'is_read'       => 0,
+                    'expired_at'    => now()->addDays(7),
+                ]);
+            } catch (\Throwable $e) {}
+
+        } elseif ($request->action == 'tolak') {
+            $prevStatus = $transaksi->status;
             $transaksi->status = 'ditolak';
             $transaksi->save();
 
-            // Kalau transaksi TOP UP → rollback koin
-            if ($paket && $paket->jumlah_koin > 0) {
-                $perusahaan->koin_perusahaan -= $paket->jumlah_koin;
-                if ($perusahaan->koin_perusahaan < 0) {
-                    $perusahaan->koin_perusahaan = 0;
+            // Rollback jika status sebelumnya sudah diterima
+            if ($prevStatus === 'diterima') {
+                if ($isTopUpKoin && $perusahaan) {
+                    $jumlahKoin = (int)($paket->jumlah_koin ?? 100);
+                    $perusahaan->koin_perusahaan = max(0, $perusahaan->koin_perusahaan - $jumlahKoin);
+                    $perusahaan->save();
                 }
-                $perusahaan->save();
-            } else {
-                // Kalau transaksi PENDAFTARAN KANDIDAT → rollback kategori jadi pelamar lagi
-                if ($pelamar) {
+
+                if ($isPendaftaranKandidat && $pelamar) {
                     $pelamar->kategori = 'pelamar';
                     $pelamar->save();
                 }
             }
-        } elseif ($request->action == 'tolak') {
-            // Tolak langsung dari pending → hanya ubah status
-            $transaksi->status = 'ditolak';
-            $transaksi->save();
+
+            // Kirim notifikasi penolakan
+            try {
+                Notifikasi::create([
+                    'user_id'       => $transaksi->user_id,
+                    'perusahaan_id' => $perusahaan?->id,
+                    'judul'         => 'Pembayaran Ditolak',
+                    'pesan'         => 'Pembayaran untuk pesanan "' . $transaksi->pesanan . '" ditolak. Silakan hubungi tim Finance atau upload bukti transfer yang valid.',
+                    'is_read'       => 0,
+                    'expired_at'    => now()->addDays(7),
+                ]);
+            } catch (\Throwable $e) {}
         }
 
         return redirect()->route('finance.catatan')

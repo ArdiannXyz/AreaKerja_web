@@ -108,7 +108,7 @@
 
             {{-- ====================== TABEL CATATAN CASH ====================== --}}
             <div>
-                <h2 class="text-lg font-semibold mb-2">Riwayat Tunai</h2>
+                <h2 class="text-lg font-semibold mb-2">Riwayat Pembayaran</h2>
 
                 <div class="rounded-2xl overflow-hidden border overflow-x-auto">
                     <table class="w-full text-xs sm:text-sm min-w-[900px]">

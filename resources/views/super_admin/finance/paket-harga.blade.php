@@ -151,8 +151,8 @@
             {{-- Riwayat Tunai --}}
             <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
                 <div class="mb-4 pb-3 border-b border-gray-100">
-                    <h2 class="text-base font-bold text-gray-800">Riwayat Transaksi Tunai (Cash)</h2>
-                    <p class="text-xs text-gray-500">Semua catatan transaksi pembayaran uang masuk</p>
+                    <h2 class="text-base font-bold text-gray-800">Riwayat Pembayaran</h2>
+                    <p class="text-xs text-gray-500">Semua catatan transaksi pembayaran masuk (Bank, QRIS &amp; Tunai)</p>
                 </div>
 
                 <div x-data="{ openDetail: false, selected: {} }" class="rounded-xl overflow-hidden border border-gray-200">
