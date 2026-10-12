@@ -39,6 +39,16 @@
             min-height: 100%;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        /* Chrome, Safari, Opera */
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            height: 0px;
         }
 
         body {

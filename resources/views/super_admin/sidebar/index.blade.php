@@ -48,6 +48,16 @@
             min-height: 100%;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE dan Edge */
+        }
+
+        /* Chrome, Safari, Opera */
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            height: 0px;
         }
 
         body {
@@ -341,6 +351,14 @@
                             Event
                         </a>
                     </div>
+                    <div
+                        class="{{ request()->is('super_admin/iklan*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.iklan.index') }}"
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
+                            <i class="{{ request()->is('super_admin/iklan*') ? 'ph-fill ph-megaphone' : 'ph ph-megaphone' }} text-xl"></i>
+                            Moderasi Iklan
+                        </a>
+                    </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Lowongan</div>
                     <div
                         class="{{ request()->is('super_admin/manajemen/lowongan*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
@@ -538,6 +556,12 @@
                                 <i class="ph ph-calendar-star"></i>
                             </div>
                             <span class="text-[11px] leading-tight">Event</span>
+                        </a>
+                        <a href="{{ route('superadmin.iklan.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/iklan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-megaphone"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Iklan</span>
                         </a>
                     </div>
                 </div>

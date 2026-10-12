@@ -98,7 +98,9 @@
         <div id="boostModal"
             class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 px-4">
             <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-6 relative">
-                <button id="closeBoostBtn" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">âœ•</button>
+                <button id="closeBoostBtn" class="absolute right-4 top-4 text-gray-400 hover:text-gray-600">
+                    <i class="ph ph-x text-lg"></i>
+                </button>
                 <h2 class="text-xl font-bold mb-4 text-slate-800">Boost Lowongan</h2>
 
                 <label class="block font-semibold mb-2 text-sm text-slate-700">Pilih Lowongan</label>
@@ -134,12 +136,12 @@
                                     <div class="flex items-center gap-2 flex-wrap mb-1">
                                         <p class="text-xs font-semibold text-slate-500">{{ Auth::user()->perusahaan->nama_perusahaan }}</p>
                                         @if ($d->status === 'tutup')
-                                            <span class="px-2.5 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200">
-                                                ðŸ”’ Pendaftaran Ditutup (Kuota Terpenuhi)
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200">
+                                                <i class="ph-bold ph-lock-key text-xs"></i> Pendaftaran Ditutup (Kuota Terpenuhi)
                                             </span>
                                         @else
-                                            <span class="px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
-                                                ðŸŸ¢ Aktif (Menerima Pelamar)
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 text-xs font-bold rounded-full border border-emerald-200">
+                                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Aktif (Menerima Pelamar)
                                             </span>
                                         @endif
                                     </div>

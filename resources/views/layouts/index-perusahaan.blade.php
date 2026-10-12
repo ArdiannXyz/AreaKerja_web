@@ -37,6 +37,16 @@
             background-color: #00509d;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        /* Chrome, Safari, Opera */
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            height: 0px;
         }
 
         body {
@@ -44,6 +54,9 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
             background-color: #00509d;
             display: flex;
             flex-direction: column;

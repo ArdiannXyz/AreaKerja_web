@@ -247,15 +247,18 @@
                     <div id="section-umpan-lowongan" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
                         @php
                             $isSearchPage = request()->routeIs('lowongan.search') || !empty($adaPencarian);
-                            $displayData = $isSearchPage ? $Data : $Data->take(6);
+                            $validData = $Data instanceof \Illuminate\Contracts\Pagination\Paginator 
+                                ? $Data 
+                                : $Data->filter(function($d) {
+                                    return $d->published_at && (!$d->expired_at || $d->expired_at > now()) && $d->status !== 'tutup' && $d->perusahaan;
+                                });
+                            $displayData = $isSearchPage ? $validData : $validData->take(6);
                         @endphp
 
                         @forelse ($displayData as $d)
-                            @if ($d->published_at && (!$d->expired_at || $d->expired_at > now()) && $d->perusahaan)
-                                <div class="h-full" onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $d->perusahaan->slug ?? 'perusahaan', 'lowongan' => $d->slug ?? $d->id]) }}'">
-                                    @include('non-user.components.card', ['lowongan' => $d])
-                                </div>
-                            @endif
+                            <div class="h-full" onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $d->perusahaan->slug ?? 'perusahaan', 'lowongan' => $d->slug ?? $d->id]) }}'">
+                                @include('non-user.components.card', ['lowongan' => $d])
+                            </div>
                         @empty
                             <div class="col-span-1 md:col-span-2 text-center py-16 bg-white rounded-2xl border border-dashed border-slate-300">
                                 <i class="ph ph-briefcase text-5xl text-slate-300 mb-2 inline-block"></i>
@@ -267,7 +270,7 @@
 
                 @if (!$isSearchPage)
                     <!-- Tombol Muat Lebih Banyak di Beranda (Hanya muncul jika total lowongan > 6) -->
-                    @if (count($Data) > 6)
+                    @if ($validData->count() > 6)
                         <div class="flex justify-center mt-8">
                             <a href="{{ route('lowongan.search') }}"
                                 class="bg-[#004e98] hover:bg-[#003d7a] text-white font-bold px-8 py-3 rounded-lg shadow-sm hover:shadow transition-all duration-200 text-xs sm:text-sm inline-flex items-center justify-center gap-2">
