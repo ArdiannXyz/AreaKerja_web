@@ -8,6 +8,7 @@ use App\Models\Perusahaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\UploadBuktiTransferRequest;
 
 class CatatanCashController extends Controller
 {
@@ -79,17 +80,9 @@ class CatatanCashController extends Controller
     }
 
     // upload bukti transaksi
-    public function uploadBukti(Request $request, $id)
+    public function uploadBukti(UploadBuktiTransferRequest $request, $id)
     {
         $transaksi = CatatanCash::findOrFail($id);
-
-        $request->validate([
-            'bukti' => 'required|mimes:jpg,jpeg,png,pdf|max:5120',
-        ], [
-            'bukti.required' => 'Silakan pilih file bukti pembayaran terlebih dahulu.',
-            'bukti.mimes'    => 'Format file bukti pembayaran harus berupa JPG, JPEG, PNG, atau PDF.',
-            'bukti.max'      => 'Ukuran file bukti pembayaran maksimal 5MB.',
-        ]);
 
         $path = $request->file('bukti')->store('bukti-transfer', 'public');
 

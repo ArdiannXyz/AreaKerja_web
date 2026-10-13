@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Iklan;
 use App\Models\CatatanKoin;
+use App\Services\CoinTransactionService;
 
 class IklanAdminController extends Controller
 {
@@ -150,34 +153,41 @@ class IklanAdminController extends Controller
 
         $iklan = Iklan::with('perusahaan')->findOrFail($id);
 
-        // Hanya refund jika status sebelumnya adalah 'menunggu'
-        if ($iklan->status === 'menunggu') {
-            $perusahaan = $iklan->perusahaan;
+        try {
+            DB::transaction(function () use ($iklan, $request) {
+                // Hanya refund jika status sebelumnya adalah 'menunggu'
+                if ($iklan->status === 'menunggu') {
+                    $perusahaan = $iklan->perusahaan;
 
-            if ($perusahaan) {
-                // Refund koin
-                $perusahaan->koin_perusahaan += $iklan->koin_terpotong;
-                $perusahaan->save();
+                    if ($perusahaan && $iklan->koin_terpotong > 0) {
+                        $pengirim = (Auth::user()?->role === 'super_admin') ? 'Super Admin AreaKerja' : 'Admin AreaKerja';
 
-                $pengirim = (Auth::user()?->role === 'super_admin') ? 'Super Admin AreaKerja' : 'Admin AreaKerja';
+                        $coinService = app(CoinTransactionService::class);
+                        $coinService->refund(
+                            $perusahaan,
+                            $iklan->koin_terpotong,
+                            'Refund Koin: Iklan "' . Str::limit($iklan->judul_iklan, 30) . '" Ditolak',
+                            'Refund Iklan',
+                            'REFUND-' . strtoupper(Str::random(8)),
+                            $pengirim
+                        );
+                    }
+                }
 
-                // Catat transaksi refund koin
-                CatatanKoin::create([
-                    'user_id' => $perusahaan->user_id,
-                    'no_referensi' => 'REFUND-' . strtoupper(Str::random(8)),
-                    'pesanan' => 'Refund Koin: Iklan "' . Str::limit($iklan->judul_iklan, 30) . '" Ditolak',
-                    'dari' => $pengirim,
-                    'sumber_dana' => 'Refund Iklan',
-                    'total' => '+' . $iklan->koin_terpotong,
-                ]);
-            }
+                $iklan->status = 'ditolak';
+                $iklan->alasan_penolakan = $request->alasan_penolakan;
+                $iklan->save();
+            });
+
+            return redirect()->back()->with('success', 'Iklan ditolak. Saldo ' . number_format($iklan->koin_terpotong, 0, ',', '.') . ' koin telah berhasil di-refund kembali ke perusahaan.');
+        } catch (\Throwable $e) {
+            Log::error("Gagal menolak dan me-refund iklan: " . $e->getMessage(), [
+                'iklan_id' => $id,
+                'trace'    => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memproses penolakan iklan.');
         }
-
-        $iklan->status = 'ditolak';
-        $iklan->alasan_penolakan = $request->alasan_penolakan;
-        $iklan->save();
-
-        return redirect()->back()->with('success', 'Iklan ditolak. Saldo ' . number_format($iklan->koin_terpotong, 0, ',', '.') . ' koin telah berhasil di-refund kembali ke perusahaan.');
     }
 
     /**

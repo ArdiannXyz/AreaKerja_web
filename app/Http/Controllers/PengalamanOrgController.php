@@ -137,7 +137,7 @@ class PengalamanOrgController extends Controller
     public function destroySuper($id = null)
     {
         if ($id) {
-            PengalamanOrganisasi::destroy($id);
+            return $this->destroy($id);
         }
         return redirect()->back()->with('success', 'Organisasi berhasil dihapus');
     }

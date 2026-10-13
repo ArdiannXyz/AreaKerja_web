@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use App\Http\Requests\UpdateProfilePerusahaanRequest;
 
 class PerusahaanController extends Controller
 {
@@ -33,33 +34,10 @@ class PerusahaanController extends Controller
         return view('perusahaan.profile.edit');
     }
 
-    public function update_profile_perusahaan(Request $request, Perusahaan $perusahaan)
+    public function update_profile_perusahaan(UpdateProfilePerusahaanRequest $request, Perusahaan $perusahaan)
     {
         try {
-            $validated = $request->validate([
-                'nama_perusahaan'     => "nullable|string",
-                'jenis_perusahaan'    => "nullable|string",
-                'website_perusahaan'  => "nullable|string",
-                'telepon_perusahaan'  => [
-                    "nullable",
-                    "regex:/^(?:\+628|08)[0-9]+$/"
-                ],
-                'whatsapp'            => [
-                    "nullable",
-                    "regex:/^(?:628|08)[0-9]+$/"
-                ],
-                'legalitas'           => "nullable|string",
-                'deskripsi'           => "nullable|string",
-                'visi'                => "nullable|string",
-                'misi'                => "nullable|string",
-                'alamat'              => "nullable|string",
-                'kota'                => "nullable|string",
-                'provinsi'            => "nullable|string",
-                'img_profile'         => "nullable|image|mimes:jpg,jpeg,png|max:2048",
-            ], [
-                'telepon_perusahaan.regex' => "Nomor telepon harus diawali 08, atau 628.",
-                'whatsapp.regex'           => "Nomor WhatsApp harus diawali 08, atau 628.",
-            ]);
+            $validated = $request->validated();
 
             if (!empty($request->telepon_perusahaan)) {
                 $telepon = preg_replace('/[^0-9]/', '', $request->telepon_perusahaan);
