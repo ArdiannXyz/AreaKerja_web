@@ -110,7 +110,7 @@
                                     </button>
 
                                     @if (Auth::user()->perusahaan->img_profile)
-                                        <button type="button" onclick="if(confirm('Yakin ingin menghapus foto logo profil?')) document.getElementById('removeperusahaanForm').submit();"
+                                        <button type="button" onclick="Swal.fire({ title: 'Hapus Logo?', text: 'Yakin ingin menghapus foto logo profil?', icon: 'warning', showCancelButton: true, confirmButtonText: 'Ya, Hapus', cancelButtonText: 'Batal', confirmButtonColor: '#ef4444' }).then(r => { if(r.isConfirmed) document.getElementById('removeperusahaanForm').submit(); })"
                                             class="inline-flex items-center gap-1.5 px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold rounded-xl text-xs transition">
                                             <i class="ph ph-trash text-sm"></i> Hapus Logo
                                         </button>

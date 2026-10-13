@@ -1,4 +1,20 @@
-﻿<!-- Modal -->
+@php
+    $userRole = auth()->check() ? (auth()->user()->role ?? null) : null;
+    $logoutUrl = match ($userRole) {
+        'super_admin' => route('logout_superadmin'),
+        'admin'       => route('logout_admin'),
+        'finance'     => route('logout_finance'),
+        'perusahaan'  => route('logout_perusahaan'),
+        default       => route('logout_pelamar'),
+    };
+@endphp
+
+<!-- Form Logout Modal -->
+<form id="modalLogoutForm" action="{{ $logoutUrl }}" method="POST" class="hidden">
+    @csrf
+</form>
+
+<!-- Modal -->
 <div id="logoutModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50">
     <!-- Konten Modal -->
     <div class="relative bg-white rounded-2xl shadow-lg w-[90%] max-w-md p-8 text-center animate-fadeIn">
@@ -18,17 +34,17 @@
 
         <!-- Pesan -->
         <p class="text-gray-700 mb-8">
-            Apakah anda yakin untuk keluar dari <span class="font-bold">Jason Statham</span>?
+            Apakah anda yakin ingin keluar dari akun ini?
         </p>
 
         <!-- Tombol aksi -->
         <div class="flex justify-center gap-6">
             <button onclick="logoutLogout()"
-                class="px-6 py-2 bg-[#00509d] text-white rounded-full font-medium shadow hover:bg-[#003d7a]">
+                class="px-6 py-2 bg-[#00509d] text-white rounded-full font-medium shadow hover:bg-[#003d7a] transition">
                 Keluar
             </button>
             <button onclick="closeModal()"
-                class="px-6 py-2 bg-gray-400 text-white rounded-full font-medium shadow hover:bg-gray-500">
+                class="px-6 py-2 bg-gray-400 text-white rounded-full font-medium shadow hover:bg-gray-500 transition">
                 Batal
             </button>
         </div>
@@ -38,19 +54,28 @@
 <script>
     function openModal() {
         const modal = document.getElementById('logoutModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
     }
 
     function closeModal() {
         const modal = document.getElementById('logoutModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        if (modal) {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
     }
 
     function logoutLogout() {
-        alert('Anda telah keluar!');
         closeModal();
+        const modalForm = document.getElementById('modalLogoutForm') || document.getElementById('logoutForm');
+        if (modalForm) {
+            modalForm.submit();
+        } else {
+            window.location.href = "{{ $logoutUrl }}";
+        }
     }
 </script>
 

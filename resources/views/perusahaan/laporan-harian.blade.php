@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <!DOCTYPE html>
     <html lang="en">
@@ -68,12 +68,22 @@
                     if (data.success) {
                         window.location.href = data.redirect_url;
                     } else {
-                        alert(data.message || "Gagal memproses permintaan.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: data.message || 'Gagal memproses permintaan.',
+                            confirmButtonText: 'Mengerti'
+                        });
                     }
                 })
                 .catch(err => {
                     console.error(err);
-                    alert("Terjadi kesalahan. Coba lagi.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Terjadi Kesalahan',
+                        text: 'Terjadi kesalahan. Coba lagi.',
+                        confirmButtonText: 'Mengerti'
+                    });
                 });
 
         });

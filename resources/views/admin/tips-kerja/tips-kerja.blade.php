@@ -337,11 +337,21 @@
         });
 
         function confirmDeleteSingle(id) {
-            if (confirm('Apakah Anda yakin ingin menghapus tips kerja ini?')) {
-                let form = document.getElementById('singleDeleteForm');
-                form.action = "{{ url('/admin/tips/kerja') }}/" + id;
-                form.submit();
-            }
+            Swal.fire({
+                title: 'Hapus Tips Kerja?',
+                text: 'Apakah Anda yakin ingin menghapus tips kerja ini? Tindakan ini tidak bisa dibatalkan.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#ef4444'
+            }).then(result => {
+                if (result.isConfirmed) {
+                    let form = document.getElementById('singleDeleteForm');
+                    form.action = "{{ url('/admin/tips/kerja') }}/" + id;
+                    form.submit();
+                }
+            });
         }
 
         function searchTable() {

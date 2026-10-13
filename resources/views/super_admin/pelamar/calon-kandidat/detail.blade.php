@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-[#f8fafc] overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
 
@@ -428,20 +428,20 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('notifHandler', () => ({
                 async hapus(id) {
-                    if (!confirm("Hapus notifikasi ini?")) return;
+                    if (!await swalConfirm("Hapus notifikasi ini?")) return;
                     let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
                     let res = await fetch(url, { method: "DELETE", headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}", "Accept": "application/json" } });
                     let data = await res.json();
                     if (data.success) document.querySelector(`.notif-item[data-id="${id}"]`)?.remove();
                 },
                 async hapusSemua() {
-                    if (!confirm("Hapus semua notifikasi?")) return;
+                    if (!await swalConfirm("Hapus semua notifikasi?")) return;
                     let res = await fetch("{{ route('notifikasi.hapusSemua') }}", { method: "DELETE", headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}", "Accept": "application/json" } });
                     let data = await res.json();
                     if (data.success) document.querySelectorAll('.notif-item').forEach(e => e.remove());
                 },
                 async hapusSemuaBaca() {
-                    if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+                    if (!await swalConfirm("Hapus semua notifikasi yang sudah dibaca?")) return;
                     let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", { method: "DELETE", headers: { "X-CSRF-TOKEN": "{{ csrf_token() }}", "Accept": "application/json" } });
                     let data = await res.json();
                     if (data.success) document.querySelectorAll('.notif-item.bg-gray-200').forEach(e => e.remove());

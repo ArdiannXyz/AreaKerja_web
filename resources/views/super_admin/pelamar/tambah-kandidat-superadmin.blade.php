@@ -304,7 +304,7 @@
                                 @endif
                                 <button type="button"
                                     class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm"
-                                    @if (!$pelamarSudahAda) onclick="alert('Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Alamat.')"
+                                    @if (!$pelamarSudahAda) onclick="Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Alamat.' })"
                                     @else data-modal-target="create_alamatmodal" data-modal-toggle="create_alamatmodal" @endif>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     <span>Tambah</span>
@@ -342,7 +342,7 @@
                                 @endif
                                 <button type="button"
                                     class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm"
-                                    @if (!$pelamarSudahAda) onclick="alert('Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Pendidikan.')"
+                                    @if (!$pelamarSudahAda) onclick="Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Pendidikan.' })"
                                     @else data-modal-target="create_pendidikanmodal" data-modal-toggle="create_pendidikanmodal" @endif>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     <span>Tambah</span>
@@ -379,7 +379,7 @@
                                 @endif
                                 <button type="button"
                                     class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm"
-                                    @if (!$pelamarSudahAda) onclick="alert('Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Pengalaman Kerja.')"
+                                    @if (!$pelamarSudahAda) onclick="Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Pengalaman Kerja.' })"
                                     @else data-modal-target="create_kerjamodal" data-modal-toggle="create_kerjamodal" @endif>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     <span>Tambah</span>
@@ -416,7 +416,7 @@
                                 @endif
                                 <button type="button"
                                     class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm"
-                                    @if (!$pelamarSudahAda) onclick="alert('Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Organisasi.')"
+                                    @if (!$pelamarSudahAda) onclick="Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Organisasi.' })"
                                     @else data-modal-target="create_organisasimodal" data-modal-toggle="create_organisasimodal" @endif>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     <span>Tambah</span>
@@ -453,7 +453,7 @@
                                 @endif
                                 <button type="button"
                                     class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm"
-                                    @if (!$pelamarSudahAda) onclick="alert('Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Keahlian.')"
+                                    @if (!$pelamarSudahAda) onclick="Swal.fire({ icon: 'warning', title: 'Perhatian', text: 'Harap simpan data utama kandidat terlebih dahulu sebelum menambahkan Keahlian.' })"
                                     @else data-modal-target="create_skillmodal" data-modal-toggle="create_skillmodal" @endif>
                                     <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
                                     <span>Tambah</span>
@@ -651,7 +651,7 @@
             document.addEventListener('alpine:init', () => {
                 Alpine.data('notifHandler', () => ({
                     async hapus(id) {
-                        if (!confirm("Hapus notifikasi ini?")) return;
+                        if (!await swalConfirm("Hapus notifikasi ini?")) return;
                         let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
                         let res = await fetch(url, {
                             method: "DELETE",
@@ -666,7 +666,7 @@
                         }
                     },
                     async hapusSemua() {
-                        if (!confirm("Hapus semua notifikasi?")) return;
+                        if (!await swalConfirm("Hapus semua notifikasi?")) return;
                         let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
                             method: "DELETE",
                             headers: {
@@ -680,7 +680,7 @@
                         }
                     },
                     async hapusSemuaBaca() {
-                        if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+                        if (!await swalConfirm("Hapus semua notifikasi yang sudah dibaca?")) return;
                         let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
                             method: "DELETE",
                             headers: {
