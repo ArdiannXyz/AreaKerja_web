@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Http\Requests\UpdateProfilePerusahaanRequest;
+use App\Services\WilayahService;
+use App\Services\NotificationService;
 
 class PerusahaanController extends Controller
 {
@@ -61,23 +63,19 @@ class PerusahaanController extends Controller
             $validated['user_id'] = Auth::id();
             $perusahaan->update($validated);
 
-            Notifikasi::create([
-                'user_id'       => Auth::id(),
-                'judul'         => 'Profil Berhasil Diperbarui',
-                'pesan'         => 'Profil perusahaan Anda telah berhasil disimpan.',
-                'is_read'       => 0,
-                'expired_at'    => now()->addDays(7),
-            ]);
+            NotificationService::send(
+                Auth::id(),
+                'Profil Berhasil Diperbarui',
+                'Profil perusahaan Anda telah berhasil disimpan.'
+            );
 
             return redirect()->route('profile.perusahaan')->with('success', 'Profile berhasil diperbarui');
         } catch (\Exception $e) {
-            Notifikasi::create([
-                'user_id'       => Auth::id(),
-                'judul'         => 'Gagal Memperbarui Profil',
-                'pesan'         => 'Terjadi kesalahan saat menyimpan data profil perusahaan: ' . $e->getMessage(),
-                'is_read'       => 0,
-                'expired_at'    => now()->addDays(7),
-            ]);
+            NotificationService::send(
+                Auth::id(),
+                'Gagal Memperbarui Profil',
+                'Terjadi kesalahan saat menyimpan data profil perusahaan: ' . $e->getMessage()
+            );
 
             return redirect()->back()
                 ->withErrors(['error' => 'Profil gagal diperbarui: ' . $e->getMessage()])
@@ -96,57 +94,9 @@ class PerusahaanController extends Controller
         return redirect()->route('profile.perusahaan')->with('success', 'Profile berhasil dihapus');
     }
 
-    private function ensureAlamatTableExists()
-    {
-        if (!Schema::hasTable('alamat_perusahaan')) {
-            try {
-                Schema::create('alamat_perusahaan', function ($table) {
-                    $table->id();
-                    $table->unsignedBigInteger('perusahaan_id')->index();
-                    $table->string('provinsi')->nullable();
-                    $table->string('kota')->nullable();
-                    $table->string('kecamatan')->nullable();
-                    $table->string('provinsi_id')->nullable();
-                    $table->string('kota_id')->nullable();
-                    $table->string('kecamatan_id')->nullable();
-                    $table->string('desa')->nullable();
-                    $table->string('kode_pos')->nullable();
-                    $table->text('detail')->nullable();
-                    $table->string('label')->nullable();
-                    $table->boolean('utama')->default(0);
-                    $table->timestamps();
-                });
-            } catch (\Throwable $e) {
-                Log::error('Gagal membuat tabel alamat_perusahaan: ' . $e->getMessage());
-            }
-        } else {
-            try {
-                if (!Schema::hasColumn('alamat_perusahaan', 'provinsi')) {
-                    Schema::table('alamat_perusahaan', function ($table) {
-                        $table->string('provinsi')->nullable();
-                    });
-                }
-                if (!Schema::hasColumn('alamat_perusahaan', 'kota')) {
-                    Schema::table('alamat_perusahaan', function ($table) {
-                        $table->string('kota')->nullable();
-                    });
-                }
-                if (!Schema::hasColumn('alamat_perusahaan', 'kecamatan')) {
-                    Schema::table('alamat_perusahaan', function ($table) {
-                        $table->string('kecamatan')->nullable();
-                    });
-                }
-            } catch (\Throwable $e) {
-                // ignore
-            }
-        }
-    }
-
     // ALAMAT PERUSAHAAN
     public function alamat_perusahaan()
     {
-        $this->ensureAlamatTableExists();
-
         $perusahaan = auth()->user()->perusahaan;
         if (!$perusahaan) {
             return redirect()->route('login');
@@ -195,39 +145,23 @@ class PerusahaanController extends Controller
 
     public function form_alamat()
     {
-        $this->ensureAlamatTableExists();
-
-        $provinsis = collect();
-        $provincesFile = database_path('data/provinces.json');
-        if (file_exists($provincesFile)) {
-            $json = json_decode(file_get_contents($provincesFile), true);
-            $provinsis = collect($json)->map(function ($item) {
-                return (object)[
-                    'id'   => (string)$item['id'],
-                    'nama' => ucwords(strtolower($item['name'])),
-                ];
-            });
-        }
-
         return view('perusahaan.alamat.buat-alamat', [
-            'provinsis' => $provinsis,
+            'provinsis' => WilayahService::getProvinces(),
         ]);
     }
 
     public function getKota($provinsi_id)
     {
-        return app(AdminController::class)->getKota($provinsi_id);
+        return response()->json(WilayahService::getRegenciesJson($provinsi_id));
     }
 
     public function getKecamatan($kota_id)
     {
-        return app(AdminController::class)->getKecamatan($kota_id);
+        return response()->json(WilayahService::getDistrictsJson($kota_id));
     }
 
     public function store_alamat(Request $request)
     {
-        $this->ensureAlamatTableExists();
-
         $perusahaan = Auth::user()->perusahaan;
         if (!$perusahaan) {
             return redirect()->route('login');
@@ -237,36 +171,14 @@ class PerusahaanController extends Controller
         $kotaNama = $request->kota_id ?? $request->kota ?? '';
         $kecamatanNama = $request->kecamatan_id ?? $request->kecamatan ?? '';
 
-        if (is_numeric($provinsiNama) && file_exists(database_path('data/provinces.json'))) {
-            $provinces = json_decode(file_get_contents(database_path('data/provinces.json')), true);
-            foreach ($provinces as $p) {
-                if ((string)$p['id'] === (string)$provinsiNama) {
-                    $provinsiNama = ucwords(strtolower($p['name']));
-                    break;
-                }
-            }
+        if (is_numeric($provinsiNama)) {
+            $provinsiNama = WilayahService::findProvince($provinsiNama)?->nama ?? $provinsiNama;
         }
-
-        if (is_numeric($kotaNama) && file_exists(database_path('data/regencies.json'))) {
-            $regencies = json_decode(file_get_contents(database_path('data/regencies.json')), true);
-            foreach ($regencies as $r) {
-                if ((string)$r['id'] === (string)$kotaNama) {
-                    $kotaNama = ucwords(strtolower($r['name']));
-                    break;
-                }
-            }
+        if (is_numeric($kotaNama)) {
+            $kotaNama = WilayahService::findRegency($kotaNama)?->nama ?? $kotaNama;
         }
-
-        if (is_numeric($kecamatanNama) && file_exists(database_path('data/districts.json'))) {
-            $districts = json_decode(file_get_contents(database_path('data/districts.json')), true);
-            if (is_array($districts)) {
-                foreach ($districts as $d) {
-                    if ((string)$d['id'] === (string)$kecamatanNama) {
-                        $kecamatanNama = ucwords(strtolower($d['name']));
-                        break;
-                    }
-                }
-            }
+        if (is_numeric($kecamatanNama)) {
+            $kecamatanNama = WilayahService::findDistrict($kecamatanNama)?->nama ?? $kecamatanNama;
         }
 
         if (Schema::hasTable('alamat_perusahaan')) {
@@ -309,21 +221,8 @@ class PerusahaanController extends Controller
 
     public function edit_alamat($id = null)
     {
-        $this->ensureAlamatTableExists();
-
         $perusahaan = Auth::user()->perusahaan;
-
-        $provinsis = collect();
-        $provincesFile = database_path('data/provinces.json');
-        if (file_exists($provincesFile)) {
-            $json = json_decode(file_get_contents($provincesFile), true);
-            $provinsis = collect($json)->map(function ($item) {
-                return (object)[
-                    'id'   => (string)$item['id'],
-                    'nama' => ucwords(strtolower($item['name'])),
-                ];
-            });
-        }
+        $provinsis = WilayahService::getProvinces();
 
         $addr = null;
         if (Schema::hasTable('alamat_perusahaan') && $id) {
@@ -356,8 +255,6 @@ class PerusahaanController extends Controller
 
     public function update_alamat(Request $request, $id = null)
     {
-        $this->ensureAlamatTableExists();
-
         $perusahaan = Auth::user()->perusahaan;
 
         $alamatDetail = $request->detail ?? $request->desa ?? $request->alamat ?? $perusahaan->alamat;
@@ -432,8 +329,6 @@ class PerusahaanController extends Controller
 
     public function destroy_alamat($id = null)
     {
-        $this->ensureAlamatTableExists();
-
         $perusahaan = Auth::user()->perusahaan;
 
         if (Schema::hasTable('alamat_perusahaan') && $id) {
@@ -476,8 +371,6 @@ class PerusahaanController extends Controller
 
     public function setUtama($id = null)
     {
-        $this->ensureAlamatTableExists();
-
         $perusahaan = Auth::user()->perusahaan;
         if (!$perusahaan) {
             return back()->with('error', 'Perusahaan tidak ditemukan.');
@@ -750,13 +643,12 @@ class PerusahaanController extends Controller
             $recruit->delete();
 
             if ($user && $perusahaan) {
-                Notifikasi::create([
-                    'user_id'       => $user->id,
-                    'perusahaan_id' => $perusahaan->id,
-                    'judul'         => 'Status Recruitment Dibatalkan',
-                    'pesan'         => 'Status Recruitment Anda telah dibatalkan oleh Perusahaan.',
-                    'expired_at'    => now()->addDays(7),
-                ]);
+                NotificationService::send(
+                    $user->id,
+                    'Status Recruitment Dibatalkan',
+                    'Status Recruitment Anda telah dibatalkan oleh Perusahaan.',
+                    ['perusahaan_id' => $perusahaan->id]
+                );
             }
         }
 

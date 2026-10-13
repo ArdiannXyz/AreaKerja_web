@@ -165,15 +165,56 @@ class WilayahService
             return null;
         }
 
-        $input = trim((string)$query);
-        $districts = self::getDistricts();
-
         return $districts->first(function ($d) use ($input) {
             return $d->id === $input
                 || (is_numeric($input) && (int)$d->id === (int)$input)
                 || strcasecmp($d->nama, $input) === 0
                 || strcasecmp($d->name, $input) === 0;
         });
+    }
+
+    /**
+     * Helper response terformat untuk list kota berdasarkan provinsi
+     */
+    public static function getRegenciesJson(string|int|null $provinsiId): array
+    {
+        $input = trim(urldecode((string)$provinsiId));
+        if (empty($input)) {
+            return [];
+        }
+
+        $province = self::findProvince($input);
+        $targetProvId = $province ? $province->id : $input;
+
+        return self::getRegencies($targetProvId)->map(function ($item) {
+            return [
+                'id'          => (string)$item->id,
+                'provinsi_id' => (string)$item->province_id,
+                'nama'        => $item->nama,
+            ];
+        })->values()->all();
+    }
+
+    /**
+     * Helper response terformat untuk list kecamatan berdasarkan kota
+     */
+    public static function getDistrictsJson(string|int|null $kotaId): array
+    {
+        $input = trim(urldecode((string)$kotaId));
+        if (empty($input)) {
+            return [];
+        }
+
+        $regency = self::findRegency($input);
+        $targetKotaId = $regency ? $regency->id : $input;
+
+        return self::getDistricts($targetKotaId)->map(function ($item) {
+            return [
+                'id'      => (string)$item->id,
+                'kota_id' => (string)$item->regency_id,
+                'nama'    => $item->nama,
+            ];
+        })->values()->all();
     }
 }
 

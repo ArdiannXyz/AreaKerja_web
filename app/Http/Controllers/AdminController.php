@@ -63,44 +63,12 @@ class AdminController extends Controller
 
     public function getKota($provinsi_id)
     {
-        $input = trim(urldecode((string)$provinsi_id));
-        if (empty($input)) {
-            return response()->json([]);
-        }
-
-        $province = WilayahService::findProvince($input);
-        $targetProvId = $province ? $province->id : $input;
-
-        $kotas = WilayahService::getRegencies($targetProvId)->map(function ($item) {
-            return [
-                'id'          => (string)$item->id,
-                'provinsi_id' => (string)$item->province_id,
-                'nama'        => $item->nama,
-            ];
-        });
-
-        return response()->json($kotas);
+        return response()->json(WilayahService::getRegenciesJson($provinsi_id));
     }
 
     public function getKecamatan($kota_id)
     {
-        $input = trim(urldecode((string)$kota_id));
-        if (empty($input)) {
-            return response()->json([]);
-        }
-
-        $regency = WilayahService::findRegency($input);
-        $targetKotaId = $regency ? $regency->id : $input;
-
-        $kecamatans = WilayahService::getDistricts($targetKotaId)->map(function ($item) {
-            return [
-                'id'      => (string)$item->id,
-                'kota_id' => (string)$item->regency_id,
-                'nama'    => $item->nama,
-            ];
-        });
-
-        return response()->json($kecamatans);
+        return response()->json(WilayahService::getDistrictsJson($kota_id));
     }
 
     public function update_profile_admin(Request $request, $id = null)

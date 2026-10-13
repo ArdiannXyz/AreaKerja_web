@@ -9,6 +9,7 @@ use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
 use App\Models\Perusahaan;
 use App\Services\CoinTransactionService;
+use App\Services\NotificationService;
 use App\Http\Requests\BeliKandidatRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -75,14 +76,12 @@ class PembeliKandidatController extends Controller
 
                 // 3. Buat notifikasi ke pelamar
                 if ($pelamar->user_id) {
-                    Notifikasi::create([
-                        'user_id'       => $pelamar->user_id,
-                        'perusahaan_id' => $perusahaan->id,
-                        'judul'         => 'Penawaran Rekrutmen Baru',
-                        'pesan'         => $perusahaan->nama_perusahaan . ' telah merekrut Anda untuk lowongan ' . $lowongan->nama,
-                        'is_read'       => false,
-                        'expired_at'    => now()->addDays(7),
-                    ]);
+                    NotificationService::send(
+                        $pelamar->user_id,
+                        'Penawaran Rekrutmen Baru',
+                        $perusahaan->nama_perusahaan . ' telah merekrut Anda untuk lowongan ' . $lowongan->nama,
+                        ['perusahaan_id' => $perusahaan->id]
+                    );
                 }
             });
 
@@ -263,14 +262,12 @@ class PembeliKandidatController extends Controller
                         // Notifikasi ke Perusahaan
                         if ($perusahaan->user_id) {
                             $alasanTxt = $request->alasan_penolakan ? " Alasan: {$request->alasan_penolakan}." : "";
-                            Notifikasi::create([
-                                'user_id'       => $perusahaan->user_id,
-                                'perusahaan_id' => $perusahaan->id,
-                                'judul'         => 'Penolakan Tawaran Rekrutmen',
-                                'pesan'         => "Kandidat {$namaPelamar} menolak tawaran Anda.{$alasanTxt} Saldo +100 koin telah dikembalikan ke akun Anda.",
-                                'is_read'       => false,
-                                'expired_at'    => now()->addDays(7),
-                            ]);
+                            NotificationService::send(
+                                $perusahaan->user_id,
+                                'Penawaran Rekrutmen Ditolak',
+                                "Kandidat {$namaPelamar} menolak tawaran Anda.{$alasanTxt} Saldo +100 koin telah dikembalikan ke akun Anda.",
+                                ['perusahaan_id' => $perusahaan->id]
+                            );
                         }
                     }
                 }

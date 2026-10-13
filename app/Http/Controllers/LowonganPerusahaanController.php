@@ -9,6 +9,7 @@ use App\Models\PaketLowongan;
 use App\Models\Perusahaan;
 use App\Models\User;
 use App\Services\CoinTransactionService;
+use App\Services\NotificationService;
 use App\Http\Requests\StoreLowonganRequest;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -404,14 +405,12 @@ class LowonganPerusahaanController extends Controller
 
         LowonganPerusahaan::create($valid);
 
-        Notifikasi::create([
-            'user_id'       => Auth::id(),
-            'perusahaan_id' => $perusahaan->id,
-            'judul'         => 'Lowongan Baru Ditambahkan',
-            'pesan'         => 'Kamu berhasil menambahkan lowongan untuk ' . $perusahaan->nama_perusahaan,
-            'is_read'       => false,
-            'expired_at'    => now()->addDays(7),
-        ]);
+        NotificationService::send(
+            Auth::id(),
+            'Lowongan Baru Ditambahkan',
+            'Kamu berhasil menambahkan lowongan untuk ' . $perusahaan->nama_perusahaan,
+            ['perusahaan_id' => $perusahaan->id]
+        );
 
         return redirect()
             ->route('superadmin.perusahaan.detail', $perusahaan->id)
