@@ -820,8 +820,38 @@
                 });
             @endif
 
-            // Intercept legacy native confirm() on forms
+            // ===================================================
+            // GLOBAL ALERT & CONFIRM OVERRIDE (SweetAlert2)
+            // ===================================================
             document.addEventListener('DOMContentLoaded', function() {
+
+                // 1. Override window.alert -> Swal toast
+                window.alert = function(msg) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Informasi',
+                        text: String(msg),
+                        timer: 3000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                };
+
+                // 1b. window.swalConfirm -> async confirm helper
+                window.swalConfirm = function(msg, title) {
+                    return Swal.fire({
+                        title: title || 'Konfirmasi',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#ef4444'
+                    }).then(r => r.isConfirmed);
+                };
+
+                // 2. Intercept form[onsubmit*="confirm("]
                 document.querySelectorAll('form[onsubmit*="confirm("]').forEach(form => {
                     const onsubmitAttr = form.getAttribute('onsubmit');
                     const match = onsubmitAttr.match(/confirm\s*\(\s*['"`](.*?)['"`]\s*\)/);
@@ -847,6 +877,59 @@
                             });
                         });
                     }
+                });
+
+                // 3. Intercept button[onclick*="confirm("] dalam form
+                document.querySelectorAll('button[onclick*="confirm("]').forEach(btn => {
+                    const onclickAttr = btn.getAttribute('onclick');
+                    const match = onclickAttr.match(/confirm\s*\(\s*['"`](.*?)['"`]\s*\)/);
+                    if (match) {
+                        const confirmMsg = match[1];
+                        btn.removeAttribute('onclick');
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const formId = btn.getAttribute('form');
+                            const form = btn.closest('form') || (formId ? document.getElementById(formId) : null);
+                            Swal.fire({
+                                title: 'Konfirmasi',
+                                text: confirmMsg,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Ya, Lanjutkan',
+                                cancelButtonText: 'Batal',
+                                confirmButtonColor: '#ef4444'
+                            }).then(result => {
+                                if (result.isConfirmed && form) {
+                                    form.dataset.confirmed = 'true';
+                                    form.submit();
+                                }
+                            });
+                        });
+                    }
+                });
+
+                // 4. Intercept button[data-swal-confirm] dalam form
+                document.querySelectorAll('button[data-swal-confirm]').forEach(btn => {
+                    const confirmMsg = btn.getAttribute('data-swal-confirm');
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const formId = btn.getAttribute('form');
+                        const form = btn.closest('form') || (formId ? document.getElementById(formId) : null);
+                        Swal.fire({
+                            title: 'Konfirmasi',
+                            text: confirmMsg,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, Lanjutkan',
+                            cancelButtonText: 'Batal',
+                            confirmButtonColor: '#ef4444'
+                        }).then(result => {
+                            if (result.isConfirmed && form) {
+                                form.dataset.confirmed = 'true';
+                                form.submit();
+                            }
+                        });
+                    });
                 });
             });
         }

@@ -290,7 +290,12 @@
         <script>
             document.addEventListener("trix-file-accept", function(event) {
                 event.preventDefault();
-                alert("Upload gambar lewat field 'Ganti Media', bukan di deskripsi!");
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Gunakan Field Ganti Media',
+                    text: "Upload gambar lewat field 'Ganti Media', bukan di deskripsi!",
+                    confirmButtonText: 'Mengerti'
+                });
             });
 
             new Sortable(document.getElementById("kegiatan-list"), {
@@ -372,7 +377,13 @@
                 let jamAkhir = document.getElementById("jam_akhir").value;
 
                 if (jamMulai && jamAkhir && jamAkhir <= jamMulai) {
-                    alert("Jam akhir harus lebih besar dari jam mulai!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Jam Tidak Valid',
+                        text: 'Jam akhir harus lebih besar dari jam mulai!',
+                        confirmButtonText: 'Mengerti',
+                        timer: 3000
+                    });
                     document.getElementById("jam_akhir").value = "";
                 }
             }

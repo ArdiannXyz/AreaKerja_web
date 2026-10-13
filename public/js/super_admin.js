@@ -73,13 +73,28 @@ if (selectKategori) {
 
 
 //NOTIF
- // Tandai dibaca
-          // Tandai dibaca
-  document.addEventListener('alpine:init', () => {
+document.addEventListener('alpine:init', () => {
+    const askConfirm = async (msg) => {
+        if (typeof window.swalConfirm === 'function') return await window.swalConfirm(msg);
+        if (typeof Swal !== 'undefined') {
+            const r = await Swal.fire({
+                title: 'Konfirmasi',
+                text: msg,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Hapus',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#ef4444'
+            });
+            return r.isConfirmed;
+        }
+        return confirm(msg);
+    };
+
     Alpine.data('notifHandler', () => ({
 
         async hapus(id) {
-            if (!confirm("Hapus notifikasi ini?")) return;
+            if (!(await askConfirm("Hapus notifikasi ini?"))) return;
 
             let url = window.routes.hapusNotif.replace(':id', id);
 
@@ -98,7 +113,7 @@ if (selectKategori) {
         },
 
         async hapusSemua() {
-            if (!confirm("Hapus semua notifikasi?")) return;
+            if (!(await askConfirm("Hapus semua notifikasi?"))) return;
 
             let res = await fetch(window.routes.hapusSemua, {
                 method: "DELETE",
@@ -115,7 +130,7 @@ if (selectKategori) {
         },
 
         async hapusSemuaBaca() {
-            if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+            if (!(await askConfirm("Hapus semua notifikasi yang sudah dibaca?"))) return;
 
             let res = await fetch(window.routes.hapusSemuaBaca, {
                 method: "DELETE",

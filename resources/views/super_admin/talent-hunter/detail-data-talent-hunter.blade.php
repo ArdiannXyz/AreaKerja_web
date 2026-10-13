@@ -1,4 +1,4 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <div class="w-full h-screen translate-x-4 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
         <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto">
@@ -121,7 +121,7 @@
 
                 // Hapus satu notifikasi
                 async hapus(id) {
-                    if (!confirm("Hapus notifikasi ini?")) return;
+                    if (!await swalConfirm("Hapus notifikasi ini?")) return;
 
                     let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
 
@@ -142,7 +142,7 @@
 
                 // Hapus semua
                 async hapusSemua() {
-                    if (!confirm("Hapus semua notifikasi?")) return;
+                    if (!await swalConfirm("Hapus semua notifikasi?")) return;
 
                     let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
                         method: "DELETE",
@@ -161,7 +161,7 @@
 
                 // Hapus semua yang sudah dibaca
                 async hapusSemuaBaca() {
-                    if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+                    if (!await swalConfirm("Hapus semua notifikasi yang sudah dibaca?")) return;
 
                     let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
                         method: "DELETE",

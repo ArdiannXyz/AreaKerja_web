@@ -1,4 +1,4 @@
-﻿ <!-- ================= MODAL STEP 1 ================= -->
+ <!-- ================= MODAL STEP 1 ================= -->
     <div id="modalStep1" class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center">
         <div class="bg-white w-full max-w-md rounded-2xl shadow-xl relative p-6 max-h-[80vh] overflow-y-auto">
             <button onclick="closeAllModal()" class="absolute top-3 right-3 text-gray-400 hover:text-black">âœ•</button>
@@ -172,7 +172,12 @@
         //redirect
         document.getElementById('btnKonfirmasi').addEventListener('click', function() {
             if (!selectedKoin || !selectedBank) {
-                alert("Silakan pilih paket dan metode pembayaran dulu.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pilih Paket & Pembayaran',
+                    text: 'Silakan pilih paket dan metode pembayaran dulu.',
+                    confirmButtonText: 'Mengerti'
+                });
                 return;
             }
 
@@ -201,7 +206,12 @@
                 })
                 .catch(err => {
                     console.error("Error detail:", err.message);
-                    alert("Gagal membuat transaksi: " + err.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Gagal membuat transaksi: ' + err.message,
+                        confirmButtonText: 'Coba Lagi'
+                    });
                 });
         });
 

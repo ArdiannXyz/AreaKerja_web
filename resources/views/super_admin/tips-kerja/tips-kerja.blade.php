@@ -278,22 +278,49 @@
 
             const checkedCount = document.querySelectorAll(`#${activeTableId} input[name="ids[]"]:checked`).length;
             if (checkedCount === 0) {
-                alert("Pilih minimal satu artikel terlebih dahulu.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pilih Artikel',
+                    text: 'Pilih minimal satu artikel terlebih dahulu.',
+                    confirmButtonText: 'Mengerti'
+                });
                 return;
             }
 
             if (action === 'update') {
-                if (!confirm(`Terbitkan ${checkedCount} artikel yang dipilih?`)) return;
-                form.action = "{{ route('superadmin.tips-kerja.update.status') }}";
-                document.getElementById('formMethod').value = "PUT";
-                document.getElementById('statusField').value = "terbit";
+                Swal.fire({
+                    title: 'Terbitkan Artikel?',
+                    text: `Terbitkan ${checkedCount} artikel yang dipilih?`,
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Terbitkan',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#00509d'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        form.action = "{{ route('superadmin.tips-kerja.update.status') }}";
+                        document.getElementById('formMethod').value = "PUT";
+                        document.getElementById('statusField').value = "terbit";
+                        form.submit();
+                    }
+                });
             } else if (action === 'delete') {
-                if (!confirm(`Yakin ingin menghapus ${checkedCount} artikel yang dipilih?`)) return;
-                form.action = "{{ route('superadmin.tips-kerja.destroy') }}";
-                document.getElementById('formMethod').value = "DELETE";
+                Swal.fire({
+                    title: 'Hapus Artikel?',
+                    text: `Yakin ingin menghapus ${checkedCount} artikel yang dipilih? Tindakan ini tidak bisa dibatalkan.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Hapus',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#ef4444'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        form.action = "{{ route('superadmin.tips-kerja.destroy') }}";
+                        document.getElementById('formMethod').value = "DELETE";
+                        form.submit();
+                    }
+                });
             }
-
-            form.submit();
         }
 
         // ---- Checkbox Select All ----

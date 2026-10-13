@@ -466,7 +466,12 @@
         //redirect
         document.getElementById('btnKonfirmasi').addEventListener('click', function() {
             if (!selectedKoin || !selectedBank) {
-                alert("Silakan pilih paket dan metode pembayaran dulu.");
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Pilih Paket & Pembayaran',
+                    text: 'Silakan pilih paket dan metode pembayaran dulu.',
+                    confirmButtonText: 'Mengerti'
+                });
                 return;
             }
 
@@ -495,7 +500,12 @@
                 })
                 .catch(err => {
                     console.error("Error detail:", err.message);
-                    alert("Gagal membuat transaksi: " + err.message);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: 'Gagal membuat transaksi: ' + err.message,
+                        confirmButtonText: 'Coba Lagi'
+                    });
                 });
         });
 

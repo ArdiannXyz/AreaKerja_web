@@ -62,6 +62,9 @@ class AuthController extends Controller
             if ($role === 'finance') {
                 return redirect()->route('finance.dashboard');
             }
+            if ($role === 'perusahaan') {
+                return redirect()->route('perusahaan.dashboard');
+            }
         }
 
         // Ambil kategori dari query string
