@@ -66,7 +66,11 @@ $("#formOrganisasi").on("submit", function(e) {
         },
         error: function(err) {
             console.error(err.responseText);
-            alert("Gagal menambahkan data");
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal menambahkan data' });
+            } else {
+                alert("Gagal menambahkan data");
+            }
         }
     });
 });
@@ -98,7 +102,11 @@ $("#formkerja").on("submit", function(e) {
         },
         error: function(err) {
             console.error(err.responseText);
-            alert("Gagal menambahkan data");
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({ icon: 'error', title: 'Gagal', text: 'Gagal menambahkan data' });
+            } else {
+                alert("Gagal menambahkan data");
+            }
         }
     });
 });

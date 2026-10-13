@@ -44,8 +44,13 @@
     }
 
     function finance_logoutFinance_logout() {
-        alert('Anda telah keluar!');
         closeModal();
+        const logoutForm = document.getElementById('financeLogoutForm') || document.getElementById('logoutForm');
+        if (logoutForm) {
+            logoutForm.submit();
+        } else {
+            window.location.href = "{{ route('logout_finance') }}";
+        }
     }
 </script>
 

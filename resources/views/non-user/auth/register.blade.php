@@ -397,11 +397,11 @@
                         if (el) el.textContent = errorData.errors[field][0];
                     });
                 } else {
-                    alert("Terjadi kesalahan server.");
+                    Swal.fire({ icon: 'error', title: 'Kesalahan Server', text: 'Terjadi kesalahan server.', confirmButtonText: 'Mengerti' });
                 }
 
             } catch (err) {
-                alert("Gagal menghubungi server. Coba lagi.");
+                Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: 'Gagal menghubungi server. Coba lagi.', confirmButtonText: 'Mengerti' });
             }
         });
 
@@ -443,11 +443,11 @@
                         if (el) el.textContent = errorData.errors[field][0];
                     });
                 } else {
-                    alert("Terjadi kesalahan server.");
+                    Swal.fire({ icon: 'error', title: 'Kesalahan Server', text: 'Terjadi kesalahan server.', confirmButtonText: 'Mengerti' });
                 }
 
             } catch (err) {
-                alert("Gagal menghubungi server. Coba lagi.");
+                Swal.fire({ icon: 'error', title: 'Koneksi Gagal', text: 'Gagal menghubungi server. Coba lagi.', confirmButtonText: 'Mengerti' });
             }
         });
 

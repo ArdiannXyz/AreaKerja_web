@@ -162,7 +162,7 @@
                                             <i class="ph ph-lock-key-open text-sm font-bold text-emerald-600"></i> Buka Pendaftaran
                                         </button>
                                     @else
-                                        <button type="submit" class="h-8.5 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1.5" onclick="return confirm('Tutup pendaftaran lowongan ini karena kuota sudah terpenuhi?')" title="Tutup Pendaftaran (Kuota Full)">
+                                        <button type="submit" class="h-8.5 px-3 bg-slate-50 hover:bg-slate-100 border border-slate-300 text-slate-700 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1.5" data-swal-confirm="Tutup pendaftaran lowongan ini karena kuota sudah terpenuhi?" title="Tutup Pendaftaran (Kuota Full)">
                                             <i class="ph ph-lock-key text-sm text-slate-500"></i> Tutup Lowongan (Kuota Full)
                                         </button>
                                     @endif
@@ -668,7 +668,12 @@
                         // If server returned non-json object shape
                         if (data && data.__rawText !== undefined) {
                             console.warn('[processBoost] server returned non-JSON response:', data);
-                            alert('Terjadi kesalahan. Silakan coba lagi atau cek console.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Terjadi Kesalahan',
+                                text: 'Terjadi kesalahan. Silakan coba lagi atau cek console.',
+                                confirmButtonText: 'Mengerti'
+                            });
                             console.log(data.__rawText);
                             return;
                         }
@@ -680,18 +685,33 @@
                         }
 
                         if (data.success) {
-                            alert(data.message ?? 'Berhasil di-boost');
-                            location.reload();
+                            Swal.fire({
+                                icon: 'success',
+                                title: 'Berhasil!',
+                                text: data.message ?? 'Lowongan berhasil di-boost.',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => location.reload());
                             return;
                         }
 
                         // fallback
                         console.warn('[processBoost] unexpected response:', data);
-                        alert(data.message ?? 'Terjadi kesalahan pada proses boost.');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Perhatian',
+                            text: data.message ?? 'Terjadi kesalahan pada proses boost.',
+                            confirmButtonText: 'Mengerti'
+                        });
                     })
                     .catch(err => {
                         console.error('[processBoost] fetch error:', err);
-                        alert('Gagal terhubung ke server. Silakan coba lagi.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Koneksi Gagal',
+                            text: 'Gagal terhubung ke server. Silakan coba lagi.',
+                            confirmButtonText: 'Mengerti'
+                        });
                     });
             };
 

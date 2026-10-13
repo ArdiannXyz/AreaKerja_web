@@ -1,4 +1,4 @@
-﻿@extends('layouts.index')
+@extends('layouts.index')
 
 @section('content')
     <div class="bg-gray-50 mt-16">
@@ -182,12 +182,22 @@
                             showConfirmTerima = false;
                             showSuccess = true;
                         } else {
-                            alert(data.message || 'Gagal memproses respon.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: data.message || 'Gagal memproses respon.',
+                                confirmButtonText: 'Mengerti'
+                            });
                         }
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('Terjadi kesalahan koneksi.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Koneksi Gagal',
+                            text: 'Terjadi kesalahan koneksi.',
+                            confirmButtonText: 'Mengerti'
+                        });
                     });
                 "
                                 class="w-full sm:w-auto bg-[#00509d] text-white px-4 py-2 rounded-lg hover:bg-[#003d7a]">
@@ -269,12 +279,22 @@
                         if (data.status === 'success') {
                             showTolakSuccess = true;
                         } else {
-                            alert(data.message || 'Gagal memproses respon.');
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Gagal',
+                                text: data.message || 'Gagal memproses respon.',
+                                confirmButtonText: 'Mengerti'
+                            });
                         }
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('Terjadi kesalahan koneksi.');
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Koneksi Gagal',
+                            text: 'Terjadi kesalahan koneksi.',
+                            confirmButtonText: 'Mengerti'
+                        });
                     });
                 "
                                 class="px-5 py-2 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition">Kirim</button>

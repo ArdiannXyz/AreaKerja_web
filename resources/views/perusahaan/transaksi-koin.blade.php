@@ -221,7 +221,15 @@
                     const noRek = this.getAttribute("data-rek");
 
                     navigator.clipboard.writeText(noRek).then(() => {
-                        alert("Nomor rekening berhasil disalin: " + noRek);
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil Disalin!',
+                            text: 'Nomor rekening ' + noRek + ' telah disalin ke clipboard.',
+                            timer: 2000,
+                            showConfirmButton: false,
+                            toast: true,
+                            position: 'top-end'
+                        });
                     }).catch(err => {
                         console.error("Gagal menyalin: ", err);
                     });

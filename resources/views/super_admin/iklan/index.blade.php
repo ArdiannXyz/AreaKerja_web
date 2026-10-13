@@ -46,63 +46,130 @@
                 <!-- Status Tabs -->
                 <div class="flex flex-wrap items-center gap-2">
                     <a href="{{ route('superadmin.iklan.index', ['status' => 'menunggu']) }}"
-                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold transition {{ $statusFilter === 'menunggu' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                        class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'menunggu' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Menunggu Review</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $statusFilter === 'menunggu' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800' }}">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'menunggu' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800' }}">
                             {{ $countMenunggu }}
                         </span>
                     </a>
 
                     <a href="{{ route('superadmin.iklan.index', ['status' => 'aktif']) }}"
-                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold transition {{ $statusFilter === 'aktif' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                        class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'aktif' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Sedang Tayang</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $statusFilter === 'aktif' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800' }}">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'aktif' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800' }}">
                             {{ $countAktif }}
                         </span>
                     </a>
 
                     <a href="{{ route('superadmin.iklan.index', ['status' => 'ditolak']) }}"
-                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold transition {{ $statusFilter === 'ditolak' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                        class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'ditolak' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Ditolak</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $statusFilter === 'ditolak' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800' }}">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'ditolak' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800' }}">
                             {{ $countDitolak }}
                         </span>
                     </a>
 
                     <a href="{{ route('superadmin.iklan.index', ['status' => 'selesai']) }}"
-                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold transition {{ $statusFilter === 'selesai' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                        class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'selesai' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Selesai / Kedaluwarsa</span>
-                        <span class="px-1.5 py-0.5 rounded-full text-[10px] {{ $statusFilter === 'selesai' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'selesai' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
                             {{ $countSelesai }}
                         </span>
                     </a>
 
                     <a href="{{ route('superadmin.iklan.index', ['status' => 'all']) }}"
-                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-extrabold transition {{ $statusFilter === 'all' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
+                        class="inline-flex items-center gap-1.5 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'all' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Semua ({{ $countSemua }})</span>
                     </a>
                 </div>
 
-                <!-- Search -->
-                <form action="{{ route('superadmin.iklan.index') }}" method="GET" class="flex items-center gap-2">
-                    <input type="hidden" name="status" value="{{ $statusFilter }}">
-                    <div class="relative w-full sm:w-64">
-                        <i class="ph ph-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
-                        <input type="text" name="q" value="{{ $search }}"
-                            placeholder="Cari judul iklan / perusahaan..."
-                            class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d] shadow-2xs">
+                <!-- Search with Smart Recommendations -->
+                <div class="relative w-full lg:w-80" x-data="{
+                    open: false,
+                    query: '{{ $search ?? '' }}',
+                    recommendations: [
+                        { label: 'PT', category: 'Perusahaan', icon: 'ph-buildings' },
+                        { label: 'CV', category: 'Perusahaan', icon: 'ph-buildings' },
+                        { label: 'Teknologi', category: 'Industri', icon: 'ph-laptop' },
+                        { label: 'Lowongan', category: 'Topik', icon: 'ph-briefcase' },
+                        { label: 'Rekrutmen', category: 'Topik', icon: 'ph-users' },
+                        { label: 'Promo', category: 'Topik', icon: 'ph-tag' },
+                        { label: 'Hiring', category: 'Topik', icon: 'ph-megaphone' },
+                        { label: 'Banner', category: 'Media', icon: 'ph-image' },
+                        { label: 'Official', category: 'Perusahaan', icon: 'ph-seal-check' },
+                        { label: 'Karir', category: 'Topik', icon: 'ph-chart-line-up' }
+                    ],
+                    get filtered() {
+                        if (!this.query.trim()) return this.recommendations.slice(0, 5);
+                        return this.recommendations.filter(r =>
+                            r.label.toLowerCase().includes(this.query.toLowerCase()) ||
+                            r.category.toLowerCase().includes(this.query.toLowerCase())
+                        );
+                    },
+                    select(val) {
+                        this.query = val;
+                        this.open = false;
+                        $nextTick(() => { $refs.superIklanSearchForm.submit(); });
+                    }
+                }" @click.outside="open = false">
+
+                    <form x-ref="superIklanSearchForm" action="{{ route('superadmin.iklan.index') }}" method="GET" autocomplete="off" class="flex items-center w-full">
+                        <input type="hidden" name="status" value="{{ $statusFilter }}">
+                        <div class="flex items-center w-full h-10 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition shadow-2xs">
+                            <div class="pl-3.5 pr-1 flex items-center justify-center text-slate-400 shrink-0 pointer-events-none">
+                                <i class="ph ph-magnifying-glass text-base leading-none"></i>
+                            </div>
+                            <input type="text" name="q" x-model="query"
+                                @focus="open = true"
+                                @input="open = true"
+                                autocomplete="off"
+                                placeholder="Cari judul iklan / perusahaan..."
+                                class="flex-1 h-full px-2 text-xs font-semibold text-slate-800 placeholder-slate-400 bg-transparent border-0 outline-none ring-0 focus:outline-none focus:ring-0 focus:border-transparent min-w-0"
+                                style="border: none !important; outline: none !important; box-shadow: none !important;">
+                            <template x-if="query.length > 0">
+                                <a href="{{ route('superadmin.iklan.index', ['status' => $statusFilter]) }}"
+                                    @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.iklan.index', ['status' => $statusFilter]) }}';"
+                                    class="mr-2.5 w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center shrink-0 transition cursor-pointer"
+                                    title="Hapus pencarian">
+                                    <i class="ph ph-x text-[10px] font-bold"></i>
+                                </a>
+                            </template>
+                            <button type="submit" class="hidden"></button>
+                        </div>
+                    </form>
+
+                    <!-- Autocomplete Dropdown -->
+                    <div x-cloak x-show="open && filtered.length > 0"
+                         x-transition:enter="transition ease-out duration-150"
+                         x-transition:enter-start="opacity-0 -translate-y-1"
+                         x-transition:enter-end="opacity-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-100"
+                         x-transition:leave-start="opacity-100 translate-y-0"
+                         x-transition:leave-end="opacity-0 -translate-y-1"
+                         class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-slate-100 shadow-xl p-2 z-50 max-h-72 overflow-y-auto">
+                        <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-50 mb-1">
+                            <span>Saran Pencarian</span>
+                            <i class="ph ph-sparkle text-[#00509d]"></i>
+                        </div>
+                        <ul class="space-y-0.5">
+                            <template x-for="(item, idx) in filtered" :key="idx">
+                                <li>
+                                    <button type="button" @click="select(item.label)"
+                                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-blue-50/70 hover:text-[#00509d] transition group">
+                                        <span class="flex items-center gap-2.5 text-xs text-slate-700 group-hover:text-[#00509d] font-medium">
+                                            <span class="w-6 h-6 rounded-lg bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-slate-500 group-hover:text-[#00509d] transition">
+                                                <i :class="'ph ' + item.icon" class="text-xs"></i>
+                                            </span>
+                                            <span x-text="item.label"></span>
+                                        </span>
+                                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 group-hover:bg-blue-100 text-slate-500 group-hover:text-[#00509d] font-medium"
+                                              x-text="item.category"></span>
+                                    </button>
+                                </li>
+                            </template>
+                        </ul>
                     </div>
-                    <button type="submit"
-                        class="px-4 py-2 bg-slate-100 hover:bg-[#00509d] text-slate-600 hover:text-white text-xs font-bold rounded-xl transition shadow-2xs">
-                        Cari
-                    </button>
-                    @if ($search)
-                        <a href="{{ route('superadmin.iklan.index', ['status' => $statusFilter]) }}"
-                            class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-xl transition" title="Reset Pencarian">
-                            <i class="ph ph-x-circle text-base"></i>
-                        </a>
-                    @endif
-                </form>
+                </div>
             </div>
         </div>
 
