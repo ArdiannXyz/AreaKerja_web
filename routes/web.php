@@ -15,6 +15,7 @@ use App\Http\Controllers\LupaPasswordController;
 use App\Http\Controllers\ManajemenLowonganController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\PelamarLowonganController;
+use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\PembeliKandidatController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\PengalamanOrgController;
@@ -37,10 +38,12 @@ use Illuminate\Support\Facades\Route;
 // TRACKING KLIK IKLAN HOMEPAGE
 Route::get('/iklan/{id}/click', [IklanPerusahaanController::class, 'handleClick'])->name('iklan.click');
 
-// OAUTH SOCIAL AUTHENTICATION (Google, Facebook, LinkedIn)
+// OAUTH SOCIAL AUTHENTICATION (Google, Facebook)
 Route::controller(SocialAuthController::class)->group(function () {
     Route::get('/auth/{provider}/redirect', 'redirect')->name('social.redirect');
     Route::get('/auth/{provider}/callback', 'callback')->name('social.callback');
+    Route::get('/auth/social/pilih-role', 'pilihRole')->name('social.pilih-role');
+    Route::match(['get', 'post'], '/auth/social/simpan-role', 'simpanRole')->name('social.simpan-role');
 });
 
 /*
@@ -97,9 +100,9 @@ Route::get('/', [AuthController::class, 'beranda']);
 
 
 //LOGIN AUTH
-Route::controller(AuthController::class)->middleware(['guest', 'throttle:5,1'])->group(function () {
+Route::controller(AuthController::class)->middleware('guest')->group(function () {
     Route::get('/login', 'login_non_user')->name('login');
-    Route::post('/loginproses', 'loginproses')->name('loginproses');
+    Route::post('/loginproses', 'loginproses')->name('loginproses')->middleware('throttle:60,1');
 });
 
 
@@ -108,26 +111,26 @@ Route::controller(AuthController::class)->group(function () {
 });
 
 
-Route::controller(AuthController::class)->middleware('throttle:5,1')->group(function () {
+Route::controller(AuthController::class)->group(function () {
     //register pelamar
-    Route::get('/register', 'regis_non_user')->name('register');
-    Route::post('/registerproses', 'regis_proses')->name('registerproses');
+    Route::get('/register', 'regis_non_user')->name('register')->middleware('guest');
+    Route::post('/registerproses', 'regis_proses')->name('registerproses')->middleware(['guest', 'throttle:30,1']);
 });
 
 
 
-//VERFIKASI PASSWORD 
-Route::controller(LupaPasswordController::class)->middleware('throttle:5,1')->group(function () {
+//VERIFIKASI PASSWORD 
+Route::controller(LupaPasswordController::class)->group(function () {
     Route::get('/verifikasi', 'showEmailForm_pelamar')->name('verifikasi_pelamar');
-    Route::post('/verifikasi', 'sendOtp')->name('password.email.pelamar');
+    Route::post('/verifikasi', 'sendOtp')->name('password.email.pelamar')->middleware('throttle:30,1');
 
     Route::get('/verifikasi/otp/{token}', 'showOtpForm_pelamar')->name('password.otp.form.pelamar');
-    Route::post('/verifikasi/otp', 'verifyOtp')->name('password.otp.verif.pelamar');
+    Route::post('/verifikasi/otp', 'verifyOtp')->name('password.otp.verif.pelamar')->middleware('throttle:30,1');
 
     Route::get('/reset-password/{token}', 'showResetForm_pelamar')->name('password.reset.form.pelamar');
-    Route::post('/reset-password/{token}', 'resetPassword')->name('password.update.pelamar');
+    Route::post('/reset-password/{token}', 'resetPassword')->name('password.update.pelamar')->middleware('throttle:30,1');
 
-    Route::post('/verifikasi/otp/resend', 'resendOtp')->name('password.otp.resend.pelamar');
+    Route::post('/verifikasi/otp/resend', 'resendOtp')->name('password.otp.resend.pelamar')->middleware('throttle:30,1');
 });
 
 
@@ -166,6 +169,8 @@ Route::get('/syarat-dan-ketentuan', function () {
 //EMAIL SUBSCRIBER
 Route::controller(EmailSubController::class)->group(function () {
     Route::post('/email-subscribe', 'index')->name('subscribe.email');
+    Route::get('/newsletter/unsubscribe', 'unsubscribe')->name('newsletter.unsubscribe');
+    Route::post('/newsletter/resubscribe', 'resubscribe')->name('newsletter.resubscribe');
 });
 
 
@@ -407,6 +412,14 @@ Route::prefix('finance')->middleware('auth', 'role:finance', 'CheckUserStatus')-
         //unduh omset pdf
         Route::get('/page/unduh/omset', 'pageUnduhOmset')->name('finance.omset.unduh.pdf');
     });
+
+    //METODE PEMBAYARAN / REKENING BANK
+    Route::controller(PembayaranController::class)->group(function () {
+        Route::get('/bank', 'index')->name('finance.bank.index');
+        Route::post('/bank', 'store')->name('finance.bank.store');
+        Route::put('/bank/{id}', 'update')->name('finance.bank.update');
+        Route::delete('/bank/{id}', 'destroy')->name('finance.bank.destroy');
+    });
 });
 /**---------------------------------------- END FINANCE PREFIX -------------------------------------*/
 
@@ -458,13 +471,13 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/kandidat', 'halKandidat')->name('admin.kandidat');
         Route::get('/kandidat/{id}', 'detailKandidat')->name('admin.detail.kandidat');
 
-        //finance
-        Route::get('/finance', 'koinHal')->name('admin.finance');
-        Route::get('/finance/koin/detail/{id}', function ($id) {
-            $data = App\Models\CatatanKoin::findOrFail($id);
-            return response()->json($data);
-        })->name('admin.finance.koin.detail');
-        Route::get('/finance/tunai', 'cashHal')->name('admin.finance.cash');
+        //finance redirect (urusan transaksi & keuangan terpusat di role finance)
+        Route::get('/finance', function () {
+            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
+        })->name('admin.finance');
+        Route::get('/finance/tunai', function () {
+            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
+        })->name('admin.finance.cash');
 
         //provinsi kota kecamatan
         Route::get('/get-kota/{provinsi_id}', 'getKota')->name('admin.get.kota')->middleware('auth');
@@ -816,6 +829,13 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/perusahaan/approve/{id}', 'approveSuper')->name('superadmin.perusahaan.approve');
         Route::post('/perusahaan/reject/{id}', 'rejectSuper')->name('superadmin.perusahaan.reject');
     });
+
+    //MODERASI IKLAN CONTROLLER (SUPER ADMIN)
+    Route::controller(IklanAdminController::class)->group(function () {
+        Route::get('/iklan', 'indexSuper')->name('superadmin.iklan.index');
+        Route::post('/iklan/{id}/approve', 'approveSuper')->name('superadmin.iklan.approve');
+        Route::post('/iklan/{id}/reject', 'rejectSuper')->name('superadmin.iklan.reject');
+    });
 });
 /**---------------------------------------- END SUPER ADMIN PREFIX -------------------------------------*/
 
@@ -1015,6 +1035,6 @@ Route::controller(AuthController::class)->middleware('auth')->group(function () 
 });
 
 //register perusahaan
-Route::controller(AuthController::class)->middleware(['guest', 'throttle:5,1'])->group(function () {
-    Route::post('/registerproses_perusahaan', 'regis_proses_perusahaan')->name('registerproses_perusahaan');
+Route::controller(AuthController::class)->middleware('guest')->group(function () {
+    Route::post('/registerproses_perusahaan', 'regis_proses_perusahaan')->name('registerproses_perusahaan')->middleware('throttle:30,1');
 });

@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\TestExpireLamaran::class,
         \App\Console\Commands\TestDeleteExpiredNotif::class,
         \App\Console\Commands\NotifyExpiredLowongans::class,
+        \App\Console\Commands\SendWeeklyNewsletter::class,
     ];
 
 
@@ -79,6 +80,12 @@ class Kernel extends ConsoleKernel
         // 9. Hapus lowongan tidak aktif 6 bulan
         $schedule->call(fn() => $call('/lowongan/clean-inactive'))
             ->dailyAt('00:00');
+
+        // 10. Kirim Newsletter Mingguan ke Subscriber (Setiap Senin jam 08:00 WIB)
+        $schedule->command('newsletter:send-weekly')
+            ->weeklyOn(1, '08:00')
+            ->withoutOverlapping()
+            ->runInBackground();
     }
 
     /**

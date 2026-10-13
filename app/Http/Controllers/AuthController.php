@@ -62,6 +62,9 @@ class AuthController extends Controller
             if ($role === 'finance') {
                 return redirect()->route('finance.dashboard');
             }
+            if ($role === 'perusahaan') {
+                return redirect()->route('perusahaan.dashboard');
+            }
         }
 
         // Ambil kategori dari query string
@@ -87,7 +90,13 @@ class AuthController extends Controller
         }
 
         $Data = LowonganPerusahaan::with('perusahaan')
+            ->whereHas('perusahaan')
             ->whereNotNull('published_at')
+            ->where('status', '!=', 'tutup')
+            ->where(function ($q) {
+                $q->whereNull('expired_at')
+                    ->orWhere('expired_at', '>', now());
+            })
             ->when($kategori, function ($q) use ($KategoriList, $kategori) {
                 if ($KategoriList->contains($kategori)) {
                     $q->where('kategori', $kategori);
@@ -418,28 +427,56 @@ class AuthController extends Controller
             $chartKoin[] = (int) $koinBulan;
         }
 
-        // Distribusi Metode Pembayaran / Sumber Dana
-        $paymentMethods = CatatanCash::with('bank')
-            ->select('daftar_bank_id', 'sumberDana', DB::raw('count(*) as count'), DB::raw('sum(total) as total_amount'))
+        // Distribusi Metode Pembayaran / Kanal Transaksi
+        $allSuccessfulCash = CatatanCash::with('bank')
             ->whereIn('status', ['diterima', 'sukses'])
-            ->groupBy('daftar_bank_id', 'sumberDana')
             ->get();
 
-        $paymentLabels = [];
-        $paymentCounts = [];
-        $paymentTotals = [];
+        $groupedPayments = [];
 
-        foreach ($paymentMethods as $pm) {
-            $label = $pm->bank->nama_bank ?? ($pm->sumberDana ?? 'Transfer Bank');
-            $paymentLabels[] = $label;
-            $paymentCounts[] = (int) $pm->count;
-            $paymentTotals[] = (int) $pm->total_amount;
+        foreach ($allSuccessfulCash as $pm) {
+            // Prioritas nama kanal: Bank tujuan penerima AreaKerja, fallback ke sumberDana
+            $rawLabel = $pm->bank?->nama_bank ?? ($pm->sumberDana ?? 'Transfer Bank');
+            $rawLabel = trim($rawLabel);
+
+            // Normalisasi nama kanal
+            $upper = strtoupper($rawLabel);
+            if ($upper === 'QRIS' || str_contains($upper, 'QRIS')) {
+                $label = 'QRIS';
+            } elseif ($upper === 'MANDIRI' || str_contains($upper, 'MANDIRI')) {
+                $label = 'Bank Mandiri';
+            } elseif ($upper === 'BCA' || str_contains($upper, 'BCA')) {
+                $label = 'Bank BCA';
+            } elseif ($upper === 'BNI' || str_contains($upper, 'BNI')) {
+                $label = 'Bank BNI';
+            } elseif ($upper === 'BRI' || str_contains($upper, 'BRI')) {
+                $label = 'Bank BRI';
+            } else {
+                $label = ucwords(strtolower($rawLabel));
+            }
+
+            if (!isset($groupedPayments[$label])) {
+                $groupedPayments[$label] = [
+                    'count' => 0,
+                    'total' => 0,
+                ];
+            }
+
+            $groupedPayments[$label]['count']++;
+            $groupedPayments[$label]['total'] += (int) ($pm->total ?? 0);
         }
 
+        // Urutkan dari jumlah transaksi terbanyak
+        uasort($groupedPayments, fn($a, $b) => $b['count'] <=> $a['count']);
+
+        $paymentLabels = array_keys($groupedPayments);
+        $paymentCounts = array_column(array_values($groupedPayments), 'count');
+        $paymentTotals = array_column(array_values($groupedPayments), 'total');
+
         if (empty($paymentLabels)) {
-            $paymentLabels = ['BCA', 'BNI', 'Mandiri', 'QRIS'];
-            $paymentCounts = [0, 0, 0, 0];
-            $paymentTotals = [0, 0, 0, 0];
+            $paymentLabels = ['Belum ada transaksi'];
+            $paymentCounts = [0];
+            $paymentTotals = [0];
         }
 
         // Status counts

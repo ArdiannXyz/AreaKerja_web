@@ -135,6 +135,9 @@ class PelamarController extends Controller
             if ($role === 'finance') {
                 return redirect()->route('finance.dashboard');
             }
+            if ($role === 'perusahaan') {
+                return redirect()->route('perusahaan.dashboard');
+            }
         }
 
         // Ambil kategori dari query string
@@ -160,6 +163,7 @@ class PelamarController extends Controller
         }
 
         $Data = LowonganPerusahaan::with('perusahaan')
+            ->whereHas('perusahaan')
             ->whereNotNull('published_at')
             ->where('status', '!=', 'tutup')
             ->where(function ($q) {

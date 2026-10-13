@@ -23,6 +23,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=7">
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
@@ -39,6 +40,16 @@
             min-height: 100%;
             margin: 0;
             padding: 0;
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        /* Chrome, Safari, Opera */
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            height: 0px;
         }
 
         body {
@@ -189,6 +200,14 @@
                                 Laporan Transaksi
                             </a>
                         </div>
+
+                        <div class="{{ request()->is('finance/bank*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md mb-1.5">
+                            <a href="{{ route('finance.bank.index') }}"
+                                class="flex font-semibold items-center gap-2.5 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-200">
+                                <i class="{{ request()->is('finance/bank*') ? 'ph-fill ph-bank' : 'ph ph-bank' }} text-lg"></i>
+                                Rekening Bank
+                            </a>
+                        </div>
                     </nav>
                 </div>
             </div>
@@ -315,6 +334,12 @@
                             </div>
                             <span class="text-[11px] leading-tight">Laporan</span>
                         </a>
+                        <a href="{{ route('finance.bank.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('finance/bank*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-teal-100 text-teal-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-bank"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Rekening</span>
+                        </a>
                         <a href="{{ route('finance.profile') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('finance/profile*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
                             <div class="w-11 h-11 rounded-xl bg-slate-100 text-slate-600 flex items-center justify-center text-xl shadow-xs">
                                 <i class="ph ph-user-circle"></i>
@@ -432,6 +457,183 @@
         });
         document.addEventListener('submit', function () { NProgress.start(); });
         window.addEventListener('pageshow', function () { NProgress.done(); });
+    </script>
+
+    {{-- Global Alert & Notification System (SweetAlert2) --}}
+    <script>
+        if (typeof Swal !== 'undefined') {
+            const defaultSwal = Swal.mixin({
+                width: 'min(90vw, 360px)',
+                customClass: {
+                    popup: '!rounded-2xl !p-6 shadow-2xl border border-slate-100',
+                    title: '!text-base font-bold text-slate-800 !pt-0',
+                    htmlContainer: '!text-xs text-slate-600 !mt-1.5 leading-relaxed',
+                    actions: '!gap-2 !mt-4 w-full !justify-center',
+                    confirmButton: '!px-4 !py-2 !rounded-xl !text-xs !font-semibold transition',
+                    cancelButton: '!px-4 !py-2 !rounded-xl !text-xs !font-semibold transition'
+                },
+                confirmButtonColor: '#00509d',
+                cancelButtonColor: '#94a3b8',
+                reverseButtons: true,
+                focusCancel: true
+            });
+            window.Swal = defaultSwal;
+
+            // Flash Session Auto Toast
+            @if(session('success'))
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Berhasil!',
+                    text: {!! json_encode(session('success')) !!},
+                    timer: 2500,
+                    showConfirmButton: false
+                });
+            @endif
+
+            @if(session('error'))
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Gagal!',
+                    text: {!! json_encode(session('error')) !!},
+                    timer: 3500,
+                    showConfirmButton: true,
+                    confirmButtonColor: '#ef4444'
+                });
+            @endif
+
+            @if(session('warning'))
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian',
+                    text: {!! json_encode(session('warning')) !!},
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+            @endif
+
+            @if(session('info'))
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Informasi',
+                    text: {!! json_encode(session('info')) !!},
+                    timer: 3000,
+                    showConfirmButton: false
+                });
+            @endif
+
+            // ===================================================
+            // GLOBAL ALERT & CONFIRM OVERRIDE (SweetAlert2)
+            // ===================================================
+            document.addEventListener('DOMContentLoaded', function() {
+
+                // 1. Override window.alert -> Swal toast
+                window.alert = function(msg) {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Informasi',
+                        text: String(msg),
+                        timer: 3000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end'
+                    });
+                };
+
+                // 1b. window.swalConfirm -> async confirm helper
+                window.swalConfirm = function(msg, title) {
+                    return Swal.fire({
+                        title: title || 'Konfirmasi',
+                        text: msg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#ef4444'
+                    }).then(r => r.isConfirmed);
+                };
+
+                // 2. Intercept form[onsubmit*="confirm("]
+                document.querySelectorAll('form[onsubmit*="confirm("]').forEach(form => {
+                    const onsubmitAttr = form.getAttribute('onsubmit');
+                    const match = onsubmitAttr.match(/confirm\s*\(\s*['"`](.*?)['"`]\s*\)/);
+                    if (match) {
+                        const confirmMsg = match[1];
+                        form.removeAttribute('onsubmit');
+                        form.addEventListener('submit', function(e) {
+                            if (form.dataset.confirmed === 'true') return;
+                            e.preventDefault();
+                            Swal.fire({
+                                title: 'Konfirmasi',
+                                text: confirmMsg,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Ya, Lanjutkan',
+                                cancelButtonText: 'Batal',
+                                confirmButtonColor: '#ef4444'
+                            }).then(result => {
+                                if (result.isConfirmed) {
+                                    form.dataset.confirmed = 'true';
+                                    form.submit();
+                                }
+                            });
+                        });
+                    }
+                });
+
+                // 3. Intercept button[onclick*="confirm("] dalam form
+                document.querySelectorAll('button[onclick*="confirm("]').forEach(btn => {
+                    const onclickAttr = btn.getAttribute('onclick');
+                    const match = onclickAttr.match(/confirm\s*\(\s*['"`](.*?)['"`]\s*\)/);
+                    if (match) {
+                        const confirmMsg = match[1];
+                        btn.removeAttribute('onclick');
+                        btn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            const formId = btn.getAttribute('form');
+                            const form = btn.closest('form') || (formId ? document.getElementById(formId) : null);
+                            Swal.fire({
+                                title: 'Konfirmasi',
+                                text: confirmMsg,
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonText: 'Ya, Lanjutkan',
+                                cancelButtonText: 'Batal',
+                                confirmButtonColor: '#ef4444'
+                            }).then(result => {
+                                if (result.isConfirmed && form) {
+                                    form.dataset.confirmed = 'true';
+                                    form.submit();
+                                }
+                            });
+                        });
+                    }
+                });
+
+                // 4. Intercept button[data-swal-confirm] dalam form
+                document.querySelectorAll('button[data-swal-confirm]').forEach(btn => {
+                    const confirmMsg = btn.getAttribute('data-swal-confirm');
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const formId = btn.getAttribute('form');
+                        const form = btn.closest('form') || (formId ? document.getElementById(formId) : null);
+                        Swal.fire({
+                            title: 'Konfirmasi',
+                            text: confirmMsg,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, Lanjutkan',
+                            cancelButtonText: 'Batal',
+                            confirmButtonColor: '#ef4444'
+                        }).then(result => {
+                            if (result.isConfirmed && form) {
+                                form.dataset.confirmed = 'true';
+                                form.submit();
+                            }
+                        });
+                    });
+                });
+            });
+        }
     </script>
 
     @stack('scripts')

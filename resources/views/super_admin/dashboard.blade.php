@@ -1,7 +1,7 @@
-@extends('super_admin.sidebar.index')
+﻿@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <!-- Main Content -->
-    <main class="flex-1 w-full min-w-0 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
+    <main class="flex-1 min-w-0 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header Top Bar -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
@@ -949,7 +949,7 @@
         document.addEventListener('alpine:init', () => {
             Alpine.data('notifHandler', () => ({
                 async hapus(id) {
-                    if (!confirm("Hapus notifikasi ini?")) return;
+                    if (!await swalConfirm("Hapus notifikasi ini?")) return;
 
                     let url = "{{ route('notifikasi.hapus', ':id') }}".replace(':id', id);
 
@@ -969,7 +969,7 @@
                 },
 
                 async hapusSemua() {
-                    if (!confirm("Hapus semua notifikasi?")) return;
+                    if (!await swalConfirm("Hapus semua notifikasi?")) return;
 
                     let res = await fetch("{{ route('notifikasi.hapusSemua') }}", {
                         method: "DELETE",
@@ -987,7 +987,7 @@
                 },
 
                 async hapusSemuaBaca() {
-                    if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+                    if (!await swalConfirm("Hapus semua notifikasi yang sudah dibaca?")) return;
 
                     let res = await fetch("{{ route('notifikasi.hapusSemuaBaca') }}", {
                         method: "DELETE",

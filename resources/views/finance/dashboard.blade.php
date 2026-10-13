@@ -127,18 +127,22 @@
                     </div>
 
                     <!-- Donut Chart Container -->
-                    <div id="paymentMethodDonutChart" class="w-full h-56 flex items-center justify-center"></div>
+                    <div id="paymentMethodDonutChart" class="w-full flex items-center justify-center py-2"></div>
                 </div>
 
                 <!-- Quick Action Buttons -->
-                <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2">
+                <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-3 gap-2">
                     <a href="{{ route('finance.catatan') }}"
-                        class="px-3 py-2 bg-blue-50 hover:bg-blue-100 text-[#00509d] font-bold text-[11px] rounded-xl text-center transition">
-                        Verifikasi Transaksi
+                        class="px-2 py-2 bg-blue-50 hover:bg-blue-100 text-[#00509d] font-bold text-[10px] sm:text-[11px] rounded-xl text-center transition">
+                        Verifikasi Trx
                     </a>
                     <a href="{{ route('finance.omset') }}"
-                        class="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[11px] rounded-xl text-center transition">
+                        class="px-2 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-[10px] sm:text-[11px] rounded-xl text-center transition">
                         Rekap Omset
+                    </a>
+                    <a href="{{ route('finance.bank.index') }}"
+                        class="px-2 py-2 bg-teal-50 hover:bg-teal-100 text-teal-700 font-bold text-[10px] sm:text-[11px] rounded-xl text-center transition">
+                        Kelola Bank
                     </a>
                 </div>
             </div>
@@ -352,32 +356,46 @@
                 labels: paymentLabels.length > 0 ? paymentLabels : ['Belum ada data'],
                 chart: {
                     type: 'donut',
-                    height: 230,
+                    height: 250,
                     fontFamily: 'Poppins, sans-serif'
                 },
-                colors: ['#00509d', '#0284c7', '#0ea5e9', '#f59e0b', '#10b981', '#6366f1'],
+                stroke: {
+                    width: 2,
+                    colors: ['#ffffff']
+                },
+                colors: ['#00509d', '#0284c7', '#10b981', '#f59e0b', '#8b5cf6', '#64748b'],
                 dataLabels: { enabled: false },
                 legend: {
                     position: 'bottom',
-                    fontSize: '11px',
+                    horizontalAlign: 'center',
+                    fontSize: '12px',
                     fontWeight: 600,
-                    labels: { colors: '#475569' }
+                    itemMargin: {
+                        horizontal: 8,
+                        vertical: 4
+                    },
+                    labels: { colors: '#334155' }
                 },
                 plotOptions: {
                     pie: {
                         donut: {
-                            size: '72%',
+                            size: '70%',
                             labels: {
                                 show: true,
                                 total: {
                                     show: true,
                                     label: 'Total Trx',
-                                    fontSize: '12px',
+                                    fontSize: '11px',
                                     fontWeight: 700,
                                     color: '#64748b',
                                     formatter: function (w) {
                                         return w.globals.seriesTotals.reduce((a, b) => a + b, 0);
                                     }
+                                },
+                                value: {
+                                    fontSize: '22px',
+                                    fontWeight: 800,
+                                    color: '#0f172a'
                                 }
                             }
                         }
@@ -386,8 +404,10 @@
                 tooltip: {
                     theme: 'light',
                     y: {
-                        formatter: function (val) {
-                            return val + ' Transaksi';
+                        formatter: function (val, opts) {
+                            const total = opts.globals.seriesTotals.reduce((a, b) => a + b, 0);
+                            const percent = total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+                            return val + ' Transaksi (' + percent + '%)';
                         }
                     }
                 }

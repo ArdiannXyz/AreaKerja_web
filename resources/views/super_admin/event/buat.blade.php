@@ -366,7 +366,13 @@
                 let jamAkhir = document.getElementById("jam_akhir").value;
 
                 if (jamMulai && jamAkhir && jamAkhir <= jamMulai) {
-                    alert("Jam akhir harus lebih besar dari jam mulai!");
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Jam Tidak Valid',
+                        text: 'Jam akhir harus lebih besar dari jam mulai!',
+                        confirmButtonText: 'Mengerti',
+                        timer: 3000
+                    });
                     document.getElementById("jam_akhir").value = "";
                 }
             }

@@ -38,18 +38,62 @@ class EmailSubController extends Controller
     public function index(Request $request)
     {
         $this->ensureTable();
-        $request->validate([
-            'email' => 'required|email|unique:email_subscribers,email',
+
+        $validator = \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'email' => 'required|email',
         ], [
             'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
-            'email.unique' => 'Email sudah terdaftar.',
+            'email.email'    => 'Format email tidak valid.',
         ]);
 
-        $email = strtolower($request->email);
+        if ($validator->fails()) {
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status'  => 'error',
+                    'message' => $validator->errors()->first('email'),
+                ], 422);
+            }
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $email = strtolower(trim($request->email));
+
+        $subscriber = EmailSubscriber::where('email', $email)->first();
+
+        if ($subscriber) {
+            if ($subscriber->is_active) {
+                if ($request->ajax() || $request->wantsJson()) {
+                    return response()->json([
+                        'status'  => 'info',
+                        'message' => 'Email Anda sudah terdaftar dan aktif berlangganan.',
+                    ]);
+                }
+                return redirect()->back()->with('info', 'Email Anda sudah terdaftar dan aktif berlangganan.');
+            }
+
+            $subscriber->is_active = true;
+            if (Auth::check()) {
+                $user = Auth::user();
+                if ($user->pelamar) {
+                    $subscriber->pelamar_id = $user->pelamar->id;
+                }
+                if ($user->perusahaan) {
+                    $subscriber->perusahaan_id = $user->perusahaan->id;
+                }
+            }
+            $subscriber->save();
+
+            if ($request->ajax() || $request->wantsJson()) {
+                return response()->json([
+                    'status'  => 'success',
+                    'message' => 'Selamat datang kembali! Langganan newsletter Anda telah diaktifkan kembali.',
+                ]);
+            }
+            return redirect()->back()->with('success', 'Selamat datang kembali! Langganan newsletter Anda telah diaktifkan kembali.');
+        }
 
         $data = [
-            'email' => $email,
+            'email'     => $email,
             'is_active' => true,
         ];
 
@@ -66,8 +110,62 @@ class EmailSubController extends Controller
 
         EmailSubscriber::create($data);
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'status'  => 'success',
+                'message' => 'Berhasil berlangganan email newsletter.',
+            ]);
+        }
 
-        return redirect()->back()->with('success', 'Berhasil berlangganan email.');
+        return redirect()->back()->with('success', 'Berhasil berlangganan email newsletter.');
+    }
+
+    /**
+     * Unsubscribe flow for guest and public users (using signed URL)
+     */
+    public function unsubscribe(Request $request)
+    {
+        $this->ensureTable();
+
+        if (! $request->hasValidSignature()) {
+            return view('non-user.newsletter-unsubscribed', [
+                'success' => false,
+                'message' => 'Tautan pembatalan langganan tidak valid atau telah kedaluwarsa.',
+                'email'   => $request->query('email'),
+            ]);
+        }
+
+        $email = strtolower(trim($request->query('email')));
+        $subscriber = EmailSubscriber::where('email', $email)->first();
+
+        if ($subscriber) {
+            $subscriber->update(['is_active' => false]);
+        }
+
+        return view('non-user.newsletter-unsubscribed', [
+            'success' => true,
+            'message' => 'Anda telah berhasil berhenti berlangganan newsletter AreaKerja.',
+            'email'   => $email,
+        ]);
+    }
+
+    /**
+     * Allow user to reactivate their subscription directly if cancelled by mistake
+     */
+    public function resubscribe(Request $request)
+    {
+        $this->ensureTable();
+        $email = strtolower(trim($request->input('email')));
+
+        if ($email) {
+            $subscriber = EmailSubscriber::where('email', $email)->first();
+            if ($subscriber) {
+                $subscriber->update(['is_active' => true]);
+                return redirect()->back()->with('status_message', 'Langganan Anda berhasil diaktifkan kembali!');
+            }
+        }
+
+        return redirect()->route('home')->with('info', 'Silakan masukkan email Anda untuk berlangganan.');
     }
 
 

@@ -30,6 +30,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        html, body {
+            overflow-x: hidden;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        ::-webkit-scrollbar {
+            display: none;
+            width: 0px;
+            height: 0px;
+        }
+    </style>
+
     <script>
         // Global Notification Functions
         const notifToast = Swal.mixin({
@@ -538,11 +554,11 @@
                 <!-- Logo -->
                 <a href="{{ route('beranda') }}" class="flex items-center gap-2 sm:gap-2.5">
                     @if ($isBeranda)
-                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-6 sm:h-7 md:h-8 object-contain">
-                        <span class="font-bold text-lg sm:text-xl md:text-2xl text-white tracking-tight">areakerja.com</span>
+                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-white tracking-tight">areakerja.com</span>
                     @else
-                        <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Areakerja Logo" class="h-6 sm:h-7 md:h-8 object-contain">
-                        <span class="font-bold text-lg sm:text-xl md:text-2xl text-[#00509d] tracking-tight">areakerja.com</span>
+                        <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#00509d] tracking-tight">areakerja.com</span>
                     @endif
                 </a>
             </div>
@@ -613,9 +629,9 @@
 
                     <!-- Drawer Header -->
                     <div class="flex items-center justify-between pb-3 border-b-2 border-[#00509d]">
-                        <a href="{{ route('beranda') }}" class="flex items-center gap-2.5">
-                            <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Logo" class="h-9 w-auto object-contain">
-                            <span class="font-bold text-xl text-[#00509d] tracking-tight">areakerja.com</span>
+                        <a href="{{ route('beranda') }}" class="flex items-center gap-2 sm:gap-2.5">
+                            <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                            <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#00509d] tracking-tight">areakerja.com</span>
                         </a>
                         <button @click="openMenu = false" class="text-[#00509d] hover:text-[#003d7a] p-1 text-2xl font-bold transition">
                             <i class="ph ph-x"></i>
@@ -1018,6 +1034,119 @@
     {{-- <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script> --}}
     <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+    <script>
+        // ===================================================
+        // GLOBAL ALERT & CONFIRM OVERRIDE (SweetAlert2)
+        // ===================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Override window.alert -> Swal toast
+            window.alert = function(msg) {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Informasi',
+                    text: String(msg),
+                    timer: 3000,
+                    showConfirmButton: false,
+                    toast: true,
+                    position: 'top-end'
+                });
+            };
+
+            // 1b. window.swalConfirm -> async confirm helper
+            window.swalConfirm = function(msg, title) {
+                return Swal.fire({
+                    title: title || 'Konfirmasi',
+                    text: msg,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Lanjutkan',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#ef4444'
+                }).then(r => r.isConfirmed);
+            };
+
+            // 2. Intercept form[onsubmit*="confirm("]
+            document.querySelectorAll('form[onsubmit*="confirm("]').forEach(form => {
+                const onsubmitAttr = form.getAttribute('onsubmit');
+                const match = onsubmitAttr.match(/confirm\s*\(\s*['"`](.*?)['"`]\s*\)/);
+                if (match) {
+                    const confirmMsg = match[1];
+                    form.removeAttribute('onsubmit');
+                    form.addEventListener('submit', function(e) {
+                        if (form.dataset.confirmed === 'true') return;
+                        e.preventDefault();
+                        Swal.fire({
+                            title: 'Konfirmasi',
+                            text: confirmMsg,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, Lanjutkan',
+                            cancelButtonText: 'Batal',
+                            confirmButtonColor: '#ef4444'
+                        }).then(result => {
+                            if (result.isConfirmed) {
+                                form.dataset.confirmed = 'true';
+                                form.submit();
+                            }
+                        });
+                    });
+                }
+            });
+
+            // 3. Intercept button[onclick*="confirm("] dalam form
+            document.querySelectorAll('button[onclick*="confirm("]').forEach(btn => {
+                const onclickAttr = btn.getAttribute('onclick');
+                const match = onclickAttr.match(/confirm\s*\(\s*['"`](.*?)['"`]\s*\)/);
+                if (match) {
+                    const confirmMsg = match[1];
+                    btn.removeAttribute('onclick');
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const formId = btn.getAttribute('form');
+                        const form = btn.closest('form') || (formId ? document.getElementById(formId) : null);
+                        Swal.fire({
+                            title: 'Konfirmasi',
+                            text: confirmMsg,
+                            icon: 'warning',
+                            showCancelButton: true,
+                            confirmButtonText: 'Ya, Lanjutkan',
+                            cancelButtonText: 'Batal',
+                            confirmButtonColor: '#ef4444'
+                        }).then(result => {
+                            if (result.isConfirmed && form) {
+                                form.dataset.confirmed = 'true';
+                                form.submit();
+                            }
+                        });
+                    });
+                }
+            });
+
+            // 4. Intercept button[data-swal-confirm] dalam form
+            document.querySelectorAll('button[data-swal-confirm]').forEach(btn => {
+                const confirmMsg = btn.getAttribute('data-swal-confirm');
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const formId = btn.getAttribute('form');
+                    const form = btn.closest('form') || (formId ? document.getElementById(formId) : null);
+                    Swal.fire({
+                        title: 'Konfirmasi',
+                        text: confirmMsg,
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonText: 'Ya, Lanjutkan',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#ef4444'
+                    }).then(result => {
+                        if (result.isConfirmed && form) {
+                            form.dataset.confirmed = 'true';
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </body>
 
 </html>

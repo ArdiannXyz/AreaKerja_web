@@ -165,7 +165,9 @@ document.addEventListener('alpine:init', () => {
 
         // ====== HAPUS SATU ======
         async hapus(id) {
-            if (!confirm("Hapus notifikasi ini?")) return;
+            if (typeof swalConfirm === 'function') {
+                if (!await swalConfirm("Hapus notifikasi ini?")) return;
+            } else if (!confirm("Hapus notifikasi ini?")) return;
 
             let url = window.routes.hapusNotif.replace(':id', id);
 
@@ -185,7 +187,9 @@ document.addEventListener('alpine:init', () => {
 
         // ====== HAPUS SEMUA ======
         async hapusSemua() {
-            if (!confirm("Hapus semua notifikasi?")) return;
+            if (typeof swalConfirm === 'function') {
+                if (!await swalConfirm("Hapus semua notifikasi?")) return;
+            } else if (!confirm("Hapus semua notifikasi?")) return;
 
             let res = await fetch(window.routes.hapusSemua, {
                 method: "DELETE",
@@ -205,7 +209,9 @@ document.addEventListener('alpine:init', () => {
 
         // ====== HAPUS SEMUA YANG SUDAH DIBACA ======
         async hapusSemuaBaca() {
-            if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+            if (typeof swalConfirm === 'function') {
+                if (!await swalConfirm("Hapus semua notifikasi yang sudah dibaca?")) return;
+            } else if (!confirm("Hapus semua notifikasi yang sudah dibaca?")) return;
 
             let res = await fetch(window.routes.hapusSemuaBaca, {
                 method: "DELETE",
