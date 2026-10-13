@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\AlamatPelamar;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
+use App\Services\NotificationService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -100,30 +101,26 @@ class ProfileController extends Controller
             $pelamar->update($validated);
 
             /* ==========================
-         NOTIFIKASI BERHASIL
-        =========================== */
-            Notifikasi::create([
-                'user_id'   => Auth::id(),
-                'judul'     => 'Profil Berhasil Diperbarui',
-                'pesan'     => 'Data profil Anda telah berhasil disimpan.',
-                'is_read'   => 0,
-                'expired_at' => now()->addDays(7),
-            ]);
+             NOTIFIKASI BERHASIL
+            =========================== */
+            NotificationService::send(
+                Auth::id(),
+                'Profil Berhasil Diperbarui',
+                'Data profil Anda telah berhasil disimpan.'
+            );
 
             return redirect()->route('profile.index')
                 ->with('success', 'Profile berhasil diperbarui');
         } catch (\Exception $e) {
 
             /* ==========================
-         NOTIFIKASI GAGAL
-        =========================== */
-            Notifikasi::create([
-                'user_id'   => Auth::id(),
-                'judul'     => 'Gagal Memperbarui Profil',
-                'pesan'     => 'Terjadi kesalahan saat menyimpan data profil Anda.',
-                'is_read'   => 0,
-                'expired_at' => now()->addDays(7),
-            ]);
+             NOTIFIKASI GAGAL
+            =========================== */
+            NotificationService::send(
+                Auth::id(),
+                'Gagal Memperbarui Profil',
+                'Terjadi kesalahan saat menyimpan data profil Anda.'
+            );
 
             return redirect()->back()
                 ->withErrors(['error' => 'Profile gagal diperbarui! Error: ' . $e->getMessage()])

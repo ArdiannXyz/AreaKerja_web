@@ -7,47 +7,44 @@ use Illuminate\Http\Request;
 
 class VerifikasiPerusahaanController extends Controller
 {
+    /**
+     * Setujui verifikasi perusahaan
+     */
     public function approve($id)
-{
-    Perusahaan::findOrFail($id)->update([
-        'verification_status' => 'approved',
-        'verified_at' => now(),
-        'verification_note' => null,
-    ]);
+    {
+        Perusahaan::findOrFail($id)->update([
+            'verification_status' => 'approved',
+            'verified_at'         => now(),
+            'verification_note'   => null,
+        ]);
 
-    return back()->with('success', 'Perusahaan berhasil diverifikasi.');
-}
+        return back()->with('success', 'Perusahaan berhasil diverifikasi.');
+    }
 
-public function reject(Request $request, $id)
-{
-    Perusahaan::findOrFail($id)->update([
-        'verification_status' => 'rejected',
-        'verified_at' => null,
-        'verification_note' => $request->note,
-    ]);
+    /**
+     * Tolak verifikasi perusahaan
+     */
+    public function reject(Request $request, $id)
+    {
+        Perusahaan::findOrFail($id)->update([
+            'verification_status' => 'rejected',
+            'verified_at'         => null,
+            'verification_note'   => $request->note,
+        ]);
 
-    return back()->with('success', 'Perusahaan ditolak.');
-}
+        return back()->with('success', 'Perusahaan ditolak.');
+    }
+
+    /**
+     * Delegasi untuk rute Super Admin (DRY - No duplicate queries/mutations)
+     */
     public function approveSuper($id)
-{
-    Perusahaan::findOrFail($id)->update([
-        'verification_status' => 'approved',
-        'verified_at' => now(),
-        'verification_note' => null,
-    ]);
+    {
+        return $this->approve($id);
+    }
 
-    return back()->with('success', 'Perusahaan berhasil diverifikasi.');
-}
-
-public function rejectSuper(Request $request, $id)
-{
-    Perusahaan::findOrFail($id)->update([
-        'verification_status' => 'rejected',
-        'verified_at' => null,
-        'verification_note' => $request->note,
-    ]);
-
-    return back()->with('success', 'Perusahaan ditolak.');
-}
-
+    public function rejectSuper(Request $request, $id)
+    {
+        return $this->reject($request, $id);
+    }
 }
