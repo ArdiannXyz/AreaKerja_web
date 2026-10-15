@@ -29,7 +29,6 @@ class User extends Authenticatable
         'fcm_token',
         'google_id',
         'facebook_id',
-        'github_id',
         'linkedin_id',
         'avatar_social',
     ];

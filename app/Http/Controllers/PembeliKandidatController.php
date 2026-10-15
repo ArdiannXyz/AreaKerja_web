@@ -7,6 +7,7 @@ use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
+use App\Models\PembelianCv;
 use App\Models\Perusahaan;
 use App\Services\CoinTransactionService;
 use App\Services\NotificationService;
@@ -18,6 +19,87 @@ use Illuminate\Support\Str;
 
 class PembeliKandidatController extends Controller
 {
+    public function beliCv(Request $request, $id)
+    {
+        $user = auth()->user();
+        $perusahaan = $user->perusahaan;
+
+        if (!$perusahaan) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Perusahaan tidak ditemukan'
+            ], 403);
+        }
+
+        $pelamar = Pelamar::findOrFail($id);
+
+        // Cek apakah CV pelamar ini sudah pernah dibeli oleh perusahaan ini
+        $alreadyBought = PembelianCv::where('perusahaan_id', $perusahaan->id)
+            ->where('pelamar_id', $pelamar->id)
+            ->exists();
+
+        if ($alreadyBought) {
+            return response()->json([
+                'status'       => 'success',
+                'message'      => 'CV sudah pernah dibuka.',
+                'download_url' => route('cv.download', $pelamar->id),
+                'sisa_koin'    => $perusahaan->koin_perusahaan,
+            ]);
+        }
+
+        $hargaCv = 5; // 5 koin per CV sesuai permintaan
+
+        if ($perusahaan->koin_perusahaan < $hargaCv) {
+            return response()->json([
+                'status'    => 'error',
+                'type'      => 'coin_insufficient',
+                'message'   => 'Koin perusahaan tidak mencukupi untuk membuka CV (Minimal 5 koin). Silakan top up koin terlebih dahulu.',
+                'sisa_koin' => $perusahaan->koin_perusahaan,
+            ], 400);
+        }
+
+        try {
+            DB::transaction(function () use ($perusahaan, $pelamar, $hargaCv) {
+                // 1. Potong 5 koin secara atomik
+                $coinService = app(CoinTransactionService::class);
+                $coinService->deduct(
+                    $perusahaan,
+                    $hargaCv,
+                    'Buka CV Kandidat: ' . $pelamar->nama_pelamar,
+                    'Saldo Koin Perusahaan',
+                    'CV-' . strtoupper(Str::random(8)),
+                    $perusahaan->nama_perusahaan
+                );
+
+                // 2. Simpan catatan pembelian CV
+                PembelianCv::create([
+                    'perusahaan_id' => $perusahaan->id,
+                    'pelamar_id'    => $pelamar->id,
+                    'koin'          => $hargaCv,
+                ]);
+            });
+
+            $perusahaan->refresh();
+
+            return response()->json([
+                'status'       => 'success',
+                'message'      => 'CV ' . $pelamar->nama_pelamar . ' berhasil dibuka seharga 5 koin!',
+                'download_url' => route('cv.download', $pelamar->id),
+                'sisa_koin'    => $perusahaan->koin_perusahaan,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error("Gagal melakukan pembelian CV: " . $e->getMessage(), [
+                'perusahaan_id' => $perusahaan->id,
+                'pelamar_id'    => $pelamar->id,
+            ]);
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Terjadi kesalahan sistem saat membuka CV: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function beli(BeliKandidatRequest $request)
     {
 

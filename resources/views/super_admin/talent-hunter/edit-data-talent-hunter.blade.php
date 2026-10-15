@@ -1,4 +1,4 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <div class="w-full sm:ml-64 mb-12">
         <div class="bg-white">
@@ -98,20 +98,15 @@
                             </div>
                         </div>
 
-                        <!-- Gaji -->
+                        <!-- Gaji yang Ditawarkan -->
                         <div class="mb-4">
-                            <label class="block font-semibold text-gray-800 text-sm mb-1 break-words">Gaji</label>
-                            <div class="flex flex-col sm:flex-row sm:items-center sm:space-x-2 space-y-2 sm:space-y-0">
-                                <input type="number" name="gaji_awal"
-                                    value="{{ old('gaji_awal', $talentHunter->gaji_awal) }}"
-                                    class="w-full sm:w-40 border border-gray-400 rounded-md px-3 py-2 focus:outline-none"
-                                    placeholder="Min" />
-                                <span class="text-gray-500 sm:hidden">sampai</span>
-                                <span class="hidden sm:inline text-gray-500">-</span>
-                                <input type="number" name="gaji_akhir"
-                                    value="{{ old('gaji_akhir', $talentHunter->gaji_akhir) }}"
-                                    class="w-full sm:w-40 border border-gray-400 rounded-md px-3 py-2 focus:outline-none"
-                                    placeholder="Max" />
+                            <label class="block font-semibold text-gray-800 text-sm mb-1 break-words">Gaji yang Ditawarkan (Min. Rp 3.500.000)</label>
+                            <div class="flex items-center space-x-2">
+                                <span class="font-bold text-gray-600 text-sm">Rp</span>
+                                <input type="number" name="gaji_ditawarkan" min="3500000"
+                                    value="{{ old('gaji_ditawarkan', $talentHunter->gaji_ditawarkan ?? $talentHunter->gaji_awal) }}"
+                                    class="w-full sm:w-60 border border-gray-400 rounded-md px-3 py-2 focus:outline-none"
+                                    placeholder="3500000" />
                             </div>
                         </div>
 

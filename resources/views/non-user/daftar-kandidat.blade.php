@@ -1,11 +1,11 @@
 @extends('layouts.index')
 @section('content')
 
-    <div class="bg-white min-h-screen text-slate-800 pt-20 sm:pt-22 md:pt-24 pb-20">
+    <div class="bg-white min-h-screen text-slate-800 pt-20 pb-20">
 
         <!-- Hero Section (Full bleed edge-to-edge, no margin gap, no round) -->
         <section class="relative w-full overflow-hidden shadow-sm">
-            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_daftar_kandidat', 'images/ntap.png') }}"
+            <img src="{{ header_image('header_daftar_kandidat', 'images/ntap.png') }}"
                 alt="Header Image" class="w-full h-[360px] sm:h-[450px] md:h-[520px] object-cover">
 
             <div class="absolute inset-0 bg-black/40"></div>

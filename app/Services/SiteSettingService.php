@@ -170,11 +170,12 @@ class SiteSettingService
     {
         $settings = self::getSettings();
         $storedHeaders = $settings['headers'] ?? [];
+        $headerPath = $storedHeaders[$nama] ?? (class_exists(\App\Models\SiteSetting::class) ? \App\Models\SiteSetting::get($nama) : null);
 
-        if (!empty($storedHeaders[$nama]) && Storage::disk('public')->exists($storedHeaders[$nama])) {
-            $fullPath = Storage::disk('public')->path($storedHeaders[$nama]);
+        if (!empty($headerPath) && Storage::disk('public')->exists($headerPath)) {
+            $fullPath = Storage::disk('public')->path($headerPath);
             $version = file_exists($fullPath) ? filemtime($fullPath) : time();
-            return asset('storage/' . $storedHeaders[$nama]) . '?v=' . $version;
+            return asset('storage/' . $headerPath) . '?v=' . $version;
         }
 
         $defaults = self::getDefaultHeaders();
@@ -203,6 +204,10 @@ class SiteSettingService
         $settings['headers'] = $storedHeaders;
         self::saveSettings($settings);
 
+        if (class_exists(\App\Models\SiteSetting::class)) {
+            \App\Models\SiteSetting::set($nama, $path);
+        }
+
         return $path;
     }
 
@@ -221,10 +226,13 @@ class SiteSettingService
             unset($storedHeaders[$nama]);
             $settings['headers'] = $storedHeaders;
             self::saveSettings($settings);
-            return true;
         }
 
-        return false;
+        if (class_exists(\App\Models\SiteSetting::class)) {
+            \App\Models\SiteSetting::set($nama, null);
+        }
+
+        return true;
     }
 
     /**
@@ -236,11 +244,24 @@ class SiteSettingService
         $storedSocials = $settings['socials'] ?? [];
         $defaults = self::getDefaultSocials();
 
+        $socialMap = [
+            1 => 'social_facebook',
+            2 => 'social_youtube',
+            3 => 'social_instagram',
+            4 => 'social_linkedin',
+            5 => 'social_twitter',
+        ];
+
         $result = collect();
 
         foreach ($defaults as $id => $item) {
             if (isset($storedSocials[$id])) {
                 $item['link'] = $storedSocials[$id];
+            } elseif (isset($socialMap[$id]) && class_exists(\App\Models\SiteSetting::class)) {
+                $dbVal = \App\Models\SiteSetting::get($socialMap[$id]);
+                if ($dbVal) {
+                    $item['link'] = $dbVal;
+                }
             }
             $result->push((object) $item);
         }
@@ -256,8 +277,19 @@ class SiteSettingService
         $settings = self::getSettings();
         $storedSocials = $settings['socials'] ?? [];
 
+        $socialMap = [
+            1 => 'social_facebook',
+            2 => 'social_youtube',
+            3 => 'social_instagram',
+            4 => 'social_linkedin',
+            5 => 'social_twitter',
+        ];
+
         foreach ($links as $id => $link) {
             $storedSocials[$id] = $link;
+            if (isset($socialMap[$id]) && class_exists(\App\Models\SiteSetting::class)) {
+                \App\Models\SiteSetting::set($socialMap[$id], $link);
+            }
         }
 
         $settings['socials'] = $storedSocials;

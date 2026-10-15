@@ -1,46 +1,62 @@
 @extends('layouts.index')
 @section('content')
 
-    <div class="bg-white min-h-screen text-slate-800 pt-20 pb-20">
+    <div class="bg-slate-50/60 min-h-[calc(100vh-200px)] text-slate-800 pt-28 pb-20">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        {{-- Top Title Bar --}}
-        <div class="border-b-2 border-[#00509d] bg-white py-4 mb-8">
-            <h1 class="text-center font-bold text-[#00509d] text-lg md:text-xl">
-                Lamaran Kerja
-            </h1>
-        </div>
-
-        @guest
-            {{-- TAMPILAN BELUM LOGIN SESUAI FIGMA (Lowongan Tersimpan - Belum Login.png) --}}
-            <div class="max-w-md mx-auto px-4 py-16 text-center flex flex-col items-center justify-center min-h-[50vh]">
-                {{-- Briefcase Icon in Blue --}}
-                <div class="w-24 h-24 mb-6 flex items-center justify-center text-[#00509d]">
-                    <svg class="w-20 h-20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-                    </svg>
+            {{-- Page Header --}}
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 pb-4 border-b border-slate-200/80">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl bg-[#00509d] text-white flex items-center justify-center text-xl shadow-sm shrink-0">
+                        <i class="ph-fill ph-paper-plane-tilt"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl sm:text-2xl font-bold text-slate-800">Lamaran Kerja</h1>
+                        <p class="text-xs sm:text-sm text-slate-500">Pantau dan kelola seluruh riwayat lamaran kerja yang telah Anda kirimkan</p>
+                    </div>
                 </div>
 
-                {{-- Message --}}
-                <p class="text-[#00509d] font-bold text-base md:text-lg leading-relaxed mb-8 max-w-xs">
-                    Lacak semua status lamaran anda dengan mudah
-                </p>
-
-                {{-- Action Buttons --}}
-                <div class="flex items-center justify-center gap-4 w-full max-w-xs">
-                    <a href="{{ route('login') }}"
-                        class="flex-1 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm shadow-sm transition">
-                        Masuk
-                    </a>
-                    <a href="{{ route('register') }}"
-                        class="flex-1 border-2 border-[#00509d] text-[#00509d] hover:bg-[#00509d] hover:text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm transition">
-                        Daftar
-                    </a>
-                </div>
+                @auth
+                    @if (isset($lamaranList) && $lamaranList->count() > 0)
+                        <div class="flex items-center gap-2.5">
+                            <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-[#00509d] border border-blue-200">
+                                <i class="ph ph-briefcase"></i>
+                                {{ $lamaranList->count() }} Lamaran Terkirim
+                            </span>
+                            <a href="{{ route('beranda') }}"
+                                class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#00509d] hover:bg-white border border-slate-200/80 shadow-2xs transition">
+                                <i class="ph ph-magnifying-glass"></i> Cari Lowongan Lain
+                            </a>
+                        </div>
+                    @endif
+                @endauth
             </div>
-        @else
-            {{-- TAMPILAN SUDAH LOGIN --}}
-            <div class="max-w-6xl mx-auto px-4 sm:px-6">
+
+            @guest
+                {{-- TAMPILAN BELUM LOGIN --}}
+                <div class="max-w-md mx-auto my-12 p-8 md:p-10 bg-white rounded-3xl border border-slate-200/80 shadow-sm text-center flex flex-col items-center justify-center">
+                    <div class="w-20 h-20 mb-5 rounded-2xl bg-blue-50 flex items-center justify-center text-[#00509d]">
+                        <i class="ph-fill ph-briefcase text-4xl"></i>
+                    </div>
+
+                    <h3 class="text-slate-800 font-bold text-lg mb-2">Lacak Lamaran Kerja Anda</h3>
+                    <p class="text-slate-500 text-xs md:text-sm leading-relaxed mb-8 max-w-xs">
+                        Masuk ke akun AreaKerja untuk melihat dan memantau status lamaran pekerjaan yang telah Anda kirimkan.
+                    </p>
+
+                    <div class="flex items-center justify-center gap-3 w-full max-w-xs">
+                        <a href="{{ route('login') }}"
+                            class="flex-1 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm shadow-sm hover:shadow transition">
+                            Masuk
+                        </a>
+                        <a href="{{ route('register') }}"
+                            class="flex-1 border-2 border-[#00509d] text-[#00509d] hover:bg-blue-50 font-bold py-2.5 px-6 rounded-xl text-center text-sm transition">
+                            Daftar
+                        </a>
+                    </div>
+                </div>
+            @else
+                {{-- TAMPILAN SUDAH LOGIN --}}
                 @if (isset($lamaranList) && $lamaranList->count() > 0)
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch mb-10">
                         @foreach ($lamaranList as $item)
@@ -54,21 +70,24 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="max-w-md mx-auto px-4 py-16 text-center flex flex-col items-center justify-center min-h-[50vh]">
-                        <div class="w-20 h-20 mb-4 flex items-center justify-center text-slate-300">
-                            <i class="ph ph-briefcase text-6xl"></i>
+                    {{-- Kosong Setelah Login --}}
+                    <div class="max-w-md mx-auto my-12 p-8 md:p-10 bg-white rounded-3xl border border-slate-200/80 shadow-sm text-center flex flex-col items-center justify-center">
+                        <div class="w-20 h-20 mb-4 rounded-2xl bg-blue-50 flex items-center justify-center text-[#00509d]">
+                            <i class="ph ph-briefcase text-4xl"></i>
                         </div>
-                        <h3 class="text-slate-700 font-bold text-base mb-1">Belum Ada Lamaran Kerja</h3>
-                        <p class="text-slate-500 text-xs md:text-sm mb-6">Anda belum mengajukan lamaran ke lowongan pekerjaan apapun.</p>
+                        <h3 class="text-slate-800 font-bold text-base md:text-lg mb-1">Belum Ada Lamaran Kerja</h3>
+                        <p class="text-slate-500 text-xs md:text-sm mb-6 max-w-xs leading-relaxed">
+                            Anda belum mengajukan lamaran ke lowongan pekerjaan apapun. Cari lowongan yang cocok dan kirimkan lamaran Anda sekarang!
+                        </p>
                         <a href="{{ route('beranda') }}"
-                            class="bg-[#00509d] hover:bg-[#003d7a] text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm shadow-sm transition">
-                            Cari Lowongan Sekarang
+                            class="bg-[#00509d] hover:bg-[#003d7a] text-white font-bold py-2.5 px-6 rounded-xl text-center text-sm shadow-sm hover:shadow transition inline-flex items-center gap-2">
+                            <i class="ph ph-magnifying-glass"></i> Cari Lowongan Sekarang
                         </a>
                     </div>
                 @endif
-            </div>
-        @endguest
+            @endguest
 
+        </div>
     </div>
 
     @include('layouts.footer')

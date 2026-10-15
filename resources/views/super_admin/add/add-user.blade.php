@@ -5,11 +5,11 @@
           x-data="{ openNotif: false, openAllNotif: false, tab: 'adminFinance', searchAdmin: '', searchPerusahaan: '' }">
         
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight">Kelola Akun</h1>
-                    <p class="text-xs text-slate-400 mt-0.5">
+                    <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight">Kelola Akun</h1>
+                    <p class="text-xs text-blue-100 mt-0.5">
                         Manajemen data pengguna, admin, finance, perusahaan, dan pelamar di AreaKerja
                     </p>
                 </div>

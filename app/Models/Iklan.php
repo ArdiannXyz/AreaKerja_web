@@ -14,6 +14,7 @@ class Iklan extends Model
 
     protected $fillable = [
         'perusahaan_id',
+        'user_id',
         'judul_iklan',
         'gambar_banner',
         'url_tujuan',
@@ -41,6 +42,11 @@ class Iklan extends Model
     public function perusahaan()
     {
         return $this->belongsTo(Perusahaan::class, 'perusahaan_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**

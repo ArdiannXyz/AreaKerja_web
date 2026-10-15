@@ -3,7 +3,7 @@
     <!-- Hero Section -->
     <section class="relative mt-20 w-full overflow-hidden min-h-[340px] md:min-h-[400px] flex items-center bg-gray-900 shadow-md">
         <!-- Background Image with Dark Overlay -->
-        <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_pasang_lowongan', 'images/tangan.png') }}" alt="Pasang Lowongan"
+        <img src="{{ header_image('header_pasang_lowongan', 'images/tangan.png') }}" alt="Pasang Lowongan"
             class="absolute inset-0 w-full h-full object-cover object-center opacity-70">
         <div class="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-black/30"></div>
 

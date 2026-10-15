@@ -10,6 +10,7 @@ use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
+use App\Models\PembelianCv;
 use App\Models\Perusahaan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -454,11 +455,42 @@ class PerusahaanController extends Controller
         $genders = ['L', 'P'];
         $query = Pelamar::where('kategori', 'kandidat aktif');
 
+        if ($request->filled('skill')) {
+            $skillSearch = $request->skill;
+            $query->where(function ($q) use ($skillSearch) {
+                $q->whereJsonContains('skills', $skillSearch)
+                  ->orWhere('skills', 'like', '%' . $skillSearch . '%');
+            });
+        }
+
         if ($request->filled('gender')) {
-            $query->where('gender', $request->gender);
+            $genderVal = $request->gender;
+            if ($genderVal === 'L' || strtolower($genderVal) === 'laki-laki') {
+                $query->where(function ($q) {
+                    $q->where('gender', 'L')->orWhere('gender', 'Laki-laki');
+                });
+            } elseif ($genderVal === 'P' || strtolower($genderVal) === 'perempuan') {
+                $query->where(function ($q) {
+                    $q->where('gender', 'P')->orWhere('gender', 'Perempuan');
+                });
+            } else {
+                $query->where('gender', $genderVal);
+            }
+        }
+
+        if ($request->filled('umur') && str_contains($request->umur, '-')) {
+            [$min, $max] = explode('-', $request->umur);
+            $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN ? AND ?', [(int)$min, (int)$max]);
         }
 
         $pelamars = $query->get();
+
+        $boughtCvPelamarIds = [];
+        if ($perusahaan) {
+            $boughtCvPelamarIds = PembelianCv::where('perusahaan_id', $perusahaan->id)
+                ->pluck('pelamar_id')
+                ->toArray();
+        }
 
         $hargaPembayarans = collect([
             (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000, 'icon' => 'bitcoin.png'],
@@ -467,21 +499,25 @@ class PerusahaanController extends Controller
         ]);
 
         return view('perusahaan.kandidat-areakerja', [
-            'hargaPembayarans' => $hargaPembayarans,
-            'daftarBank'       => DaftarBank::all(),
-            'skills'           => $skills,
-            'umurRange'        => $umurRange,
-            'genders'          => $genders,
-            'pelamars'         => $pelamars,
-            'perusahaan'       => $perusahaan,
+            'hargaPembayarans'   => $hargaPembayarans,
+            'daftarBank'         => DaftarBank::all(),
+            'skills'             => $skills,
+            'umurRange'          => $umurRange,
+            'genders'            => $genders,
+            'pelamars'           => $pelamars,
+            'perusahaan'         => $perusahaan,
+            'boughtCvPelamarIds' => $boughtCvPelamarIds,
         ]);
     }
 
     // EVENT
     public function event(Request $request)
     {
+        \App\Models\Event::autoCloseExpired();
+
         $search = $request->query('q');
         $status = $request->query('status');
+        $today = now()->toDateString();
 
         $events = \App\Models\Event::with('kegiatan')
             ->when($search, function ($q) use ($search) {
@@ -491,13 +527,23 @@ class PerusahaanController extends Controller
                         ->orWhere('content', 'like', "%{$search}%");
                 });
             })
-            ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
-            }, function ($q) {
+            ->when($status === 'buka', function ($q) {
+                $q->upcoming();
+            })
+            ->when($status === 'tutup', function ($q) {
+                $q->ended();
+            })
+            ->when(empty($status), function ($q) {
                 $q->where('status', '!=', 'draft');
             })
-            ->orderBy('tgl_mulai', 'asc')
-            ->paginate(9);
+            ->when($status === 'tutup', function ($q) {
+                $q->orderBy('tgl_mulai', 'desc');
+            }, function ($q) use ($today) {
+                $q->orderByRaw("CASE WHEN status = 'tutup' OR (tgl_akhir IS NOT NULL AND tgl_akhir < ?) THEN 1 ELSE 0 END ASC", [$today])
+                  ->orderBy('tgl_mulai', 'asc');
+            })
+            ->paginate(9)
+            ->withQueryString();
 
         return view('perusahaan.event.event', compact('events', 'search', 'status'));
     }
@@ -506,7 +552,7 @@ class PerusahaanController extends Controller
     {
         $event = \App\Models\Event::with('kegiatan')->findOrFail($id);
         $otherEvents = \App\Models\Event::where('id', '!=', $id)
-            ->where('status', 'buka')
+            ->upcoming()
             ->latest('tgl_mulai')
             ->take(3)
             ->get();

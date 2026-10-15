@@ -546,49 +546,48 @@
     @endphp
 
     {{-- Navbar --}}
-    <header class="{{ $isBeranda ? 'bg-[#0054a6] text-white' : 'bg-white text-slate-800 border-b border-slate-100 shadow-sm' }} fixed top-0 left-0 w-full z-50 transition-all duration-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 sm:h-22 md:h-24 flex items-center justify-between gap-4">
+    <header style="background-color: #00509d;" class="text-white border-b border-blue-800 shadow-sm fixed top-0 left-0 w-full z-50 transition-all duration-200">
+        <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
 
             <!-- Logo & Hamburger (Kiri) -->
             <div class="flex items-center gap-3 shrink-0">
                 <!-- Logo -->
                 <a href="{{ route('beranda') }}" class="flex items-center gap-2 sm:gap-2.5">
-                    @if ($isBeranda)
-                        <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
-                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-white tracking-tight">areakerja.com</span>
-                    @else
-                        <img src="{{ asset('images/logo_area_kerja_biru.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
-                        <span class="font-bold text-base sm:text-lg lg:text-[21px] text-[#00509d] tracking-tight">areakerja.com</span>
-                    @endif
+                    <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
+                    <span class="font-bold text-base sm:text-lg lg:text-[21px] text-white tracking-tight">areakerja.com</span>
                 </a>
             </div>
 
             <!-- Menu Desktop & Laptop (Tengah) - Tampil di layar >= 768px -->
-            <nav class="hidden md:flex items-center justify-center font-medium text-xs sm:text-sm lg:text-[15px] {{ $isBeranda ? 'text-white' : 'text-[#00509d]' }} gap-4 lg:gap-6 xl:gap-8 flex-1 px-4">
-                <a href="{{ route('beranda') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+            <nav class="hidden md:flex items-center font-semibold text-xs lg:text-[14px] xl:text-[15px] text-white gap-3 lg:gap-5 xl:gap-8 ml-4 lg:ml-7 xl:ml-10 mr-auto">
+                <a href="{{ route('beranda') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ Route::is('beranda') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Beranda
                 </a>
-                <a href="{{ url('/talent-hunter') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
-                    Talent Hunter
-                </a>
-                <a href="{{ route('pelamar.event.index') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                @if (Auth::user()?->role !== 'pelamar')
+                    <a href="{{ url('/talent-hunter') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->is('talent-hunter*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
+                        Talent Hunter
+                    </a>
+                @endif
+                <a href="{{ route('pelamar.event.index') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('pelamar.event.*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Event
                 </a>
-                <a href="{{ url('/pelamar/tips-kerja') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                <a href="{{ url('/pelamar/tips-kerja') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->is('pelamar/tips-kerja*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Tips Kerja
                 </a>
-                <a href="{{ route('pelamar.daftar-kandidat') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                <a href="{{ route('pelamar.daftar-kandidat') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('pelamar.daftar-kandidat*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Daftar Kandidat
                 </a>
-                <a href="{{ url('/lowongan') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
-                    Pasang Lowongan
-                </a>
+                @if (Auth::user()?->role !== 'pelamar')
+                    <a href="{{ url('/lowongan') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->is('lowongan*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
+                        Pasang Lowongan
+                    </a>
+                @endif
             </nav>
 
             <!-- Aksi (Kanan) -->
             <div class="flex items-center gap-3 sm:gap-4 shrink-0">
                 <!-- Hamburger Button (HANYA MUNCUL DI HP < 768px di kanan) -->
-                <button @click="openMenu = !openMenu" type="button" class="flex md:hidden p-2 rounded-xl {{ $isBeranda ? 'text-white hover:bg-white/10' : 'text-[#00509d] hover:bg-blue-50' }} focus:outline-none" aria-label="Toggle Menu">
+                <button @click="openMenu = !openMenu" type="button" class="flex md:hidden p-2 rounded-xl text-white hover:bg-white/10 focus:outline-none" aria-label="Toggle Menu">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
                         stroke="currentColor" class="w-8 h-8">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -598,9 +597,9 @@
 
                 @auth
                     {{-- Notifikasi (Hanya jika Login) --}}
-                    <button @click="openNotif = true" class="relative p-2 rounded-full {{ $isBeranda ? 'hover:bg-white/10 text-white' : 'hover:bg-blue-50 text-[#00509d]' }} transition">
+                    <button @click="openNotif = true" class="relative p-2 rounded-full hover:bg-white/20 text-white transition">
                         <svg width="24" height="25" viewBox="0 0 24 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M23.4955 17.1131C23.3918 17.006 23.29 16.8989 23.1901 16.7955C21.8162 15.3699 20.9851 14.5096 20.9851 10.474C20.9851 8.38475 20.4024 6.67047 19.254 5.38475C18.4072 4.43493 17.2626 3.7144 15.7539 3.1819C15.7344 3.17263 15.7171 3.16048 15.7027 3.146C15.16 1.58708 13.675 0.542969 12.0002 0.542969C10.3253 0.542969 8.84094 1.58708 8.29828 3.1444C8.28379 3.15834 8.2667 3.17011 8.24769 3.17922C4.72691 4.42261 3.01586 6.80815 3.01586 10.4724C3.01586 14.5096 2.18593 15.3699 0.810843 16.7939C0.710927 16.8973 0.609138 17.0023 0.505476 17.1115C0.237702 17.3886 0.0680456 17.7256 0.0165842 18.0828C-0.0348772 18.4399 0.0340108 18.8023 0.215096 19.1269C0.600396 19.8233 1.42158 20.2556 2.35891 20.2556H21.6483C22.5812 20.2556 23.3968 19.8239 23.7833 19.1306C23.9652 18.8059 24.0347 18.4433 23.9837 18.0857C23.9327 17.7282 23.7633 17.3906 23.4955 17.1131ZM12.0002 24.543C12.9025 24.5423 13.7879 24.3322 14.5623 23.9349C15.3368 23.5375 15.9714 22.9677 16.3989 22.286C16.4191 22.2533 16.429 22.2167 16.4278 22.1798C16.4266 22.1429 16.4143 22.1068 16.392 22.0752C16.3698 22.0435 16.3384 22.0173 16.3008 21.9992C16.2633 21.981 16.221 21.9715 16.1779 21.9715H7.82368C7.78054 21.9714 7.7381 21.9809 7.70049 21.999C7.66288 22.0171 7.63138 22.0433 7.60906 22.0749C7.58674 22.1066 7.57435 22.1427 7.57311 22.1797C7.57188 22.2167 7.58182 22.2533 7.60199 22.286C8.02946 22.9677 8.664 23.5374 9.43832 23.9347C10.2126 24.3321 11.0979 24.5422 12.0002 24.543Z" fill="{{ $isBeranda ? '#FFFFFF' : '#00509d' }}" />
+                            <path d="M23.4955 17.1131C23.3918 17.006 23.29 16.8989 23.1901 16.7955C21.8162 15.3699 20.9851 14.5096 20.9851 10.474C20.9851 8.38475 20.4024 6.67047 19.254 5.38475C18.4072 4.43493 17.2626 3.7144 15.7539 3.1819C15.7344 3.17263 15.7171 3.16048 15.7027 3.146C15.16 1.58708 13.675 0.542969 12.0002 0.542969C10.3253 0.542969 8.84094 1.58708 8.29828 3.1444C8.28379 3.15834 8.2667 3.17011 8.24769 3.17922C4.72691 4.42261 3.01586 6.80815 3.01586 10.4724C3.01586 14.5096 2.18593 15.3699 0.810843 16.7939C0.710927 16.8973 0.609138 17.0023 0.505476 17.1115C0.237702 17.3886 0.0680456 17.7256 0.0165842 18.0828C-0.0348772 18.4399 0.0340108 18.8023 0.215096 19.1269C0.600396 19.8233 1.42158 20.2556 2.35891 20.2556H21.6483C22.5812 20.2556 23.3968 19.8239 23.7833 19.1306C23.9652 18.8059 24.0347 18.4433 23.9837 18.0857C23.9327 17.7282 23.7633 17.3906 23.4955 17.1131ZM12.0002 24.543C12.9025 24.5423 13.7879 24.3322 14.5623 23.9349C15.3368 23.5375 15.9714 22.9677 16.3989 22.286C16.4191 22.2533 16.429 22.2167 16.4278 22.1798C16.4266 22.1429 16.4143 22.1068 16.392 22.0752C16.3698 22.0435 16.3384 22.0173 16.3008 21.9992C16.2633 21.981 16.221 21.9715 16.1779 21.9715H7.82368C7.78054 21.9714 7.7381 21.9809 7.70049 21.999C7.66288 22.0171 7.63138 22.0433 7.60906 22.0749C7.58674 22.1066 7.57435 22.1427 7.57311 22.1797C7.57188 22.2167 7.58182 22.2533 7.60199 22.286C8.02946 22.9677 8.664 23.5374 9.43832 23.9347C10.2126 24.3321 11.0979 24.5422 12.0002 24.543Z" fill="#FFFFFF" />
                         </svg>
                         @if ($global_notifikasi_unread > 0)
                             <span id="notif-badge" class="notif-badge absolute -top-0.5 -right-0.5 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full">
@@ -612,7 +611,7 @@
 
                 @guest
                     <a href="{{ route('login') }}"
-                        class="hidden md:inline-flex {{ $isBeranda ? 'bg-white text-[#00509d] hover:bg-slate-50' : 'bg-[#00509d] text-white hover:bg-[#003d7a]' }} font-bold px-8 py-2.5 rounded-xl transition-all text-sm text-center shadow-sm whitespace-nowrap">
+                        class="hidden md:inline-flex bg-white/10 hover:bg-white text-white hover:text-[#00509d] border border-white/30 font-bold px-8 py-2.5 rounded-xl transition-all text-sm text-center shadow-sm whitespace-nowrap">
                         Masuk
                     </a>
                 @endguest
@@ -644,10 +643,12 @@
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Beranda
                         </a>
-                        <a href="{{ url('/talent-hunter') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Talent Hunter
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/talent-hunter') }}" @click="openMenu = false"
+                                class="block py-2 hover:translate-x-1.5 transition duration-200">
+                                Talent Hunter
+                            </a>
+                        @endif
                         <a href="{{ route('pelamar.event.index') }}" @click="openMenu = false"
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Event
@@ -660,10 +661,12 @@
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Daftar Kandidat
                         </a>
-                        <a href="{{ url('/lowongan') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Pasang Lowongan
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/lowongan') }}" @click="openMenu = false"
+                                class="block py-2 hover:translate-x-1.5 transition duration-200">
+                                Pasang Lowongan
+                            </a>
+                        @endif
                     </nav>
 
                     <!-- Divider -->
@@ -859,11 +862,13 @@
                             Beranda
                         </a>
 
-                        <a href="{{ url('/talent-hunter') }}"
-                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
-                    {{ request()->is('talent-hunter') ? 'font-bold text-[#00509d] scale-105' : '' }}">
-                            Talent Hunter
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/talent-hunter') }}"
+                                class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                        {{ request()->is('talent-hunter') ? 'font-bold text-[#00509d] scale-105' : '' }}">
+                                Talent Hunter
+                            </a>
+                        @endif
 
                         <a href="{{ url('/pelamar/tips-kerja') }}"
                             class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
@@ -900,11 +905,13 @@
                             </a>
 @endif
 
-                        <a href="{{ url('/lowongan') }}"
-                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
-                   {{ request()->is('lowongan') ? 'font-bold text-[#00509d] scale-105' : '' }}">
-                            Pasang Lowongan
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/lowongan') }}"
+                                class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                       {{ request()->is('lowongan') ? 'font-bold text-[#00509d] scale-105' : '' }}">
+                                Pasang Lowongan
+                            </a>
+                        @endif
 
                     </nav>
                 </div> -->

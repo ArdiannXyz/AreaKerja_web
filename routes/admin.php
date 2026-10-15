@@ -133,6 +133,7 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::put('/iklan/{id}', 'update')->name('admin.iklan.update');
         Route::post('/iklan/{id}/approve', 'approve')->name('admin.iklan.approve');
         Route::post('/iklan/{id}/reject', 'reject')->name('admin.iklan.reject');
+        Route::post('/iklan/{id}/perpanjang', 'perpanjang')->name('admin.iklan.perpanjang');
         Route::delete('/iklan/{id}', 'destroy')->name('admin.iklan.destroy');
     });
 });

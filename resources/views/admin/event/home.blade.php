@@ -3,13 +3,13 @@
     <main class="flex-1 min-w-0 max-w-full p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header Topbar -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                    <h1 class="text-lg sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
                         <i class="ph ph-calendar-blank text-[#00509d] text-xl sm:text-2xl"></i> Event
                     </h1>
-                    <p class="text-[11px] sm:text-xs font-semibold text-slate-500 mt-0.5 sm:mt-1">Kelola semua event dan webinar yang ada di platform AreaKerja</p>
+                    <p class="text-[11px] sm:text-xs font-semibold text-blue-100 mt-0.5 sm:mt-1">Kelola semua event dan webinar yang ada di platform AreaKerja</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('admin.components.notif_button')

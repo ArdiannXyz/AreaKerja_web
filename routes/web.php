@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Route;
 // TRACKING KLIK IKLAN HOMEPAGE
 Route::get('/iklan/{id}/click', [IklanPerusahaanController::class, 'handleClick'])->name('iklan.click');
 
-// OAUTH SOCIAL AUTHENTICATION (Google, Facebook, GitHub)
+// OAUTH SOCIAL AUTHENTICATION (Google, Facebook)
 Route::controller(SocialAuthController::class)->group(function () {
     Route::get('/auth/{provider}/redirect', 'redirect')->name('social.redirect');
     Route::get('/auth/{provider}/callback', 'callback')->name('social.callback');

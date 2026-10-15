@@ -56,6 +56,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
             Route::get('/iklan', 'index')->name('perusahaan.iklan.index');
             Route::get('/iklan/pasang', 'create')->name('perusahaan.iklan.create');
             Route::post('/iklan/pasang', 'store')->name('perusahaan.iklan.store');
+            Route::post('/iklan/{id}/perpanjang', 'perpanjang')->name('perusahaan.iklan.perpanjang');
         });
 
         Route::get('/recruitment/kandidat-saya', 'kandidatSaya')->name('perusahaan.kandidat.saya');
@@ -81,6 +82,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
     Route::controller(CatatanCashController::class)->middleware('perusahaan.verified')->group(function () {
         Route::post('/topup/store', 'store')->name('catatan_cash.store');
         Route::get('/topup/{id}', 'show')->name('catatan_cash.show');
+        Route::get('/transaksi/{id}', 'show')->name('perusahaan.transaksi');
         Route::post('/topup/{id}/upload-bukti', 'uploadBukti')->name('catatan_cash.upload_bukti');
     });
 
@@ -115,6 +117,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
     // PEMBELI KANDIDAT CONTROLLER (VERIFIED ONLY)
     Route::controller(PembeliKandidatController::class)->middleware('perusahaan.verified')->group(function () {
         Route::post('/kandidat/beli', 'beli')->name('kandidat.beli');
+        Route::post('/kandidat/{id}/beli-cv', 'beliCv')->name('perusahaan.kandidat.beli-cv');
     });
 
     // TALENT HUNTER CONTROLLER

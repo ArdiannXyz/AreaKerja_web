@@ -4,15 +4,15 @@
         x-data="{ openModal: false, detail: {}, openNotif: false, openAllNotif: false }" x-cloak>
 
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.finance') }}"
-                   class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0">
+                   class="w-9 h-9 rounded-xl bg-white/10 hover:bg-slate-200 flex items-center justify-center text-white transition flex-shrink-0">
                     <i class="ph ph-arrow-left text-base"></i>
                 </a>
                 <div>
-                    <p class="text-xs text-slate-400 font-medium">Finance / <span class="text-slate-600 font-semibold">Catatan Transaksi</span></p>
-                    <h1 class="text-lg sm:text-xl font-bold text-slate-900 tracking-tight leading-tight">Riwayat Koin</h1>
+                    <p class="text-xs text-blue-100 font-medium">Finance / <span class="text-white font-semibold">Catatan Transaksi</span></p>
+                    <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight leading-tight">Riwayat Koin</h1>
                 </div>
             </div>
             <div class="flex items-center gap-3 w-full sm:w-auto justify-end">

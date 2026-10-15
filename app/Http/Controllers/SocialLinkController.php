@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteSetting;
 use App\Services\SiteSettingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SocialLinkController extends Controller
 {
@@ -44,7 +46,21 @@ class SocialLinkController extends Controller
         $links = $request->input('links', []);
         SiteSettingService::updateSocials($links);
 
-        return back()->with('success', 'Berhasil memperbarui tautan media sosial.');
+        $socialMap = [
+            1 => 'social_facebook',
+            2 => 'social_youtube',
+            3 => 'social_instagram',
+            4 => 'social_linkedin',
+            5 => 'social_twitter',
+        ];
+
+        foreach ($links as $id => $link) {
+            if (isset($socialMap[$id])) {
+                SiteSetting::set($socialMap[$id], $link);
+            }
+        }
+
+        return back()->with('success', 'Tautan media sosial berhasil disimpan.');
     }
 
     /**
@@ -61,10 +77,17 @@ class SocialLinkController extends Controller
             'image.max'      => 'Ukuran gambar maksimal adalah 5MB.',
         ]);
 
-        try {
-            SiteSettingService::updateHeader($nama, $request->file('image'));
+        $validNames = array_keys(SiteSettingService::getDefaultHeaders());
 
-            return back()->with('success', 'Banner Image Header berhasil diperbarui!');
+        if (!in_array($nama, $validNames)) {
+            return back()->withErrors(['error' => 'Jenis header tidak valid.']);
+        }
+
+        try {
+            $path = SiteSettingService::updateHeader($nama, $request->file('image'));
+            SiteSetting::set($nama, $path);
+
+            return back()->with('success', 'Banner image header berhasil diperbarui!');
         } catch (\Throwable $e) {
             return back()->with('error', 'Gagal mengunggah banner: ' . $e->getMessage());
         }
@@ -77,8 +100,9 @@ class SocialLinkController extends Controller
     {
         try {
             SiteSettingService::deleteHeader($nama);
+            SiteSetting::set($nama, null);
 
-            return back()->with('success', 'Banner Image Header berhasil dikembalikan ke default.');
+            return back()->with('success', 'Banner image header berhasil direset ke default.');
         } catch (\Throwable $e) {
             return back()->with('error', 'Gagal mereset banner: ' . $e->getMessage());
         }
