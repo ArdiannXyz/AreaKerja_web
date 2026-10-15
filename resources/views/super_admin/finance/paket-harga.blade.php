@@ -8,13 +8,13 @@
         }">
 
         {{-- Topbar Header --}}
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-xl font-bold text-slate-800 tracking-tight">
+                    <h1 class="text-base sm:text-xl font-bold text-white tracking-tight">
                         Finance & Keuangan
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola paket harga, riwayat transaksi, dan laporan pendapatan</p>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola paket harga, riwayat transaksi, dan laporan pendapatan</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')

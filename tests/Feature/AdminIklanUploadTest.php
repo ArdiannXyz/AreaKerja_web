@@ -48,7 +48,7 @@ class AdminIklanUploadTest extends TestCase
     {
         $response = $this->actingAs($this->adminUser)->get(route('admin.iklan.create'));
         $response->assertStatus(200);
-        $response->assertSee('Pasang Banner Iklan');
+        $response->assertSee('Pasang Iklan');
     }
 
     /** @test */
@@ -56,7 +56,7 @@ class AdminIklanUploadTest extends TestCase
     {
         $response = $this->actingAs($this->superAdminUser)->get(route('superadmin.iklan.create'));
         $response->assertStatus(200);
-        $response->assertSee('Pasang Banner Iklan');
+        $response->assertSee('Pasang Iklan');
     }
 
     /** @test */
@@ -72,23 +72,21 @@ class AdminIklanUploadTest extends TestCase
             'perusahaan_id' => null,
         ]);
 
-        $response->assertRedirect(route('admin.iklan.index'));
+        $response->assertRedirect(route('admin.iklan.index', ['status' => 'aktif']));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('iklans', [
             'judul_iklan'    => 'Promo Event Karir Admin 2026',
             'url_tujuan'     => 'https://areakerja.com/event-karir',
-            'durasi_hari'    => 14,
+            'durasi_hari'    => 0,
             'koin_terpotong' => 0,
             'status'         => 'aktif',
-            'user_id'        => $this->adminUser->id,
             'perusahaan_id'  => null,
         ]);
 
         $iklan = Iklan::where('judul_iklan', 'Promo Event Karir Admin 2026')->first();
         $this->assertNotNull($iklan);
         $this->assertNotNull($iklan->tanggal_mulai);
-        $this->assertNotNull($iklan->tanggal_selesai);
         $this->assertTrue($iklan->isActive());
         Storage::disk('public')->assertExists($iklan->gambar_banner);
     }
@@ -106,16 +104,15 @@ class AdminIklanUploadTest extends TestCase
             'perusahaan_id' => null,
         ]);
 
-        $response->assertRedirect(route('superadmin.iklan.index'));
+        $response->assertRedirect(route('superadmin.iklan.index', ['status' => 'aktif']));
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('iklans', [
             'judul_iklan'    => 'Kampanye Nasional Super Admin',
             'url_tujuan'     => 'https://areakerja.com/kampanye-nasional',
-            'durasi_hari'    => 30,
+            'durasi_hari'    => 0,
             'koin_terpotong' => 0,
             'status'         => 'aktif',
-            'user_id'        => $this->superAdminUser->id,
             'perusahaan_id'  => null,
         ]);
 

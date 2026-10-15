@@ -513,8 +513,11 @@ class PerusahaanController extends Controller
     // EVENT
     public function event(Request $request)
     {
+        \App\Models\Event::autoCloseExpired();
+
         $search = $request->query('q');
         $status = $request->query('status');
+        $today = now()->toDateString();
 
         $events = \App\Models\Event::with('kegiatan')
             ->when($search, function ($q) use ($search) {
@@ -524,13 +527,23 @@ class PerusahaanController extends Controller
                         ->orWhere('content', 'like', "%{$search}%");
                 });
             })
-            ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
-            }, function ($q) {
+            ->when($status === 'buka', function ($q) {
+                $q->upcoming();
+            })
+            ->when($status === 'tutup', function ($q) {
+                $q->ended();
+            })
+            ->when(empty($status), function ($q) {
                 $q->where('status', '!=', 'draft');
             })
-            ->orderBy('tgl_mulai', 'asc')
-            ->paginate(9);
+            ->when($status === 'tutup', function ($q) {
+                $q->orderBy('tgl_mulai', 'desc');
+            }, function ($q) use ($today) {
+                $q->orderByRaw("CASE WHEN status = 'tutup' OR (tgl_akhir IS NOT NULL AND tgl_akhir < ?) THEN 1 ELSE 0 END ASC", [$today])
+                  ->orderBy('tgl_mulai', 'asc');
+            })
+            ->paginate(9)
+            ->withQueryString();
 
         return view('perusahaan.event.event', compact('events', 'search', 'status'));
     }
@@ -539,7 +552,7 @@ class PerusahaanController extends Controller
     {
         $event = \App\Models\Event::with('kegiatan')->findOrFail($id);
         $otherEvents = \App\Models\Event::where('id', '!=', $id)
-            ->where('status', 'buka')
+            ->upcoming()
             ->latest('tgl_mulai')
             ->take(3)
             ->get();

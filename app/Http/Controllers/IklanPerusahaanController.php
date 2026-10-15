@@ -77,6 +77,7 @@ class IklanPerusahaanController extends Controller
         $iklanAktif = Iklan::where('perusahaan_id', $perusahaan->id)->where('status', 'aktif')->count();
         $totalViews = Iklan::where('perusahaan_id', $perusahaan->id)->sum('total_views');
         $totalClicks = Iklan::where('perusahaan_id', $perusahaan->id)->sum('total_clicks');
+        $paketList = self::getPaketList();
 
         return view('perusahaan.iklan.index', compact(
             'perusahaan',
@@ -84,7 +85,8 @@ class IklanPerusahaanController extends Controller
             'totalIklan',
             'iklanAktif',
             'totalViews',
-            'totalClicks'
+            'totalClicks',
+            'paketList'
         ));
     }
 
@@ -172,6 +174,77 @@ class IklanPerusahaanController extends Controller
             ]);
 
             return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan sistem saat mengajukan iklan.');
+        }
+    }
+
+    /**
+     * Perpanjang Durasi Iklan oleh Perusahaan (Menggunakan Saldo Koin)
+     */
+    public function perpanjang(Request $request, $id)
+    {
+        $user = Auth::user();
+        $perusahaan = Perusahaan::where('user_id', $user->id)->firstOrFail();
+        $iklan = Iklan::where('id', $id)->where('perusahaan_id', $perusahaan->id)->firstOrFail();
+
+        $request->validate([
+            'paket_id' => 'required|integer|in:1,2,3,4',
+        ], [
+            'paket_id.required' => 'Silakan pilih paket perpanjangan durasi.',
+            'paket_id.in'       => 'Pilihan paket perpanjangan tidak valid.',
+        ]);
+
+        $paketList = self::getPaketList();
+        $paket = $paketList[$request->paket_id];
+        $hargaKoin = (int) $paket['koin'];
+        $tambahHari = (int) $paket['durasi'];
+
+        // Cek kecukupan saldo koin perusahaan
+        if ($perusahaan->koin_perusahaan < $hargaKoin) {
+            return redirect()->back()->with('error', "Saldo koin Anda (" . number_format($perusahaan->koin_perusahaan, 0, ',', '.') . " koin) tidak mencukupi untuk memperpanjang iklan dengan {$paket['nama']} ({$hargaKoin} koin). Silakan top up koin terlebih dahulu.");
+        }
+
+        try {
+            DB::transaction(function () use ($perusahaan, $iklan, $paket, $hargaKoin, $tambahHari) {
+                // 1. Potong koin perusahaan
+                $coinService = app(CoinTransactionService::class);
+                $coinService->deduct(
+                    $perusahaan,
+                    $hargaKoin,
+                    'Perpanjang ' . $paket['nama'] . ' (' . $tambahHari . ' Hari) - ' . Str::limit($iklan->judul_iklan, 25),
+                    'Perpanjangan Iklan',
+                    'EXT-' . strtoupper(Str::random(8)),
+                    $perusahaan->nama_perusahaan
+                );
+
+                // 2. Kalkulasi masa tayang baru
+                // Jika iklan masih aktif dan tanggal_selesai di masa depan, lanjutkan dari tanggal_selesai
+                if ($iklan->status === 'aktif' && $iklan->tanggal_selesai && $iklan->tanggal_selesai->isFuture()) {
+                    $iklan->tanggal_selesai = $iklan->tanggal_selesai->copy()->addDays($tambahHari);
+                } else {
+                    // Jika sudah selesai / expired, mulai aktif kembali dari hari ini
+                    $now = now();
+                    $iklan->tanggal_mulai = $now;
+                    $iklan->tanggal_selesai = $now->copy()->addDays($tambahHari);
+                }
+
+                $iklan->status = 'aktif';
+                $iklan->durasi_hari = (int) $iklan->durasi_hari + $tambahHari;
+                $iklan->koin_terpotong = (int) $iklan->koin_terpotong + $hargaKoin;
+                $iklan->paket_nama = $paket['nama'];
+                $iklan->save();
+            });
+
+            return redirect()->route('perusahaan.iklan.index')
+                ->with('success', "Masa tayang iklan '{$iklan->judul_iklan}' berhasil diperpanjang selama {$tambahHari} hari menggunakan {$paket['nama']}.");
+        } catch (\Throwable $e) {
+            Log::error("Gagal memperpanjang iklan perusahaan: " . $e->getMessage(), [
+                'perusahaan_id' => $perusahaan->id,
+                'iklan_id'      => $id,
+                'paket_id'      => $request->paket_id,
+                'trace'         => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem saat memperpanjang durasi iklan: ' . $e->getMessage());
         }
     }
 

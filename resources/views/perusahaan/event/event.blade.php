@@ -31,7 +31,7 @@
                 <div class="space-y-8">
                     @foreach ($events as $event)
                         @php
-                            $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
+                            $isEnded = $event->is_ended;
                             $defaultImages = [
                                 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80',
                                 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&auto=format&fit=crop&q=80',

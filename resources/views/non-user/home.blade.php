@@ -113,29 +113,52 @@
                                              alt="{{ $ad->judul_iklan }}" 
                                              class="w-full h-full object-cover object-center {{ $ad->url_tujuan ? 'group-hover/item:scale-[1.02]' : '' }} transition-transform duration-700 ease-out">
                                         
-                                        {{-- 
-                                        Badge Official / Perusahaan dengan centang biru (disimpan sebagai komentar):
+                                        {{-- Badge Official / Perusahaan di pojok kiri atas --}}
                                         <div class="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2 z-10 pointer-events-none">
                                             @if($ad->perusahaan)
-                                                <span class="bg-black/60 backdrop-blur-md text-white/95 border border-white/15 text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full shadow-md">
-                                                    {{ $ad->perusahaan->nama_perusahaan }}
+                                                <span class="inline-flex items-center gap-1.5 bg-black/60 backdrop-blur-md text-white/95 border border-white/20 text-[11px] sm:text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                                                    @if($ad->perusahaan->img_profile)
+                                                        <img src="{{ asset('storage/' . $ad->perusahaan->img_profile) }}" alt="" class="w-4 h-4 rounded-full object-cover">
+                                                    @else
+                                                        <i class="ph-fill ph-buildings text-sky-300"></i>
+                                                    @endif
+                                                    <span>{{ $ad->perusahaan->nama_perusahaan }}</span>
                                                 </span>
                                             @else
-                                                <span class="bg-[#00509d]/90 backdrop-blur-md text-white border border-white/25 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
-                                                    <i class="ph-fill ph-seal-check text-sky-300 text-xs"></i> Official AreaKerja
+                                                <span class="inline-flex items-center gap-1.5 bg-[#00509d]/90 backdrop-blur-md text-white border border-white/25 text-[11px] sm:text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+                                                    <i class="ph-fill ph-seal-check text-sky-300 text-sm"></i>
+                                                    <span>Official AreaKerja</span>
                                                 </span>
                                             @endif
                                         </div>
-                                        --}}
 
-                                        {{-- Jika ada tautan tujuan, tampilkan tombol Kunjungi kecil di sudut kanan bawah --}}
-                                        @if($ad->url_tujuan)
-                                            <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10">
-                                                <span class="inline-flex items-center gap-1.5 bg-white/95 hover:bg-white text-slate-900 font-bold text-xs sm:text-sm px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-lg transition backdrop-blur-xs">
-                                                    Kunjungi <i class="ph ph-arrow-square-out text-sm"></i>
-                                                </span>
+                                        {{-- Overlay Gradien & Judul Iklan di bagian bawah --}}
+                                        <div class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent pt-12 pb-3.5 sm:pb-4 px-4 sm:px-6 pointer-events-none flex items-end justify-between gap-4 z-10">
+                                            <div class="max-w-xl">
+                                                <h3 class="text-white font-extrabold text-sm sm:text-base md:text-lg lg:text-xl drop-shadow-md line-clamp-1 tracking-tight">
+                                                    {{ $ad->judul_iklan }}
+                                                </h3>
+                                                @if($ad->perusahaan)
+                                                    <p class="text-white/80 text-[10px] sm:text-xs font-medium flex items-center gap-1 mt-0.5 drop-shadow-xs">
+                                                        <i class="ph ph-buildings"></i> {{ $ad->perusahaan->nama_perusahaan }}
+                                                    </p>
+                                                @else
+                                                    <p class="text-sky-200 text-[10px] sm:text-xs font-medium flex items-center gap-1 mt-0.5 drop-shadow-xs">
+                                                        <i class="ph-fill ph-seal-check"></i> Official Partner AreaKerja
+                                                    </p>
+                                                @endif
                                             </div>
-                                        @endif
+
+                                            {{-- Tombol Kunjungi jika ada tautan tujuan --}}
+                                            @if($ad->url_tujuan)
+                                                <div class="pointer-events-auto shrink-0">
+                                                    <span class="inline-flex items-center gap-1.5 bg-white/95 hover:bg-white text-slate-900 font-bold text-xs sm:text-sm px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-lg transition backdrop-blur-xs group-hover/item:scale-105">
+                                                        <span>Kunjungi</span>
+                                                        <i class="ph ph-arrow-square-out text-sm"></i>
+                                                    </span>
+                                                </div>
+                                            @endif
+                                        </div>
                                 @if($ad->url_tujuan)
                                     </a>
                                 @else

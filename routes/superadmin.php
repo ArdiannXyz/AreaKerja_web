@@ -234,6 +234,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::put('/iklan/{id}', 'updateSuper')->name('superadmin.iklan.update');
         Route::post('/iklan/{id}/approve', 'approveSuper')->name('superadmin.iklan.approve');
         Route::post('/iklan/{id}/reject', 'rejectSuper')->name('superadmin.iklan.reject');
+        Route::post('/iklan/{id}/perpanjang', 'perpanjangSuper')->name('superadmin.iklan.perpanjang');
         Route::delete('/iklan/{id}', 'destroySuper')->name('superadmin.iklan.destroy');
     });
 });
