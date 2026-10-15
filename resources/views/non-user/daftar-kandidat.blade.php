@@ -5,7 +5,7 @@
 
         <!-- Hero Section (Full bleed edge-to-edge, no margin gap, no round) -->
         <section class="relative w-full overflow-hidden shadow-sm">
-            <img src="{{ asset('images/ntap.png') }}"
+            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_daftar_kandidat', 'images/ntap.png') }}"
                 alt="Header Image" class="w-full h-[360px] sm:h-[450px] md:h-[520px] object-cover">
 
             <div class="absolute inset-0 bg-black/40"></div>

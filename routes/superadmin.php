@@ -203,6 +203,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/social-links', 'update')->name('superadmin.social.update')->middleware('auth');
         Route::get('/header-image', 'headerImageIndex')->name('superadmin.header.image')->middleware('auth');
         Route::put('/header-image/{nama}', 'headerImageUpdate')->name('superadmin.header.update')->middleware('auth');
+        Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('superadmin.header.destroy')->middleware('auth');
     });
 
     // TALENT HUNTER CONTROLLER
@@ -224,11 +225,16 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/perusahaan/reject/{id}', 'rejectSuper')->name('superadmin.perusahaan.reject');
     });
 
-    // MODERASI IKLAN CONTROLLER (SUPER ADMIN)
+    // MODERASI & MANAJEMEN IKLAN CONTROLLER (SUPER ADMIN)
     Route::controller(IklanAdminController::class)->group(function () {
         Route::get('/iklan', 'indexSuper')->name('superadmin.iklan.index');
+        Route::get('/iklan/pasang', 'createSuper')->name('superadmin.iklan.create');
+        Route::post('/iklan/pasang', 'storeSuper')->name('superadmin.iklan.store');
+        Route::get('/iklan/{id}/edit', 'editSuper')->name('superadmin.iklan.edit');
+        Route::put('/iklan/{id}', 'updateSuper')->name('superadmin.iklan.update');
         Route::post('/iklan/{id}/approve', 'approveSuper')->name('superadmin.iklan.approve');
         Route::post('/iklan/{id}/reject', 'rejectSuper')->name('superadmin.iklan.reject');
+        Route::delete('/iklan/{id}', 'destroySuper')->name('superadmin.iklan.destroy');
     });
 });
 

@@ -7,7 +7,7 @@
     <button @click="openUserMenu = !openUserMenu"
         class="flex items-center gap-2 bg-white border border-gray-300 shadow-sm rounded-2xl px-3 py-1.5 transition hover:border-[#00509d] focus:outline-none"
         type="button">
-        @if (Auth::user()->superadmin->img_profile)
+        @if (Auth::user()->superadmin && Auth::user()->superadmin->img_profile)
             <img class="w-8 h-8 rounded-full object-cover flex-shrink-0"
                 src="{{ asset('storage/' . Auth::user()->superadmin->img_profile) }}" alt="Profile">
         @elseif (Auth::user()->avatar)

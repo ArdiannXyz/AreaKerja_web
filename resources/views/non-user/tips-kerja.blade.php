@@ -17,7 +17,7 @@
                         @if ($headline->image && !$isHeadlinePdf && file_exists(public_path('storage/' . $headline->image)))
                             <img src="{{ asset('storage/' . $headline->image) }}" alt="{{ $headline->title }}" class="w-full h-full object-cover">
                         @else
-                            <img src="{{ asset('images/tips_kerja_default.png') }}" alt="Hero Banner" class="w-full h-full object-cover">
+                            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_tips_kerja', 'images/tips_kerja_default.png') }}" alt="Hero Banner" class="w-full h-full object-cover">
                         @endif
                     </div>
 

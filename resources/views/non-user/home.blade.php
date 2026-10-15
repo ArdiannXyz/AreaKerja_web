@@ -104,39 +104,43 @@
                                  x-transition:leave-end="opacity-0 -translate-x-12 scale-98"
                                  class="w-full h-full">
                                 
-                                <a href="{{ route('iklan.click', $ad->id) }}" target="_blank" rel="noopener noreferrer" class="block w-full h-full relative cursor-pointer group/item">
-                                    <img src="{{ $ad->banner_url }}" 
-                                         alt="{{ $ad->judul_iklan }}" 
-                                         class="w-full h-full object-cover object-center group-hover/item:scale-[1.02] transition-transform duration-700 ease-out">
-                                    
-                                    {{-- Dark gradient bottom overlay for readability --}}
-                                    <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
-
-                                    {{-- Badge Perusahaan --}}
-                                    @if($ad->perusahaan)
-                                        <div class="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2">
-                                            <span class="bg-black/50 backdrop-blur-md text-white/90 border border-white/10 text-[10px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full shadow-sm">
-                                                {{ $ad->perusahaan->nama_perusahaan }}
-                                            </span>
+                                @if($ad->url_tujuan)
+                                    <a href="{{ route('iklan.click', $ad->id) }}" target="_blank" rel="noopener noreferrer" class="block w-full h-full relative cursor-pointer group/item">
+                                @else
+                                    <div class="block w-full h-full relative cursor-default select-none">
+                                @endif
+                                        <img src="{{ $ad->banner_url }}" 
+                                             alt="{{ $ad->judul_iklan }}" 
+                                             class="w-full h-full object-cover object-center {{ $ad->url_tujuan ? 'group-hover/item:scale-[1.02]' : '' }} transition-transform duration-700 ease-out">
+                                        
+                                        {{-- 
+                                        Badge Official / Perusahaan dengan centang biru (disimpan sebagai komentar):
+                                        <div class="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2 z-10 pointer-events-none">
+                                            @if($ad->perusahaan)
+                                                <span class="bg-black/60 backdrop-blur-md text-white/95 border border-white/15 text-[10px] sm:text-xs font-semibold px-2.5 py-1 rounded-full shadow-md">
+                                                    {{ $ad->perusahaan->nama_perusahaan }}
+                                                </span>
+                                            @else
+                                                <span class="bg-[#00509d]/90 backdrop-blur-md text-white border border-white/25 text-[10px] sm:text-xs font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1.5">
+                                                    <i class="ph-fill ph-seal-check text-sky-300 text-xs"></i> Official AreaKerja
+                                                </span>
+                                            @endif
                                         </div>
-                                    @endif
+                                        --}}
 
-                                    {{-- Banner Info Title & Call-to-action button --}}
-                                    <div class="absolute bottom-3 left-3 right-3 sm:bottom-5 sm:left-6 sm:right-6 flex items-end justify-between gap-4">
-                                        <div class="max-w-xl">
-                                            <h4 class="text-white text-sm sm:text-lg md:text-xl font-bold tracking-tight line-clamp-1 drop-shadow-md">
-                                                {{ $ad->judul_iklan }}
-                                            </h4>
-                                            <p class="text-white/80 text-xs hidden sm:block mt-0.5 line-clamp-1">
-                                                Klik untuk melihat penawaran menarik dari {{ $ad->perusahaan->nama_perusahaan ?? 'iklan ini' }}
-                                            </p>
-                                        </div>
-
-                                        <span class="inline-flex items-center gap-1.5 bg-white text-slate-900 font-bold text-xs sm:text-sm px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-lg hover:bg-slate-100 transition shrink-0">
-                                            Kunjungi <i class="ph ph-arrow-square-out text-sm"></i>
-                                        </span>
+                                        {{-- Jika ada tautan tujuan, tampilkan tombol Kunjungi kecil di sudut kanan bawah --}}
+                                        @if($ad->url_tujuan)
+                                            <div class="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10">
+                                                <span class="inline-flex items-center gap-1.5 bg-white/95 hover:bg-white text-slate-900 font-bold text-xs sm:text-sm px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl shadow-lg transition backdrop-blur-xs">
+                                                    Kunjungi <i class="ph ph-arrow-square-out text-sm"></i>
+                                                </span>
+                                            </div>
+                                        @endif
+                                @if($ad->url_tujuan)
+                                    </a>
+                                @else
                                     </div>
-                                </a>
+                                @endif
                             </div>
                         @endforeach
                     </div>
