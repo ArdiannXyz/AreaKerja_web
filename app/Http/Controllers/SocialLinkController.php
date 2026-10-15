@@ -2,59 +2,95 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\SiteSettingService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class SocialLinkController extends Controller
 {
+    /**
+     * Display social links and banner header management.
+     */
     public function index()
     {
-        $socials = collect([
-            (object)['id' => 1, 'nama' => 'Facebook', 'link' => 'https://facebook.com/areakerja'],
-            (object)['id' => 2, 'nama' => 'Youtube', 'link' => 'https://youtube.com/@areakerja'],
-            (object)['id' => 3, 'nama' => 'Instagram', 'link' => 'https://instagram.com/areakerjacom'],
-            (object)['id' => 4, 'nama' => 'Linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
-            (object)['id' => 5, 'nama' => 'Twitter', 'link' => 'https://twitter.com/areakerja'],
-        ]);
-
-        $headers = collect([
-            (object)['id' => 1, 'nama' => 'header_pasang_lowongan', 'link' => null, 'default' => 'images/woi.jpg'],
-            (object)['id' => 2, 'nama' => 'header_talent_hunter', 'link' => null, 'default' => 'images/woi.jpg'],
-            (object)['id' => 3, 'nama' => 'header_daftar_kandidat', 'link' => null, 'default' => 'images/ntap.png'],
-        ]);
+        $socials = SiteSettingService::getSocials();
+        $headers = SiteSettingService::getHeaders();
 
         return view('super_admin.social.banner', [
             'socials' => $socials,
-            'headers' => $headers
+            'headers' => $headers,
         ]);
     }
 
+    /**
+     * Alias for headerImageIndex to match named routes.
+     */
+    public function headerImageIndex()
+    {
+        return $this->index();
+    }
+
+    /**
+     * Update social media links.
+     */
     public function update(Request $request)
     {
-        return back()->with('success', 'Berhasil Mengupdate Social Link');
-    }
-
-    public function index_footer()
-    {
-        $socialLinks = collect([
-            (object)['nama' => 'facebook', 'link' => 'https://facebook.com/areakerja'],
-            (object)['nama' => 'youtube', 'link' => 'https://youtube.com/@areakerja'],
-            (object)['nama' => 'instagram', 'link' => 'https://instagram.com/areakerjacom'],
-            (object)['nama' => 'linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
+        $request->validate([
+            'links'   => 'nullable|array',
+            'links.*' => 'nullable|url',
+        ], [
+            'links.*.url' => 'Format URL tautan media sosial tidak valid.',
         ]);
 
-        return view('layouts.footer', [
-            'socialLinks' => $socialLinks
-        ]);
+        $links = $request->input('links', []);
+        SiteSettingService::updateSocials($links);
+
+        return back()->with('success', 'Berhasil memperbarui tautan media sosial.');
     }
 
+    /**
+     * Update/upload header banner image.
+     */
     public function headerImageUpdate(Request $request, $nama)
     {
-        return back()->with('success', 'Header image berhasil diupdate');
+        $request->validate([
+            'image' => 'required|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
+        ], [
+            'image.required' => 'Silakan pilih berkas gambar terlebih dahulu.',
+            'image.image'    => 'Berkas yang diunggah harus berupa gambar.',
+            'image.mimes'    => 'Format gambar yang didukung: jpeg, png, jpg, webp, gif.',
+            'image.max'      => 'Ukuran gambar maksimal adalah 5MB.',
+        ]);
+
+        try {
+            SiteSettingService::updateHeader($nama, $request->file('image'));
+
+            return back()->with('success', 'Banner Image Header berhasil diperbarui!');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal mengunggah banner: ' . $e->getMessage());
+        }
     }
 
+    /**
+     * Delete/reset header banner back to default.
+     */
     public function headerImageDestroy($nama)
     {
-        return back()->with('success', 'Header image berhasil dihapus');
+        try {
+            SiteSettingService::deleteHeader($nama);
+
+            return back()->with('success', 'Banner Image Header berhasil dikembalikan ke default.');
+        } catch (\Throwable $e) {
+            return back()->with('error', 'Gagal mereset banner: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Footer social links view helper.
+     */
+    public function index_footer()
+    {
+        return view('layouts.footer', [
+            'socialLinks' => SiteSettingService::getSocials(),
+        ]);
     }
 }

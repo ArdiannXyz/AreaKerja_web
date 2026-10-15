@@ -479,8 +479,7 @@ class PelamarController extends Controller
 
     public function destroypendidikanSuper(RiwayatPendidikan $riwayatpendidikan)
     {
-        $riwayatpendidikan->delete();
-        return redirect()->back()->with('success', 'Pendidikan berhasil dihapus');
+        return $this->destroypendidikan($riwayatpendidikan);
     }
 
     // LAMARAN PELAMAR

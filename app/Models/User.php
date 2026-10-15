@@ -2,9 +2,11 @@
 
 namespace App\Models;
 
+use App\Services\WilayahService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Log;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -85,88 +87,41 @@ class User extends Authenticatable
             if (\Illuminate\Support\Facades\Schema::hasTable('finances')) {
                 $financeRecord = \Illuminate\Support\Facades\DB::table('finances')->where('user_id', $this->id)->first();
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            Log::warning("Gagal memuat record finance untuk user {$this->id}: " . $e->getMessage());
+        }
 
-        $provinsi_id  = $financeRecord->provinsi_id ?? null;
-        $kota_id      = $financeRecord->kota_id ?? null;
-        $kecamatan_id = $financeRecord->kecamatan_id ?? null;
-        $desa         = $financeRecord->desa ?? null;
-        $kode_pos     = $financeRecord->kode_pos ?? null;
+        $provinsi_id   = $financeRecord->provinsi_id ?? null;
+        $kota_id       = $financeRecord->kota_id ?? null;
+        $kecamatan_id  = $financeRecord->kecamatan_id ?? null;
+        $desa          = $financeRecord->desa ?? null;
+        $kode_pos      = $financeRecord->kode_pos ?? null;
         $detail_alamat = $financeRecord->detail_alamat ?? null;
-        $img_profile  = $financeRecord->img_profile ?? $this->avatar ?? null;
-        $nama_lengkap = $financeRecord->nama_lengkap ?? $this->nama_lengkap ?? $this->username;
+        $img_profile   = $financeRecord->img_profile ?? $this->avatar ?? null;
+        $nama_lengkap  = $financeRecord->nama_lengkap ?? $this->nama_lengkap ?? $this->username;
 
-        $provinsi  = null;
-        $kota      = null;
-        $kecamatan = null;
-
-        if ($provinsi_id) {
-            try {
-                if (\Illuminate\Support\Facades\Schema::hasTable('provinsis')) {
-                    $provinsi = \Illuminate\Support\Facades\DB::table('provinsis')->where('id', $provinsi_id)->first();
-                }
-            } catch (\Throwable $e) {}
-
-            if (!$provinsi && file_exists(database_path('data/provinces.json'))) {
-                $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
-                $found = collect($json)->firstWhere('id', (string)$provinsi_id);
-                if ($found) {
-                    $provinsi = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
-                }
-            }
-        }
-
-        if ($kota_id) {
-            try {
-                if (\Illuminate\Support\Facades\Schema::hasTable('kotas')) {
-                    $kota = \Illuminate\Support\Facades\DB::table('kotas')->where('id', $kota_id)->first();
-                }
-            } catch (\Throwable $e) {}
-
-            if (!$kota && file_exists(database_path('data/regencies.json'))) {
-                $json = json_decode(file_get_contents(database_path('data/regencies.json')), true);
-                $found = collect($json)->firstWhere('id', (string)$kota_id);
-                if ($found) {
-                    $kota = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
-                }
-            }
-        }
-
-        if ($kecamatan_id) {
-            try {
-                if (\Illuminate\Support\Facades\Schema::hasTable('kecamatans')) {
-                    $kecamatan = \Illuminate\Support\Facades\DB::table('kecamatans')->where('id', $kecamatan_id)->first();
-                }
-            } catch (\Throwable $e) {}
-
-            if (!$kecamatan && file_exists(database_path('data/districts.json'))) {
-                $json = json_decode(file_get_contents(database_path('data/districts.json')), true);
-                $found = collect($json)->firstWhere('id', (string)$kecamatan_id);
-                if ($found) {
-                    $kecamatan = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
-                }
-            }
-        }
+        $provinsi  = $provinsi_id ? WilayahService::findProvince($provinsi_id) : null;
+        $kota      = $kota_id ? WilayahService::findRegency($kota_id) : null;
+        $kecamatan = $kecamatan_id ? WilayahService::findDistrict($kecamatan_id) : null;
 
         return (object)[
-            'id'           => $this->id,
-            'img_profile'  => $img_profile,
-            'nama'         => $nama_lengkap,
-            'nama_lengkap' => $nama_lengkap,
-            'email'        => $this->email,
-            'telepon'      => $this->telepon ?? '',
-            'provinsi_id'  => $provinsi_id,
-            'kota_id'      => $kota_id,
-            'kecamatan_id' => $kecamatan_id,
-            'provinsi'     => $provinsi,
-            'kota'         => $kota,
-            'kecamatan'    => $kecamatan,
-            'desa'         => $desa,
-            'kode_pos'     => $kode_pos,
-            'detail_alamat'=> $detail_alamat,
+            'id'            => $this->id,
+            'img_profile'   => $img_profile,
+            'nama'          => $nama_lengkap,
+            'nama_lengkap'  => $nama_lengkap,
+            'email'         => $this->email,
+            'telepon'       => $this->telepon ?? '',
+            'provinsi_id'   => $provinsi_id,
+            'kota_id'       => $kota_id,
+            'kecamatan_id'  => $kecamatan_id,
+            'provinsi'      => $provinsi,
+            'kota'          => $kota,
+            'kecamatan'     => $kecamatan,
+            'desa'          => $desa,
+            'kode_pos'      => $kode_pos,
+            'detail_alamat' => $detail_alamat,
         ];
     }
-
 
     public function getAdminAttribute()
     {
@@ -175,85 +130,39 @@ class User extends Authenticatable
             if (\Illuminate\Support\Facades\Schema::hasTable('admins')) {
                 $adminRecord = \Illuminate\Support\Facades\DB::table('admins')->where('user_id', $this->id)->first();
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            Log::warning("Gagal memuat record admin untuk user {$this->id}: " . $e->getMessage());
+        }
 
-        $provinsi_id = $adminRecord->provinsi_id ?? null;
-        $kota_id = $adminRecord->kota_id ?? null;
-        $kecamatan_id = $adminRecord->kecamatan_id ?? null;
-        $desa = $adminRecord->desa ?? null;
-        $kode_pos = $adminRecord->kode_pos ?? null;
+        $provinsi_id   = $adminRecord->provinsi_id ?? null;
+        $kota_id       = $adminRecord->kota_id ?? null;
+        $kecamatan_id  = $adminRecord->kecamatan_id ?? null;
+        $desa          = $adminRecord->desa ?? null;
+        $kode_pos      = $adminRecord->kode_pos ?? null;
         $detail_alamat = $adminRecord->detail_alamat ?? null;
-        $img_profile = $adminRecord->img_profile ?? $this->avatar ?? null;
+        $img_profile   = $adminRecord->img_profile ?? $this->avatar ?? null;
 
-        $provinsi = null;
-        $kota = null;
-        $kecamatan = null;
-
-        if ($provinsi_id) {
-            try {
-                if (\Illuminate\Support\Facades\Schema::hasTable('provinsis')) {
-                    $provinsi = \Illuminate\Support\Facades\DB::table('provinsis')->where('id', $provinsi_id)->first();
-                }
-            } catch (\Throwable $e) {}
-
-            if (!$provinsi && file_exists(database_path('data/provinces.json'))) {
-                $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
-                $found = collect($json)->firstWhere('id', (string)$provinsi_id);
-                if ($found) {
-                    $provinsi = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
-                }
-            }
-        }
-
-        if ($kota_id) {
-            try {
-                if (\Illuminate\Support\Facades\Schema::hasTable('kotas')) {
-                    $kota = \Illuminate\Support\Facades\DB::table('kotas')->where('id', $kota_id)->first();
-                }
-            } catch (\Throwable $e) {}
-
-            if (!$kota && file_exists(database_path('data/regencies.json'))) {
-                $json = json_decode(file_get_contents(database_path('data/regencies.json')), true);
-                $found = collect($json)->firstWhere('id', (string)$kota_id);
-                if ($found) {
-                    $kota = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
-                }
-            }
-        }
-
-        if ($kecamatan_id) {
-            try {
-                if (\Illuminate\Support\Facades\Schema::hasTable('kecamatans')) {
-                    $kecamatan = \Illuminate\Support\Facades\DB::table('kecamatans')->where('id', $kecamatan_id)->first();
-                }
-            } catch (\Throwable $e) {}
-
-            if (!$kecamatan && file_exists(database_path('data/districts.json'))) {
-                $json = json_decode(file_get_contents(database_path('data/districts.json')), true);
-                $found = collect($json)->firstWhere('id', (string)$kecamatan_id);
-                if ($found) {
-                    $kecamatan = (object)['id' => $found['id'], 'nama' => ucwords(strtolower($found['name']))];
-                }
-            }
-        }
+        $provinsi  = $provinsi_id ? WilayahService::findProvince($provinsi_id) : null;
+        $kota      = $kota_id ? WilayahService::findRegency($kota_id) : null;
+        $kecamatan = $kecamatan_id ? WilayahService::findDistrict($kecamatan_id) : null;
 
         return (object)[
-            'id'           => $this->id,
-            'img_profile'  => $img_profile,
-            'nama'         => $this->nama_lengkap ?? $this->username,
-            'nama_lengkap' => $this->nama_lengkap ?? $this->username,
-            'email'        => $this->email,
-            'telepon'      => $this->telepon ?? '',
-            'provinsi_id'  => $provinsi_id,
-            'kota_id'      => $kota_id,
-            'kecamatan_id' => $kecamatan_id,
-            'provinsi'     => $provinsi,
-            'kota'         => $kota,
-            'kecamatan'    => $kecamatan,
-            'desa'         => $desa,
-            'kode_pos'     => $kode_pos,
-            'detail'       => $detail_alamat,
-            'detail_alamat'=> $detail_alamat,
+            'id'            => $this->id,
+            'img_profile'   => $img_profile,
+            'nama'          => $this->nama_lengkap ?? $this->username,
+            'nama_lengkap'  => $this->nama_lengkap ?? $this->username,
+            'email'         => $this->email,
+            'telepon'       => $this->telepon ?? '',
+            'provinsi_id'   => $provinsi_id,
+            'kota_id'       => $kota_id,
+            'kecamatan_id'  => $kecamatan_id,
+            'provinsi'      => $provinsi,
+            'kota'          => $kota,
+            'kecamatan'     => $kecamatan,
+            'desa'          => $desa,
+            'kode_pos'      => $kode_pos,
+            'detail'        => $detail_alamat,
+            'detail_alamat' => $detail_alamat,
         ];
     }
 
@@ -264,7 +173,9 @@ class User extends Authenticatable
             if (\Illuminate\Support\Facades\Schema::hasTable('superadmins')) {
                 $record = \Illuminate\Support\Facades\DB::table('superadmins')->where('user_id', $this->id)->first();
             }
-        } catch (\Throwable $e) {}
+        } catch (\Throwable $e) {
+            Log::warning("Gagal memuat record superadmin untuk user {$this->id}: " . $e->getMessage());
+        }
 
         return (object)[
             'id'            => $record->id ?? null,

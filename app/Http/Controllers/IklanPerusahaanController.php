@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\Perusahaan;
 use App\Models\Iklan;
 use App\Models\CatatanKoin;
 use App\Models\LowonganPerusahaan;
+use App\Services\CoinTransactionService;
+use App\Http\Requests\StoreIklanRequest;
 
 class IklanPerusahaanController extends Controller
 {
@@ -105,26 +109,11 @@ class IklanPerusahaanController extends Controller
     /**
      * Proses Simpan Iklan & Pemotongan Koin
      */
-    public function store(Request $request)
+    public function store(StoreIklanRequest $request)
     {
         $user = Auth::user();
         $perusahaan = Perusahaan::where('user_id', $user->id)->firstOrFail();
         $paketList = self::getPaketList();
-
-        $request->validate([
-            'paket_id' => 'required|in:1,2,3,4',
-            'judul_iklan' => 'required|string|max:200',
-            'gambar_banner' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
-            'url_tujuan' => 'required|url|max:500',
-        ], [
-            'paket_id.required' => 'Silakan pilih paket iklan.',
-            'judul_iklan.required' => 'Judul iklan wajib diisi.',
-            'gambar_banner.required' => 'Gambar banner iklan wajib diunggah.',
-            'gambar_banner.image' => 'File banner harus berupa gambar.',
-            'gambar_banner.max' => 'Ukuran gambar banner maksimal 3MB.',
-            'url_tujuan.required' => 'Link tujuan iklan wajib diisi.',
-            'url_tujuan.url' => 'Format link tujuan harus berupa URL valid (cth: https://...).',
-        ]);
 
         $paket = $paketList[$request->paket_id];
         $hargaKoin = $paket['koin'];
@@ -141,36 +130,49 @@ class IklanPerusahaanController extends Controller
         // Upload banner
         $path = $request->file('gambar_banner')->store('iklan-banners', 'public');
 
-        // Potong koin
-        $perusahaan->koin_perusahaan -= $hargaKoin;
-        $perusahaan->save();
+        try {
+            DB::transaction(function () use ($perusahaan, $hargaKoin, $paket, $request, $path) {
+                // 1. Potong koin via CoinTransactionService secara aman
+                $coinService = app(CoinTransactionService::class);
+                $coinService->deduct(
+                    $perusahaan,
+                    $hargaKoin,
+                    'Pasang ' . $paket['nama'] . ' (' . $paket['durasi'] . ' Hari)',
+                    'Pembayaran Iklan',
+                    'IKLAN-' . strtoupper(Str::random(8)),
+                    $perusahaan->nama_perusahaan
+                );
 
-        // Catat pengeluaran koin
-        CatatanKoin::create([
-            'user_id' => $user->id,
-            'no_referensi' => 'IKLAN-' . strtoupper(Str::random(8)),
-            'pesanan' => 'Pasang ' . $paket['nama'] . ' (' . $paket['durasi'] . ' Hari)',
-            'dari' => $perusahaan->nama_perusahaan,
-            'sumber_dana' => 'Pembayaran Iklan',
-            'total' => '-' . $hargaKoin,
-        ]);
+                // 2. Simpan data iklan
+                Iklan::create([
+                    'perusahaan_id'   => $perusahaan->id,
+                    'judul_iklan'     => $request->judul_iklan,
+                    'gambar_banner'   => $path,
+                    'url_tujuan'      => $request->url_tujuan,
+                    'paket_nama'      => $paket['nama'],
+                    'durasi_hari'     => $paket['durasi'],
+                    'koin_terpotong'  => $hargaKoin,
+                    'posisi'          => 'home_hero',
+                    'status'          => 'menunggu', // Menunggu persetujuan Admin
+                    'total_views'     => 0,
+                    'total_clicks'    => 0,
+                ]);
+            });
 
-        // Simpan data iklan
-        Iklan::create([
-            'perusahaan_id' => $perusahaan->id,
-            'judul_iklan' => $request->judul_iklan,
-            'gambar_banner' => $path,
-            'url_tujuan' => $request->url_tujuan,
-            'paket_nama' => $paket['nama'],
-            'durasi_hari' => $paket['durasi'],
-            'koin_terpotong' => $hargaKoin,
-            'posisi' => 'home_hero',
-            'status' => 'menunggu', // Menunggu persetujuan Admin
-            'total_views' => 0,
-            'total_clicks' => 0,
-        ]);
+            return redirect()->route('perusahaan.iklan.index')->with('success', 'Iklan berhasil diajukan dan saldo koin telah dipotong. Iklan akan tayang di homepage setelah disetujui oleh Admin.');
+        } catch (\Throwable $e) {
+            // Hapus file banner jika transaksi database gagal
+            if ($path && Storage::disk('public')->exists($path)) {
+                Storage::disk('public')->delete($path);
+            }
 
-        return redirect()->route('perusahaan.iklan.index')->with('success', 'Iklan berhasil diajukan dan saldo koin telah dipotong. Iklan akan tayang di homepage setelah disetujui oleh Admin.');
+            Log::error("Gagal mengajukan pasang iklan perusahaan: " . $e->getMessage(), [
+                'perusahaan_id' => $perusahaan->id,
+                'paket_id'      => $request->paket_id,
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan sistem saat mengajukan iklan.');
+        }
     }
 
     /**
@@ -179,8 +181,12 @@ class IklanPerusahaanController extends Controller
     public function handleClick($id)
     {
         $iklan = Iklan::findOrFail($id);
-        $iklan->increment('total_clicks');
 
-        return redirect()->away($iklan->url_tujuan);
+        if (!empty($iklan->url_tujuan)) {
+            $iklan->increment('total_clicks');
+            return redirect()->away($iklan->url_tujuan);
+        }
+
+        return redirect('/');
     }
 }

@@ -15,6 +15,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterPelamarRequest;
+use App\Http\Requests\RegisterPerusahaanRequest;
 
 class AuthController extends Controller
 {
@@ -132,16 +135,9 @@ class AuthController extends Controller
         ]);
     }
 
-    public function loginproses(Request $request)
+    public function loginproses(LoginRequest $request)
     {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ], [
-            'email.required'    => 'Email wajib diisi.',
-            'email.email'       => 'Format email tidak valid.',
-            'password.required' => 'Kata sandi wajib diisi.',
-        ]);
+        $credentials = $request->validated();
 
         $remember = $request->boolean('remember');
 
@@ -186,29 +182,10 @@ class AuthController extends Controller
         ]);
     }
 
-    public function regis_proses(Request $request)
+    public function regis_proses(RegisterPelamarRequest $request)
     {
         try {
-            $valid = $request->validate([
-                'username'         => 'required|unique:users,username',
-                'email'            => 'required|email|unique:users,email',
-                'password'         => 'required|min:8',
-                'role'             => 'required',
-                'telepon_pelamar'  => ['required', 'regex:/^(?:628|08)[0-9]+$/'],
-                'agree_pelamar'    => 'accepted'
-            ], [
-                'username.required'        => 'Username wajib diisi.',
-                'username.unique'          => 'Username sudah digunakan.',
-                'email.required'           => 'Email wajib diisi.',
-                'email.email'              => 'Format email tidak valid.',
-                'email.unique'             => 'Email sudah terdaftar.',
-                'password.required'        => 'Password wajib diisi.',
-                'password.min'             => 'Password minimal 8 karakter.',
-                'role.required'            => 'Role wajib diisi.',
-                'telepon_pelamar.required' => 'Nomor telepon wajib diisi.',
-                'agree_pelamar.accepted'   => 'Anda harus menyetujui syarat dan ketentuan.',
-                'telepon_pelamar.regex'    => 'Nomor telepon harus diawali dengan 628, atau 08.'
-            ]);
+            $valid = $request->validated();
 
             $telepon = preg_replace('/[^0-9\+]/', '', $request->telepon_pelamar);
             $telepon = preg_replace('/^62/', '0', $telepon);
@@ -316,38 +293,10 @@ class AuthController extends Controller
         return $this->loginproses($request);
     }
 
-    public function regis_proses_perusahaan(Request $request)
+    public function regis_proses_perusahaan(RegisterPerusahaanRequest $request)
     {
         try {
-            if (!$request->has('nama_perusahaan') && $request->has('username')) {
-                $request->merge(['nama_perusahaan' => $request->username]);
-            }
-            if (!$request->has('username') && $request->has('nama_perusahaan')) {
-                $request->merge(['username' => \Illuminate\Support\Str::slug($request->nama_perusahaan) . '_' . rand(100, 999)]);
-            }
-
-            $valid = $request->validate([
-                'username'           => 'required|unique:users,username',
-                'email'              => 'required|email|unique:users,email',
-                'password'           => 'required|min:8',
-                'role'               => 'required',
-                'nama_perusahaan'    => 'required|string|max:255',
-                'telepon_perusahaan' => ['required', 'regex:/^(?:628|08)[0-9]+$/'],
-                'agree_perusahaan'   => 'accepted'
-            ], [
-                'username.required'           => 'Username wajib diisi.',
-                'username.unique'             => 'Username / Nama Perusahaan sudah digunakan.',
-                'email.required'              => 'Email wajib diisi.',
-                'email.email'                 => 'Format email tidak valid.',
-                'email.unique'                => 'Email sudah terdaftar.',
-                'password.required'           => 'Password wajib diisi.',
-                'password.min'                => 'Password minimal 8 karakter.',
-                'role.required'               => 'Role wajib diisi.',
-                'nama_perusahaan.required'    => 'Nama Perusahaan wajib diisi.',
-                'telepon_perusahaan.required' => 'Nomor telepon perusahaan wajib diisi.',
-                'agree_perusahaan.accepted'   => 'Anda harus menyetujui syarat dan ketentuan.',
-                'telepon_perusahaan.regex'    => 'Nomor telepon harus diawali dengan 628, atau 08.',
-            ]);
+            $valid = $request->validated();
 
             $telepon = preg_replace('/[^0-9\+]/', '', $request->telepon_perusahaan);
             $telepon = preg_replace('/^62/', '0', $telepon);

@@ -50,15 +50,9 @@ class AppServiceProvider extends ServiceProvider
             ]);
         });
 
-        // Default social links collection
+        // Social links collection from SiteSettingService
         View::composer('layouts.footer', function ($view) {
-            $socialLinks = collect([
-                (object)['nama' => 'instagram', 'link' => 'https://instagram.com/areakerjacom'],
-                (object)['nama' => 'linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
-                (object)['nama' => 'facebook', 'link' => 'https://facebook.com/areakerja'],
-                (object)['nama' => 'youtube', 'link' => 'https://youtube.com/@areakerja'],
-            ]);
-            $view->with('socialLinks', $socialLinks);
+            $view->with('socialLinks', \App\Services\SiteSettingService::getSocials());
         });
 
         // Top up data khusus perusahaan

@@ -3,7 +3,7 @@
     <!-- Hero Section -->
     <div class="mt-16">
         <section class="relative">
-            <img src="{{ asset('images/woi.jpg') }}"
+            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_talent_hunter', 'images/woi.jpg') }}"
                 alt="Header Image" class="w-full h-[600px] object-cover">
             <div class="absolute inset-0 bg-black bg-opacity-40"></div>
             <div class="absolute bottom-52 left-0 pl-6 text-left

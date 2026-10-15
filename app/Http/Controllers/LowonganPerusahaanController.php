@@ -8,9 +8,14 @@ use App\Models\Notifikasi;
 use App\Models\PaketLowongan;
 use App\Models\Perusahaan;
 use App\Models\User;
+use App\Services\CoinTransactionService;
+use App\Services\NotificationService;
+use App\Http\Requests\StoreLowonganRequest;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class LowonganPerusahaanController extends Controller
 {
@@ -133,25 +138,11 @@ class LowonganPerusahaanController extends Controller
         return view('perusahaan.lowongan-saya.tambah-lowongan', compact('pakets', 'categories', 'perusahaan', 'alamats'));
     }
 
-    public function store(Request $request)
+    public function store(StoreLowonganRequest $request)
     {
         $perusahaan = Auth::user()->perusahaan;
 
-        $valid = $request->validate([
-            'nama'             => 'required|string|max:255',
-            'alamat'           => 'required|string|max:255',
-            'jenis'            => 'required|string',
-            'kategori'         => 'required|string',
-            'label_gaji'       => 'nullable|string|max:100',
-            'benefit'          => 'required|string',
-            'gaji_awal'        => 'required|numeric|min:0',
-            'gaji_akhir'       => 'required|numeric|min:0',
-            'deskripsi'        => 'required|string',
-            'tanggung_jawab'   => 'required|string',
-            'syarat_pekerjaan' => 'required|string',
-            'batas_lamaran'    => 'required|date',
-            'paket_id'         => 'nullable|exists:paket_lowongans,id',
-        ]);
+        $valid = $request->validated();
 
         if (empty($valid['label_gaji'])) {
             $formatAwal = 'Rp ' . number_format($valid['gaji_awal'], 0, ',', '.');
@@ -337,33 +328,46 @@ class LowonganPerusahaanController extends Controller
             ->where('id', $request->lowongan_id)
             ->firstOrFail();
 
-        $perusahaan->decrement('koin_perusahaan', $biayaKoin);
+        try {
+            $pesanSukses = DB::transaction(function () use ($perusahaan, $paket, $lowongan, $biayaKoin, $user) {
+                // 1. Potong koin via CoinTransactionService
+                $coinService = app(CoinTransactionService::class);
+                $coinService->deduct(
+                    $perusahaan,
+                    $biayaKoin,
+                    'Pembelian Paket ' . $paket->nama,
+                    'Saldo Koin Perusahaan',
+                    'KOIN-' . now()->format('YmdHis') . '-' . $user->id,
+                    $perusahaan->nama_perusahaan
+                );
 
-        if ($lowongan->published_at && $lowongan->expired_at && $lowongan->expired_at > now()) {
-            $lowongan->update([
-                'paket_id'   => $paket->id,
-                'expired_at' => $lowongan->expired_at->addDays($paket->batas_listing),
+                // 2. Update status & expired_at lowongan
+                if ($lowongan->published_at && $lowongan->expired_at && $lowongan->expired_at > now()) {
+                    $lowongan->update([
+                        'paket_id'   => $paket->id,
+                        'expired_at' => $lowongan->expired_at->addDays($paket->batas_listing),
+                    ]);
+                    return 'Paket berhasil dibeli. Masa aktif lowongan berhasil diperpanjang ' . $paket->batas_listing . ' hari.';
+                } else {
+                    $lowongan->update([
+                        'paket_id'     => $paket->id,
+                        'published_at' => now(),
+                        'expired_at'   => now()->addDays($paket->batas_listing),
+                    ]);
+                    return 'Paket ' . $paket->nama . ' berhasil dibeli! Lowongan Anda kini telah AKTIF dan terbit selama ' . $paket->batas_listing . ' hari.';
+                }
+            });
+
+            return redirect()->route('lowongan.saya.perusahaan')->with('success', $pesanSukses);
+        } catch (\Throwable $e) {
+            Log::error("Gagal memproses pembelian paket lowongan: " . $e->getMessage(), [
+                'perusahaan_id' => $perusahaan->id,
+                'lowongan_id'   => $lowongan->id,
+                'paket_id'      => $paket->id,
             ]);
-            $pesanSukses = 'Paket berhasil dibeli. Masa aktif lowongan berhasil diperpanjang ' . $paket->batas_listing . ' hari.';
-        } else {
-            $lowongan->update([
-                'paket_id'     => $paket->id,
-                'published_at' => now(),
-                'expired_at'   => now()->addDays($paket->batas_listing),
-            ]);
-            $pesanSukses = 'Paket ' . $paket->nama . ' berhasil dibeli! Lowongan Anda kini telah AKTIF dan terbit selama ' . $paket->batas_listing . ' hari.';
+
+            return redirect()->route('paket.form')->with('error', 'Terjadi kesalahan sistem saat memproses pembelian paket.');
         }
-
-        CatatanKoin::create([
-            'user_id'      => $user->id,
-            'no_referensi' => 'KOIN-' . now()->format('YmdHis') . '-' . $user->id,
-            'pesanan'      => 'Pembelian Paket ' . $paket->nama,
-            'dari'         => $perusahaan->nama_perusahaan,
-            'sumber_dana'  => 'Saldo Koin Perusahaan',
-            'total'        => '-' . $biayaKoin,
-        ]);
-
-        return redirect()->route('lowongan.saya.perusahaan')->with('success', $pesanSukses);
     }
 
     public function toggleRekomendasi($id)
@@ -387,21 +391,9 @@ class LowonganPerusahaanController extends Controller
         ]);
     }
 
-    public function storeSuper(Request $request, $id)
+    public function storeSuper(StoreLowonganRequest $request, $id)
     {
-        $valid = $request->validate([
-            "nama"             => "required",
-            "alamat"           => "required",
-            "jenis"            => "required",
-            "gaji_awal"        => "required",
-            "gaji_akhir"       => "required",
-            "deskripsi"        => "required",
-            "syarat_pekerjaan" => "required",
-            "batas_lamaran"    => "required",
-            'kategori'         => 'nullable',
-            'benefit'          => 'nullable',
-            'tanggung_jawab'   => 'nullable',
-        ]);
+        $valid = $request->validated();
 
         if (Auth::user()->role !== 'super_admin') {
             abort(403, 'Hanya Super Admin yang dapat menambahkan lowongan.');
@@ -413,14 +405,12 @@ class LowonganPerusahaanController extends Controller
 
         LowonganPerusahaan::create($valid);
 
-        Notifikasi::create([
-            'user_id'       => Auth::id(),
-            'perusahaan_id' => $perusahaan->id,
-            'judul'         => 'Lowongan Baru Ditambahkan',
-            'pesan'         => 'Kamu berhasil menambahkan lowongan untuk ' . $perusahaan->nama_perusahaan,
-            'is_read'       => false,
-            'expired_at'    => now()->addDays(7),
-        ]);
+        NotificationService::send(
+            Auth::id(),
+            'Lowongan Baru Ditambahkan',
+            'Kamu berhasil menambahkan lowongan untuk ' . $perusahaan->nama_perusahaan,
+            ['perusahaan_id' => $perusahaan->id]
+        );
 
         return redirect()
             ->route('superadmin.perusahaan.detail', $perusahaan->id)
@@ -492,24 +482,37 @@ class LowonganPerusahaanController extends Controller
             ->whereNotNull('published_at')
             ->findOrFail($request->lowongan_id);
 
-        $perusahaan->decrement('koin_perusahaan', $hargaBoost);
+        try {
+            DB::transaction(function () use ($perusahaan, $lowongan, $hargaBoost, $user) {
+                $coinService = app(CoinTransactionService::class);
+                $coinService->deduct(
+                    $perusahaan,
+                    $hargaBoost,
+                    'Boost Lowongan: ' . $lowongan->nama,
+                    'boost-lowongan',
+                    'BOOST-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
+                    'Koin Perusahaan'
+                );
 
-        $lowongan->update([
-            'boosted_until' => now()
-        ]);
+                $lowongan->update([
+                    'boosted_until' => now()
+                ]);
+            });
 
-        CatatanKoin::create([
-            'user_id'      => $user->id,
-            'no_referensi' => 'BOOST-' . now()->format('Ymd') . '-' . strtoupper(Str::random(6)),
-            'pesanan'      => 'Boost Lowongan: ' . $lowongan->nama,
-            'dari'         => 'Koin Perusahaan',
-            'sumber_dana'  => 'boost-lowongan',
-            'total'        => -$hargaBoost,
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Lowongan berhasil di-boost.',
+            ]);
+        } catch (\Throwable $e) {
+            Log::error("Gagal melakukan boost lowongan: " . $e->getMessage(), [
+                'perusahaan_id' => $perusahaan->id,
+                'lowongan_id'   => $lowongan->id,
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Lowongan berhasil di-boost.',
-        ]);
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan sistem saat memproses booster lowongan.',
+            ], 500);
+        }
     }
 }

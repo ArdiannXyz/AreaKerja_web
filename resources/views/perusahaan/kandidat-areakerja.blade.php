@@ -1,8 +1,8 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <section class="relative">
-        <img src="{{ asset('images/ntap.png') }}"
+        <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_daftar_kandidat', 'images/ntap.png') }}"
             alt="Header Image" class="w-full h-[600px] object-cover">
 
 

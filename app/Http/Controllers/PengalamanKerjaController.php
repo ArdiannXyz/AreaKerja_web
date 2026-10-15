@@ -146,7 +146,6 @@ class PengalamanKerjaController extends Controller
 
     public function destroySuper(PengalamanKerja $kerja)
     {
-        $kerja->delete();
-        return redirect()->back()->with('success', 'Pengalaman Kerja berhasil dihapus');
+        return $this->destroy($kerja);
     }
 }

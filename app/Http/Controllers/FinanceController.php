@@ -8,10 +8,13 @@ use App\Models\CatatanKoin;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\Perusahaan;
+use App\Services\CoinTransactionService;
+use App\Services\WilayahService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
@@ -41,14 +44,8 @@ class FinanceController extends Controller
             $provinsis = collect();
         }
 
-        if ($provinsis->isEmpty() && file_exists(database_path('data/provinces.json'))) {
-            $json = json_decode(file_get_contents(database_path('data/provinces.json')), true);
-            $provinsis = collect($json)->map(function ($item) {
-                return (object)[
-                    'id'   => (string)$item['id'],
-                    'nama' => ucwords(strtolower($item['name'])),
-                ];
-            });
+        if ($provinsis->isEmpty()) {
+            $provinsis = WilayahService::getProvinces();
         }
 
         return view('finance.profile.edit-profile', [
@@ -56,52 +53,19 @@ class FinanceController extends Controller
         ]);
     }
 
-    private function loadJsonFileFinance($filepath)
-    {
-        if (!file_exists($filepath)) return [];
-        $content = file_get_contents($filepath);
-        $content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
-        $content = trim($content);
-        $data = json_decode($content, true);
-        if ($data === null && json_last_error() !== JSON_ERROR_NONE) {
-            $content = iconv('UTF-8', 'UTF-8//IGNORE', $content);
-            $data = json_decode($content, true);
-        }
-        return $data ?? [];
-    }
-
     public function getKotaFinance($provinsi_id)
     {
         $input = trim(urldecode((string)$provinsi_id));
         if (empty($input)) return response()->json([]);
 
-        $regencies = $this->loadJsonFileFinance(database_path('data/regencies.json'));
-        $provinces = $this->loadJsonFileFinance(database_path('data/provinces.json'));
-        if (empty($regencies)) return response()->json([]);
+        $province = WilayahService::findProvince($input);
+        $targetProvId = $province ? $province->id : $input;
 
-        $targetProvId = null;
-        foreach ($provinces as $p) {
-            $pId = trim((string)($p['id'] ?? ''));
-            $pName = trim((string)($p['name'] ?? ''));
-            if ($pId === $input || (is_numeric($input) && (int)$pId === (int)$input)
-                || strcasecmp($pName, $input) === 0
-                || str_contains(strtolower($pName), strtolower($input))) {
-                $targetProvId = $pId;
-                break;
-            }
-        }
-        if (!$targetProvId) $targetProvId = $input;
-
-        $kotas = collect($regencies)
-            ->filter(fn($item) =>
-                trim((string)($item['province_id'] ?? '')) === (string)$targetProvId
-                || (is_numeric($targetProvId) && (int)trim((string)($item['province_id'] ?? '')) === (int)$targetProvId)
-            )->values()
-            ->map(fn($item) => [
-                'id'          => (string)$item['id'],
-                'provinsi_id' => (string)$item['province_id'],
-                'nama'        => ucwords(strtolower($item['name'])),
-            ]);
+        $kotas = WilayahService::getRegencies($targetProvId)->map(fn($item) => [
+            'id'          => (string)$item->id,
+            'provinsi_id' => (string)$item->province_id,
+            'nama'        => $item->nama,
+        ]);
 
         return response()->json($kotas);
     }
@@ -111,32 +75,14 @@ class FinanceController extends Controller
         $input = trim(urldecode((string)$kota_id));
         if (empty($input)) return response()->json([]);
 
-        $districts = $this->loadJsonFileFinance(database_path('data/districts.json'));
-        $regencies = $this->loadJsonFileFinance(database_path('data/regencies.json'));
-        if (empty($districts)) return response()->json([]);
+        $regency = WilayahService::findRegency($input);
+        $targetKotaId = $regency ? $regency->id : $input;
 
-        $targetKotaId = null;
-        foreach ($regencies as $r) {
-            $rId = trim((string)($r['id'] ?? ''));
-            $rName = trim((string)($r['name'] ?? ''));
-            if ($rId === $input || (is_numeric($input) && (int)$rId === (int)$input)
-                || strcasecmp($rName, $input) === 0) {
-                $targetKotaId = $rId;
-                break;
-            }
-        }
-        if (!$targetKotaId) $targetKotaId = $input;
-
-        $kecamatans = collect($districts)
-            ->filter(fn($item) =>
-                trim((string)($item['regency_id'] ?? '')) === (string)$targetKotaId
-                || (is_numeric($targetKotaId) && (int)trim((string)($item['regency_id'] ?? '')) === (int)$targetKotaId)
-            )->values()
-            ->map(fn($item) => [
-                'id'      => (string)$item['id'],
-                'kota_id' => (string)$item['regency_id'],
-                'nama'    => ucwords(strtolower($item['name'])),
-            ]);
+        $kecamatans = WilayahService::getDistricts($targetKotaId)->map(fn($item) => [
+            'id'      => (string)$item->id,
+            'kota_id' => (string)$item->regency_id,
+            'nama'    => $item->nama,
+        ]);
 
         return response()->json($kecamatans);
     }
@@ -291,85 +237,96 @@ class FinanceController extends Controller
         $isPendaftaranKandidat = str_contains($pesananLower, 'kandidat') || ($pelamar !== null && $perusahaan === null);
         $isTopUpKoin = str_contains($pesananLower, 'koin') || str_contains($pesananLower, 'top up') || ($perusahaan !== null);
 
-        if ($request->action == 'terima' && $transaksi->status !== 'diterima') {
-            $transaksi->status = 'diterima';
-            $transaksi->save();
+        try {
+            DB::transaction(function () use ($transaksi, $request, $perusahaan, $pelamar, $paket, $isTopUpKoin, $isPendaftaranKandidat) {
+                if ($request->action == 'terima' && $transaksi->status !== 'diterima') {
+                    $transaksi->status = 'diterima';
+                    $transaksi->save();
 
-            // 1. Transaksi TOP UP KOIN PERUSAHAAN
-            if ($isTopUpKoin && $perusahaan) {
-                $jumlahKoin = (int)($paket->jumlah_koin ?? 100);
-                if ($jumlahKoin > 0) {
-                    $perusahaan->koin_perusahaan += $jumlahKoin;
-                    $perusahaan->save();
+                    // 1. Transaksi TOP UP KOIN PERUSAHAAN
+                    if ($isTopUpKoin && $perusahaan) {
+                        $jumlahKoin = (int)($paket->jumlah_koin ?? 100);
+                        if ($jumlahKoin > 0) {
+                            $coinService = app(CoinTransactionService::class);
+                            $coinService->credit(
+                                $perusahaan,
+                                $jumlahKoin,
+                                'Top Up ' . $jumlahKoin . ' Koin',
+                                'Top Up Cash (' . ($transaksi->sumberDana ?? 'Transfer Bank') . ')',
+                                $transaksi->no_referensi,
+                                $perusahaan->nama_perusahaan ?? $transaksi->dari
+                            );
+                        }
+                    }
 
-                    // Catat ke catatan_koins jika belum ada
-                    try {
-                        CatatanKoin::firstOrCreate(
-                            ['no_referensi' => $transaksi->no_referensi],
-                            [
+                    // 2. Transaksi PENDAFTARAN KANDIDAT PELAMAR
+                    if ($isPendaftaranKandidat && $pelamar) {
+                        $pelamar->kategori = 'calon kandidat';
+                        $pelamar->save();
+                    }
+
+                    // Kirim notifikasi sukses
+                    Notifikasi::create([
+                        'user_id'       => $transaksi->user_id,
+                        'perusahaan_id' => $perusahaan?->id,
+                        'judul'         => 'Pembayaran Diverifikasi',
+                        'pesan'         => 'Pembayaran untuk pesanan "' . $transaksi->pesanan . '" berhasil diverifikasi dan diterima.',
+                        'is_read'       => 0,
+                        'expired_at'    => now()->addDays(7),
+                    ]);
+
+                } elseif ($request->action == 'tolak') {
+                    $prevStatus = $transaksi->status;
+                    $transaksi->status = 'ditolak';
+                    $transaksi->save();
+
+                    // Rollback jika status sebelumnya sudah diterima
+                    if ($prevStatus === 'diterima') {
+                        if ($isTopUpKoin && $perusahaan) {
+                            $jumlahKoin = (int)($paket->jumlah_koin ?? 100);
+                            $perusahaan->koin_perusahaan = max(0, $perusahaan->koin_perusahaan - $jumlahKoin);
+                            $perusahaan->save();
+
+                            CatatanKoin::create([
                                 'user_id'      => $transaksi->user_id,
-                                'pesanan'      => 'Top Up ' . $jumlahKoin . ' Koin',
-                                'dari'         => $perusahaan->nama_perusahaan ?? $transaksi->dari,
-                                'sumber_dana'  => 'Top Up Cash (' . ($transaksi->sumberDana ?? 'Transfer Bank') . ')',
-                                'total'        => $jumlahKoin,
-                            ]
-                        );
-                    } catch (\Throwable $e) {}
+                                'no_referensi' => 'REV-' . $transaksi->no_referensi,
+                                'pesanan'      => 'Reversal Top Up (Pembayaran Ditolak)',
+                                'dari'         => 'Finance AreaKerja',
+                                'sumber_dana'  => 'Koreksi Saldo',
+                                'total'        => '-' . $jumlahKoin,
+                            ]);
+                        }
+
+                        if ($isPendaftaranKandidat && $pelamar) {
+                            $pelamar->kategori = 'pelamar';
+                            $pelamar->save();
+                        }
+                    }
+
+                    // Kirim notifikasi penolakan
+                    Notifikasi::create([
+                        'user_id'       => $transaksi->user_id,
+                        'perusahaan_id' => $perusahaan?->id,
+                        'judul'         => 'Pembayaran Ditolak',
+                        'pesan'         => 'Pembayaran untuk pesanan "' . $transaksi->pesanan . '" ditolak. Silakan hubungi tim Finance atau upload bukti transfer yang valid.',
+                        'is_read'       => 0,
+                        'expired_at'    => now()->addDays(7),
+                    ]);
                 }
-            }
+            });
 
-            // 2. Transaksi PENDAFTARAN KANDIDAT PELAMAR
-            if ($isPendaftaranKandidat && $pelamar) {
-                $pelamar->kategori = 'calon kandidat';
-                $pelamar->save();
-            }
+            return redirect()->route('finance.catatan')
+                ->with('success', 'Transaksi berhasil diverifikasi: ' . $transaksi->status);
+        } catch (\Throwable $e) {
+            Log::error("Gagal memproses verifikasi transaksi cash di Finance: " . $e->getMessage(), [
+                'transaksi_id' => $id,
+                'action'       => $request->action,
+                'trace'        => $e->getTraceAsString(),
+            ]);
 
-            // Kirim notifikasi sukses
-            try {
-                Notifikasi::create([
-                    'user_id'       => $transaksi->user_id,
-                    'perusahaan_id' => $perusahaan?->id,
-                    'judul'         => 'Pembayaran Diverifikasi',
-                    'pesan'         => 'Pembayaran untuk pesanan "' . $transaksi->pesanan . '" berhasil diverifikasi dan diterima.',
-                    'is_read'       => 0,
-                    'expired_at'    => now()->addDays(7),
-                ]);
-            } catch (\Throwable $e) {}
-
-        } elseif ($request->action == 'tolak') {
-            $prevStatus = $transaksi->status;
-            $transaksi->status = 'ditolak';
-            $transaksi->save();
-
-            // Rollback jika status sebelumnya sudah diterima
-            if ($prevStatus === 'diterima') {
-                if ($isTopUpKoin && $perusahaan) {
-                    $jumlahKoin = (int)($paket->jumlah_koin ?? 100);
-                    $perusahaan->koin_perusahaan = max(0, $perusahaan->koin_perusahaan - $jumlahKoin);
-                    $perusahaan->save();
-                }
-
-                if ($isPendaftaranKandidat && $pelamar) {
-                    $pelamar->kategori = 'pelamar';
-                    $pelamar->save();
-                }
-            }
-
-            // Kirim notifikasi penolakan
-            try {
-                Notifikasi::create([
-                    'user_id'       => $transaksi->user_id,
-                    'perusahaan_id' => $perusahaan?->id,
-                    'judul'         => 'Pembayaran Ditolak',
-                    'pesan'         => 'Pembayaran untuk pesanan "' . $transaksi->pesanan . '" ditolak. Silakan hubungi tim Finance atau upload bukti transfer yang valid.',
-                    'is_read'       => 0,
-                    'expired_at'    => now()->addDays(7),
-                ]);
-            } catch (\Throwable $e) {}
+            return redirect()->route('finance.catatan')
+                ->with('error', 'Terjadi kesalahan sistem saat memproses verifikasi transaksi.');
         }
-
-        return redirect()->route('finance.catatan')
-            ->with('success', 'Transaksi berhasil diverifikasi: ' . $transaksi->status);
     }
 
 

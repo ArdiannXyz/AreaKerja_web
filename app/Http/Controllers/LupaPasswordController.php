@@ -15,27 +15,8 @@ use Illuminate\Support\Str;
 
 class LupaPasswordController extends Controller
 {
-    private function ensureTableExists()
-    {
-        if (!Schema::hasTable('password_verifications')) {
-            try {
-                Schema::create('password_verifications', function ($table) {
-                    $table->id();
-                    $table->unsignedBigInteger('user_id')->nullable()->index();
-                    $table->string('email')->index();
-                    $table->string('otp', 10);
-                    $table->string('token', 64)->unique();
-                    $table->timestamps();
-                });
-            } catch (\Throwable $e) {
-                Log::error('Gagal create password_verifications: ' . $e->getMessage());
-            }
-        }
-    }
-
     public function resendOtp(Request $request)
     {
-        $this->ensureTableExists();
 
         $request->validate([
             'email' => 'required|email'
@@ -77,14 +58,12 @@ class LupaPasswordController extends Controller
 
     public function showEmailForm_pelamar()
     {
-        $this->ensureTableExists();
         return view('non-user.auth.verifikasi');
     }
 
     //kirim otp ke email
     public function sendOtp(Request $request)
     {
-        $this->ensureTableExists();
 
         $request->validate([
             'email' => 'required|email',
