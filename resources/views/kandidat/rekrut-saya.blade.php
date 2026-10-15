@@ -1,8 +1,8 @@
-﻿@extends('layouts.index')
+@extends('layouts.index')
 @section('content')
     <!-- Hero Section -->
     <div class="relative">
-        <img src="{{ asset('images/ter.jpg') }}"
+        <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_rekrut_pelamar', 'images/ter.jpg') }}"
             alt="Header Image" class="w-screen h-[600px] object-cover">
         <div class="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center px-10">
             <h1 class="text-white text-4xl font-bold">Rekrut Saya</h1>

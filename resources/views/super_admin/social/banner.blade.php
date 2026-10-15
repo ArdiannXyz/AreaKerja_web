@@ -29,15 +29,19 @@
             </div>
         @endif
 
+        @if (session('error'))
+            <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl flex items-center gap-3 text-sm shadow-sm animate-fade-in">
+                <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+
         @if ($errors->any())
-            <div class="mb-6 p-4 bg-rose-50 border border-rose-200 text-rose-800 rounded-xl flex flex-col gap-1 text-sm shadow-sm animate-fade-in">
-                <div class="flex items-center gap-2 font-bold text-rose-700">
-                    <svg class="w-5 h-5 text-rose-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>Terjadi kesalahan pengunggahan:</span>
-                </div>
-                <ul class="list-disc list-inside text-xs pl-7 text-rose-600 mt-1">
+            <div class="mb-6 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-sm shadow-sm animate-fade-in">
+                <p class="font-bold mb-1">Perhatian:</p>
+                <ul class="list-disc list-inside space-y-0.5 text-xs">
                     @foreach ($errors->all() as $err)
                         <li>{{ $err }}</li>
                     @endforeach
@@ -136,31 +140,45 @@
                 </div>
 
                 <div class="p-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         @foreach ($headers as $header)
                             @php
-                                $title = ucwords(str_replace(['header_', '_'], ['', ' '], $header->nama));
-                                $current = !empty($header->link)
-                                    ? asset('storage/' . $header->link)
-                                    : asset($header->default ?? 'images/logoarea.png');
+                                $title = $header->title ?? ucwords(str_replace(['header_', '_'], ['', ' '], $header->nama));
+                                $deskripsi = $header->deskripsi ?? 'Banner hero halaman';
+                                $current = \App\Services\SiteSettingService::getHeaderUrl($header->nama, $header->default ?? 'images/logoarea.png');
                             @endphp
 
                             <div class="bg-gray-50/70 rounded-2xl border border-gray-200 overflow-hidden flex flex-col justify-between hover:border-gray-300 transition-all duration-200">
                                 <form action="{{ route('superadmin.header.update', $header->nama) }}" 
                                     method="POST"
                                     enctype="multipart/form-data" 
+                                    onsubmit="return handleHeaderSubmit(event, this, '{{ addslashes($title) }}')"
                                     class="p-5 flex flex-col h-full">
                                     @csrf
                                     @method('PUT')
 
                                     <div class="flex items-center justify-between mb-3">
-                                        <span class="text-xs font-bold uppercase tracking-wider text-gray-500 bg-white px-2.5 py-1 rounded-lg border border-gray-100 shadow-2xs">
-                                            Header Banner
-                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-bold uppercase tracking-wider text-gray-500 bg-white px-2.5 py-1 rounded-lg border border-gray-100 shadow-2xs">
+                                                Header Banner
+                                            </span>
+                                            @if (!empty($header->link))
+                                                <span class="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                                    Kustom Aktif
+                                                </span>
+                                            @else
+                                                <span class="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">
+                                                    Default
+                                                </span>
+                                            @endif
+                                        </div>
                                         <span class="text-xs text-gray-400">1200 x 400</span>
                                     </div>
 
-                                    <h3 class="text-base font-bold text-gray-900 mb-3">{{ $title }}</h3>
+                                    <div class="mb-3">
+                                        <h3 class="text-base font-bold text-gray-900 leading-snug">{{ $title }}</h3>
+                                        <p class="text-xs text-gray-500 mt-0.5 line-clamp-1" title="{{ $deskripsi }}">{{ $deskripsi }}</p>
+                                    </div>
 
                                     <!-- Image Preview Box -->
                                     <div class="relative w-full h-44 rounded-xl overflow-hidden bg-gray-200 border border-gray-200 mb-4 group shadow-inner">
@@ -197,15 +215,37 @@
                                             </label>
                                         </div>
 
-                                        <button type="submit"
-                                            class="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            <span>Simpan Header</span>
-                                        </button>
+                                        <div class="flex items-center gap-2">
+                                            <button type="submit"
+                                                class="flex-1 inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                                </svg>
+                                                <span>Simpan Header</span>
+                                            </button>
+                                            @if (!empty($header->link))
+                                                <button type="button"
+                                                    onclick="confirmResetHeader('{{ $header->id }}', '{{ addslashes($title) }}')"
+                                                    class="inline-flex items-center justify-center px-3 py-2.5 rounded-xl border border-red-200 bg-red-50 hover:bg-red-100 text-red-600 transition"
+                                                    title="Kembalikan ke gambar default">
+                                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            @endif
+                                        </div>
                                     </div>
                                 </form>
+
+                                @if (!empty($header->link))
+                                    <form id="reset-header-{{ $header->id }}" 
+                                        action="{{ route('superadmin.header.destroy', $header->nama) }}" 
+                                        method="POST" 
+                                        class="hidden">
+                                        @csrf
+                                        @method('DELETE')
+                                    </form>
+                                @endif
                             </div>
                         @endforeach
                     </div>
@@ -224,6 +264,52 @@
             const filenameEl = document.getElementById(filenameId);
 
             if (file) {
+                // Validasi tipe berkas
+                if (!file.type.startsWith('image/')) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Format Tidak Sesuai',
+                            html: 'Harap pilih berkas berupa gambar dengan format <b>JPG, JPEG, PNG, WEBP, atau GIF</b>.',
+                            confirmButtonText: 'Tutup',
+                            confirmButtonColor: '#00509d',
+                            customClass: {
+                                popup: '!rounded-2xl !p-6 shadow-2xl border border-slate-100',
+                                title: '!text-base font-bold text-slate-800 !pt-1',
+                                htmlContainer: '!text-xs text-slate-600 !mt-2 leading-relaxed',
+                                confirmButton: '!px-5 !py-2.5 !rounded-xl !text-xs !font-semibold transition'
+                            }
+                        });
+                    } else {
+                        alert('Format berkas harus berupa gambar.');
+                    }
+                    input.value = '';
+                    return;
+                }
+
+                // Validasi ukuran berkas (maksimal 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    if (typeof Swal !== 'undefined') {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Ukuran Terlalu Besar',
+                            html: 'Ukuran gambar maksimal adalah <b>5MB</b>. Silakan gunakan berkas dengan resolusi lebih optimal.',
+                            confirmButtonText: 'Mengerti',
+                            confirmButtonColor: '#00509d',
+                            customClass: {
+                                popup: '!rounded-2xl !p-6 shadow-2xl border border-slate-100',
+                                title: '!text-base font-bold text-slate-800 !pt-1',
+                                htmlContainer: '!text-xs text-slate-600 !mt-2 leading-relaxed',
+                                confirmButton: '!px-5 !py-2.5 !rounded-xl !text-xs !font-semibold transition'
+                            }
+                        });
+                    } else {
+                        alert('Ukuran berkas melebihi 5MB.');
+                    }
+                    input.value = '';
+                    return;
+                }
+
                 if (filenameEl) {
                     filenameEl.textContent = file.name;
                     filenameEl.classList.remove('text-gray-500');
@@ -234,6 +320,62 @@
                     if (preview) preview.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
+            }
+        }
+
+        function handleHeaderSubmit(event, form, title) {
+            const fileInput = form.querySelector('input[type="file"][name="image"]');
+            if (!fileInput || !fileInput.files || fileInput.files.length === 0) {
+                event.preventDefault();
+                if (typeof Swal !== 'undefined') {
+                    Swal.fire({
+                        icon: 'info',
+                        title: 'Pilih Berkas Dulu',
+                        html: `Silakan klik tombol <b>Pilih File</b> untuk memilih gambar banner <b>${title}</b> sebelum menekan Simpan.`,
+                        confirmButtonText: 'Mengerti',
+                        confirmButtonColor: '#00509d',
+                        customClass: {
+                            popup: '!rounded-2xl !p-6 shadow-2xl border border-slate-100',
+                            title: '!text-base font-bold text-slate-800 !pt-1',
+                            htmlContainer: '!text-xs text-slate-600 !mt-2 leading-relaxed',
+                            confirmButton: '!px-5 !py-2.5 !rounded-xl !text-xs !font-semibold transition'
+                        }
+                    });
+                }
+                return false;
+            }
+        }
+
+        function confirmResetHeader(id, title) {
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    title: 'Kembalikan ke Default?',
+                    html: `Apakah Anda yakin ingin mengembalikan banner <b>${title}</b> ke gambar bawaan (*default*)? Banner kustom saat ini akan dihapus.`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Ya, Kembalikan',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#64748b',
+                    reverseButtons: true,
+                    customClass: {
+                        popup: '!rounded-2xl !p-6 shadow-2xl border border-slate-100',
+                        title: '!text-base font-bold text-slate-800 !pt-1',
+                        htmlContainer: '!text-xs text-slate-600 !mt-2 leading-relaxed',
+                        confirmButton: '!px-4 !py-2.5 !rounded-xl !text-xs !font-semibold transition',
+                        cancelButton: '!px-4 !py-2.5 !rounded-xl !text-xs !font-semibold transition'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        const form = document.getElementById('reset-header-' + id);
+                        if (form) form.submit();
+                    }
+                });
+            } else {
+                if (confirm(`Kembalikan header ${title} ke gambar default?`)) {
+                    const form = document.getElementById('reset-header-' + id);
+                    if (form) form.submit();
+                }
             }
         }
     </script>

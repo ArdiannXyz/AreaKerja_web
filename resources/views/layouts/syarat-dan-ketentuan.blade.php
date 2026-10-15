@@ -2,7 +2,7 @@
 @section('content')
     <!-- Hero Section -->
     <section class="relative pt-20 w-full bg-slate-900">
-        <img src="{{ url('/images/syarat-dan-ketentuan-banner.png') }}" alt="Syarat dan Ketentuan" class="w-full h-auto object-cover block">
+        <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_syarat_ketentuan', 'images/syarat-ketentuan.png') }}" alt="Syarat dan Ketentuan" class="w-full h-auto object-cover block">
     </section>
 
     <div class="bg-white flex justify-center py-6 sm:py-10">

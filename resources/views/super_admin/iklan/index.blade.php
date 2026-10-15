@@ -4,23 +4,28 @@
 
         <!-- HEADER TOP BAR -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
-            <div class="w-full sm:w-auto flex items-center justify-between">
-                <div>
-                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
-                        <i class="ph ph-megaphone text-[#00509d] text-2xl"></i> Moderasi Iklan Beranda
-                    </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Review pengajuan banner iklan perusahaan, verifikasi kelayakan konten, dan kelola penayangan</p>
+            <!-- Kiri: Judul -->
+            <div class="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-4">
+                <div class="flex items-center gap-3">
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
+                            <i class="ph ph-megaphone text-[#00509d] text-2xl"></i> Moderasi Iklan Beranda
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Review pengajuan banner iklan perusahaan, verifikasi kelayakan konten, dan kelola penayangan</p>
+                    </div>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')
                 </div>
             </div>
 
+            <!-- Kanan: Notif + Avatar saja -->
             <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>
         </header>
+
 
         @include('super_admin.notif.modal_notif')
         @include('super_admin.notif.modal_semua')
@@ -41,11 +46,12 @@
         @endif
 
         <!-- FILTER TABS & SEARCH TOOLBAR -->
-        <div class="bg-white rounded-3xl p-5 border border-slate-200/80 shadow-xs mb-6 space-y-4">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                <!-- Status Tabs -->
+        <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-4 mb-6">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+
+                <!-- Status Filter Tabs -->
                 <div class="flex flex-wrap items-center gap-2">
-                    <a href="{{ route('superadmin.iklan.index', ['status' => 'menunggu']) }}"
+                    <a href="{{ route('superadmin.iklan.index', array_filter(['status' => 'menunggu', 'q' => $search])) }}"
                         class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'menunggu' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Menunggu Review</span>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'menunggu' ? 'bg-white/20 text-white' : 'bg-amber-100 text-amber-800' }}">
@@ -53,7 +59,7 @@
                         </span>
                     </a>
 
-                    <a href="{{ route('superadmin.iklan.index', ['status' => 'aktif']) }}"
+                    <a href="{{ route('superadmin.iklan.index', array_filter(['status' => 'aktif', 'q' => $search])) }}"
                         class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'aktif' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Sedang Tayang</span>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'aktif' ? 'bg-white/20 text-white' : 'bg-emerald-100 text-emerald-800' }}">
@@ -61,7 +67,7 @@
                         </span>
                     </a>
 
-                    <a href="{{ route('superadmin.iklan.index', ['status' => 'ditolak']) }}"
+                    <a href="{{ route('superadmin.iklan.index', array_filter(['status' => 'ditolak', 'q' => $search])) }}"
                         class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'ditolak' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Ditolak</span>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'ditolak' ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-800' }}">
@@ -69,7 +75,7 @@
                         </span>
                     </a>
 
-                    <a href="{{ route('superadmin.iklan.index', ['status' => 'selesai']) }}"
+                    <a href="{{ route('superadmin.iklan.index', array_filter(['status' => 'selesai', 'q' => $search])) }}"
                         class="inline-flex items-center gap-2 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'selesai' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Selesai / Kedaluwarsa</span>
                         <span class="px-2 py-0.5 rounded-full text-[10px] font-extrabold {{ $statusFilter === 'selesai' ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-700' }}">
@@ -77,110 +83,138 @@
                         </span>
                     </a>
 
-                    <a href="{{ route('superadmin.iklan.index', ['status' => 'all']) }}"
+                    <a href="{{ route('superadmin.iklan.index', array_filter(['status' => 'all', 'q' => $search])) }}"
                         class="inline-flex items-center gap-1.5 h-10 px-3.5 rounded-xl text-xs font-bold transition shadow-2xs {{ $statusFilter === 'all' ? 'bg-[#00509d] text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200' }}">
                         <span>Semua ({{ $countSemua }})</span>
                     </a>
                 </div>
 
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
-                    <!-- Tombol Upload Banner (Gratis) -->
-                    <a href="{{ route('superadmin.iklan.create') }}"
-                        class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs font-bold bg-[#00509d] hover:bg-blue-700 text-white shadow-2xs transition shrink-0 active:scale-95">
-                        <i class="ph-bold ph-plus-circle text-base"></i>
-                        <span>Upload Banner (Gratis)</span>
-                    </a>
+                <!-- Search + Tombol Pasang (dikelompokkan berdampingan) -->
+                <div class="flex items-center gap-2.5 w-full lg:w-auto">
 
                     <!-- Search with Smart Recommendations -->
-                    <div class="relative w-full sm:w-72 lg:w-80" x-data="{
+                    <div class="relative flex-1 min-w-0 sm:w-72 sm:flex-initial" x-data="{
                         open: false,
                         query: '{{ $search ?? '' }}',
-                    recommendations: [
-                        { label: 'PT', category: 'Perusahaan', icon: 'ph-buildings' },
-                        { label: 'CV', category: 'Perusahaan', icon: 'ph-buildings' },
-                        { label: 'Teknologi', category: 'Industri', icon: 'ph-laptop' },
-                        { label: 'Lowongan', category: 'Topik', icon: 'ph-briefcase' },
-                        { label: 'Rekrutmen', category: 'Topik', icon: 'ph-users' },
-                        { label: 'Promo', category: 'Topik', icon: 'ph-tag' },
-                        { label: 'Hiring', category: 'Topik', icon: 'ph-megaphone' },
-                        { label: 'Banner', category: 'Media', icon: 'ph-image' },
-                        { label: 'Official', category: 'Perusahaan', icon: 'ph-seal-check' },
-                        { label: 'Karir', category: 'Topik', icon: 'ph-chart-line-up' }
-                    ],
-                    get filtered() {
-                        if (!this.query.trim()) return this.recommendations.slice(0, 5);
-                        return this.recommendations.filter(r =>
-                            r.label.toLowerCase().includes(this.query.toLowerCase()) ||
-                            r.category.toLowerCase().includes(this.query.toLowerCase())
-                        );
-                    },
-                    select(val) {
-                        this.query = val;
-                        this.open = false;
-                        $nextTick(() => { $refs.superIklanSearchForm.submit(); });
-                    }
-                }" @click.outside="open = false">
+                        recommendations: [
+                            { label: 'PT', category: 'Perusahaan', icon: 'ph-buildings' },
+                            { label: 'CV', category: 'Perusahaan', icon: 'ph-buildings' },
+                            { label: 'Official', category: 'AreaKerja', icon: 'ph-seal-check' },
+                            { label: 'AreaKerja', category: 'AreaKerja', icon: 'ph-seal-check' },
+                            { label: 'Menunggu', category: 'Status', icon: 'ph-clock' },
+                            { label: 'Aktif', category: 'Status', icon: 'ph-check-circle' },
+                            { label: 'Ditolak', category: 'Status', icon: 'ph-x-circle' },
+                            { label: 'Selesai', category: 'Status', icon: 'ph-flag-checkered' },
+                            { label: 'Premium', category: 'Paket', icon: 'ph-star' },
+                            { label: 'Beranda', category: 'Paket', icon: 'ph-house' },
+                            { label: 'Rekrutmen', category: 'Topik', icon: 'ph-users' },
+                            { label: 'Promo', category: 'Topik', icon: 'ph-tag' },
+                            { label: 'Hiring', category: 'Topik', icon: 'ph-megaphone' },
+                        ],
+                        get filtered() {
+                            if (!this.query.trim()) return this.recommendations.slice(0, 5);
+                            return this.recommendations.filter(r =>
+                                r.label.toLowerCase().includes(this.query.toLowerCase()) ||
+                                r.category.toLowerCase().includes(this.query.toLowerCase())
+                            );
+                        },
+                        select(val) {
+                            this.query = val;
+                            this.open = false;
+                            $nextTick(() => { $refs.superIklanSearchForm.submit(); });
+                        }
+                    }" @click.outside="open = false">
 
-                    <form x-ref="superIklanSearchForm" action="{{ route('superadmin.iklan.index') }}" method="GET" autocomplete="off" class="flex items-center w-full">
-                        <input type="hidden" name="status" value="{{ $statusFilter }}">
-                        <div class="flex items-center w-full h-10 bg-slate-50 border border-slate-200 rounded-xl overflow-hidden focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition shadow-2xs">
-                            <div class="pl-3.5 pr-1 flex items-center justify-center text-slate-400 shrink-0 pointer-events-none">
-                                <i class="ph ph-magnifying-glass text-base leading-none"></i>
+                        <form x-ref="superIklanSearchForm" action="{{ route('superadmin.iklan.index') }}" method="GET" autocomplete="off" class="flex items-center w-full">
+                            <!-- Pertahankan status filter saat submit search -->
+                            <input type="hidden" name="status" value="{{ $statusFilter }}">
+                            <div class="h-10 flex items-center w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition">
+                                <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
+                                <input type="text" name="q" x-model="query"
+                                    @focus="open = true"
+                                    @input="open = true"
+                                    @keydown.enter.prevent="open = false; $refs.superIklanSearchForm.submit()"
+                                    autocomplete="off"
+                                    placeholder="Cari judul iklan / perusahaan / paket..."
+                                    class="flex-1 h-full px-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
+                                    style="border: none !important; outline: none !important; box-shadow: none !important;">
+                                <template x-if="query.length > 0">
+                                    <a href="{{ route('superadmin.iklan.index', ['status' => $statusFilter]) }}"
+                                       @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.iklan.index') }}?status={{ $statusFilter }}';"
+                                       class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
+                                       title="Hapus pencarian">
+                                        <i class="ph ph-x text-[10px] font-bold"></i>
+                                    </a>
+                                </template>
+                                <button type="submit" class="hidden"></button>
                             </div>
-                            <input type="text" name="q" x-model="query"
-                                @focus="open = true"
-                                @input="open = true"
-                                autocomplete="off"
-                                placeholder="Cari judul iklan / perusahaan..."
-                                class="flex-1 h-full px-2 text-xs font-semibold text-slate-800 placeholder-slate-400 bg-transparent border-0 outline-none ring-0 focus:outline-none focus:ring-0 focus:border-transparent min-w-0"
-                                style="border: none !important; outline: none !important; box-shadow: none !important;">
-                            <template x-if="query.length > 0">
-                                <a href="{{ route('superadmin.iklan.index', ['status' => $statusFilter]) }}"
-                                    @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.iklan.index', ['status' => $statusFilter]) }}';"
-                                    class="mr-2.5 w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center shrink-0 transition cursor-pointer"
-                                    title="Hapus pencarian">
-                                    <i class="ph ph-x text-[10px] font-bold"></i>
-                                </a>
-                            </template>
-                            <button type="submit" class="hidden"></button>
-                        </div>
-                    </form>
+                        </form>
 
-                    <!-- Autocomplete Dropdown -->
-                    <div x-cloak x-show="open && filtered.length > 0"
-                         x-transition:enter="transition ease-out duration-150"
-                         x-transition:enter-start="opacity-0 -translate-y-1"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-100"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 -translate-y-1"
-                         class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-slate-100 shadow-xl p-2 z-50 max-h-72 overflow-y-auto">
-                        <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-50 mb-1">
-                            <span>Saran Pencarian</span>
-                            <i class="ph ph-sparkle text-[#00509d]"></i>
-                        </div>
-                        <ul class="space-y-0.5">
-                            <template x-for="(item, idx) in filtered" :key="idx">
-                                <li>
-                                    <button type="button" @click="select(item.label)"
-                                        class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-blue-50/70 hover:text-[#00509d] transition group">
-                                        <span class="flex items-center gap-2.5 text-xs text-slate-700 group-hover:text-[#00509d] font-medium">
-                                            <span class="w-6 h-6 rounded-lg bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-slate-500 group-hover:text-[#00509d] transition">
-                                                <i :class="'ph ' + item.icon" class="text-xs"></i>
+                        <!-- Autocomplete Dropdown -->
+                        <div x-cloak x-show="open && filtered.length > 0"
+                             x-transition:enter="transition ease-out duration-150"
+                             x-transition:enter-start="opacity-0 -translate-y-1"
+                             x-transition:enter-end="opacity-100 translate-y-0"
+                             x-transition:leave="transition ease-in duration-100"
+                             x-transition:leave-start="opacity-100 translate-y-0"
+                             x-transition:leave-end="opacity-0 -translate-y-1"
+                             class="absolute left-0 right-0 top-full mt-2 bg-white rounded-2xl border border-slate-100 shadow-xl p-2 z-50 max-h-72 overflow-y-auto">
+                            <div class="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center justify-between border-b border-slate-50 mb-1">
+                                <span>Saran Pencarian</span>
+                                <i class="ph ph-sparkle text-[#00509d]"></i>
+                            </div>
+                            <ul class="space-y-0.5">
+                                <template x-for="(item, idx) in filtered" :key="idx">
+                                    <li>
+                                        <button type="button" @click="select(item.label)"
+                                            class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left hover:bg-blue-50/70 hover:text-[#00509d] transition group">
+                                            <span class="flex items-center gap-2.5 text-xs text-slate-700 group-hover:text-[#00509d] font-medium">
+                                                <span class="w-6 h-6 rounded-lg bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center text-slate-500 group-hover:text-[#00509d] transition">
+                                                    <i :class="'ph ' + item.icon" class="text-xs"></i>
+                                                </span>
+                                                <span x-text="item.label"></span>
                                             </span>
-                                            <span x-text="item.label"></span>
-                                        </span>
-                                        <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 group-hover:bg-blue-100 text-slate-500 group-hover:text-[#00509d] font-medium"
-                                              x-text="item.category"></span>
-                                    </button>
-                                </li>
-                            </template>
-                        </ul>
+                                            <span class="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 group-hover:bg-blue-100 text-slate-500 group-hover:text-[#00509d] font-medium"
+                                                  x-text="item.category"></span>
+                                        </button>
+                                    </li>
+                                </template>
+                            </ul>
+                        </div>
                     </div>
+
+                    <!-- Tombol Pasang Iklan -->
+                    <a href="{{ route('superadmin.iklan.create') }}"
+                       class="h-10 inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-semibold px-4 rounded-xl transition duration-200 shadow-xs flex-shrink-0">
+                        <i class="ph ph-plus-circle text-base"></i>
+                        Pasang Iklan
+                    </a>
+
                 </div>
             </div>
         </div>
         </div>
+
+        @if ($search)
+            <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 bg-blue-50/80 border border-blue-100 rounded-2xl text-xs text-[#00509d]">
+                <div class="flex items-center flex-wrap gap-2 font-medium">
+                    <i class="ph-fill ph-magnifying-glass text-base text-[#00509d] shrink-0"></i>
+                    <span>Hasil pencarian untuk: <strong class="text-slate-800">"{{ $search }}"</strong></span>
+                    <span class="px-2 py-0.5 rounded-full bg-blue-100 text-[11px] font-bold text-[#00509d]">
+                        {{ $iklans->total() }} ditemukan
+                    </span>
+                    @if ($statusFilter !== 'all')
+                        <span class="px-2 py-0.5 rounded-full bg-slate-100 text-[11px] font-semibold text-slate-500">
+                            di tab: {{ ['menunggu' => 'Menunggu Review', 'aktif' => 'Sedang Tayang', 'ditolak' => 'Ditolak', 'selesai' => 'Selesai'][$statusFilter] ?? $statusFilter }}
+                        </span>
+                    @endif
+                </div>
+                <a href="{{ route('superadmin.iklan.index', ['status' => $statusFilter]) }}"
+                   class="font-bold hover:underline flex items-center gap-1 text-xs text-rose-600 shrink-0">
+                    <i class="ph ph-x-circle text-sm"></i> Reset Pencarian
+                </a>
+            </div>
+        @endif
 
         <!-- TABEL MODERASI IKLAN (TABLE FIXED 100% - PASTI PAS DI LAYAR) -->
         <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
@@ -189,7 +223,7 @@
                     <thead class="bg-slate-50 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100">
                         <tr>
                             <th class="w-[42%] px-4 py-3.5">Iklan & Perusahaan</th>
-                            <th class="w-[18%] px-3 py-3.5">Paket & Biaya</th>
+                            <th class="w-[18%] px-3 py-3.5">Paket & Durasi</th>
                             <th class="w-[20%] px-3 py-3.5">Status & Periode</th>
                             <th class="w-[20%] px-4 py-3.5 text-right">Aksi Moderasi</th>
                         </tr>
@@ -212,32 +246,33 @@
                                         <div class="min-w-0 flex-1">
                                             <p class="font-extrabold text-slate-900 truncate" title="{{ $item->judul_iklan }}">{{ $item->judul_iklan }}</p>
                                             <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 font-medium truncate">
-                                                @if($item->perusahaan)
-                                                    <i class="ph ph-buildings text-slate-400 shrink-0"></i>
-                                                    <span class="truncate font-bold text-slate-700" title="{{ $item->perusahaan->nama_perusahaan }}">{{ $item->perusahaan->nama_perusahaan }}</span>
-                                                @else
-                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-[#00509d] border border-blue-100 text-[10px] font-black">
-                                                        <i class="ph-fill ph-seal-check"></i> Official Area Kerja
-                                                    </span>
-                                                @endif
+                                                <i class="ph ph-buildings text-slate-400 shrink-0"></i>
+                                                <span class="truncate font-bold {{ $item->perusahaan ? 'text-slate-700' : 'text-[#00509d]' }}" title="{{ $item->perusahaan?->nama_perusahaan ?? 'Official AreaKerja' }}">
+                                                    @if($item->perusahaan)
+                                                        {{ $item->perusahaan->nama_perusahaan }}
+                                                    @else
+                                                        <span class="inline-flex items-center gap-1">
+                                                            <i class="ph-fill ph-seal-check text-xs"></i> Official AreaKerja
+                                                        </span>
+                                                    @endif
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
                                 </td>
 
-                                <!-- Paket & Biaya -->
+                                <!-- Paket & Durasi -->
                                 <td class="px-3 py-3.5 whitespace-nowrap">
                                     <p class="font-extrabold text-slate-800 text-xs">{{ $item->paket_nama ?? 'Paket Iklan' }}</p>
                                     <div class="flex items-center gap-1 mt-0.5 text-[11px] font-bold">
-                                        <span class="text-slate-500">{{ $item->durasi_hari }} Hari</span>
-                                        <span class="text-slate-300">•</span>
-                                        @if($item->koin_terpotong == 0)
-                                            <span class="text-emerald-600 flex items-center gap-0.5">
-                                                <i class="ph-fill ph-tag text-xs"></i>
-                                                Gratis (0 Koin)
-                                            </span>
+                                        @if($item->durasi_hari > 0)
+                                            <span class="text-slate-500">{{ $item->durasi_hari }} Hari</span>
                                         @else
-                                            <span class="text-amber-600 flex items-center gap-0.5">
+                                            <span class="text-[#00509d]">Tanpa Batas</span>
+                                        @endif
+                                        @if($item->perusahaan && $item->koin_terpotong > 0)
+                                            <span class="text-slate-300">•</span>
+                                            <span class="text-amber-600 flex items-center gap-0.5" title="Koin Perusahaan">
                                                 <i class="ph-fill ph-coin text-xs"></i>
                                                 {{ number_format($item->koin_terpotong, 0, ',', '.') }} Koin
                                             </span>
@@ -258,9 +293,13 @@
                                             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                             <span>Aktif Tayang</span>
                                         </span>
-                                        @if ($item->tanggal_mulai && $item->tanggal_selesai)
+                                        @if ($item->tanggal_selesai)
                                             <p class="text-[10px] text-emerald-600 mt-0.5 font-bold">
                                                 Sisa {{ $item->sisa_hari }} hari (s/d {{ $item->tanggal_selesai->translatedFormat('d M') }})
+                                            </p>
+                                        @else
+                                            <p class="text-[10px] text-[#00509d] mt-0.5 font-bold">
+                                                Aktif Beranda
                                             </p>
                                         @endif
                                         <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->total_views }} views • {{ $item->total_clicks }} klik</p>
@@ -292,6 +331,13 @@
                                             <i class="ph ph-eye text-sm"></i>
                                         </button>
 
+                                        <!-- Tombol Edit -->
+                                        <a href="{{ route('superadmin.iklan.edit', $item->id) }}"
+                                            class="p-1.5 rounded-xl bg-slate-100 hover:bg-amber-500 text-slate-600 hover:text-white transition shadow-2xs"
+                                            title="Edit Iklan">
+                                            <i class="ph ph-note-pencil text-sm"></i>
+                                        </a>
+
                                         @if ($item->status === 'menunggu')
                                             <!-- Approve Form -->
                                             <form id="approveFormSuper{{ $item->id }}" action="{{ route('superadmin.iklan.approve', $item->id) }}" method="POST">
@@ -311,15 +357,13 @@
                                             </button>
                                         @endif
 
-                                        <!-- Hapus Banner Iklan -->
-                                        <form action="{{ route('superadmin.iklan.destroy', $item->id) }}" method="POST"
-                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus banner iklan ini?');"
-                                            class="inline-block">
+                                        <!-- Hapus Iklan -->
+                                        <form id="deleteFormSuper{{ $item->id }}" action="{{ route('superadmin.iklan.destroy', $item->id) }}" method="POST">
                                             @csrf
                                             @method('DELETE')
-                                            <button type="submit"
-                                                class="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 transition shadow-2xs"
-                                                title="Hapus Banner Iklan">
+                                            <button type="button" onclick="confirmDelete('deleteFormSuper{{ $item->id }}', '{{ addslashes($item->judul_iklan) }}')"
+                                                class="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-600 text-slate-600 hover:text-white transition shadow-2xs"
+                                                title="Hapus Iklan">
                                                 <i class="ph ph-trash text-sm"></i>
                                             </button>
                                         </form>
@@ -490,6 +534,33 @@
                             Swal.showLoading();
                         }
                     });
+                    document.getElementById(formId).submit();
+                }
+            });
+        }
+
+        // Konfirmasi Hapus Iklan Permanen
+        function confirmDelete(formId, judul) {
+            Swal.fire({
+                title: 'Hapus Iklan Ini?',
+                html: `<p class="text-sm text-slate-600">Apakah Anda yakin ingin menghapus iklan <b>"${judul}"</b>?</p><p class="text-xs text-rose-500 mt-2 font-semibold">Tindakan ini bersifat permanen dan banner akan langsung dihapus dari sistem.</p>`,
+                icon: 'warning',
+                showCancelButton: true,
+                width: '410px',
+                padding: '1.5rem',
+                confirmButtonColor: '#e11d48',
+                cancelButtonColor: '#64748b',
+                confirmButtonText: 'Ya, Hapus Iklan',
+                cancelButtonText: 'Batal',
+                reverseButtons: true,
+                customClass: {
+                    popup: 'rounded-3xl shadow-2xl font-sans',
+                    title: 'text-base font-extrabold text-slate-800',
+                    confirmButton: 'rounded-xl px-4 py-2.5 text-xs font-bold shadow-xs',
+                    cancelButton: 'rounded-xl px-4 py-2.5 text-xs font-bold'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
                     document.getElementById(formId).submit();
                 }
             });

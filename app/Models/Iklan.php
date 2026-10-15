@@ -56,9 +56,11 @@ class Iklan extends Model
     {
         return $query->where('status', 'aktif')
                      ->whereNotNull('tanggal_mulai')
-                     ->whereNotNull('tanggal_selesai')
                      ->where('tanggal_mulai', '<=', now())
-                     ->where('tanggal_selesai', '>=', now());
+                     ->where(function ($q) {
+                         $q->whereNull('tanggal_selesai')
+                           ->orWhere('tanggal_selesai', '>=', now());
+                     });
     }
 
     /**
@@ -68,16 +70,20 @@ class Iklan extends Model
     {
         return $this->status === 'aktif'
             && $this->tanggal_mulai
-            && $this->tanggal_selesai
-            && now()->between($this->tanggal_mulai, $this->tanggal_selesai);
+            && $this->tanggal_mulai <= now()
+            && (!$this->tanggal_selesai || $this->tanggal_selesai >= now());
     }
 
     /**
      * Sisa hari tayang
      */
-    public function getSisaHariAttribute(): int
+    public function getSisaHariAttribute(): ?int
     {
-        if (!$this->tanggal_selesai || now()->gt($this->tanggal_selesai)) {
+        if (!$this->tanggal_selesai) {
+            return null;
+        }
+
+        if (now()->gt($this->tanggal_selesai)) {
             return 0;
         }
 

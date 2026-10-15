@@ -2,20 +2,24 @@
 @section('sidebarsuperadmin')
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
-        <!-- HEADER TOP BAR -->
+        <!-- Header -->
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
-                <div>
-                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
-                        <i class="ph ph-megaphone text-[#00509d] text-2xl"></i> Pasang Banner Iklan
-                    </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Upload banner promosi official atau mitra perusahaan langsung tayang di beranda tanpa biaya</p>
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('superadmin.iklan.index') }}"
+                       class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0"
+                       title="Kembali">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">Pasang Iklan Baru</h1>
+                        <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Iklan / Pasang Iklan Baru</p>
+                    </div>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')
                 </div>
             </div>
-
             <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
@@ -25,292 +29,254 @@
         @include('super_admin.notif.modal_notif')
         @include('super_admin.notif.modal_semua')
 
-        <!-- BREADCRUMB & BACK -->
-        <div class="flex items-center justify-between mb-6">
-            <a href="{{ route('superadmin.iklan.index') }}"
-                class="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-slate-600 hover:text-[#00509d] transition">
-                <i class="ph ph-arrow-left font-bold"></i>
-                <span>Kembali ke Moderasi Iklan</span>
-            </a>
-
-            <!-- FREE BADGE -->
-            <div class="flex items-center gap-1.5 px-3.5 py-1.5 bg-emerald-50 border border-emerald-200 rounded-2xl text-xs font-bold text-emerald-700 shadow-2xs">
-                <i class="ph-fill ph-tag text-emerald-600"></i>
-                <span>Biaya: 0 Koin (Gratis)</span>
-            </div>
-        </div>
-
-        @if ($errors->any())
-            <div class="mb-6 bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl p-4 shadow-2xs">
-                <div class="flex items-center gap-2 font-bold text-sm mb-1">
-                    <i class="ph-fill ph-warning-circle text-lg text-rose-600"></i>
-                    <span>Terdapat kesalahan pada isian form:</span>
+        {{-- Flash Alerts --}}
+        @if (session('success'))
+            <div class="mb-5 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm flex items-center gap-3 shadow-xs">
+                <div class="w-8 h-8 rounded-xl bg-emerald-100 flex items-center justify-center shrink-0">
+                    <i class="ph-fill ph-check-circle text-emerald-600 text-lg"></i>
                 </div>
-                <ul class="list-disc list-inside text-xs space-y-0.5 text-rose-700 pl-1 font-medium">
-                    @foreach ($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
+                <div>
+                    <p class="font-bold text-xs">Berhasil!</p>
+                    <p class="text-xs text-emerald-700">{{ session('success') }}</p>
+                </div>
             </div>
         @endif
 
-        <!-- FORM UPLOAD BANNER IKLAN -->
-        <form action="{{ route('superadmin.iklan.store') }}" method="POST" enctype="multipart/form-data" id="formUploadIklanSuper">
+        @if (session('error'))
+            <div class="mb-5 p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-sm flex items-center gap-3 shadow-xs">
+                <div class="w-8 h-8 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
+                    <i class="ph-fill ph-warning-circle text-rose-600 text-lg"></i>
+                </div>
+                <div>
+                    <p class="font-bold text-xs">Terjadi Kendala</p>
+                    <p class="text-xs text-rose-700">{{ session('error') }}</p>
+                </div>
+            </div>
+        @endif
+
+        <form action="{{ route('superadmin.iklan.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
 
-            <div class="space-y-6">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-5">
 
-                <!-- INFORMASI KAMPANYE IKLAN -->
-                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-5">
-                    <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center font-black text-sm">
-                            1
-                        </div>
-                        <div>
-                            <h3 class="text-base font-extrabold text-slate-900">Detail Kampanye Iklan</h3>
-                            <p class="text-xs text-slate-500 font-medium">Informasi nama kampanye, URL tujuan, serta pihak pemilik banner</p>
-                        </div>
-                    </div>
+                {{-- ============ KOLOM KIRI (2/3) ============ --}}
+                <div class="xl:col-span-2 space-y-5">
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <!-- Judul Iklan -->
-                        <div class="md:col-span-2">
-                            <label for="judul_iklan" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
-                                Judul / Nama Kampanye Iklan <span class="text-rose-500">*</span>
-                            </label>
-                            <input type="text" name="judul_iklan" id="judul_iklan"
-                                value="{{ old('judul_iklan') }}"
-                                required
-                                placeholder="Contoh: Promo Job Fair Nasional 2026 / Diskon Hiring Mitra"
-                                class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 transition outline-none">
-                            <p class="text-[11px] text-slate-400 mt-1.5 font-medium">Judul ini akan menjadi alt-text banner dan judul tampilan di slider.</p>
-                        </div>
-
-                        <!-- URL Tujuan -->
-                        <div>
-                            <label for="url_tujuan" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
-                                URL / Link Tujuan <span class="text-rose-500">*</span>
-                            </label>
-                            <div class="relative">
-                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                                    <i class="ph ph-link text-base"></i>
-                                </span>
-                                <input type="url" name="url_tujuan" id="url_tujuan"
-                                    value="{{ old('url_tujuan') }}"
-                                    required
-                                    placeholder="https://example.com/promo-atau-event"
-                                    class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 placeholder-slate-400 focus:bg-white focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 transition outline-none">
+                    {{-- Card: Identitas Iklan --}}
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                        <div class="flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100">
+                            <div class="w-8 h-8 rounded-xl bg-[#00509d]/10 flex items-center justify-center shrink-0">
+                                <i class="ph-fill ph-identification-card text-[#00509d] text-base"></i>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1.5 font-medium">Halaman yang akan terbuka saat pengunjung mengklik banner di Beranda.</p>
-                        </div>
-
-                        <!-- Perusahaan Asosiasi (Opsional) -->
-                        <div>
-                            <label for="perusahaan_id" class="block text-xs font-extrabold text-slate-700 uppercase tracking-wider mb-2">
-                                Perusahaan Asosiasi (Opsional)
-                            </label>
-                            <div class="relative">
-                                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
-                                    <i class="ph ph-buildings text-base"></i>
-                                </span>
-                                <select name="perusahaan_id" id="perusahaan_id"
-                                    class="w-full pl-10 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-800 focus:bg-white focus:border-[#00509d] focus:ring-2 focus:ring-[#00509d]/20 transition outline-none">
-                                    <option value="">-- Official / Internal Area Kerja (Tanpa Perusahaan) --</option>
-                                    @foreach($perusahaans as $p)
-                                        <option value="{{ $p->id }}" {{ old('perusahaan_id') == $p->id ? 'selected' : '' }}>
-                                            {{ $p->nama_perusahaan }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Identitas Iklan</p>
+                                <p class="text-[11px] text-slate-400">Judul dan tautan tujuan iklan</p>
                             </div>
-                            <p class="text-[11px] text-slate-400 mt-1.5 font-medium">Biarkan default untuk badge Official Area Kerja, atau pilih mitra perusahaan.</p>
                         </div>
-                    </div>
-                </div>
 
-                <!-- DURASI PENAYANGAN -->
-                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-5">
-                    <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center font-black text-sm">
-                            2
+                        {{-- Judul Iklan --}}
+                        <div class="mb-5">
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Judul Iklan <span class="text-rose-500">*</span></label>
+                            <input type="text" name="judul_iklan" value="{{ old('judul_iklan') }}" required
+                                placeholder="Contoh: Bergabunglah Bersama AreaKerja!"
+                                class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs placeholder-slate-300">
+                            @error('judul_iklan')
+                                <p class="text-rose-500 text-xs mt-1.5 flex items-center gap-1"><i class="ph ph-warning-circle"></i> {{ $message }}</p>
+                            @enderror
                         </div>
+
+                        {{-- URL Tujuan --}}
                         <div>
-                            <h3 class="text-base font-extrabold text-slate-900">Durasi Masa Tayang</h3>
-                            <p class="text-xs text-slate-500 font-medium">Tentukan lama banner iklan akan aktif ditampilkan di beranda</p>
+                            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Link Tujuan Saat Banner Diklik <span class="text-slate-400 font-normal">(opsional)</span></label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                                    <i class="ph ph-link text-slate-400 text-sm"></i>
+                                </div>
+                                <input type="url" name="url_tujuan" value="{{ old('url_tujuan') }}"
+                                    placeholder="https://areakerja.com/..."
+                                    class="w-full bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs placeholder-slate-300">
+                            </div>
+                            <p class="text-[11px] text-slate-400 mt-1.5">Pengunjung akan diarahkan ke URL ini saat mengklik banner. Kosongkan jika tidak ada tautan khusus.</p>
+                            @error('url_tujuan')
+                                <p class="text-rose-500 text-xs mt-1 flex items-center gap-1"><i class="ph ph-warning-circle"></i> {{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
 
-                    <!-- Preset Durasi Pills -->
-                    <div class="grid grid-cols-2 sm:grid-cols-5 gap-3" id="presetDurasiGridSuper">
-                        @php
-                            $presets = [
-                                7   => '7 Hari (1 Mgg)',
-                                14  => '14 Hari (2 Mgg)',
-                                30  => '30 Hari (1 Bln)',
-                                90  => '90 Hari (3 Bln)',
-                                365 => '365 Hari (1 Thn)',
-                            ];
-                            $selectedDurasi = old('durasi_hari', 30);
-                        @endphp
-                        @foreach($presets as $days => $label)
-                            <button type="button" onclick="setDurasiSuper({{ $days }})"
-                                class="durasi-preset-btn-super py-3 px-3 rounded-2xl border-2 text-center transition font-bold text-xs {{ $selectedDurasi == $days ? 'border-[#00509d] bg-blue-50/50 text-[#00509d] shadow-2xs' : 'border-slate-200 hover:border-slate-300 text-slate-700 bg-white' }}"
-                                data-days="{{ $days }}">
-                                <i class="ph ph-clock text-base block mx-auto mb-1"></i>
-                                <span>{{ $label }}</span>
-                            </button>
-                        @endforeach
+                    {{-- Card: Upload Banner --}}
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                        <div class="flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100">
+                            <div class="w-8 h-8 rounded-xl bg-violet-50 flex items-center justify-center shrink-0">
+                                <i class="ph-fill ph-image text-violet-500 text-base"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Banner Iklan</p>
+                                <p class="text-[11px] text-slate-400">Gambar yang tampil di halaman beranda</p>
+                            </div>
+                        </div>
+
+                        <div x-data="{ hasImage: false, fileName: '' }">
+                            {{-- Preview / Upload Area --}}
+                            <div class="relative w-full h-44 rounded-2xl overflow-hidden border-2 border-dashed border-slate-200 bg-slate-50 mb-4 group cursor-pointer transition hover:border-[#00509d]/40 hover:bg-blue-50/30"
+                                 onclick="document.getElementById('uploadBannerSuper').click()">
+                                {{-- Placeholder --}}
+                                <div x-show="!hasImage" class="absolute inset-0 flex flex-col items-center justify-center gap-2">
+                                    <div class="w-12 h-12 rounded-2xl bg-slate-100 group-hover:bg-[#00509d]/10 flex items-center justify-center transition">
+                                        <i class="ph ph-image-square text-2xl text-slate-400 group-hover:text-[#00509d] transition"></i>
+                                    </div>
+                                    <div class="text-center">
+                                        <p class="text-xs font-semibold text-slate-500 group-hover:text-[#00509d] transition">Klik untuk upload banner</p>
+                                        <p class="text-[11px] text-slate-400 mt-0.5">Rasio 3:1 direkomendasikan (misal 1200×400 px)</p>
+                                    </div>
+                                </div>
+                                {{-- Image preview --}}
+                                <img id="previewBannerImgSuper" src="" alt="Preview Banner"
+                                     x-show="hasImage"
+                                     class="w-full h-full object-cover">
+                                {{-- Hover overlay --}}
+                                <div x-show="hasImage" class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                                    <span class="text-white text-xs font-semibold flex items-center gap-1.5">
+                                        <i class="ph ph-pencil-simple"></i> Ganti Gambar
+                                    </span>
+                                </div>
+                            </div>
+
+                            <input id="uploadBannerSuper" type="file" name="gambar_banner" accept="image/png,image/jpeg,image/webp" hidden
+                                   @change="
+                                        const file = $event.target.files[0];
+                                        if (file) {
+                                            hasImage = true;
+                                            fileName = file.name;
+                                            const reader = new FileReader();
+                                            reader.onload = e => { document.getElementById('previewBannerImgSuper').src = e.target.result; };
+                                            reader.readAsDataURL(file);
+                                        }
+                                   ">
+
+                            <div class="flex items-center justify-between">
+                                <p class="text-[11px] text-slate-400">Format: PNG, JPG, WEBP. Maks 3 MB.</p>
+                                <span x-show="hasImage" x-text="fileName" class="text-[11px] text-emerald-600 font-semibold truncate max-w-[180px]"></span>
+                            </div>
+
+                            @error('gambar_banner')
+                                <p class="text-rose-500 text-xs mt-1.5 flex items-center gap-1"><i class="ph ph-warning-circle"></i> {{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
 
-                    <div class="pt-3 flex flex-col sm:flex-row sm:items-center gap-3">
-                        <label for="durasi_hari" class="text-xs font-bold text-slate-600 whitespace-nowrap">
-                            Atau input durasi kustom (hari):
-                        </label>
-                        <div class="w-36">
-                            <input type="number" name="durasi_hari" id="durasi_hari"
-                                value="{{ $selectedDurasi }}"
-                                min="1" max="3650" required
-                                class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-extrabold text-slate-800 text-center focus:bg-white focus:border-[#00509d] outline-none">
-                        </div>
-                        <span class="text-xs text-slate-400 font-medium">hari kalender (otomatis non-aktif setelah masa tayang usai)</span>
-                    </div>
                 </div>
 
-                <!-- UPLOAD BANNER GAMBAR -->
-                <div class="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200/80 shadow-xs space-y-5">
-                    <div class="flex items-center gap-3 pb-4 border-b border-slate-100">
-                        <div class="w-8 h-8 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center font-black text-sm">
-                            3
+                {{-- ============ KOLOM KANAN (1/3) ============ --}}
+                <div class="xl:col-span-1 space-y-5">
+
+                    {{-- Card: Pemilik Iklan --}}
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                        <div class="flex items-center gap-2.5 mb-5 pb-4 border-b border-slate-100">
+                            <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center shrink-0">
+                                <i class="ph-fill ph-buildings text-amber-500 text-base"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Pemilik Iklan</p>
+                                <p class="text-[11px] text-slate-400">Opsional — bisa internal</p>
+                            </div>
                         </div>
-                        <div>
-                            <h3 class="text-base font-extrabold text-slate-900">Upload Banner Desain</h3>
-                            <p class="text-xs text-slate-500 font-medium">Unggah materi banner dengan orientasi horizontal (rekomendasi: 1200x400 px atau rasio 3:1)</p>
+
+                        <label class="block text-xs font-semibold text-slate-600 mb-1.5">Perusahaan / Pemilik</label>
+                        <select name="perusahaan_id" class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs">
+                            <option value="">— Official AreaKerja (Internal) —</option>
+                            @foreach ($perusahaans as $p)
+                                <option value="{{ $p->id }}" {{ old('perusahaan_id') == $p->id ? 'selected' : '' }}>
+                                    {{ $p->nama_perusahaan }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('perusahaan_id')
+                            <p class="text-rose-500 text-xs mt-1.5">{{ $message }}</p>
+                        @enderror
+
+                        <div class="mt-4 p-3 bg-blue-50 rounded-xl border border-blue-100">
+                            <p class="text-[11px] text-[#00509d] font-semibold flex items-start gap-1.5">
+                                <i class="ph-fill ph-seal-check text-sm shrink-0 mt-0.5"></i>
+                                <span>Biarkan kosong agar iklan tampil sebagai <b>Official AreaKerja</b> tanpa nama perusahaan.</span>
+                            </p>
                         </div>
                     </div>
 
-                    <!-- Live Banner Preview Box -->
-                    <div id="previewContainerSuper" class="hidden mb-4 relative rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-900 group shadow-md">
-                        <img id="bannerImgPreviewSuper" src="" alt="Preview Banner" class="w-full h-auto object-cover max-h-[300px]">
-                        <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-3">
-                            <button type="button" onclick="document.getElementById('gambar_banner').click()"
-                                class="px-4 py-2 bg-white/90 hover:bg-white text-slate-800 text-xs font-bold rounded-xl shadow-xs transition">
-                                Ganti Banner
-                            </button>
-                            <button type="button" onclick="removeBannerSuper()"
-                                class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition">
-                                Hapus
-                            </button>
+                    {{-- Card: Info Penayangan --}}
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6">
+                        <div class="flex items-center gap-2.5 mb-4 pb-4 border-b border-slate-100">
+                            <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                                <i class="ph-fill ph-broadcast text-[#00509d] text-base"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-slate-800">Info Penayangan</p>
+                                <p class="text-[11px] text-slate-400">Pengaturan tayang banner</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between py-2 border-b border-slate-50">
+                                <span class="text-xs text-slate-500 font-medium">Status Publikasi</span>
+                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold rounded-full">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    Langsung Aktif
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-50">
+                                <span class="text-xs text-slate-500 font-medium">Posisi Banner</span>
+                                <span class="text-xs font-semibold text-slate-800 flex items-center gap-1">
+                                    <i class="ph-fill ph-slideshow text-[#00509d] text-sm"></i>
+                                    Slider Beranda
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between py-2 border-b border-slate-50">
+                                <span class="text-xs text-slate-500 font-medium">Target Audiens</span>
+                                <span class="text-xs font-semibold text-slate-800 flex items-center gap-1">
+                                    <i class="ph-fill ph-users-three text-amber-500 text-sm"></i>
+                                    Semua Pengunjung
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between py-2">
+                                <span class="text-xs text-slate-500 font-medium">Tampilan</span>
+                                <span class="text-xs font-semibold text-slate-700 flex items-center gap-1">
+                                    <i class="ph-fill ph-devices text-purple-500 text-sm"></i>
+                                    Desktop & Mobile
+                                </span>
+                            </div>
+                        </div>
+
+                        {{-- Catatan Penayangan --}}
+                        <div class="mt-4 pt-3.5 border-t border-slate-100 space-y-2">
+                            <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/60 text-[11px] text-slate-600 space-y-1.5">
+                                <div class="flex items-start gap-1.5 font-medium">
+                                    <i class="ph-fill ph-check-circle text-emerald-500 text-sm shrink-0 mt-0.5"></i>
+                                    <span>Banner berotasi secara otomatis di halaman utama.</span>
+                                </div>
+                                <div class="flex items-start gap-1.5 font-medium">
+                                    <i class="ph-fill ph-check-circle text-emerald-500 text-sm shrink-0 mt-0.5"></i>
+                                    <span>Klik banner akan membuka link tujuan (jika diisi).</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Dropzone Area -->
-                    <div id="dropzoneAreaSuper"
-                        onclick="document.getElementById('gambar_banner').click()"
-                        class="border-2 border-dashed border-slate-300 hover:border-[#00509d] hover:bg-blue-50/20 rounded-2xl p-8 sm:p-12 text-center cursor-pointer transition flex flex-col items-center justify-center group">
-                        
-                        <div class="w-16 h-16 rounded-2xl bg-blue-50 group-hover:bg-blue-100 text-[#00509d] flex items-center justify-center text-3xl mb-3 transition group-hover:scale-105">
-                            <i class="ph ph-image"></i>
-                        </div>
-                        <h4 class="text-sm font-extrabold text-slate-800 group-hover:text-[#00509d] transition">
-                            Klik untuk memilih file banner atau seret ke sini
-                        </h4>
-                        <p class="text-xs text-slate-400 mt-1 font-medium">
-                            Mendukung JPG, JPEG, PNG, WEBP, GIF (Maksimal 5MB)
-                        </p>
-                        <span class="mt-4 px-3.5 py-1.5 rounded-full bg-slate-100 text-slate-600 text-[11px] font-bold">
-                            Rekomendasi Rasio: 3:1 (1200 x 400 px)
-                        </span>
-
-                        <input type="file" name="gambar_banner" id="gambar_banner"
-                            accept="image/jpeg,image/png,image/jpg,image/webp,image/gif"
-                            class="hidden" required onchange="handleFileSelectSuper(this)">
-                    </div>
-                </div>
-
-                <!-- SUMMARY CARD & SUBMIT BUTTON -->
-                <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl p-6 sm:p-8 text-white shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
-                    <div class="space-y-1.5">
-                        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[11px] font-extrabold uppercase tracking-wider">
-                            <i class="ph-fill ph-seal-check"></i>
-                            <span>Super Admin Privilege: Langsung Aktif</span>
-                        </div>
-                        <h3 class="text-lg sm:text-xl font-black">Tayangkan Iklan Tanpa Biaya</h3>
-                        <p class="text-xs text-slate-300 max-w-xl font-medium">
-                            Banner akan langsung tayang pada slider Beranda Area Kerja seketika setelah disimpan, dengan biaya 0 Koin.
-                        </p>
-                    </div>
-
-                    <div class="flex items-center gap-3 shrink-0">
-                        <a href="{{ route('superadmin.iklan.index') }}"
-                            class="px-5 py-3 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold transition">
-                            Batal
-                        </a>
-                        <button type="submit" id="btnSubmitIklanSuper"
-                            class="px-6 py-3 rounded-xl bg-[#00509d] hover:bg-blue-600 text-white text-xs font-black shadow-lg hover:shadow-blue-500/25 transition flex items-center gap-2">
-                            <i class="ph-bold ph-paper-plane-tilt text-base"></i>
-                            <span>Tayangkan Sekarang</span>
+                    {{-- Action Buttons --}}
+                    <div class="flex flex-col gap-3">
+                        <button type="submit"
+                            class="w-full inline-flex items-center justify-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-semibold px-6 py-3 rounded-xl transition shadow-sm active:scale-[.98]">
+                            <i class="ph ph-megaphone text-base"></i>
+                            Pasang Iklan Sekarang
                         </button>
+                        <a href="{{ route('superadmin.iklan.index') }}"
+                           class="w-full inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold px-6 py-3 rounded-xl transition">
+                            <i class="ph ph-arrow-left text-base"></i>
+                            Kembali
+                        </a>
                     </div>
-                </div>
 
+                </div>
             </div>
         </form>
 
     </main>
-
-    <script>
-        function setDurasiSuper(days) {
-            document.getElementById('durasi_hari').value = days;
-            document.querySelectorAll('.durasi-preset-btn-super').forEach(btn => {
-                if (btn.getAttribute('data-days') == days) {
-                    btn.classList.add('border-[#00509d]', 'bg-blue-50/50', 'text-[#00509d]', 'shadow-2xs');
-                    btn.classList.remove('border-slate-200', 'text-slate-700', 'bg-white');
-                } else {
-                    btn.classList.remove('border-[#00509d]', 'bg-blue-50/50', 'text-[#00509d]', 'shadow-2xs');
-                    btn.classList.add('border-slate-200', 'text-slate-700', 'bg-white');
-                }
-            });
-        }
-
-        document.getElementById('durasi_hari').addEventListener('input', function() {
-            const val = this.value;
-            document.querySelectorAll('.durasi-preset-btn-super').forEach(btn => {
-                if (btn.getAttribute('data-days') == val) {
-                    btn.classList.add('border-[#00509d]', 'bg-blue-50/50', 'text-[#00509d]', 'shadow-2xs');
-                    btn.classList.remove('border-slate-200', 'text-slate-700', 'bg-white');
-                } else {
-                    btn.classList.remove('border-[#00509d]', 'bg-blue-50/50', 'text-[#00509d]', 'shadow-2xs');
-                    btn.classList.add('border-slate-200', 'text-slate-700', 'bg-white');
-                }
-            });
-        });
-
-        function handleFileSelectSuper(input) {
-            if (input.files && input.files[0]) {
-                const file = input.files[0];
-
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Ukuran file maksimal adalah 5MB.');
-                    input.value = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('bannerImgPreviewSuper').src = e.target.result;
-                    document.getElementById('previewContainerSuper').classList.remove('hidden');
-                    document.getElementById('dropzoneAreaSuper').classList.add('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function removeBannerSuper() {
-            document.getElementById('gambar_banner').value = '';
-            document.getElementById('bannerImgPreviewSuper').src = '';
-            document.getElementById('previewContainerSuper').classList.add('hidden');
-            document.getElementById('dropzoneAreaSuper').classList.remove('hidden');
-        }
-    </script>
 @endsection
-

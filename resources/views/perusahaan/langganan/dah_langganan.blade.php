@@ -6,7 +6,7 @@
             $header = null;
         @endphp
 
-        <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/ntap.png') }}"
+        <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_berlangganan', 'images/ntap.png') }}"
             alt="Header Image" class="w-full h-[400px] md:h-[500px] object-cover">
         <div class="absolute inset-0 bg-black/50"></div>
         <div class="absolute inset-0 flex flex-col justify-center px-6 md:px-20 text-white max-w-5xl">
