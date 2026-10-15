@@ -568,9 +568,11 @@
                 <a href="{{ route('beranda') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
                     Beranda
                 </a>
-                <a href="{{ url('/talent-hunter') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
-                    Talent Hunter
-                </a>
+                @if (Auth::user()?->role !== 'pelamar')
+                    <a href="{{ url('/talent-hunter') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                        Talent Hunter
+                    </a>
+                @endif
                 <a href="{{ route('pelamar.event.index') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
                     Event
                 </a>
@@ -580,9 +582,11 @@
                 <a href="{{ route('pelamar.daftar-kandidat') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
                     Daftar Kandidat
                 </a>
-                <a href="{{ url('/lowongan') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
-                    Pasang Lowongan
-                </a>
+                @if (Auth::user()?->role !== 'pelamar')
+                    <a href="{{ url('/lowongan') }}" class="{{ $isBeranda ? 'hover:text-white/80' : 'hover:text-blue-800' }} transition-colors whitespace-nowrap">
+                        Pasang Lowongan
+                    </a>
+                @endif
             </nav>
 
             <!-- Aksi (Kanan) -->
@@ -644,10 +648,12 @@
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Beranda
                         </a>
-                        <a href="{{ url('/talent-hunter') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Talent Hunter
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/talent-hunter') }}" @click="openMenu = false"
+                                class="block py-2 hover:translate-x-1.5 transition duration-200">
+                                Talent Hunter
+                            </a>
+                        @endif
                         <a href="{{ route('pelamar.event.index') }}" @click="openMenu = false"
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Event
@@ -660,10 +666,12 @@
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Daftar Kandidat
                         </a>
-                        <a href="{{ url('/lowongan') }}" @click="openMenu = false"
-                            class="block py-2 hover:translate-x-1.5 transition duration-200">
-                            Pasang Lowongan
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/lowongan') }}" @click="openMenu = false"
+                                class="block py-2 hover:translate-x-1.5 transition duration-200">
+                                Pasang Lowongan
+                            </a>
+                        @endif
                     </nav>
 
                     <!-- Divider -->
@@ -859,11 +867,13 @@
                             Beranda
                         </a>
 
-                        <a href="{{ url('/talent-hunter') }}"
-                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
-                    {{ request()->is('talent-hunter') ? 'font-bold text-[#00509d] scale-105' : '' }}">
-                            Talent Hunter
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/talent-hunter') }}"
+                                class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                        {{ request()->is('talent-hunter') ? 'font-bold text-[#00509d] scale-105' : '' }}">
+                                Talent Hunter
+                            </a>
+                        @endif
 
                         <a href="{{ url('/pelamar/tips-kerja') }}"
                             class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
@@ -900,11 +910,13 @@
                             </a>
 @endif
 
-                        <a href="{{ url('/lowongan') }}"
-                            class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
-                   {{ request()->is('lowongan') ? 'font-bold text-[#00509d] scale-105' : '' }}">
-                            Pasang Lowongan
-                        </a>
+                        @if (Auth::user()?->role !== 'pelamar')
+                            <a href="{{ url('/lowongan') }}"
+                                class="hover:text-[#00509d] hover:font-bold hover:scale-105 transition-all duration-300
+                       {{ request()->is('lowongan') ? 'font-bold text-[#00509d] scale-105' : '' }}">
+                                Pasang Lowongan
+                            </a>
+                        @endif
 
                     </nav>
                 </div> -->

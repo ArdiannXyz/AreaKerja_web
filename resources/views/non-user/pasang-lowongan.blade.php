@@ -5,7 +5,7 @@
 
         <!-- Hero Section (Full bleed edge-to-edge, no margin gap, no round) -->
         <section class="relative w-full overflow-hidden shadow-sm mb-16">
-            <img src="{{ asset('images/tangan.png') }}"
+            <img src="{{ header_image('header_pasang_lowongan', 'images/tangan.png') }}"
                 alt="Header Image" class="w-full h-[360px] sm:h-[450px] md:h-[520px] object-cover">
 
             <div class="absolute inset-0 bg-black/40"></div>

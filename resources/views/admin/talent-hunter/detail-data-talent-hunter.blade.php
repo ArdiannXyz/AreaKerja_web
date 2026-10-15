@@ -112,10 +112,9 @@
                             </div>
 
                             <div class="p-3 rounded-xl bg-slate-50 border border-slate-100">
-                                <span class="text-slate-400 font-medium block mb-0.5">Kisaran Gaji</span>
+                                <span class="text-slate-400 font-medium block mb-0.5">Gaji yang Ditawarkan</span>
                                 <span class="font-semibold text-emerald-700">
-                                    {{ $talentHunter->gaji_awal ? 'Rp' . number_format($talentHunter->gaji_awal, 0, ',', '.') : '-' }} - 
-                                    {{ $talentHunter->gaji_akhir ? 'Rp' . number_format($talentHunter->gaji_akhir, 0, ',', '.') : '-' }}
+                                    {{ $talentHunter->gaji_tampil }}
                                 </span>
                             </div>
 

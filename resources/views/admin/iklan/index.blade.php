@@ -83,10 +83,18 @@
                     </a>
                 </div>
 
-                <!-- Search with Smart Recommendations -->
-                <div class="relative w-full lg:w-80" x-data="{
-                    open: false,
-                    query: '{{ $search ?? '' }}',
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
+                    <!-- Tombol Upload Banner (Gratis) -->
+                    <a href="{{ route('admin.iklan.create') }}"
+                        class="inline-flex items-center justify-center gap-2 h-10 px-4 rounded-xl text-xs font-bold bg-[#00509d] hover:bg-blue-700 text-white shadow-2xs transition shrink-0 active:scale-95">
+                        <i class="ph-bold ph-plus-circle text-base"></i>
+                        <span>Upload Banner (Gratis)</span>
+                    </a>
+
+                    <!-- Search with Smart Recommendations -->
+                    <div class="relative w-full sm:w-72 lg:w-80" x-data="{
+                        open: false,
+                        query: '{{ $search ?? '' }}',
                     recommendations: [
                         { label: 'PT', category: 'Perusahaan', icon: 'ph-buildings' },
                         { label: 'CV', category: 'Perusahaan', icon: 'ph-buildings' },
@@ -172,6 +180,7 @@
                 </div>
             </div>
         </div>
+        </div>
 
         <!-- TABEL MODERASI IKLAN -->
         <!-- TABEL MODERASI IKLAN (TABLE FIXED 100% - PASTI PAS DI LAYAR) -->
@@ -204,8 +213,14 @@
                                         <div class="min-w-0 flex-1">
                                             <p class="font-extrabold text-slate-900 truncate" title="{{ $item->judul_iklan }}">{{ $item->judul_iklan }}</p>
                                             <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 font-medium truncate">
-                                                <i class="ph ph-buildings text-slate-400 shrink-0"></i>
-                                                <span class="truncate font-bold text-slate-700" title="{{ $item->perusahaan?->nama_perusahaan }}">{{ $item->perusahaan?->nama_perusahaan ?? 'Perusahaan #' . $item->perusahaan_id }}</span>
+                                                @if($item->perusahaan)
+                                                    <i class="ph ph-buildings text-slate-400 shrink-0"></i>
+                                                    <span class="truncate font-bold text-slate-700" title="{{ $item->perusahaan->nama_perusahaan }}">{{ $item->perusahaan->nama_perusahaan }}</span>
+                                                @else
+                                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-blue-50 text-[#00509d] border border-blue-100 text-[10px] font-black">
+                                                        <i class="ph-fill ph-seal-check"></i> Official Area Kerja
+                                                    </span>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -217,10 +232,17 @@
                                     <div class="flex items-center gap-1 mt-0.5 text-[11px] font-bold">
                                         <span class="text-slate-500">{{ $item->durasi_hari }} Hari</span>
                                         <span class="text-slate-300">•</span>
-                                        <span class="text-amber-600 flex items-center gap-0.5">
-                                            <i class="ph-fill ph-coin text-xs"></i>
-                                            {{ number_format($item->koin_terpotong, 0, ',', '.') }} Koin
-                                        </span>
+                                        @if($item->koin_terpotong == 0)
+                                            <span class="text-emerald-600 flex items-center gap-0.5">
+                                                <i class="ph-fill ph-tag text-xs"></i>
+                                                Gratis (0 Koin)
+                                            </span>
+                                        @else
+                                            <span class="text-amber-600 flex items-center gap-0.5">
+                                                <i class="ph-fill ph-coin text-xs"></i>
+                                                {{ number_format($item->koin_terpotong, 0, ',', '.') }} Koin
+                                            </span>
+                                        @endif
                                     </div>
                                 </td>
 
@@ -242,6 +264,7 @@
                                                 Sisa {{ $item->sisa_hari }} hari (s/d {{ $item->tanggal_selesai->translatedFormat('d M') }})
                                             </p>
                                         @endif
+                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->total_views }} views • {{ $item->total_clicks }} klik</p>
                                     @elseif ($item->status === 'ditolak')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-extrabold rounded-full">
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
@@ -256,7 +279,7 @@
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-extrabold rounded-full">
                                             <span>Selesai</span>
                                         </span>
-                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->views }} views • {{ $item->clicks }} klik</p>
+                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->total_views }} views • {{ $item->total_clicks }} klik</p>
                                     @endif
                                 </td>
 
@@ -288,6 +311,19 @@
                                                 <span>Tolak</span>
                                             </button>
                                         @endif
+
+                                        <!-- Hapus Banner Iklan -->
+                                        <form action="{{ route('admin.iklan.destroy', $item->id) }}" method="POST"
+                                            onsubmit="return confirm('Apakah Anda yakin ingin menghapus banner iklan ini?');"
+                                            class="inline-block">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="p-1.5 rounded-xl bg-slate-100 hover:bg-rose-50 text-slate-500 hover:text-rose-600 transition shadow-2xs"
+                                                title="Hapus Banner Iklan">
+                                                <i class="ph ph-trash text-sm"></i>
+                                            </button>
+                                        </form>
                                     </div>
                                 </td>
                             </tr>

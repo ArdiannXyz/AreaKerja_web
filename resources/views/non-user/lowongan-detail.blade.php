@@ -78,6 +78,8 @@
                                     Lamaran Terkirim
                                 @elseif ($isTutup)
                                     Ditutup
+                                @elseif ($isExpired)
+                                    Batas Waktu Berakhir
                                 @else
                                     Lamar cepat
                                 @endif
@@ -269,6 +271,23 @@
                             if (resData.success) {
                                 showConfirm = false;
                                 showSuccess = true;
+                                return;
+                            }
+                            if (resData.redirect) {
+                                showConfirm = false;
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Lengkapi Profil',
+                                    text: resData.message,
+                                    confirmButtonText: 'Lengkapi Profil Sekarang',
+                                    confirmButtonColor: '#00509d',
+                                    showCancelButton: true,
+                                    cancelButtonText: 'Batal'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = resData.redirect;
+                                    }
+                                });
                                 return;
                             }
                             Swal.fire({ icon: 'error', title: 'Gagal!', text: resData.message ?? 'Terjadi kesalahan.' });

@@ -112,14 +112,18 @@
                                     {{-- Dark gradient bottom overlay for readability --}}
                                     <div class="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent pointer-events-none"></div>
 
-                                    {{-- Badge Perusahaan --}}
-                                    @if($ad->perusahaan)
-                                        <div class="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2">
+                                    {{-- Badge Perusahaan / Official --}}
+                                    <div class="absolute top-3 left-3 sm:top-4 sm:left-4 flex items-center gap-2">
+                                        @if($ad->perusahaan)
                                             <span class="bg-black/50 backdrop-blur-md text-white/90 border border-white/10 text-[10px] sm:text-xs font-medium px-2.5 py-0.5 rounded-full shadow-sm">
                                                 {{ $ad->perusahaan->nama_perusahaan }}
                                             </span>
-                                        </div>
-                                    @endif
+                                        @else
+                                            <span class="bg-[#00509d]/80 backdrop-blur-md text-white border border-white/20 text-[10px] sm:text-xs font-semibold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+                                                <i class="ph-fill ph-seal-check text-xs"></i> Official Area Kerja
+                                            </span>
+                                        @endif
+                                    </div>
 
                                     {{-- Banner Info Title & Call-to-action button --}}
                                     <div class="absolute bottom-3 left-3 right-3 sm:bottom-5 sm:left-6 sm:right-6 flex items-end justify-between gap-4">
@@ -128,7 +132,7 @@
                                                 {{ $ad->judul_iklan }}
                                             </h4>
                                             <p class="text-white/80 text-xs hidden sm:block mt-0.5 line-clamp-1">
-                                                Klik untuk melihat penawaran menarik dari {{ $ad->perusahaan->nama_perusahaan ?? 'iklan ini' }}
+                                                Klik untuk melihat penawaran menarik dari {{ $ad->perusahaan->nama_perusahaan ?? 'Area Kerja' }}
                                             </p>
                                         </div>
 

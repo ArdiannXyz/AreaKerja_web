@@ -1,43 +1,36 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <!-- Hero Section -->
     <section class="relative">
-        <img src="{{ asset('images/ntap.png') }}"
-            alt="Header Image" class="w-full h-[600px] object-cover">
-
-
-        {{-- <img src="{{ asset('images/ntap.png') }}" alt="hero" class="w-full h-[350px] object-cover"> --}}
-        <div class="absolute inset-0 bg-black bg-opacity-30"></div>
-        <div class="absolute bottom-52 left-20 text-white">
-            <h1 class="text-3xl md:text-4xl font-semibold max-w-2xl mb-3">
+        <img src="{{ header_image('header_daftar_kandidat', 'images/ntap.png') }}"
+            alt="Header Image" class="w-full h-[520px] md:h-[580px] object-cover">
+        <div class="absolute inset-0 bg-black/40"></div>
+        <div class="absolute bottom-32 sm:bottom-36 left-6 sm:left-12 lg:left-24 text-white">
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-extrabold max-w-2xl mb-2 sm:mb-3 tracking-tight">
                 Kandidat Area Kerja
             </h1>
-            <p class="text-sm mb-16">Rekrut karyawan terakreditasi <br> di Area Kerja</p>
+            <p class="text-sm sm:text-base font-normal max-w-xl text-gray-200 leading-relaxed">
+                Rekrut karyawan terakreditasi <br class="hidden sm:inline"> di Area Kerja
+            </p>
         </div>
     </section>
 
-    <!-- Filter -->
-    <form action="{{ route('perusahaan.kandidat.ak') }}" method="get">
-        <div class="bg-white border-2 shadow-md p-6 -mt-12 relative z-10 max-w-4xl mx-auto rounded-lg">
-            <div class="overflow-x-auto">
-                <div class="flex items-center gap-4 min-w-max">
+    <!-- Bar Pencarian & Koin (Simetris & Sejajar) -->
+    <div class="max-w-6xl mx-auto px-4 -mt-10 sm:-mt-12 relative z-20">
+        <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+            
+            <!-- Box Filter Pencarian Kandidat -->
+            <form action="{{ route('perusahaan.kandidat.ak') }}" method="get"
+                class="flex-1 bg-white rounded-2xl shadow-xl border border-slate-200 p-2 sm:p-2.5">
+                <div class="flex flex-wrap lg:flex-nowrap items-center divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
+                    
                     <!-- Skill -->
-                    <div class="flex items-center gap-2 text-center border-r pr-4">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <rect width="24" height="24" fill="url(#pattern0_661_9288)" fill-opacity="0.3" />
-                            <defs>
-                                <pattern id="pattern0_661_9288" patternContentUnits="objectBoundingBox" width="1"
-                                    height="1">
-                                    <use xlink:href="#image0_661_9288" transform="scale(0.0104167)" />
-                                </pattern>
-                                <image id="image0_661_9288" width="96" height="96" preserveAspectRatio="none"
-                                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAAEIklEQVR4nO2cTYhWVRjHf6OjhGOJaS5Ey8LsQ9H8wIIWgbqRwChcBLVwYQoaooIIMooQiA4agbkoqCgF3RkpIZIuitCCQNMxA1skIgouzCbx+5EDJ5RBnefM3Pee59xzfvDfvTz3PP/nvOeej3svFAqFQqFQKBQKhYI9ngTeBNYC3yh+L8aVBFOBTcBvwO3ABGIbnGwBOoBlwMkBJhDb4OQK0AFsAC5VlEBsg5MpQBuwGDhfcQKxDU6iABOAH1qUQGyDzRdgIXClhQmIcUVjELAFuNPiBMS4ojAY+KqmBDYr47iO8EEFuc0Driuv2UUEhgDf1tiD2oDPlbFu+SGxv7wG9Civ9bVvW620VdjzJeAv7Ia7Pcp4rvfO70duLwdMnfcD7USgqwVj6LvKaw8FDihj9vjerGU8cFYZ+2dgGBF4q4IbrjxAN/zekAaX+I/KuJeBVxQxRwGnlDG7/V5W7UwE/mmB+eL1H/C6si0jgePKuG5R+Fwfq/Yjylh/A+OIQNsAFlkSINdjZyjb9BRwWhn3L2DsQyYT3ytjuHvDS0RiSQ3mi9cF4Hllu54Fzinjnug1dLhOtTPgfvIqkRgOXKyxAOJvhk8r2zcpoH2/+Hwc2wLuT/2ZUVXGxprNl/tudqOVbZwN/KuMexDoVP7WTTjeIyKP+3FZIulX3wYNc4FrFV9/JZFZEdF88ToMPKZs7wLgZkXXdad30fnTQAEE2Buw6lxUwVrlixhbDL2ZZcB4uU87/XaEhg8HcJ19sbYYerPFgOnSS9sD2v9RP+If8QszE/R1kB5L6wNy2BEQ93e/wjbB6Bbt+UhFWqXMw43jXyrXHW4zzgxvGzBZHqHbAfPzIYpVrlvMmWKDAZNFcfDyjjKfvjbYzLHLgMGi0FXgjaYVYLCh+b8o5FbqjSrAagOmSqAaU4BnAja1LKkxBdhnwEzJtQDvGzBSci3AqAiHLlIKcA/t0ZxVJf0PmGN820GaXAD3jM0ZAwZKrgXYasA8ybUA0yo8vout5ArQ7t9WjG2c5FqApQZMkxoLYI7vDJgmORfgmAHTJOcCpL7wktQL8II/zIhtnORaAMeUgBcdrCtppgOfBbyYZlGNYIR/D+APA4ZKjgX4n0EGDJWa5DYh12AQyUTdAU9e14pkoBvATIwiGWgdhpGG66iVR9AfhjRYN5Uvb0dFGqwuEkAaqsuxPjMQijRUnSSCNFDXgTEkgjRQu0kIaaAWkBApPiEtfUw9nyAhug2YJhXqJxLjEwOmSYVy+SR3WnbLgHFSkZaTICEvOVvXPBLEfaHwkAHzpAK9SKK4InzagOFoHIkzGfjYf3ctxSnqSDJDjMl9riArxJiyQ4wpO8SYskOMKTvEmLJDjCk7xJiyQ4wpO8SYskOMKTvEmAqFQqFQKBQKhUKBVnIXvexR+hsD3XMAAAAASUVORK5CYII=" />
-                            </defs>
+                    <div class="flex items-center gap-2 px-3 py-2 flex-1 min-w-[150px]">
+                        <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
                         </svg>
-
                         <select name="skill"
-                            class="appearance-none px-8 py-2 bg-transparent boder-none text-gray-600 text-sm focus:outline-none">
+                            class="w-full bg-transparent border-0 text-slate-700 text-sm font-semibold focus:ring-0 cursor-pointer p-0">
                             <option value="">Skill</option>
                             @foreach ($skills as $skill)
                                 <option value="{{ $skill }}" {{ request('skill') == $skill ? 'selected' : '' }}>
@@ -48,360 +41,443 @@
                     </div>
 
                     <!-- Umur -->
-                    <div class="flex items-center gap-2 text-center border-r pr-4">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <rect opacity="0.3" width="24" height="24" fill="url(#pattern0_661_9289)" />
-                            <defs>
-                                <pattern id="pattern0_661_9289" patternContentUnits="objectBoundingBox" width="1"
-                                    height="1">
-                                    <use xlink:href="#image0_661_9289" transform="scale(0.0104167)" />
-                                </pattern>
-                                <image id="image0_661_9289" width="96" height="96" preserveAspectRatio="none"
-                                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAACjklEQVR4nO2dS04cMRCG/83kLHkckCVeIiUQEKdJcoyQgwTYTaRCI3UkQJNMM9j1Fa76pFr7f7jdI43UloqiKIpiHHZgaKLrm96gBdc3vUELrm96gxZc3/QGLbi+6Q1acH3TG7Tg+qY3aMH1HeSTpK+SbiTdrzD01ud+8Xoh6SMZ/DtJ15L+BAjFoNl5v5K0IcL/ESAACzLfvUu4DmDags2l55mf+dixf8xW0gePAi4DmLWgc+5RwK8ARi3o/PQo4C6AUQs6tx4F0CYt+FQBqgLwXWj1BPBBWB1BfBgGTL0DVAXgu9DqCeCDsDqC+DAMmHoHqArAd6HVE8AHYVmPoNkx2j8uAAb3jwuAwf3jAmBw/7gAGNw/LgAG948LgMH94wJgcP+4gEc0SWfyBfePC3gU/t81PUvA/eMC9DR87xJw/7SA9p+1zxL4RwW0FeuPLiFtAW3F2h4lpCygvSD80SWkK6AdEf7IElIV0F4R/qgS0hTQOoQ/ooQUBbSO4fcuYfoC2oDwe5YwfQHRwf3jAmBw/7gAGNw/LgAG948LgMH94wJgcP+4ABjcPy4ABvc/WsDJijWOndM34D+EgJOg4acpoHcJvcJPVUCvEnqGn66A15bQO/yUBRxbwojw0xbw0hJGhZ+6gLUljAxf2Qs4VMLo8CP45wVofwke4YfwjwvYU4JX+CH84wKe/X+8G09w/7gAGNw/LgAG948LgMH94wJgcP+3K0Rknd8eBdwEMGqZP118EcCoBZ3PHgXsru2oz9dr7+fr38uJqwC7zYLN7mRwY7Nc20GbtiDzjbhHZrNc5rANEIBBs112vnv4z98J58svgAx3C9wtXr94XVlSFEVRFEVRFEVRFEVRaAoeAGng/CsPyJlSAAAAAElFTkSuQmCC" />
-                            </defs>
+                    <div class="flex items-center gap-2 px-3 py-2 flex-1 min-w-[130px]">
+                        <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
-
                         <select name="umur"
-                            class="appearance-none px-10 py-2 bg-transparent border-none text-gray-600 text-sm focus:outline-none">
+                            class="w-full bg-transparent border-0 text-slate-700 text-sm font-semibold focus:ring-0 cursor-pointer p-0">
                             <option value="">Umur</option>
                             @foreach ($umurRange as $umur)
                                 <option value="{{ $umur }}" {{ request('umur') == $umur ? 'selected' : '' }}>
-                                    {{ $umur }}
+                                    {{ $umur }} Tahun
                                 </option>
                             @endforeach
                         </select>
-
                     </div>
 
                     <!-- Gender -->
-                    <div class="flex items-center gap-2 text-center pr-4">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
-                            xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                            <rect opacity="0.3" width="24" height="24" fill="url(#pattern0_661_9289)" />
-                            <defs>
-                                <pattern id="pattern0_661_9289" patternContentUnits="objectBoundingBox" width="1"
-                                    height="1">
-                                    <use xlink:href="#image0_661_9289" transform="scale(0.0104167)" />
-                                </pattern>
-                                <image id="image0_661_9289" width="96" height="96" preserveAspectRatio="none"
-                                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAACXBIWXMAAAsTAAALEwEAmpwYAAACjklEQVR4nO2dS04cMRCG/83kLHkckCVeIiUQEKdJcoyQgwTYTaRCI3UkQJNMM9j1Fa76pFr7f7jdI43UloqiKIpiHHZgaKLrm96gBdc3vUELrm96gxZc3/QGLbi+6Q1acH3TG7Tg+qY3aMH1HeSTpK+SbiTdrzD01ud+8Xoh6SMZ/DtJ15L+BAjFoNl5v5K0IcL/ESAACzLfvUu4DmDags2l55mf+dixf8xW0gePAi4DmLWgc+5RwK8ARi3o/PQo4C6AUQs6tx4F0CYt+FQBqgLwXWj1BPBBWB1BfBgGTL0DVAXgu9DqCeCDsDqC+DAMmHoHqArAd6HVE8AHYVmPoNkx2j8uAAb3jwuAwf3jAmBw/7gAGNw/LgAG948LgMH94wJgcP+4gEc0SWfyBfePC3gU/t81PUvA/eMC9DR87xJw/7SA9p+1zxL4RwW0FeuPLiFtAW3F2h4lpCygvSD80SWkK6AdEf7IElIV0F4R/qgS0hTQOoQ/ooQUBbSO4fcuYfoC2oDwe5YwfQHRwf3jAmBw/7gAGNw/LgAG948LgMH94wJgcP+4ABjcPy4ABvc/WsDJijWOndM34D+EgJOg4acpoHcJvcJPVUCvEnqGn66A15bQO/yUBRxbwojw0xbw0hJGhZ+6gLUljAxf2Qs4VMLo8CP45wVofwke4YfwjwvYU4JX+CH84wKe/X+8G09w/7gAGNw/LgAG948LgMH94wJgcP+3K0Rknd8eBdwEMGqZP118EcCoBZ3PHgXsru2oz9dr7+fr38uJqwC7zYLN7mRwY7Nc20GbtiDzjbhHZrNc5rANEIBBs112vnv4z98J58svgAx3C9wtXr94XVlSFEVRFEVRFEVRFEVRaAoeAGng/CsPyJlSAAAAAElFTkSuQmCC" />
-                            </defs>
+                    <div class="flex items-center gap-2 px-3 py-2 flex-1 min-w-[130px]">
+                        <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
                         </svg>
-
                         <select name="gender"
-                            class="appearance-none px-8 py-2 bg-transparent border-none text-gray-600 text-sm focus:outline-none">
+                            class="w-full bg-transparent border-0 text-slate-700 text-sm font-semibold focus:ring-0 cursor-pointer p-0">
                             <option value="">Gender</option>
-                            <option value="Laki-laki">Laki-laki</option>
-                            <option value="Perempuan">Perempuan</option>
+                            <option value="L" {{ request('gender') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                            <option value="P" {{ request('gender') == 'P' ? 'selected' : '' }}>Perempuan</option>
                         </select>
-
                     </div>
 
-                    <!-- Button -->
-                    <button type="submit"
-                        class="ml-auto bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md text-sm font-medium">
-                        Cari Kandidat
+                    <!-- Button Cari Kandidat -->
+                    <div class="p-1 shrink-0 w-full lg:w-auto">
+                        <button type="submit"
+                            class="w-full lg:w-auto bg-[#00509d] hover:bg-[#003d7a] text-white font-bold px-6 py-2.5 rounded-xl text-sm transition shadow-sm cursor-pointer whitespace-nowrap">
+                            Cari Kandidat
+                        </button>
+                    </div>
+                </div>
+            </form>
+
+            <!-- Box Koin (Simetris Sejajar dengan Form Pencarian) -->
+            <div class="bg-white rounded-2xl shadow-xl border border-slate-200 px-5 py-2.5 flex items-center justify-between gap-4 shrink-0 min-w-[190px]">
+                <div class="text-left">
+                    <div class="flex items-center gap-1.5">
+                        <span id="saldoKoinHeader" class="text-2xl font-black text-amber-500 font-mono">
+                            {{ number_format($perusahaan->koin_perusahaan ?? 0, 0, ',', '.') }}
+                        </span>
+                        <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-6 h-6 object-contain">
+                    </div>
+                    <button type="button" onclick="toggleModal()"
+                        class="text-[11px] font-bold text-emerald-600 hover:text-emerald-700 transition cursor-pointer">
+                        Top Up Koin
                     </button>
                 </div>
+                <button type="button" onclick="toggleModal()" title="Top Up Koin"
+                    class="w-9 h-9 rounded-full bg-emerald-500 hover:bg-emerald-600 text-white flex items-center justify-center font-bold text-xl shadow-sm transition shrink-0 cursor-pointer">
+                    <svg class="w-5 h-5 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Tabel Kandidat Sesuai Mockup UI -->
+    <div class="max-w-6xl mx-auto px-4 mt-8 mb-16">
+        <div class="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-[#00509d] text-white text-center">
+                            <th class="py-4 px-6 font-bold text-xs uppercase tracking-wider text-left">Nama</th>
+                            <th class="py-4 px-4 font-bold text-xs uppercase tracking-wider">Skill</th>
+                            <th class="py-4 px-4 font-bold text-xs uppercase tracking-wider">Umur</th>
+                            <th class="py-4 px-4 font-bold text-xs uppercase tracking-wider">Pengalaman</th>
+                            <th class="py-4 px-4 font-bold text-xs uppercase tracking-wider">Gender</th>
+                            <th class="py-4 px-4 font-bold text-xs uppercase tracking-wider">CV</th>
+                            <th class="py-4 px-6 font-bold text-xs uppercase tracking-wider">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        @forelse ($pelamars as $p)
+                            @php
+                                $isCvUnlocked = in_array($p->id, $boughtCvPelamarIds ?? []);
+                                $skillsList = $p->skill->isNotEmpty()
+                                    ? $p->skill->pluck('skill')->take(2)->implode(', ')
+                                    : ($p->skills ? (is_array($p->skills) ? implode(', ', array_slice($p->skills, 0, 2)) : $p->skills) : '-');
+                                $pengalamanTeks = $p->pengalaman_kerja->first()?->posisi ?? 'Expert';
+                            @endphp
+                            <tr class="hover:bg-blue-50/40 transition text-center" id="row-kandidat-{{ $p->id }}">
+                                <td class="py-4 px-6 text-left">
+                                    <div class="font-bold text-slate-800 text-sm">{{ $p->nama_pelamar }}</div>
+                                </td>
+                                <td class="py-4 px-4 text-slate-600 font-medium">
+                                    {{ $skillsList }}
+                                </td>
+                                <td class="py-4 px-4 text-slate-600 font-medium">
+                                    {{ $p->umur ? $p->umur . ' Tahun' : '-' }}
+                                </td>
+                                <td class="py-4 px-4 text-slate-600 font-medium">
+                                    {{ $pengalamanTeks }}
+                                </td>
+                                <td class="py-4 px-4 text-slate-600 font-medium">
+                                    {{ $p->gender_singkat ?? '-' }}
+                                </td>
+                                <td class="py-4 px-4">
+                                    <div id="cv-action-{{ $p->id }}">
+                                        @if ($isCvUnlocked)
+                                            <a href="{{ route('cv.download', $p->id) }}"
+                                                class="inline-flex items-center justify-center w-28 py-1.5 border-2 border-[#00509d] text-[#00509d] hover:bg-[#00509d] hover:text-white font-bold rounded-lg text-xs transition shadow-2xs">
+                                                Download
+                                            </a>
+                                        @else
+                                            <button type="button"
+                                                class="btn-beli-cv inline-flex items-center justify-center w-28 py-1.5 border-2 border-[#00509d] text-[#00509d] hover:bg-blue-50 font-bold rounded-lg text-xs transition shadow-2xs cursor-pointer"
+                                                data-id="{{ $p->id }}"
+                                                data-nama="{{ $p->nama_pelamar }}">
+                                                Beli
+                                            </button>
+                                        @endif
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6">
+                                    <button type="button"
+                                        class="btn-rekrut w-28 py-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-lg text-xs transition shadow-sm cursor-pointer"
+                                        data-id="{{ $p->id }}"
+                                        data-nama="{{ $p->nama_pelamar }}">
+                                        Rekrut
+                                    </button>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="7" class="py-12 px-4 text-center text-slate-400 font-medium">
+                                    Tidak ada kandidat aktif yang sesuai dengan kriteria filter pencarian.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
         </div>
-    </form>
+    </div>
 
-    <!-- Koin -->
-    <div class="max-w-6xl mx-auto mt-4 flex justify-end">
-        <div class="flex items-center gap-6 bg-white  px-6 py-4 rounded-lg">
-            <!-- Coin + jumlah + teks -->
-            <div class="flex flex-col items-center">
-                <span class="flex items-center">
-                    <p class="text-yellow-500 font-semibold text-4xl">{{ $perusahaan->koin_perusahaan ?? 0 }}</p>
-                    <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-10 h-10 ml-2">
-                </span>
-                <button onclick="toggleModal()" class="flex items-center text-green-600 text-sm font-medium">
-                    <p class="mr-2">Top Up Koin</p>
-                    <!-- icon + -->
-                    <svg width="22" height="22" viewBox="0 0 22 22" fill="none"
-                        xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                        <mask id="mask0_614_15612" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0"
-                            width="22" height="22">
-                            <rect x="0.53125" y="0.722656" width="20.4918" height="20.4918"
-                                fill="url(#pattern0_614_15612)" />
-                        </mask>
-                        <g mask="url(#mask0_614_15612)">
-                            <rect x="0.773438" y="0.96875" width="20" height="20" fill="#42BB72" />
-                        </g>
-                        <defs>
-                            <pattern id="pattern0_614_15612" patternContentUnits="objectBoundingBox" width="1"
-                                height="1">
-                                <use xlink:href="#image0_614_15612" transform="scale(0.0104167)" />
-                            </pattern>
-                            <image id="image0_614_15612" width="96" height="96" preserveAspectRatio="none"
-                                xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABmJLR0QA/wD/AP+gvaeTAAAEhUlEQVR4nO2dz48URRTHP47ouCPIL1kJRBc9AAdNIF6JhkVMjEwg/uJEOHhBvUDgjyASJRIve9UbBxU5GvGCePRHlMCGRUPWFQPyQxDwsnCoISyrs/W6q6pf9fT7JN/Mpabn9fdNdXV3Vb8GwzAMwzAMwzCaxgPaAXgYBtYDa2ZoGHgUWNz7BPgHuNz7/BMYB04Bp4HvgQuVRl2A3BLQATYDo8BG4FnCY7wN/Awc6+kr4GbgNgeKFrABGAOu4gxLqRvAYaALPFjB/mXLI8C7wFnSm95PE8A7vVgaQwfYB0yhZ/xsTQF7e7ENNF3gV/QN76dJ4M1ke6/IKuAo+gZLdQQYSeKEAtuAS+ibWlRXge0J/KiMNvAR+kaGaqy3L7ViKfAd+ubF0rfAkqgOJWQF8BP6psXWSeCpiD4lYS1wDn2zUulcbx+zZCXwG/ompdYkGZ4hLcV1UW1zqtI47qZgFrQZrAFXqhNkcnb0MfpmaOlQBP+CeAN9E7T1erCLJVkFXBEEOOi6jNKg/GWJYAdVRwK9LMy2SIEPkrpBjhagg+75vg+tuM4CQ4L47qNV9AvAe2R4IZIBTwO7Uv9IG/gd3a7uQzO2PyjYC4r2gLdxN9uM/2c5sDPVxlvoTqDXoQfcxk30i5fSFOkBL+KOc8bcPAO8IG1cJAE7isfSWMReSbvKEG6AWVgqnLj4YpYcplLzN2488K7Ak/aAl8nD/LrwGLBJ0lCagNHysTSWjZJG0gSINmbch+hPKxkDhoHzwrZVUIcxAGAaeAK4OFcjSQ9YTz7m14kWsE7SyMea8Fgai9c7S0BaoiRgdYRAmoo3AfMEG1keIZCZpB5PYjzSFAuvd5IesCBCIE3F650lIC1REjA/QiBNJUoCjIRIEnA9eRSDyzVfA0kCvBsx+mIJUCZKAs5HCGQmuc8Jx8TrnSQB4xECaSqnfQ0kCfBuxOiLJUAZr3eS+ybLcDV4cpkTqNOEzDDw11yNJD3gAq7ejlGMH/GYD/Ir4WNhsTQSkWeWgHR8I2lkC7PSEH1h1k3gs5CIGsZhhHXpitwN/bRcLI0kiVct3NJr7eXfPrTjO0Oi5enTwAcF2jeVAyQch+wRpbk1RcEKjEVnxP4FPiz4nSbxPnAr9Y900K186EMrrglKPKZallcq2KG6aUuQoyWwUgX39Hmgl6UYwRWq0N55bV1CsZZcF3d6qm2ClqaB14JdDOQQ+kZo6WAE/4Jp4+pqaptRtY4DD0fwLwoLcRMQ2qZUpV/IsJBrk8pWZlvAtQmFW7N/YmgFg3k4Ogk8GdGnpCzB1dXUNi2WjpPhMd/HQ8B+6n+dMEZGZztl2Ep9X+DwVgI/VBihXveOviDjM50QuuRRdaufJoBXk+19JnSAPejPrM3UJLCbCu/n50Ab9xI1zYn+CVypySyqoGvyPO6FPxdJb/oV4BPgJTJYcKwewCyGcJWmRnt6jvAnOadx77S5+zLPr6lg3lZKbgmYzeO4cjmrcbc57r7OdgGwiHvPMF/H/bOv8d/X2f6Ap2aPYRiGYRiGYRhGldwBFK9RwjpRCLwAAAAASUVORK5CYII=" />
-                        </defs>
-                    </svg>
-
+    <!-- Modal Konfirmasi Beli CV (5 Koin) -->
+    <div id="modalConfirmBeliCv"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-sm text-center animate-fade-in border border-slate-100">
+            <div class="w-14 h-14 bg-amber-50 text-amber-500 border border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-8 h-8 object-contain">
+            </div>
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1">Buka CV Kandidat</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                Buka dan unduh CV pelamar <span id="namaPelamarBeliCv" class="font-bold text-slate-800"></span> seharga:
+            </p>
+            <div class="bg-amber-50/70 border border-amber-200 rounded-2xl py-3 px-4 mb-3 flex items-center justify-center gap-2">
+                <span class="text-3xl font-black text-amber-500 font-mono">5</span>
+                <span class="text-xs font-bold text-amber-800">Koin AreaKerja</span>
+            </div>
+            <p class="text-[11px] text-slate-400 mb-5">
+                Saldo koin Anda: <span id="saldoKoinModalCv" class="font-bold text-slate-700">{{ $perusahaan->koin_perusahaan ?? 0 }}</span> Koin
+            </p>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="closeModalBeliCv()"
+                    class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer">
+                    Batal
+                </button>
+                <button type="button" id="btnProsesBeliCv"
+                    class="w-1/2 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold rounded-xl text-xs transition shadow-sm cursor-pointer">
+                    Beli Sekarang
                 </button>
             </div>
         </div>
     </div>
 
-
-    <!-- Tabel Kandidat -->
-    <div class="max-w-6xl mx-auto mt-6 mb-10 overflow-x-auto rounded-lg border shadow-md">
-        <table class="w-full border-collapse text-sm">
-            <thead>
-                <tr class="bg-[#00509d] text-white text-center">
-                    <th class="py-3 px-4 font-medium">Nama</th>
-                    <th class="py-3 px-4 font-medium">Skill</th>
-                    <th class="py-3 px-4 font-medium">Umur</th>
-                    <th class="py-3 px-4 font-medium">Pengalaman</th>
-                    <th class="py-3 px-4 font-medium">Gender</th>
-                    <th class="py-3 px-4 font-medium">CV</th>
-                    <th class="py-3 px-4 font-medium">Status</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y">
-                @forelse ($pelamars as $p)
-                    <tr class="hover:bg-gray-50 text-center">
-                        <td class="py-3 px-4">{{ $p->nama_pelamar }}</td>
-                        <td class="py-3 px-4">
-                            @if ($p->skill->isNotEmpty())
-                                {{ $p->skill->pluck('skill')->implode(', ') }}
-                            @else
-                                -
-                            @endif
-                        </td>
-                        <td class="py-3 px-4">{{ $p->umur ?? '-' }} Tahun</td>
-                        <td class="py-3 px-4">Expert</td>
-                        <td class="py-3 px-4">{{ $p->gender_singkat ?? '-' }}</td>
-                        <td class="py-3 px-4">
-                            <button onclick="openConfirmModal({{ $p->id }})">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-[#00509d]"
-                                    fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 3v12l4-4h-3V3h-2v8H8l4 4zM4 19h16v2H4z" />
-                                </svg>
-                            </button>
-                        </td>
-                        <td class="py-3 px-4">
-                            @php
-                                $sudahPernahDibeli = \App\Models\PelamarLowongan::where('pelamar_id', $p->id)
-                                    ->whereHas('lowongan_perusahaan', function ($q) use ($perusahaan) {
-                                        $q->where('perusahaan_id', $perusahaan->id);
-                                    })
-                                    ->exists();
-                            @endphp
-                            <button
-                                class="btn-beli {{ $sudahPernahDibeli ? 'bg-gray-600 hover:bg-gray-700' : 'bg-green-500 hover:bg-green-600' }} text-white px-10 py-2 rounded-md text-xs font-medium"
-                                data-id="{{ $p->id }}">
-                                {{ $sudahPernahDibeli ? 'Beli Lagi' : 'Beli' }}
-                            </button>
-                        </td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="8" class="py-3 px-4 text-center">Tidak ada kandidat yang terdaftar.</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-
-    {{-- MODAL CV --}}
-    <div id="confirmModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-        <div class="bg-white p-6 rounded-lg text-center max-w-sm w-full scale-[0.85] md:scale-100">
-            <div class="flex justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d] mb-4" fill="currentColor"
-                    viewBox="0 0 24 24">
-                    <path d="M12 16l4-5h-3V4h-2v7H8l4 5zM4 20h16v2H4z" />
+    <!-- Modal Koin Tidak Cukup untuk CV (Min 5 Koin) -->
+    <div id="modalKoinKurangCv"
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-sm text-center animate-fade-in border border-slate-100">
+            <div class="w-14 h-14 bg-rose-50 text-rose-500 border border-rose-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <svg class="w-8 h-8 font-bold" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
                 </svg>
             </div>
-            <p class="mb-4 font-medium">Yakin akan mengunduh CV pelamar?</p>
-            <div class="flex justify-center gap-4">
-                <button onclick="downloadCV()" class="px-4 py-2 bg-[#00509d] text-white rounded">Unduh</button>
-                <button onclick="closeConfirmModal()" class="px-4 py-2 bg-gray-300 text-black rounded">Batal</button>
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1">Koin Tidak Mencukupi</h3>
+            <p class="text-xs text-slate-500 mb-5 leading-relaxed">
+                Saldo koin perusahaan Anda tidak mencukupi untuk membuka CV kandidat ini (Minimal 5 koin). Silakan lakukan top up koin.
+            </p>
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="closeModalKoinKurangCv()"
+                    class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer">
+                    Batal
+                </button>
+                <button type="button" onclick="closeModalKoinKurangCv(); toggleModal()"
+                    class="w-1/2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs transition shadow-sm cursor-pointer">
+                    Top Up Koin
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal 2: Sukses -->
-    <div id="successModal" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-        <div class="bg-white p-6 rounded-lg text-center max-w-sm w-full scale-[0.85] md:scale-100">
-            <div class="flex justify-center">
-                <div class="bg-blue-100 p-4 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-[#00509d]" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                    </svg>
-                </div>
-            </div>
-            <p class="mt-4 font-semibold">CV Berhasil diunduh</p>
-            <button onclick="closeSuccessModal()" class="mt-4 px-4 py-2 bg-[#00509d] text-white rounded">Tutup</button>
-        </div>
-    </div>
-
-    <!-- Modal Pilih Lowongan -->
+    <!-- Modal Pilih Lowongan untuk Rekrut -->
     <div id="modalPilihLowongan"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 transition-all">
-        <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md text-center animate-fade-in">
-            <h3 class="text-xl font-semibold mb-4 text-gray-800">Pilih Lowongan</h3>
-            <select id="selectLowongan"
-                class="w-full border-2 border-gray-400 rounded-lg px-4 py-2 text-sm  focus:outline-none">
-                @foreach (auth()->user()->perusahaan->lowonganPerusahaans as $low)
-                    <option value="{{ $low->id }}">{{ $low->nama }}</option>
-                @endforeach
-            </select>
-            <div class="flex justify-center gap-4 mt-6">
-                <button id="btnLanjut"
-                    class="bg-[#00509d] hover:bg-[#003d7a] text-white px-5 py-2 rounded-md transition-all">Lanjutkan</button>
-                <button id="btnCancel1"
-                    class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-5 py-2 rounded-md transition-all">Batal</button>
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-md text-center animate-fade-in border border-slate-100">
+            <div class="w-14 h-14 bg-blue-50 text-[#00509d] border border-blue-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <svg class="w-7 h-7 text-[#00509d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path>
+                </svg>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal Pilih Lowongan -->
-    <div id="modalPilihLowongan"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 transition-all">
-        <div class="bg-white p-6 rounded-xl shadow-lg w-full max-w-md text-center animate-fade-in">
-            <h3 class="text-xl font-semibold mb-4 text-gray-800">Pilih Lowongan</h3>
-            <select id="selectLowongan"
-                class="w-full border rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-[#00509d] focus:outline-none">
-                <option value="">-- Pilih Lowongan --</option>
-                @foreach (auth()->user()->perusahaan->lowonganPerusahaans as $low)
-                    <option value="{{ $low->id }}">{{ $low->nama }}</option>
-                @endforeach
-            </select>
-            <div class="flex justify-center gap-4 mt-6">
-                <button id="btnLanjut"
-                    class="bg-[#00509d] hover:bg-[#003d7a] text-white px-5 py-2 rounded-md transition-all">
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1">Rekrut Kandidat</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                Pilih lowongan pekerjaan untuk merekrut <span id="namaPelamarRekrut" class="font-bold text-slate-800"></span>:
+            </p>
+            <div class="mb-5 text-left">
+                <label class="block text-xs font-bold text-slate-700 mb-1.5">Posisi Lowongan yang Dibuka:</label>
+                <select id="selectLowongan"
+                    class="w-full bg-slate-50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]">
+                    <option value="">-- Pilih Lowongan --</option>
+                    @if(auth()->user()->perusahaan && auth()->user()->perusahaan->lowonganPerusahaans)
+                        @foreach (auth()->user()->perusahaan->lowonganPerusahaans as $low)
+                            <option value="{{ $low->id }}">{{ $low->nama }}</option>
+                        @endforeach
+                    @endif
+                </select>
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="button" id="btnCancelRekrut"
+                    class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer">
+                    Batal
+                </button>
+                <button type="button" id="btnLanjutRekrut"
+                    class="w-1/2 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold rounded-xl text-xs transition shadow-sm cursor-pointer">
                     Lanjutkan
                 </button>
-                <button id="btnCancel1"
-                    class="bg-gray-300 hover:bg-gray-400 text-gray-700 px-5 py-2 rounded-md transition-all">
-                    Batal
-                </button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Konfirmasi -->
+    <!-- Modal Konfirmasi Rekrut (100 Koin) -->
     <div id="modalKonfirmasi"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 transition-all">
-        <div
-            class="bg-white p-10 rounded-2xl shadow-xl w-[360px] text-center animate-fade-in flex flex-col items-center justify-center space-y-5">
-
-            <!-- Nominal Koin -->
-            <div class="flex items-center justify-center space-x-2">
-                <span class="text-4xl font-bold text-yellow-500">100</span>
-                <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-8 h-8">
+        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-sm text-center animate-fade-in border border-slate-100">
+            <div class="w-14 h-14 bg-amber-50 text-amber-500 border border-amber-200 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <img src="{{ asset('images/coin.png') }}" alt="coin" class="w-8 h-8 object-contain">
             </div>
-
-            <!-- Teks -->
-            <p class="text-gray-800 font-medium">Beli kandidat area kerja</p>
-
-            <!-- Tombol -->
-            <div class="flex items-center justify-center space-x-4">
-                <button id="btnKonfirmasiBeli"
-                    class="bg-green-500 hover:bg-green-600 text-white font-medium px-8 py-2 rounded-full transition-all">
-                    Beli
-                </button>
-                <button id="btnKonfirmasiBatal"
-                    class="bg-red-500 hover:bg-red-600 text-white font-medium px-8 py-2 rounded-full transition-all">
+            <h3 class="text-lg font-extrabold text-slate-900 mb-1">Konfirmasi Rekrutmen</h3>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">
+                Biaya rekrutmen kandidat ke lowongan perusahaan:
+            </p>
+            <div class="bg-amber-50/70 border border-amber-200 rounded-2xl py-3 px-4 mb-4 flex items-center justify-center gap-2">
+                <span class="text-3xl font-black text-amber-500 font-mono">100</span>
+                <span class="text-xs font-bold text-amber-800">Koin AreaKerja</span>
+            </div>
+            <div class="flex items-center gap-3">
+                <button type="button" id="btnKonfirmasiBatal"
+                    class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer">
                     Batal
                 </button>
+                <button type="button" id="btnKonfirmasiBeli"
+                    class="w-1/2 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs transition shadow-sm cursor-pointer">
+                    Konfirmasi Rekrut
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- âœ… Modal Top Up -->
-    <div id="modalTopUp"
-        class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 transition-all">
-        <div
-            class="bg-white p-10 rounded-2xl shadow-xl w-[360px] text-center animate-fade-in flex flex-col items-center justify-center space-y-5">
-            <h2 class="text-2xl font-semibold italic text-gray-800">Upss!!</h2>
-            <p class="text-gray-600 leading-relaxed text-sm">
-                Koin anda kurang silahkan <br> Top Up terlebih dahulu.
-            </p>
-            <button onclick="toggleModal()"
-                class="bg-[#00509d] hover:bg-[#003d7a] text-white font-medium px-8 py-2 rounded-full transition-all text-sm">
-                Top Up
-            </button>
-        </div>
-    </div>
-
-    {{-- @include('perusahaan.modal-topup') --}}
-
+    {{-- SCRIPTS --}}
     <script>
-        let selectedId = null;
-
-        function openConfirmModal(id) {
-            selectedId = id;
-            document.getElementById('confirmModal').classList.remove('hidden');
-        }
-
-        function closeConfirmModal() {
-            document.getElementById('confirmModal').classList.add('hidden');
-        }
-
-        function downloadCV() {
-            if (!selectedId) return;
-            closeConfirmModal();
-            document.getElementById('successModal').classList.remove('hidden');
-            setTimeout(() => {
-                let url = "{{ route('cv.download', ':id') }}";
-                url = url.replace(':id', selectedId);
-                window.location.href = url;
-            }, 500);
-        }
-
-        function closeSuccessModal() {
-            document.getElementById('successModal').classList.add('hidden');
-        }
-    </script>
-
-    <script>
-        const harga = 100;
+        let currentCoins = {{ $perusahaan->koin_perusahaan ?? 0 }};
         let selectedPelamarId = null;
+        let selectedPelamarNama = '';
         let selectedLowonganId = null;
 
-        const modalPilih = document.getElementById('modalPilihLowongan');
-        const modalKonfirmasi = document.getElementById('modalKonfirmasi');
-        const modalTopUp = document.getElementById('modalTopUp');
-        const selectLowongan = document.getElementById('selectLowongan');
+        function updateCoinDisplay(newAmount) {
+            currentCoins = newAmount;
+            const formatted = new Intl.NumberFormat('id-ID').format(newAmount);
+            const elHeader = document.getElementById('saldoKoinHeader');
+            if (elHeader) elHeader.textContent = formatted;
+            const elModalCv = document.getElementById('saldoKoinModalCv');
+            if (elModalCv) elModalCv.textContent = formatted;
+        }
 
-        // ðŸ”¸ Buka modal pilih lowongan
-        document.querySelectorAll('.btn-beli').forEach(btn => {
+        // --- FITUR BELI CV (5 KOIN) ---
+        function closeModalBeliCv() {
+            document.getElementById('modalConfirmBeliCv').classList.add('hidden');
+        }
+
+        function closeModalKoinKurangCv() {
+            document.getElementById('modalKoinKurangCv').classList.add('hidden');
+        }
+
+        document.querySelectorAll('.btn-beli-cv').forEach(btn => {
             btn.addEventListener('click', function() {
                 selectedPelamarId = this.dataset.id;
+                selectedPelamarNama = this.dataset.nama || '';
+
+                if (currentCoins < 5) {
+                    document.getElementById('modalKoinKurangCv').classList.remove('hidden');
+                    return;
+                }
+
+                document.getElementById('namaPelamarBeliCv').textContent = selectedPelamarNama;
+                document.getElementById('modalConfirmBeliCv').classList.remove('hidden');
+            });
+        });
+
+        document.getElementById('btnProsesBeliCv')?.addEventListener('click', async function() {
+            if (!selectedPelamarId) return;
+
+            const btn = this;
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
+
+            try {
+                let url = "{{ route('perusahaan.kandidat.beli-cv', ':id') }}".replace(':id', selectedPelamarId);
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    }
+                });
+
+                const data = await res.json();
+
+                if (data.status === 'success') {
+                    closeModalBeliCv();
+
+                    if (data.sisa_koin !== undefined) {
+                        updateCoinDisplay(data.sisa_koin);
+                    }
+
+                    // Ganti tombol Beli menjadi Download
+                    const wrapper = document.getElementById('cv-action-' + selectedPelamarId);
+                    if (wrapper) {
+                        wrapper.innerHTML = `
+                            <a href="${data.download_url}"
+                                class="inline-flex items-center justify-center w-28 py-1.5 border-2 border-[#00509d] text-[#00509d] hover:bg-[#00509d] hover:text-white font-bold rounded-lg text-xs transition shadow-2xs">
+                                Download
+                            </a>
+                        `;
+                    }
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'CV Berhasil Dibuka!',
+                        text: data.message,
+                        timer: 2000,
+                        showConfirmButton: false
+                    });
+                } else if (data.type === 'coin_insufficient') {
+                    closeModalBeliCv();
+                    document.getElementById('modalKoinKurangCv').classList.remove('hidden');
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message || 'Gagal membuka CV kandidat.',
+                        confirmButtonColor: '#00509d'
+                    });
+                }
+            } catch (err) {
+                console.error('Beli CV Error:', err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan Sistem',
+                    text: 'Terjadi kesalahan saat memproses data. Silakan coba lagi.',
+                    confirmButtonColor: '#00509d'
+                });
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
+        });
+
+        // --- FITUR REKRUT KANDIDAT (100 KOIN) ---
+        const modalPilih = document.getElementById('modalPilihLowongan');
+        const modalKonfirmasi = document.getElementById('modalKonfirmasi');
+        const selectLowongan = document.getElementById('selectLowongan');
+
+        document.querySelectorAll('.btn-rekrut').forEach(btn => {
+            btn.addEventListener('click', function() {
+                selectedPelamarId = this.dataset.id;
+                selectedPelamarNama = this.dataset.nama || '';
+                document.getElementById('namaPelamarRekrut').textContent = selectedPelamarNama;
                 modalPilih.classList.remove('hidden');
             });
         });
 
-        // ðŸ”¸ Tombol lanjut dari modal pilih lowongan
-        document.getElementById('btnLanjut').addEventListener('click', () => {
+        document.getElementById('btnCancelRekrut')?.addEventListener('click', () => {
+            modalPilih.classList.add('hidden');
+        });
+
+        document.getElementById('btnLanjutRekrut')?.addEventListener('click', () => {
             selectedLowonganId = selectLowongan.value;
             if (!selectedLowonganId) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Pilih Lowongan',
-                    text: 'âš ï¸ Pilih lowongan terlebih dahulu!',
-                    confirmButtonColor: '#3085d6',
+                    text: 'Silakan pilih posisi lowongan terlebih dahulu!',
+                    confirmButtonColor: '#00509d',
                 });
                 return;
             }
+
+            if (currentCoins < 100) {
+                modalPilih.classList.add('hidden');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Koin Tidak Cukup',
+                    text: 'Saldo koin perusahaan Anda kurang untuk merekrut kandidat (Dibutuhkan 100 Koin).',
+                    showCancelButton: true,
+                    confirmButtonText: 'Top Up Koin',
+                    cancelButtonText: 'Batal',
+                    confirmButtonColor: '#10b981',
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        toggleModal();
+                    }
+                });
+                return;
+            }
+
             modalPilih.classList.add('hidden');
             modalKonfirmasi.classList.remove('hidden');
-            document.getElementById('hargaKoin').textContent = harga;
         });
 
-        // ðŸ”¸ Tombol batal di modal pilih lowongan
-        document.getElementById('btnCancel1').addEventListener('click', () => {
-            modalPilih.classList.add('hidden');
-        });
-
-        // ðŸ”¸ Tombol konfirmasi beli
-        document.getElementById('btnKonfirmasiBeli').addEventListener('click', async () => {
+        document.getElementById('btnKonfirmasiBatal')?.addEventListener('click', () => {
             modalKonfirmasi.classList.add('hidden');
+        });
+
+        document.getElementById('btnKonfirmasiBeli')?.addEventListener('click', async function() {
+            modalKonfirmasi.classList.add('hidden');
+
+            const btn = this;
+            btn.disabled = true;
 
             try {
                 const res = await fetch("{{ route('kandidat.beli') }}", {
@@ -417,113 +493,54 @@
                     })
                 });
 
-                let data = {};
-                try {
-                    data = await res.json();
-                } catch (jsonErr) {
-                    console.warn('Respon bukan JSON:', jsonErr);
-                }
+                const data = await res.json();
 
-                //Jika akun belum verifikasi Tampilkan alert dan stop semua proses
-                if (!data.success && data.type === 'verification') {
-                    
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Akun Belum Terverifikasi',
-                        text: data.message,
-                        confirmButtonText: 'Mengerti'
-                    });
-
-                    return; //STOP SEMUA PROSES
-                }
-
-
-                if (!res.ok) {
-                    throw new Error(data.message || `HTTP Error ${res.status}`);
-                }
-
-                // --- jika sukses ---
                 if (data.status === 'success' || data.success) {
+                    updateCoinDisplay(Math.max(0, currentCoins - 100));
+
                     Swal.fire({
                         icon: 'success',
-                        title: 'Pembelian Berhasil!',
-                        text: 'Data kandidat berhasil dibeli.',
-                        confirmButtonColor: '#22c55e',
+                        title: 'Kandidat Berhasil Direkrut!',
+                        text: data.message || 'Kandidat berhasil dihubungkan ke lowongan Anda.',
+                        confirmButtonColor: '#00509d',
                     });
-
-                    const btn = document.querySelector(`.btn-beli[data-id="${selectedPelamarId}"]`);
-                    if (btn) {
-                        btn.textContent = 'Beli Lagi';
-                        btn.classList.remove('bg-green-500', 'hover:bg-green-600');
-                        btn.classList.add('bg-gray-600', 'hover:bg-gray-700');
-                        //  jangan pakai btn.disabled = true
-                    }
-
-                    return;
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal',
+                        text: data.message || 'Terjadi kesalahan saat merekrut kandidat.',
+                        confirmButtonColor: '#00509d'
+                    });
                 }
-
-                // --- jika gagal karena koin ---
-                if (data.message && data.message.toLowerCase().includes('koin')) {
-                    // langsung buka modal top up
-                    modalTopUp.classList.remove('hidden');
-                    return;
-                }
-
-
-                // --- fallback error lainnya ---
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Gagal',
-                    text: data.message || 'Terjadi kesalahan.',
-                    confirmButtonColor: '#d33'
-                });
-
             } catch (err) {
-                console.error('Fetch Error:', err);
+                console.error('Rekrut Error:', err);
                 Swal.fire({
                     icon: 'error',
-                    title: 'Koneksi Bermasalah',
-                    text: 'âš ï¸ Terjadi kesalahan koneksi, coba lagi nanti.',
-                    confirmButtonColor: '#d33'
+                    title: 'Kesalahan Sistem',
+                    text: 'Terjadi kesalahan koneksi. Silakan coba lagi.',
+                    confirmButtonColor: '#00509d'
                 });
-            }
-        });
-
-
-        // ðŸ”¸ Tombol batal di modal konfirmasi
-        document.getElementById('btnKonfirmasiBatal').addEventListener('click', () => {
-            modalKonfirmasi.classList.add('hidden');
-        });
-
-        // ðŸ”¸ Tutup modal Top Up jika klik di luar
-        modalTopUp.addEventListener('click', e => {
-            if (e.target === modalTopUp) {
-                modalTopUp.classList.add('hidden');
+            } finally {
+                btn.disabled = false;
             }
         });
     </script>
 
-
     <style>
-        @keyframes fade-in {
+        @keyframes fadeIn {
             from {
                 opacity: 0;
-                transform: scale(0.95);
+                transform: scale(0.96);
             }
-
             to {
                 opacity: 1;
                 transform: scale(1);
             }
         }
-
         .animate-fade-in {
-            animation: fade-in 0.25s ease-out;
+            animation: fadeIn 0.2s ease-out;
         }
     </style>
 
-
-
     @include('layouts.footer')
 @endsection
-

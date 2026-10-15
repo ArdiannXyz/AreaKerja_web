@@ -1,4 +1,4 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <div class="w-full h-screen translate-x-4 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
         <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto">
@@ -47,8 +47,7 @@
                             <p>Posisi Yang Dibutuhkan: <span class="font-medium">{{ $talentHunter->posisi ?? '-' }}</span>
                             </p>
                             <p>Jenis Kelamin: <span class="font-medium">{{ $talentHunter->gender ?? '-' }}</span></p>
-                            <p>Kisaran Gaji: <span class="font-medium">{{ $talentHunter->gaji_awal ?? '-' }} -
-                                    {{ $talentHunter->gaji_akhir ?? '-' }}</span></p>
+                            <p>Gaji yang Ditawarkan: <span class="font-medium text-[#00509d]">{{ $talentHunter->gaji_tampil }}</span></p>
                             <p>Pengalaman Kerja: <span
                                     class="font-medium">{{ $talentHunter->pengalaman_kerja ?? '-' }}</span></p>
                             <p>Kontak Perusahaan: <span

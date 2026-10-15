@@ -8,8 +8,11 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Iklan;
+use App\Models\Perusahaan;
 use App\Models\CatatanKoin;
 use App\Services\CoinTransactionService;
+use App\Http\Requests\StoreAdminIklanRequest;
+use Illuminate\Support\Facades\Storage;
 
 class IklanAdminController extends Controller
 {
@@ -26,7 +29,7 @@ class IklanAdminController extends Controller
         $statusFilter = $request->query('status', 'menunggu');
         $search = $request->query('q');
 
-        $query = Iklan::with('perusahaan');
+        $query = Iklan::with(['perusahaan', 'user']);
 
         if ($statusFilter && in_array($statusFilter, ['menunggu', 'aktif', 'ditolak', 'selesai'])) {
             $query->where('status', $statusFilter);
@@ -75,7 +78,7 @@ class IklanAdminController extends Controller
         $statusFilter = $request->query('status', 'menunggu');
         $search = $request->query('q');
 
-        $query = Iklan::with('perusahaan');
+        $query = Iklan::with(['perusahaan', 'user']);
 
         if ($statusFilter && in_array($statusFilter, ['menunggu', 'aktif', 'ditolak', 'selesai'])) {
             $query->where('status', $statusFilter);
@@ -196,5 +199,111 @@ class IklanAdminController extends Controller
     public function rejectSuper(Request $request, $id)
     {
         return $this->reject($request, $id);
+    }
+
+    /**
+     * Form Pasang Banner Iklan Baru (Admin - Gratis Tanpa Biaya)
+     */
+    public function create()
+    {
+        $perusahaans = Perusahaan::select('id', 'nama_perusahaan')
+            ->orderBy('nama_perusahaan')
+            ->get();
+
+        return view('admin.iklan.create', compact('perusahaans'));
+    }
+
+    /**
+     * Form Pasang Banner Iklan Baru (Super Admin - Gratis Tanpa Biaya)
+     */
+    public function createSuper()
+    {
+        $perusahaans = Perusahaan::select('id', 'nama_perusahaan')
+            ->orderBy('nama_perusahaan')
+            ->get();
+
+        return view('super_admin.iklan.create', compact('perusahaans'));
+    }
+
+    /**
+     * Simpan Banner Iklan Baru oleh Admin (Tanpa Biaya / 0 Koin)
+     */
+    public function store(StoreAdminIklanRequest $request)
+    {
+        $path = $request->file('gambar_banner')->store('iklan-banners', 'public');
+        $durasiHari = (int) $request->durasi_hari;
+        $now = now();
+
+        Iklan::create([
+            'perusahaan_id'   => $request->perusahaan_id ?: null,
+            'user_id'         => Auth::id(),
+            'judul_iklan'     => $request->judul_iklan,
+            'gambar_banner'   => $path,
+            'url_tujuan'      => $request->url_tujuan,
+            'paket_nama'      => 'Official Admin (Gratis)',
+            'durasi_hari'     => $durasiHari,
+            'koin_terpotong'  => 0,
+            'posisi'          => 'home_hero',
+            'status'          => 'aktif', // Langsung aktif tanpa approval
+            'tanggal_mulai'   => $now,
+            'tanggal_selesai' => (clone $now)->addDays($durasiHari),
+            'total_views'     => 0,
+            'total_clicks'    => 0,
+        ]);
+
+        return redirect()->route('admin.iklan.index')->with('success', 'Banner iklan berhasil diupload tanpa biaya dan langsung aktif tayang di Beranda!');
+    }
+
+    /**
+     * Simpan Banner Iklan Baru oleh Super Admin (Tanpa Biaya / 0 Koin)
+     */
+    public function storeSuper(StoreAdminIklanRequest $request)
+    {
+        $path = $request->file('gambar_banner')->store('iklan-banners', 'public');
+        $durasiHari = (int) $request->durasi_hari;
+        $now = now();
+
+        Iklan::create([
+            'perusahaan_id'   => $request->perusahaan_id ?: null,
+            'user_id'         => Auth::id(),
+            'judul_iklan'     => $request->judul_iklan,
+            'gambar_banner'   => $path,
+            'url_tujuan'      => $request->url_tujuan,
+            'paket_nama'      => 'Official Super Admin (Gratis)',
+            'durasi_hari'     => $durasiHari,
+            'koin_terpotong'  => 0,
+            'posisi'          => 'home_hero',
+            'status'          => 'aktif', // Langsung aktif tanpa approval
+            'tanggal_mulai'   => $now,
+            'tanggal_selesai' => (clone $now)->addDays($durasiHari),
+            'total_views'     => 0,
+            'total_clicks'    => 0,
+        ]);
+
+        return redirect()->route('superadmin.iklan.index')->with('success', 'Banner iklan berhasil diupload tanpa biaya dan langsung aktif tayang di Beranda!');
+    }
+
+    /**
+     * Hapus Banner Iklan (Admin)
+     */
+    public function destroy($id)
+    {
+        $iklan = Iklan::findOrFail($id);
+
+        if ($iklan->gambar_banner && Storage::disk('public')->exists($iklan->gambar_banner)) {
+            Storage::disk('public')->delete($iklan->gambar_banner);
+        }
+
+        $iklan->delete();
+
+        return redirect()->back()->with('success', 'Banner iklan berhasil dihapus.');
+    }
+
+    /**
+     * Hapus Banner Iklan (Super Admin)
+     */
+    public function destroySuper($id)
+    {
+        return $this->destroy($id);
     }
 }

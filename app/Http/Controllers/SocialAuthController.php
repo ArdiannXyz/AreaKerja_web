@@ -24,7 +24,7 @@ class SocialAuthController extends Controller
 
     public function redirect(Request $request, $provider)
     {
-        $allowedProviders = ['google', 'facebook', 'github'];
+        $allowedProviders = ['google', 'facebook'];
         if (!in_array(strtolower($provider), $allowedProviders)) {
             return redirect()->route('login')->with('error', 'Provider otentikasi sosial tidak didukung.');
         }
@@ -51,7 +51,7 @@ class SocialAuthController extends Controller
 
     public function callback(Request $request, $provider)
     {
-        $allowedProviders = ['google', 'facebook', 'github'];
+        $allowedProviders = ['google', 'facebook'];
         if (!in_array(strtolower($provider), $allowedProviders)) {
             return redirect()->route('login')->with('error', 'Provider otentikasi sosial tidak didukung.');
         }

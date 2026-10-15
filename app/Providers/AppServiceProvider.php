@@ -53,10 +53,10 @@ class AppServiceProvider extends ServiceProvider
         // Default social links collection
         View::composer('layouts.footer', function ($view) {
             $socialLinks = collect([
-                (object)['nama' => 'instagram', 'link' => 'https://instagram.com/areakerjacom'],
-                (object)['nama' => 'linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
-                (object)['nama' => 'facebook', 'link' => 'https://facebook.com/areakerja'],
-                (object)['nama' => 'youtube', 'link' => 'https://youtube.com/@areakerja'],
+                (object)['nama' => 'instagram', 'link' => \App\Models\SiteSetting::get('social_instagram', 'https://instagram.com/areakerjacom')],
+                (object)['nama' => 'linkedin', 'link' => \App\Models\SiteSetting::get('social_linkedin', 'https://linkedin.com/company/areakerja')],
+                (object)['nama' => 'facebook', 'link' => \App\Models\SiteSetting::get('social_facebook', 'https://facebook.com/areakerja')],
+                (object)['nama' => 'youtube', 'link' => \App\Models\SiteSetting::get('social_youtube', 'https://youtube.com/@areakerja')],
             ]);
             $view->with('socialLinks', $socialLinks);
         });

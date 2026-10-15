@@ -10,6 +10,7 @@ use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
+use App\Models\PembelianCv;
 use App\Models\Perusahaan;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -454,11 +455,42 @@ class PerusahaanController extends Controller
         $genders = ['L', 'P'];
         $query = Pelamar::where('kategori', 'kandidat aktif');
 
+        if ($request->filled('skill')) {
+            $skillSearch = $request->skill;
+            $query->where(function ($q) use ($skillSearch) {
+                $q->whereJsonContains('skills', $skillSearch)
+                  ->orWhere('skills', 'like', '%' . $skillSearch . '%');
+            });
+        }
+
         if ($request->filled('gender')) {
-            $query->where('gender', $request->gender);
+            $genderVal = $request->gender;
+            if ($genderVal === 'L' || strtolower($genderVal) === 'laki-laki') {
+                $query->where(function ($q) {
+                    $q->where('gender', 'L')->orWhere('gender', 'Laki-laki');
+                });
+            } elseif ($genderVal === 'P' || strtolower($genderVal) === 'perempuan') {
+                $query->where(function ($q) {
+                    $q->where('gender', 'P')->orWhere('gender', 'Perempuan');
+                });
+            } else {
+                $query->where('gender', $genderVal);
+            }
+        }
+
+        if ($request->filled('umur') && str_contains($request->umur, '-')) {
+            [$min, $max] = explode('-', $request->umur);
+            $query->whereRaw('TIMESTAMPDIFF(YEAR, tanggal_lahir, CURDATE()) BETWEEN ? AND ?', [(int)$min, (int)$max]);
         }
 
         $pelamars = $query->get();
+
+        $boughtCvPelamarIds = [];
+        if ($perusahaan) {
+            $boughtCvPelamarIds = PembelianCv::where('perusahaan_id', $perusahaan->id)
+                ->pluck('pelamar_id')
+                ->toArray();
+        }
 
         $hargaPembayarans = collect([
             (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000, 'icon' => 'bitcoin.png'],
@@ -467,13 +499,14 @@ class PerusahaanController extends Controller
         ]);
 
         return view('perusahaan.kandidat-areakerja', [
-            'hargaPembayarans' => $hargaPembayarans,
-            'daftarBank'       => DaftarBank::all(),
-            'skills'           => $skills,
-            'umurRange'        => $umurRange,
-            'genders'          => $genders,
-            'pelamars'         => $pelamars,
-            'perusahaan'       => $perusahaan,
+            'hargaPembayarans'   => $hargaPembayarans,
+            'daftarBank'         => DaftarBank::all(),
+            'skills'             => $skills,
+            'umurRange'          => $umurRange,
+            'genders'            => $genders,
+            'pelamars'           => $pelamars,
+            'perusahaan'         => $perusahaan,
+            'boughtCvPelamarIds' => $boughtCvPelamarIds,
         ]);
     }
 

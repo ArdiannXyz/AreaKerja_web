@@ -18,3 +18,10 @@ if (!function_exists('url_lowongan')) {
         return url(route_lowongan($lowongan));
     }
 }
+
+if (!function_exists('header_image')) {
+    function header_image(string $key, string $defaultPath = 'images/logoarea.png'): string
+    {
+        return \App\Models\SiteSetting::headerUrl($key, $defaultPath);
+    }
+}

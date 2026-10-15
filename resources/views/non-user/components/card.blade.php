@@ -188,6 +188,23 @@
                                 showSuccess = true;
                                 return;
                             }
+                            if (data.redirect) {
+                                showConfirm = false;
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Lengkapi Profil',
+                                    text: data.message,
+                                    confirmButtonText: 'Lengkapi Profil Sekarang',
+                                    confirmButtonColor: '#00509d',
+                                    showCancelButton: true,
+                                    cancelButtonText: 'Batal'
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        window.location.href = data.redirect;
+                                    }
+                                });
+                                return;
+                            }
                             Swal.fire({ icon: 'error', title: 'Gagal!', text: data.message ?? 'Terjadi kesalahan.' });
                         })
                     " class="px-5 py-2.5 bg-[#004e98] hover:bg-[#003d7a] text-white font-semibold rounded-xl text-sm transition shadow-md">Kirim Lamaran</button>
