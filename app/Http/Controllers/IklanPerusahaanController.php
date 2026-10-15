@@ -181,8 +181,12 @@ class IklanPerusahaanController extends Controller
     public function handleClick($id)
     {
         $iklan = Iklan::findOrFail($id);
-        $iklan->increment('total_clicks');
 
-        return redirect()->away($iklan->url_tujuan);
+        if (!empty($iklan->url_tujuan)) {
+            $iklan->increment('total_clicks');
+            return redirect()->away($iklan->url_tujuan);
+        }
+
+        return redirect('/');
     }
 }

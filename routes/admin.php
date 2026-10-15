@@ -124,11 +124,16 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::post('/perusahaan/reject/{id}', 'reject')->name('admin.perusahaan.reject');
     });
 
-    // MODERASI IKLAN CONTROLLER
+    // MODERASI & MANAJEMEN IKLAN CONTROLLER
     Route::controller(IklanAdminController::class)->group(function () {
         Route::get('/iklan', 'index')->name('admin.iklan.index');
+        Route::get('/iklan/pasang', 'create')->name('admin.iklan.create');
+        Route::post('/iklan/pasang', 'store')->name('admin.iklan.store');
+        Route::get('/iklan/{id}/edit', 'edit')->name('admin.iklan.edit');
+        Route::put('/iklan/{id}', 'update')->name('admin.iklan.update');
         Route::post('/iklan/{id}/approve', 'approve')->name('admin.iklan.approve');
         Route::post('/iklan/{id}/reject', 'reject')->name('admin.iklan.reject');
+        Route::delete('/iklan/{id}', 'destroy')->name('admin.iklan.destroy');
     });
 });
 

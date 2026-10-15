@@ -1,4 +1,4 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-white mt-16">
 
@@ -9,7 +9,7 @@
                 $header = null;
             @endphp
 
-            <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/ntap.png') }}"
+            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_request_data', 'images/ntap.png') }}"
                 alt="Header Image" class="w-full h-[600px] object-cover">
             {{-- <img src="{{ asset('images/ntap.png') }}" alt="hero" class="w-full h-[350px] object-cover"> --}}
             <div class="absolute inset-0 bg-black bg-opacity-40"></div>

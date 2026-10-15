@@ -8,7 +8,7 @@
         <section class="relative w-full">
 
             <!-- Gambar Header -->
-            <img src="{{ $header && $header->link ? asset('storage/' . $header->link) : asset('images/tangan.png') }}"
+            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_pelamar_perusahaan', 'images/tangan.png') }}"
                 alt="Header Image" class="w-full h-52 md:h-96 object-cover">
 
             <!-- Overlay Hitam -->

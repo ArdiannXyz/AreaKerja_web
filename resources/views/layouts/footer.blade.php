@@ -239,19 +239,30 @@
                     Temukan peluang kerja yang tepat dan bangun kariermu bersama AreaKerja.
                 </p>
 
+                @php
+                    $fbLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Facebook')->link : null) ?: '#';
+                    $igLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Instagram')->link : null) ?: '#';
+                    $twLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Twitter')->link : null) ?: '#';
+                    $inLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Linkedin')->link : null) ?: '#';
+                    $ytLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Youtube')->link : null) ?: '#';
+                @endphp
+
                 {{-- Social Media --}}
                 <div class="flex items-center gap-2.5 pt-1">
-                    <a href="#" class="ak-social-btn" aria-label="Facebook AreaKerja" rel="noopener noreferrer">
+                    <a href="{{ $fbLink }}" target="_blank" class="ak-social-btn" aria-label="Facebook AreaKerja" rel="noopener noreferrer">
                         <i class="ph-fill ph-facebook-logo" style="font-size:16px;"></i>
                     </a>
-                    <a href="#" class="ak-social-btn" aria-label="Instagram AreaKerja" rel="noopener noreferrer">
+                    <a href="{{ $igLink }}" target="_blank" class="ak-social-btn" aria-label="Instagram AreaKerja" rel="noopener noreferrer">
                         <i class="ph-fill ph-instagram-logo" style="font-size:16px;"></i>
                     </a>
-                    <a href="#" class="ak-social-btn" aria-label="Twitter / X AreaKerja" rel="noopener noreferrer">
+                    <a href="{{ $twLink }}" target="_blank" class="ak-social-btn" aria-label="Twitter / X AreaKerja" rel="noopener noreferrer">
                         <i class="ph-fill ph-twitter-logo" style="font-size:16px;"></i>
                     </a>
-                    <a href="#" class="ak-social-btn" aria-label="LinkedIn AreaKerja" rel="noopener noreferrer">
+                    <a href="{{ $inLink }}" target="_blank" class="ak-social-btn" aria-label="LinkedIn AreaKerja" rel="noopener noreferrer">
                         <i class="ph-fill ph-linkedin-logo" style="font-size:16px;"></i>
+                    </a>
+                    <a href="{{ $ytLink }}" target="_blank" class="ak-social-btn" aria-label="YouTube AreaKerja" rel="noopener noreferrer">
+                        <i class="ph-fill ph-youtube-logo" style="font-size:16px;"></i>
                     </a>
                 </div>
             </div>
@@ -513,17 +524,20 @@
 
             {{-- Social Media (Mobile) --}}
             <div class="mt-6 flex items-center gap-2.5">
-                <a href="#" class="ak-social-btn" aria-label="Facebook AreaKerja" rel="noopener noreferrer">
+                <a href="{{ $fbLink }}" target="_blank" class="ak-social-btn" aria-label="Facebook AreaKerja" rel="noopener noreferrer">
                     <i class="ph-fill ph-facebook-logo" style="font-size:15px;"></i>
                 </a>
-                <a href="#" class="ak-social-btn" aria-label="Instagram AreaKerja" rel="noopener noreferrer">
+                <a href="{{ $igLink }}" target="_blank" class="ak-social-btn" aria-label="Instagram AreaKerja" rel="noopener noreferrer">
                     <i class="ph-fill ph-instagram-logo" style="font-size:15px;"></i>
                 </a>
-                <a href="#" class="ak-social-btn" aria-label="Twitter / X AreaKerja" rel="noopener noreferrer">
+                <a href="{{ $twLink }}" target="_blank" class="ak-social-btn" aria-label="Twitter / X AreaKerja" rel="noopener noreferrer">
                     <i class="ph-fill ph-twitter-logo" style="font-size:15px;"></i>
                 </a>
-                <a href="#" class="ak-social-btn" aria-label="LinkedIn AreaKerja" rel="noopener noreferrer">
+                <a href="{{ $inLink }}" target="_blank" class="ak-social-btn" aria-label="LinkedIn AreaKerja" rel="noopener noreferrer">
                     <i class="ph-fill ph-linkedin-logo" style="font-size:15px;"></i>
+                </a>
+                <a href="{{ $ytLink }}" target="_blank" class="ak-social-btn" aria-label="YouTube AreaKerja" rel="noopener noreferrer">
+                    <i class="ph-fill ph-youtube-logo" style="font-size:15px;"></i>
                 </a>
             </div>
 
