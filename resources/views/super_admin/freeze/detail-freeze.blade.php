@@ -6,7 +6,7 @@
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="flex items-center gap-3 flex-1">
                 <a href="{{ route('superadmin.freeze') }}"
-                   class="w-8 h-8 rounded-xl bg-white/10 hover:bg-slate-200 flex items-center justify-center text-white transition flex-shrink-0">
+                   class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0">
                     <i class="ph ph-arrow-left text-sm"></i>
                 </a>
                 <div>

@@ -7,7 +7,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-tag text-[#00509d] text-lg sm:text-2xl"></i> Paket & Tarif Harga
+                        <i class="ph ph-tag text-white/80 text-lg sm:text-2xl"></i> Paket & Tarif Harga
                     </h1>
                     <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola tarif penggunaan koin untuk pasang lowongan serta paket nominal top up koin AreaKerja.</p>
                 </div>

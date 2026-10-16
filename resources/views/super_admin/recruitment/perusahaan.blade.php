@@ -1,18 +1,24 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4 sm:gap-0">
-            <h1 class="text-2xl font-medium break-words">
-                Data Perusahaan Recruitment
-            </h1>
-
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3 w-full sm:w-auto">
-                {{-- Tombol Notifikasi --}}
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+        <!-- HEADER TOP BAR -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-briefcase text-white/80 text-lg sm:text-2xl"></i> Data Perusahaan Recruitment
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Pilih perusahaan untuk mengelola data recruitment pelamar</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
-                {{-- User Badge Dropdown --}}
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -100,13 +106,13 @@
                     <div class="flex items-center w-full bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition">
                         <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
                         <input type="text" name="search" x-model="query"
-                            @focus="open = true" @input="open = true"
+                            @focus="open = true" @input="open = true; filterRecPerusahaanTable($event.target.value)"
                             autocomplete="off" placeholder="Cari nama perusahaan..."
                             class="flex-1 px-2.5 py-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
                             style="border: none !important; outline: none !important; box-shadow: none !important;">
                         <template x-if="query.length > 0">
                             <a href="{{ route('superadmin.recruitment.perusahaan') }}"
-                               @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.recruitment.perusahaan') }}';"
+                               @click.prevent="query = ''; open = false; filterRecPerusahaanTable(''); window.location.href = '{{ route('superadmin.recruitment.perusahaan') }}';"
                                class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
                                title="Hapus pencarian">
                                 <i class="ph ph-x text-[10px] font-bold"></i>
@@ -156,7 +162,7 @@
                 </thead>
                 <tbody class="text-center">
                     @forelse ($perusahaan as $p)
-                        <tr class="border-b border-gray-300">
+                        <tr class="perusahaan-row border-b border-gray-300">
                             <td class="px-4 py-3">{{ $p->id }}</td>
                             <td class="px-4 py-3 break-all">{{ $p->nama_perusahaan ?? $p->user->username }}</td>
                             <td class="px-4 py-3">{{ $p->user->email }}</td>
@@ -325,5 +331,15 @@
         });
     </script>
 
+    <script>
+        function filterRecPerusahaanTable(val) {
+            const q = (val || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('tr.perusahaan-row');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = (!q || text.includes(q)) ? '' : 'none';
+            });
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 @endsection

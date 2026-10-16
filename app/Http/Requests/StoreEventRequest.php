@@ -26,6 +26,8 @@ class StoreEventRequest extends FormRequest
             'lokasi'                 => 'nullable|string',
             'link_form'              => 'nullable|url',
             'penutupan_pendaftaran'  => 'nullable|date',
+            'kegiatan_waktu'         => 'nullable|array',
+            'kegiatan_nama'          => 'nullable|array',
         ];
     }
 

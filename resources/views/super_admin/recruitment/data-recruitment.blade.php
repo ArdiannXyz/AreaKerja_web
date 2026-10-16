@@ -1,21 +1,31 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto">
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 sm:gap-0">
-            <!-- Judul -->
-            <h1 class="text-2xl font-medium text-gray-700 truncate sm:truncate-0 w-full sm:w-auto">
-                Data Recruitment
-            </h1>
-
-            <!-- Notifikasi + Profil -->
-            <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 w-full sm:w-auto">
-                <!-- Tombol Notifikasi -->
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+        <!-- HEADER TOP BAR -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('superadmin.recruitment.perusahaan') }}"
+                       class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                       title="Kembali ke Perusahaan Recruitment">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+                            <i class="ph ph-users text-white/80 text-lg sm:text-2xl"></i> Recruitment - {{ $perusahaan->nama_perusahaan }}
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Daftar kandidat yang telah direkrut oleh perusahaan ini</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
-
-                {{-- User Badge Dropdown --}}
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
         <!-- Header + Search -->
         <div class="bg-white rounded-2xl border border-slate-100 shadow-xs p-4 mb-6">
@@ -51,14 +61,14 @@
                             <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
                             <input type="text" name="search" x-model="query"
                                 @focus="open = true"
-                                @input="open = true"
+                                @input="open = true; filterRecruitmentTable($event.target.value)"
                                 autocomplete="off"
                                 placeholder="Cari nama kandidat, lowongan..."
                                 class="flex-1 px-2.5 py-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
                                 style="border: none !important; outline: none !important; box-shadow: none !important;">
                             <template x-if="query.length > 0">
                                 <a href="{{ route('superadmin.recruitment', $perusahaan->id) }}"
-                                   @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.recruitment', $perusahaan->id) }}';"
+                                   @click.prevent="query = ''; open = false; filterRecruitmentTable(''); window.location.href = '{{ route('superadmin.recruitment', $perusahaan->id) }}';"
                                    class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
                                    title="Hapus pencarian">
                                     <i class="ph ph-x text-[10px] font-bold"></i>
@@ -119,7 +129,7 @@
                 </thead>
                 <tbody class="text-center">
                     @forelse ($recruitments as $r)
-                        <tr class="border-b border-gray-300">
+                        <tr class="recruitment-row border-b border-gray-300">
                             <td class="px-2 sm:px-4 py-2 break-words">{{ $r->id }}</td>
                             <td class="px-2 sm:px-4 py-2 break-words">{{ $r->pelamar->nama_pelamar }}</td>
                             <td class="px-2 sm:px-4 py-2 break-words">{{ $r->lowonganPerusahaan->nama }}</td>
@@ -141,4 +151,15 @@
             </table>
         </div>
     </main>
+
+    <script>
+        function filterRecruitmentTable(val) {
+            const q = (val || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('tr.recruitment-row');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = (!q || text.includes(q)) ? '' : 'none';
+            });
+        }
+    </script>
 @endsection

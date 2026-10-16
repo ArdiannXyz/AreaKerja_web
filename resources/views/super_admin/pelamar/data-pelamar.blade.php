@@ -1,20 +1,25 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-[#f8fafc] overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
 
         {{-- TOP NAVIGATION & ADMIN USER BAR --}}
-        <div class="flex justify-between items-center mb-4 sm:mb-6 gap-3 pb-3 sm:pb-4 border-b border-slate-200">
-            <div>
-                <h1 class="text-lg sm:text-2xl font-bold text-slate-800 tracking-tight">Data Kandidat</h1>
-                <p class="text-[11px] sm:text-xs text-slate-500 mt-0.5">Kelola seluruh data pelamar & kandidat aktif</p>
-            </div>
-            <div class="flex items-center gap-2 sm:gap-3">
-                @include('super_admin.components.notif_button')
-                <div class="hidden sm:block">
-                    @include('super_admin.components.user_badge_dropdown')
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-users text-white/80 text-lg sm:text-2xl"></i> Data Kandidat
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola seluruh data pelamar & kandidat aktif</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
                 </div>
             </div>
-        </div>
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
         {{-- TOOLBAR: Add + Category Tabs + Search --}}
         <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 mb-6">
@@ -81,6 +86,7 @@
                     select(val) {
                         this.query = val;
                         this.open = false;
+                        filterTable(val);
                         $nextTick(() => { $refs.pelamarSearchForm.submit(); });
                     }
                 }" @click.outside="open = false">
@@ -89,15 +95,16 @@
                         <div class="flex items-center w-full h-10 bg-slate-100 rounded-xl overflow-hidden border border-slate-200 focus-within:bg-white focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition">
                             <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
                             <input type="text" name="search" x-model="query"
+                                id="pelamar-search-input"
                                 @focus="open = true"
-                                @input="open = true"
+                                @input="open = true; filterTable($event.target.value)"
                                 autocomplete="off"
                                 placeholder="Cari nama, wilayah, kategori..."
                                 class="flex-1 h-full px-2.5 text-xs sm:text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
                                 style="border: none !important; outline: none !important; box-shadow: none !important;">
                             <template x-if="query.length > 0">
                                 <a href="{{ route('superadmin.pelamar') }}"
-                                   @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.pelamar') }}';"
+                                   @click.prevent="query = ''; open = false; filterTable(''); window.location.href = '{{ route('superadmin.pelamar') }}';"
                                    class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
                                    title="Hapus pencarian">
                                     <i class="ph ph-x text-[10px] font-bold"></i>
@@ -208,7 +215,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse ($kandidat as $p)
-                                <tr class="hover:bg-slate-50/60 transition group">
+                                <tr class="pelamar-row hover:bg-slate-50/60 transition group">
                                     <td class="px-5 py-3.5">
                                         <span class="text-xs font-mono text-slate-400">#{{ $p->id }}</span>
                                     </td>
@@ -271,6 +278,12 @@
                                     </td>
                                 </tr>
                             @endforelse
+                            <tr class="pelamar-empty-row hidden">
+                                <td colspan="6" class="py-12 text-center text-xs text-slate-400">
+                                    <i class="ph ph-magnifying-glass text-2xl mb-1 block text-slate-300"></i>
+                                    Tidak ada data kandidat yang cocok dengan pencarian
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -303,7 +316,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse ($nonKandidat as $p)
-                                <tr class="hover:bg-slate-50/60 transition group">
+                                <tr class="pelamar-row hover:bg-slate-50/60 transition group">
                                     <td class="px-5 py-3.5">
                                         <span class="text-xs font-mono text-slate-400">#{{ $p->id }}</span>
                                     </td>
@@ -366,6 +379,12 @@
                                     </td>
                                 </tr>
                             @endforelse
+                            <tr class="pelamar-empty-row hidden">
+                                <td colspan="6" class="py-12 text-center text-xs text-slate-400">
+                                    <i class="ph ph-magnifying-glass text-2xl mb-1 block text-slate-300"></i>
+                                    Tidak ada data pelamar yang cocok dengan pencarian
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -398,7 +417,7 @@
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @forelse ($calonKandidat as $p)
-                                <tr class="hover:bg-slate-50/60 transition group">
+                                <tr class="pelamar-row hover:bg-slate-50/60 transition group">
                                     <td class="px-5 py-3.5">
                                         <span class="text-xs font-mono text-slate-400">#{{ $p->id }}</span>
                                     </td>
@@ -461,6 +480,12 @@
                                     </td>
                                 </tr>
                             @endforelse
+                            <tr class="pelamar-empty-row hidden">
+                                <td colspan="6" class="py-12 text-center text-xs text-slate-400">
+                                    <i class="ph ph-magnifying-glass text-2xl mb-1 block text-slate-300"></i>
+                                    Tidak ada data calon kandidat yang cocok dengan pencarian
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -520,6 +545,39 @@
             }
 
             activeTab = tab;
+            const input = document.getElementById('pelamar-search-input');
+            if (input && input.value) {
+                filterTable(input.value);
+            }
+        }
+
+        function filterTable(val) {
+            const q = (val || '').toLowerCase().trim();
+            ['panel-kandidat', 'panel-non_kandidat', 'panel-calon_kandidat'].forEach(panelId => {
+                const panel = document.getElementById(panelId);
+                if (!panel) return;
+                const rows = panel.querySelectorAll('tr.pelamar-row');
+                let visible = 0;
+                rows.forEach(row => {
+                    const text = row.textContent.toLowerCase();
+                    if (!q || text.includes(q)) {
+                        row.style.display = '';
+                        visible++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                const emptyRow = panel.querySelector('tr.pelamar-empty-row');
+                if (emptyRow) {
+                    if (q && visible === 0 && rows.length > 0) {
+                        emptyRow.classList.remove('hidden');
+                        emptyRow.style.display = '';
+                    } else {
+                        emptyRow.classList.add('hidden');
+                        emptyRow.style.display = 'none';
+                    }
+                }
+            });
         }
 
         // Initialize on load

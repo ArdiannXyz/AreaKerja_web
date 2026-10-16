@@ -1,27 +1,25 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-[#f8fafc] overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
 
         {{-- TOP NAVIGATION & ADMIN USER BAR --}}
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4 pb-4 border-b border-slate-200">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="flex items-center gap-3">
                 <a href="{{ route('superadmin.pelamar') }}"
-                    class="p-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition shadow-sm flex items-center justify-center"
+                    class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
                     title="Kembali ke Data Pelamar">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                    </svg>
+                    <i class="ph ph-arrow-left text-base"></i>
                 </a>
                 <div>
-                    <h1 class="text-2xl font-bold text-slate-800 tracking-tight whitespace-nowrap">Detail Calon Kandidat</h1>
-                    <p class="text-xs text-slate-500">Kelola masa pelatihan dan status kelulusan calon kandidat</p>
+                    <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight leading-tight">Detail Calon Kandidat</h1>
+                    <p class="text-xs text-blue-100 mt-0.5">Kelola masa pelatihan dan status kelulusan calon kandidat</p>
                 </div>
             </div>
-            <div class="flex items-center gap-3 self-end sm:self-auto">
+            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
         {{-- FLASH MESSAGES --}}
         @if (session('success'))

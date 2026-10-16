@@ -1,11 +1,30 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto">
-                {{-- User Badge Dropdown --}}
-                @include('super_admin.components.user_badge_dropdown')
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+        <!-- HEADER TOP BAR -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('superadmin.recruitment', $recruitment->lowonganPerusahaan->perusahaan_id) }}"
+                       class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                       title="Kembali ke Daftar Recruitment">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight leading-tight">Detail Recruitment</h1>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Recruitment / Detail</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
                 </div>
             </div>
-        </div>
+
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
 
         <!-- Konten utama -->

@@ -1,205 +1,238 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openModal: false, openNotif: false, openAllNotif: false }">
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openModal: false, openNotif: false, openAllNotif: false }">
 
-        <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
-            <div class="flex items-center gap-3 flex-1">
-                <a href="{{ route('superadmin.eventform') }}"
-                   class="w-8 h-8 rounded-xl bg-white/10 hover:bg-slate-200 flex items-center justify-center text-white transition flex-shrink-0">
-                    <i class="ph ph-arrow-left text-sm"></i>
-                </a>
-                <div>
-                    <p class="text-xs text-blue-100">Event / <span class="text-blue-100 font-medium">Buat Event Baru</span></p>
-                    <h1 class="text-lg sm:text-xl font-semibold text-white tracking-tight leading-tight">Buat Event</h1>
+        <!-- Header Topbar -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('superadmin.eventform') }}"
+                       class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                       title="Kembali ke Event">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight leading-tight flex items-center gap-2">
+                            <i class="ph ph-calendar-plus text-white/80 text-lg sm:text-2xl"></i> Buat Event Baru
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Event / Buat Event Baru</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
                 </div>
             </div>
-            <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>
         </header>
 
-        {{-- content --}}
-        <div class="w-full bg-white rounded-2xl border border-slate-100 shadow-sm p-6">
-            <form action="{{ route('superadmin.event.store') }}" method="post" enctype="multipart/form-data"
-                class="w-full">
+        <!-- Form Card -->
+        <div class="w-full bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-8">
+            <form action="{{ route('superadmin.event.store') }}" method="post" enctype="multipart/form-data" class="w-full">
                 @csrf
 
-                <!-- Judul -->
-                <input type="text" placeholder="Masukkan judul artikel" name="title"
-                    class="w-full bg-gray-200 border-2 border-gray-400 rounded-md px-4 py-2 mb-8 
-               break-words max-w-full">
+                <!-- Section: Informasi Utama -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Judul Event <span class="text-rose-500">*</span></label>
+                    <input type="text" placeholder="Masukkan judul event..." name="title" value="{{ old('title') }}" required
+                        class="w-full bg-white border border-slate-200 rounded-xl px-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs">
+                    @error('title')
+                        <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
 
-                <!-- Upload Media -->
-                <div class="mb-4">
-                    <label for="uploadMedia"
-                        class="cursor-pointer inline-block px-4 py-2 bg-gray-100 border-2 border-gray-400 
-                   rounded-lg shadow hover:bg-gray-200 text-sm font-medium">
-                        Tambahkan Media
-                    </label>
+                <!-- Status & Upload Media Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Status -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Status Event <span class="text-rose-500">*</span></label>
+                        <select name="status" required class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2.5 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs">
+                            <option value="buka" {{ old('status', 'buka') == 'buka' ? 'selected' : '' }}>Buka (Menerima Pendaftaran)</option>
+                            <option value="tutup" {{ old('status') == 'tutup' ? 'selected' : '' }}>Tutup</option>
+                            <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                        </select>
+                        @error('status')
+                            <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
+                    </div>
 
-                    <input id="uploadMedia" type="file" name="image" accept="image/*" hidden>
-
-                    <!-- Preview Gambar -->
-                    <div
-                        class="mt-3 w-full max-w-xs sm:max-w-sm md:max-w-md h-40 
-                    border-2 border-gray-400 rounded-md overflow-hidden">
-                        <img id="previewImage"
-                            src="{{ isset($event) && $event->image ? asset('storage/' . $event->image) : asset('images/no images.jpg') }}"
-                            class="w-full h-full object-contain">
+                    <!-- Upload Media Banner -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Gambar Banner Event</label>
+                        <div class="flex items-center gap-4">
+                            <div class="w-24 h-16 border border-slate-200 rounded-xl overflow-hidden bg-slate-50 flex items-center justify-center flex-shrink-0">
+                                <img id="previewImage" src="{{ asset('images/no images.jpg') }}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <label for="uploadMedia"
+                                    class="cursor-pointer inline-flex items-center gap-1.5 px-3.5 py-2 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-xl text-slate-700 text-xs font-semibold transition">
+                                    <i class="ph ph-image text-sm"></i>
+                                    Pilih Gambar
+                                </label>
+                                <p class="text-[11px] text-slate-400 mt-1">PNG, JPG, JPEG, WEBP maks 5MB.</p>
+                                <input id="uploadMedia" type="file" name="image" accept="image/*" hidden>
+                            </div>
+                        </div>
+                        @error('image')
+                            <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                        @enderror
                     </div>
                 </div>
 
-
-                <!-- Editor -->
-                <div class="rounded-md overflow-hidden mt-4 w-full">
-                    <label class="block mb-2 text-lg font-medium break-words">Isi Artikel</label>
-
-                    <textarea id="editor" name="content"
-                        class="w-full min-h-48 border border-gray-400 rounded-lg p-3
-               break-words overflow-y-auto resize-y">
-        {{ old('content', $event->content ?? '') }}
-    </textarea>
+                <!-- Editor Konten / Deskripsi -->
+                <div class="mb-6">
+                    <label class="block text-xs font-semibold text-slate-700 mb-1.5">Deskripsi / Isi Acara</label>
+                    <textarea id="editor" name="content" class="w-full min-h-48 border border-slate-200 rounded-xl p-3">
+                        {{ old('content') }}
+                    </textarea>
+                    @error('content')
+                        <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                    @enderror
                 </div>
 
-
-                <div class="space-y-4 mt-4">
-
-                    <!-- Waktu Acara -->
+                <!-- Jadwal & Waktu -->
+                <div class="space-y-5 pt-4 border-t border-slate-100">
                     <div>
-                        <label class="block font-medium mb-1">Waktu Acara</label>
-
-                        <div class="flex flex-col md:flex-row md:items-center gap-3 md:gap-2 w-full">
-
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Waktu Pelaksanaan Acara <span class="text-rose-500">*</span></label>
+                        <div class="flex flex-col md:flex-row md:items-center gap-3 w-full">
                             <!-- Tanggal Mulai -->
-                            <input type="date" name="tgl_mulai" id="tgl_mulai"
-                                class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full md:w-40"
-                                value="{{ old('tgl_mulai') }}">
-
-                            <!-- Tanggal Akhir -->
-                            <input type="date" name="tgl_akhir" id="tgl_akhir"
-                                class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full md:w-40"
-                                value="{{ old('tgl_akhir') }}">
-
-                            <!-- Jam Mulai -->
-                            <div class="relative w-full md:w-32">
-                                <input type="time" name="jam_mulai" id="jam_mulai"
-                                    class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-                    focus:border-blue-700 focus:ring-0">
-                                <span id="ph_mulai"
-                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
-                                    12:00 PM
-                                </span>
+                            <div class="flex-1">
+                                <span class="text-[11px] text-slate-400 block mb-1">Tanggal Mulai</span>
+                                <input type="date" name="tgl_mulai" id="tgl_mulai" required
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                    value="{{ old('tgl_mulai') }}">
+                                @error('tgl_mulai')
+                                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
-                            <span class="text-center hidden md:block">Sampai</span>
-                            <span class="text-center md:hidden">→</span>
+                            <!-- Tanggal Akhir -->
+                            <div class="flex-1">
+                                <span class="text-[11px] text-slate-400 block mb-1">Tanggal Selesai</span>
+                                <input type="date" name="tgl_akhir" id="tgl_akhir" required
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                    value="{{ old('tgl_akhir') }}">
+                                @error('tgl_akhir')
+                                    <p class="text-rose-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
+                            </div>
+
+                            <!-- Jam Mulai -->
+                            <div class="w-full md:w-36">
+                                <span class="text-[11px] text-slate-400 block mb-1">Jam Mulai</span>
+                                <input type="time" name="jam_mulai" id="jam_mulai"
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                    value="{{ old('jam_mulai') }}">
+                            </div>
+
+                            <span class="text-center text-xs text-slate-400 hidden md:block pt-4">sampai</span>
 
                             <!-- Jam Akhir -->
-                            <div class="relative w-full md:w-32">
+                            <div class="w-full md:w-36">
+                                <span class="text-[11px] text-slate-400 block mb-1">Jam Selesai</span>
                                 <input type="time" name="jam_akhir" id="jam_akhir"
-                                    class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full
-                    focus:border-blue-700 focus:ring-0">
-                                <span id="ph_akhir"
-                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-xs pointer-events-none">
-                                    12:00 PM
-                                </span>
+                                    class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                    value="{{ old('jam_akhir') }}">
                             </div>
                         </div>
                     </div>
 
-                    <!-- Penutupan Pendaftaran -->
-                    <div>
-                        <label class="block font-medium mb-1">Penutupan Pendaftaran</label>
-                        <input type="date" name="penutupan_pendaftaran" id="penutupan_pendaftaran"
-                            class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full md:w-40"
-                            value="{{ old('penutupan_pendaftaran') }}">
-                    </div>
+                    <!-- Penutupan & Kuota Grid -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Penutupan Pendaftaran -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Batas Akhir Pendaftaran</label>
+                            <input type="date" name="penutupan_pendaftaran" id="penutupan_pendaftaran"
+                                class="bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                value="{{ old('penutupan_pendaftaran') }}">
+                        </div>
 
-                    <!-- Kuota -->
-                    <div>
-                        <label class="block font-medium mb-1">Kuota Partisipasi</label>
-                        <input type="number" name="kuota"
-                            class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full md:w-24"
-                            placeholder="000">
+                        <!-- Kuota -->
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1.5">Kuota Partisipasi</label>
+                            <input type="number" name="kuota"
+                                class="bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                placeholder="Contoh: 100" value="{{ old('kuota') }}">
+                        </div>
                     </div>
 
                     <!-- Link Form -->
                     <div>
-                        <label class="block font-medium mb-1">Link Form</label>
-                        <input type="text" name="link_form"
-                            class="bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm w-full md:w-[350px] break-words"
-                            placeholder="https://forms.gle/...">
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Link Form Pendaftaran Eksternal (Opsional)</label>
+                        <input type="url" name="link_form"
+                            class="bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                            placeholder="https://forms.gle/..." value="{{ old('link_form') }}">
                     </div>
 
                     <!-- Lokasi -->
                     <div>
-                        <label class="block font-medium mb-1">Lokasi</label>
-                        <textarea name="lokasi"
-                            class="w-full md:w-96 bg-gray-200 border-2 border-gray-400 rounded-md px-3 py-2 text-sm h-32 max-h-64 break-words"
-                            placeholder="Isi Detail Alamat Acara"></textarea>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1.5">Lokasi / Tempat Acara</label>
+                        <textarea name="lokasi" rows="3"
+                            class="w-full bg-white border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                            placeholder="Isi detail alamat acara atau link pertemuan online (contoh: Zoom Meeting / Google Meet)">{{ old('lokasi') }}</textarea>
                     </div>
 
                     <!-- Daftar Kegiatan -->
-                    <div>
-                        <label class="block font-medium mb-2">Daftar Kegiatan</label>
+                    <div class="pt-2">
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-xs font-semibold text-slate-700">Jadwal Rangkaian Kegiatan</label>
+                            <button type="button" @click="openModal = true"
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-[#00509d] hover:bg-blue-100 rounded-xl text-xs font-semibold transition">
+                                <i class="ph ph-plus-circle text-sm"></i> Tambah Kegiatan
+                            </button>
+                        </div>
                         <div id="kegiatan-list" class="space-y-2"></div>
                     </div>
 
-                    <!-- Tombol Tambah Acara -->
-                    <div>
-                        <button type="button" @click="openModal = true"
-                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md shadow w-full md:w-auto">
-                            Tambah Acara
-                        </button>
-                    </div>
-
-                    <!-- Modal -->
+                    <!-- Modal Tambah Kegiatan -->
                     <div x-show="openModal"
-                        class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4" x-cloak>
-                        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
-                            <h2 class="text-lg font-semibold mb-4">Tambah Kegiatan</h2>
+                        class="fixed inset-0 flex items-center justify-center bg-slate-900/50 backdrop-blur-xs z-50 p-4" x-cloak>
+                        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-6 border border-slate-100">
+                            <h2 class="text-base font-bold text-slate-800 mb-4 flex items-center gap-2">
+                                <i class="ph ph-calendar-plus text-[#00509d] text-lg"></i> Tambah Rangkaian Kegiatan
+                            </h2>
 
-                            <div class="space-y-3">
+                            <div class="space-y-3 text-xs">
                                 <div>
-                                    <label class="block text-sm font-medium">Waktu</label>
+                                    <label class="block font-semibold text-slate-600 mb-1">Waktu</label>
                                     <input type="time" id="modal-waktu"
-                                        class="w-full border-2 border-gray-400 rounded-md px-3 py-2 bg-gray-100">
+                                        class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]">
                                 </div>
 
                                 <div>
-                                    <label class="block text-sm font-medium">Kegiatan</label>
+                                    <label class="block font-semibold text-slate-600 mb-1">Nama Kegiatan</label>
                                     <input type="text" id="modal-kegiatan"
-                                        class="w-full border-2 border-gray-400 rounded-md px-3 py-2 bg-gray-100"
-                                        placeholder="Nama kegiatan">
+                                        class="w-full border border-slate-200 rounded-xl px-3 py-2 text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d]"
+                                        placeholder="Contoh: Pembukaan & Sambutan">
                                 </div>
                             </div>
 
                             <div class="mt-6 flex justify-end gap-3">
                                 <button type="button" @click="openModal = false"
-                                    class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md">
+                                    class="px-4 py-2 border border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl text-xs font-semibold transition">
                                     Batal
                                 </button>
-
                                 <button type="button" onclick="tambahKegiatan(); openModal=false"
-                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md">
+                                    class="px-4 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-xl text-xs font-semibold transition">
                                     Simpan
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Submit -->
-                    <div class="flex flex-col md:flex-row gap-4 mt-6 w-full">
+                    <!-- Submit & Cancel Buttons -->
+                    <div class="flex flex-col sm:flex-row gap-3 pt-6 border-t border-slate-100">
                         <button type="submit"
-                            class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-semibold px-6 py-2.5 rounded-xl transition shadow-sm w-full md:w-auto justify-center">
+                            class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-semibold px-6 py-2.5 rounded-xl transition shadow-xs justify-center">
                             <i class="ph ph-floppy-disk text-base"></i>
                             Simpan Event
                         </button>
 
                         <a href="{{ route('superadmin.eventform') }}"
-                           class="inline-flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-sm font-semibold px-6 py-2.5 rounded-xl transition w-full md:w-auto justify-center">
+                           class="inline-flex items-center gap-1.5 border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-semibold px-6 py-2.5 rounded-xl transition justify-center">
                             <i class="ph ph-x text-base"></i>
                             Batal
                         </a>
@@ -208,7 +241,6 @@
             </form>
         </div>
 
-
         <!-- TinyMCE -->
         <script src="https://cdn.tiny.cloud/1/oqx873eo8a4800gwchmdyn357lbg0rvj9bxkryttzmw9uf7q/tinymce/8/tinymce.min.js"
             referrerpolicy="origin"></script>
@@ -216,45 +248,18 @@
         <script>
             tinymce.init({
                 selector: '#editor',
-                height: 500,
+                height: 400,
                 menubar: false,
                 plugins: 'lists link image media code fullscreen mentions',
                 toolbar: 'undo redo | bold italic underline | bullist numlist | link image media | code fullscreen',
-
-                setup: function(editor) {
-
-                    editor.ui.registry.addAutocompleter("usermentions", {
-                        trigger: '@',
-                        minChars: 1,
-                        fetch: async function(pattern, maxResults) {
-                            const res = await fetch("/tinymce-mention?q=" + pattern);
-                            const users = await res.json();
-
-                            return users.map(user => ({
-                                value: user.name,
-                                text: user.name
-                            }));
-                        },
-                        onAction: function(api, rng, value) {
-                            editor.selection.setRng(rng);
-                            editor.insertContent(`<span class="mention">@${value}</span>&nbsp;`);
-                            api.hide();
-                        }
-                    });
-
-                },
-
-                // FIX UPLOAD GAMBAR
                 images_upload_handler: function(blobInfo, progress) {
                     return new Promise(function(resolve, reject) {
                         const xhr = new XMLHttpRequest();
                         xhr.open('POST', '{{ route('tinymce.upload') }}');
                         xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-
                         xhr.upload.onprogress = function(e) {
                             progress(e.loaded / e.total * 100);
                         };
-
                         xhr.onload = function() {
                             if (xhr.status === 200) {
                                 const json = JSON.parse(xhr.responseText);
@@ -263,7 +268,6 @@
                                 reject('HTTP Error: ' + xhr.status);
                             }
                         };
-
                         const formData = new FormData();
                         formData.append('file', blobInfo.blob());
                         xhr.send(formData);
@@ -272,15 +276,13 @@
             });
         </script>
 
-
-
-        <!-- Script -->
+        <!-- Sortable and Event Form Script -->
         <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
         <script>
             new Sortable(document.getElementById("kegiatan-list"), {
                 animation: 150,
                 handle: ".kegiatan-item",
-                ghostClass: "bg-yellow-100"
+                ghostClass: "bg-blue-50"
             });
 
             function tambahKegiatan() {
@@ -290,26 +292,20 @@
                 if (waktu && kegiatan) {
                     let container = document.getElementById("kegiatan-list");
                     let div = document.createElement("div");
-                    div.classList.add("flex", "items-center", "gap-2", "kegiatan-item", "bg-gray-100", "p-2", "rounded-md",
-                        "cursor-move");
+                    div.classList.add("flex", "items-center", "gap-2", "kegiatan-item", "bg-slate-50", "p-2.5", "rounded-xl",
+                        "border", "border-slate-200/80", "cursor-move");
 
                     div.innerHTML = `
-                <div class="flex flex-col md:flex-row items-start md:items-center gap-2 kegiatan-item bg-gray-100 p-2 rounded-md w-full">
-
-    <input type="time" name="kegiatan_waktu[]" value="${waktu}"
-        class="bg-gray-200 border rounded-md px-3 py-2 text-sm w-full md:w-24">
-
-    <input type="text" name="kegiatan_nama[]" value="${kegiatan}"
-        class="bg-gray-200 border rounded-md px-3 py-2 text-sm w-full md:w-80 break-words">
-
-    <button type="button" onclick="hapusKegiatan(this)"
-        class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm w-full md:w-auto text-center">
-        Hapus
-    </button>
-
-</div>
-
-            `;
+                        <i class="ph ph-dots-six-vertical text-slate-400"></i>
+                        <input type="time" name="kegiatan_waktu[]" value="${waktu}"
+                            class="bg-white border border-slate-200 rounded-lg px-2.5 py-1.5 text-xs w-28 text-slate-800">
+                        <input type="text" name="kegiatan_nama[]" value="${kegiatan}"
+                            class="bg-white border border-slate-200 rounded-lg px-3 py-1.5 text-xs flex-1 text-slate-800">
+                        <button type="button" onclick="hapusKegiatan(this)"
+                            class="w-7 h-7 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 flex items-center justify-center transition">
+                            <i class="ph ph-trash text-sm"></i>
+                        </button>
+                    `;
 
                     container.appendChild(div);
                     document.getElementById("modal-waktu").value = "";
@@ -321,7 +317,7 @@
                 button.closest(".kegiatan-item").remove();
             }
 
-            // Upload gambar 
+            // Upload preview
             document.getElementById("uploadMedia").addEventListener("change", function(e) {
                 let file = e.target.files[0];
                 if (file) {
@@ -333,20 +329,17 @@
                 }
             });
 
-            // Sinkronisasi tanggal mulai, akhir, dan penutupan
+            // Date validation sync
             document.getElementById("tgl_mulai").addEventListener("change", function() {
                 let tglMulai = this.value;
                 let tglAkhir = document.getElementById("tgl_akhir");
                 let pendaftaran = document.getElementById("penutupan_pendaftaran");
 
                 if (tglMulai) {
-                    // batasi pendaftaran <= tgl_mulai
                     pendaftaran.setAttribute("max", tglMulai);
                     if (pendaftaran.value && pendaftaran.value > tglMulai) {
                         pendaftaran.value = tglMulai;
                     }
-
-                    // batasi tgl_akhir >= tgl_mulai
                     tglAkhir.setAttribute("min", tglMulai);
                     if (tglAkhir.value && tglAkhir.value < tglMulai) {
                         tglAkhir.value = tglMulai;
@@ -356,28 +349,7 @@
                     tglAkhir.removeAttribute("min");
                 }
             });
-
-            // Validasi jam (jam_mulai < jam_akhir)
-            document.getElementById("jam_mulai").addEventListener("change", validateJam);
-            document.getElementById("jam_akhir").addEventListener("change", validateJam);
-
-            function validateJam() {
-                let jamMulai = document.getElementById("jam_mulai").value;
-                let jamAkhir = document.getElementById("jam_akhir").value;
-
-                if (jamMulai && jamAkhir && jamAkhir <= jamMulai) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Jam Tidak Valid',
-                        text: 'Jam akhir harus lebih besar dari jam mulai!',
-                        confirmButtonText: 'Mengerti',
-                        timer: 3000
-                    });
-                    document.getElementById("jam_akhir").value = "";
-                }
-            }
         </script>
-
 
         @include('super_admin.notif.modal_notif')
         @include('super_admin.notif.modal_semua')

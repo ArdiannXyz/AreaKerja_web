@@ -5,8 +5,10 @@
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-2xl font-bold text-gray-900 tracking-tight">Link & Image Header</h1>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1">Kelola tautan media sosial resmi dan banner header halaman publik AreaKerja</p>
+                    <h1 class="text-base sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-link text-white/80 text-xl sm:text-2xl"></i> Link & Image Header
+                    </h1>
+                    <p class="text-xs sm:text-sm text-white/90 mt-1">Kelola tautan media sosial resmi dan banner header halaman publik AreaKerja</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')
