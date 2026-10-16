@@ -128,10 +128,14 @@
                             <div class="text-[11px] text-slate-500">Durasi tayang otomatis sebelum lowongan kedaluwarsa (expired)</div>
                         </td>
                         <td class="py-4 px-4 sm:px-6 font-bold text-slate-700">
-                            <strong>7 Hari (1 Minggu)</strong>
+                            <strong>30 Hari (1 Bulan Penuh)</strong>
+                            <div class="text-[11px] text-slate-500 mt-0.5">Durasi tayang standar</div>
                         </td>
                         <td class="py-4 px-4 sm:px-6 font-extrabold text-[#00509d] bg-blue-50/30 border-l border-blue-100">
-                            <strong>30 Hari (1 Bulan Penuh)</strong>
+                            <strong>60 s/d 90 Hari (Fleksibel VIP)</strong>
+                            <div class="text-[11px] text-emerald-700 mt-0.5 flex items-center gap-1 font-bold">
+                                <i class="ph-fill ph-check-circle text-xs text-emerald-600"></i> Bebas pilih durasi 30, 60, hingga 90 hari
+                            </div>
                         </td>
                     </tr>
 

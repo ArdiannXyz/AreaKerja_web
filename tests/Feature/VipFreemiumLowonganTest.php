@@ -83,7 +83,7 @@ class VipFreemiumLowonganTest extends TestCase
         return [$user, $perusahaan];
     }
 
-    public function test_non_vip_company_can_post_up_to_2_jobs_with_7_days_expiry(): void
+    public function test_non_vip_company_can_post_up_to_2_jobs_with_30_days_expiry(): void
     {
         [$user, $perusahaan] = $this->createPerusahaan(isVip: false);
 
@@ -96,6 +96,7 @@ class VipFreemiumLowonganTest extends TestCase
             'gaji_akhir'       => 8000000,
             'deskripsi'        => 'Deskripsi pekerjaan web developer',
             'syarat_pekerjaan' => 'Minimal lulusan D3/S1 Informatika',
+            'durasi_hari'      => 90, // Non-VIP attempts 90 days, should still be forced to 30 days
         ];
 
         // 1st Job
@@ -104,7 +105,7 @@ class VipFreemiumLowonganTest extends TestCase
 
         $job1 = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)->first();
         $this->assertNotNull($job1);
-        $this->assertEquals(7, Carbon::parse($job1->published_at)->diffInDays($job1->expired_at));
+        $this->assertEquals(30, Carbon::parse($job1->published_at)->diffInDays($job1->expired_at));
         $this->assertNull($job1->boosted_until);
 
         // 2nd Job
@@ -119,12 +120,13 @@ class VipFreemiumLowonganTest extends TestCase
         $this->assertEquals(2, $perusahaan->activeLowonganCount());
     }
 
-    public function test_vip_company_can_post_with_30_days_expiry_and_auto_job_booster(): void
+    public function test_vip_company_can_select_duration_up_to_90_days_and_auto_job_booster(): void
     {
         [$user, $perusahaan] = $this->createPerusahaan(isVip: true);
 
-        $payload = [
-            'nama'             => 'Senior Tech Lead',
+        // Test VIP with 60 days
+        $payload60 = [
+            'nama'             => 'Senior Tech Lead 60',
             'alamat'           => 'Jakarta Pusat, DKI Jakarta',
             'jenis'            => 'Fulltime',
             'kategori'         => 'IT & Software',
@@ -132,16 +134,37 @@ class VipFreemiumLowonganTest extends TestCase
             'gaji_akhir'       => 25000000,
             'deskripsi'        => 'Memimpin tim engineering AreaKerja',
             'syarat_pekerjaan' => 'Pengalaman min 5 tahun arsitektur sistem',
+            'durasi_hari'      => 60,
         ];
 
-        $res = $this->actingAs($user)->post(route('lowongan.saya.store'), $payload);
-        $res->assertRedirect(route('lowongan.saya.perusahaan'));
+        $res60 = $this->actingAs($user)->post(route('lowongan.saya.store'), $payload60);
+        $res60->assertRedirect(route('lowongan.saya.perusahaan'));
 
-        $job = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)->first();
-        $this->assertNotNull($job);
-        $this->assertEquals(30, Carbon::parse($job->published_at)->diffInDays($job->expired_at));
-        $this->assertNotNull($job->boosted_until);
-        $this->assertTrue(Carbon::parse($job->boosted_until)->isFuture());
+        $job60 = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)->where('nama', 'Senior Tech Lead 60')->first();
+        $this->assertNotNull($job60);
+        $this->assertEquals(60, Carbon::parse($job60->published_at)->diffInDays($job60->expired_at));
+        $this->assertNotNull($job60->boosted_until);
+        $this->assertTrue(Carbon::parse($job60->boosted_until)->isFuture());
+
+        // Test VIP with 90 days
+        $payload90 = [
+            'nama'             => 'Principal Architect 90',
+            'alamat'           => 'Jakarta Pusat, DKI Jakarta',
+            'jenis'            => 'Fulltime',
+            'kategori'         => 'IT & Software',
+            'gaji_awal'        => 25000000,
+            'gaji_akhir'       => 35000000,
+            'deskripsi'        => 'Arsitektur skala enterprise AreaKerja',
+            'syarat_pekerjaan' => 'Pengalaman min 8 tahun',
+            'durasi_hari'      => 90,
+        ];
+
+        $res90 = $this->actingAs($user)->post(route('lowongan.saya.store'), $payload90);
+        $res90->assertRedirect(route('lowongan.saya.perusahaan'));
+
+        $job90 = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)->where('nama', 'Principal Architect 90')->first();
+        $this->assertNotNull($job90);
+        $this->assertEquals(90, Carbon::parse($job90->published_at)->diffInDays($job90->expired_at));
     }
 
     public function test_non_vip_job_is_locked_after_5_applicants_on_the_same_day(): void

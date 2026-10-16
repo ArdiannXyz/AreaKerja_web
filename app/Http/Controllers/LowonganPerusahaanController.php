@@ -161,16 +161,22 @@ class LowonganPerusahaanController extends Controller
         $valid['published_at'] = now();
         $valid['status'] = 'buka';
 
-        // Durasi otomatis & Job Booster sesuai Tier (Freemium vs VIP Glints):
-        // Akun Biasa: Masa aktif 7 hari (1 minggu), kuota pelamar harian maks 5.
-        // VIP: Masa aktif 30 hari (1 bulan), unlimited pelamar, Job Booster otomatis aktif (selalu top).
+        // Durasi otomatis & Job Booster sesuai Tier (Freemium vs VIP):
+        // Akun Biasa: Masa aktif 30 hari (1 bulan), kuota pelamar harian maks 5.
+        // VIP: Pilihan masa aktif 30, 60, hingga 90 hari, unlimited pelamar, Job Booster otomatis aktif (selalu top).
         if ($isVip) {
-            $valid['expired_at'] = now()->addDays(30);
+            $allowedDurasi = [30, 60, 90];
+            $durasiHari = (int) $request->input('durasi_hari', 60);
+            if (!in_array($durasiHari, $allowedDurasi)) {
+                $durasiHari = 60;
+            }
+            $valid['expired_at'] = now()->addDays($durasiHari);
             $valid['boosted_until'] = $perusahaan->tanggal_expired && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired)
                 ? $perusahaan->tanggal_expired
-                : now()->addDays(30);
+                : now()->addDays($durasiHari);
         } else {
-            $valid['expired_at'] = now()->addDays(7);
+            $durasiHari = 30;
+            $valid['expired_at'] = now()->addDays(30);
             $valid['boosted_until'] = null;
         }
 
@@ -179,8 +185,8 @@ class LowonganPerusahaanController extends Controller
         LowonganPerusahaan::create($valid);
 
         $successMsg = $isVip
-            ? 'Lowongan VIP berhasil diterbitkan! Masa aktif 30 hari dan Job Booster otomatis aktif (selalu teratas di pencarian).'
-            : 'Lowongan berhasil diterbitkan secara gratis! Masa aktif berlaku selama 7 hari.';
+            ? "Lowongan VIP berhasil diterbitkan! Masa aktif {$durasiHari} hari dan Job Booster otomatis aktif (selalu teratas di pencarian)."
+            : 'Lowongan berhasil diterbitkan secara gratis! Masa aktif berlaku selama 30 hari.';
 
         return redirect()->route('lowongan.saya.perusahaan')->with('success', $successMsg);
     }

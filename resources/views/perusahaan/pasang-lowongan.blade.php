@@ -43,9 +43,9 @@
                     </h3>
                     <p class="text-xs text-slate-500 mt-1 max-w-xl">
                         @if ($isVip ?? false)
-                            Masa aktif lowongan otomatis 30 hari, tanpa batas pelamar harian, dan fitur Job Booster selalu aktif teratas di pencarian.
+                            Masa aktif lowongan lebih fleksibel (hingga 90 hari), tanpa batas pelamar harian, dan fitur Job Booster selalu aktif teratas di pencarian.
                         @else
-                            Masa aktif lowongan otomatis 7 hari (maks. 5 pelamar/hari). Upgrade ke VIP untuk 20 lowongan aktif & unlimited pelamar.
+                            Masa aktif lowongan 30 hari (maks. 5 pelamar/hari). Upgrade ke VIP untuk memilih durasi 60 hingga 90 hari, kuota 20 lowongan aktif & unlimited pelamar.
                         @endif
                     </p>
                 </div>
@@ -90,7 +90,7 @@
                 <div class="bg-[#002855] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">01</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Pilih paket pemasangan lowongan sesuai yang anda inginkan
+                        Daftarkan atau masuk ke akun perusahaan Anda
                     </p>
                 </div>
 
@@ -98,7 +98,7 @@
                 <div class="bg-[#003d7a] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">02</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Kirim materi lowongan via formulir website atau whatsapp kami
+                        Isi detail lowongan, kualifikasi, dan rentang gaji via formulir
                     </p>
                 </div>
 
@@ -106,7 +106,7 @@
                 <div class="bg-[#00509d] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">03</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Anda akan diberi instruksi pembayaran
+                        Pilih publikasi gratis (30 hari) atau optimalkan dengan VIP (hingga 90 hari)
                     </p>
                 </div>
 
@@ -114,7 +114,7 @@
                 <div class="bg-[#1e73be] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">04</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Lowongan anda siap di publish!
+                        Lowongan Anda langsung terbit dan tayang di AreaKerja!
                     </p>
                 </div>
             </div>

@@ -33,6 +33,7 @@ class StoreLowonganRequest extends FormRequest
             'syarat_pekerjaan' => 'required|string',
             'batas_lamaran'    => 'nullable|date',
             'paket_id'         => 'nullable',
+            'durasi_hari'      => 'nullable|integer|in:30,60,90',
         ];
     }
 

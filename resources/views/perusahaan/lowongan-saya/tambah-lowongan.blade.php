@@ -246,13 +246,66 @@
                                 </div>
                             </div>
 
+                            @if ($isVip ?? false)
+                                <!-- Pilihan Durasi Masa Tayang Khusus VIP -->
+                                <div class="pt-3 border-t border-blue-200/80 mb-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <label class="block text-xs font-black text-slate-800 uppercase tracking-wider">
+                                            Pilihan Masa Berlaku Lowongan (Fitur Eksklusif VIP) <span class="text-rose-500">*</span>
+                                        </label>
+                                        <span class="text-[11px] font-bold text-amber-700 bg-amber-100/70 px-2 py-0.5 rounded border border-amber-200 flex items-center gap-1">
+                                            <i class="ph-fill ph-crown text-amber-600"></i> Pilihan 60 hingga 90 Hari
+                                        </span>
+                                    </div>
+                                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                        @php
+                                            $selectedDurasi = old('durasi_hari', 60);
+                                        @endphp
+                                        <label class="durasi-card relative p-3.5 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between {{ $selectedDurasi == 30 ? 'border-[#00509d] bg-blue-50/50 shadow-xs' : 'border-slate-200 bg-white hover:border-slate-300' }}">
+                                            <div class="flex items-center justify-between">
+                                                <span class="text-xs font-black text-slate-900">30 Hari</span>
+                                                <input type="radio" name="durasi_hari" value="30" {{ $selectedDurasi == 30 ? 'checked' : '' }} class="w-4 h-4 text-[#00509d] focus:ring-[#00509d]" onchange="updateDurasiCards(this)">
+                                            </div>
+                                            <p class="text-[11px] text-slate-500 font-medium mt-1">1 Bulan Masa Tayang (Standar)</p>
+                                            <span class="text-[10px] text-slate-400 mt-2">Exp: {{ now()->addDays(30)->translatedFormat('d M Y') }}</span>
+                                        </label>
+
+                                        <label class="durasi-card relative p-3.5 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between {{ $selectedDurasi == 60 ? 'border-[#00509d] bg-blue-50/50 shadow-xs ring-2 ring-blue-100' : 'border-slate-200 bg-white hover:border-slate-300' }}">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="text-xs font-black text-slate-900">60 Hari</span>
+                                                    <span class="px-1.5 py-0.5 bg-emerald-100 text-emerald-800 text-[9px] font-black rounded">Populer VIP</span>
+                                                </div>
+                                                <input type="radio" name="durasi_hari" value="60" {{ $selectedDurasi == 60 ? 'checked' : '' }} class="w-4 h-4 text-[#00509d] focus:ring-[#00509d]" onchange="updateDurasiCards(this)">
+                                            </div>
+                                            <p class="text-[11px] text-slate-500 font-medium mt-1">2 Bulan Rekrutmen Intensif</p>
+                                            <span class="text-[10px] text-slate-400 mt-2">Exp: {{ now()->addDays(60)->translatedFormat('d M Y') }}</span>
+                                        </label>
+
+                                        <label class="durasi-card relative p-3.5 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between {{ $selectedDurasi == 90 ? 'border-[#00509d] bg-blue-50/50 shadow-xs ring-2 ring-blue-100' : 'border-slate-200 bg-white hover:border-slate-300' }}">
+                                            <div class="flex items-center justify-between">
+                                                <div class="flex items-center gap-1.5">
+                                                    <span class="text-xs font-black text-slate-900">90 Hari</span>
+                                                    <span class="px-1.5 py-0.5 bg-amber-100 text-amber-800 text-[9px] font-black rounded">Maksimal 3 Bulan</span>
+                                                </div>
+                                                <input type="radio" name="durasi_hari" value="90" {{ $selectedDurasi == 90 ? 'checked' : '' }} class="w-4 h-4 text-[#00509d] focus:ring-[#00509d]" onchange="updateDurasiCards(this)">
+                                            </div>
+                                            <p class="text-[11px] text-slate-500 font-medium mt-1">3 Bulan Masa Tayang Terpanjang</p>
+                                            <span class="text-[10px] text-slate-400 mt-2">Exp: {{ now()->addDays(90)->translatedFormat('d M Y') }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            @endif
+
                             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-200/80 text-xs">
                                 <div class="bg-white p-3 rounded-xl border border-slate-200/60 shadow-2xs">
                                     <span class="text-slate-500 font-medium block">Masa Berlaku Tayang:</span>
                                     <strong class="text-slate-900 font-extrabold text-sm text-[#00509d]">
-                                        {{ ($isVip ?? false) ? '30 Hari (1 Bulan)' : '7 Hari (1 Minggu)' }}
+                                        {{ ($isVip ?? false) ? 'Hingga 90 Hari (Fleksibel VIP)' : '30 Hari (1 Bulan Penuh)' }}
                                     </strong>
-                                    <p class="text-[11px] text-slate-400 mt-0.5">Kedaluwarsa otomatis: {{ now()->addDays(($isVip ?? false) ? 30 : 7)->translatedFormat('d F Y') }}</p>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">
+                                        {{ ($isVip ?? false) ? 'Sesuai opsi durasi yang Anda pilih di atas' : 'Kedaluwarsa otomatis: ' . now()->addDays(30)->translatedFormat('d F Y') }}
+                                    </p>
                                 </div>
                                 <div class="bg-white p-3 rounded-xl border border-slate-200/60 shadow-2xs">
                                     <span class="text-slate-500 font-medium block">Batas Pelamar Masuk:</span>
@@ -273,7 +326,7 @@
                             @if (!($isVip ?? false))
                                 <div class="mt-4 pt-3 border-t border-slate-200/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-amber-50/60 p-3 rounded-xl border border-amber-200/60">
                                     <div class="text-xs text-amber-900 font-medium">
-                                        Ingin kuota hingga <strong>20 lowongan aktif</strong>, masa berlaku 30 hari, dan otomatis ranking teratas?
+                                        Ingin kuota hingga <strong>20 lowongan aktif</strong>, pilihan durasi <strong>60 hingga 90 hari</strong>, dan otomatis ranking teratas?
                                     </div>
                                     <a href="{{ route('perusahaan.berlangganan') }}"
                                         class="shrink-0 px-3 py-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-lg transition flex items-center gap-1 shadow-2xs">
@@ -322,6 +375,19 @@
     </div>
 
     <script>
+        function updateDurasiCards(el) {
+            document.querySelectorAll('.durasi-card').forEach(card => {
+                card.classList.remove('border-[#00509d]', 'bg-blue-50/50', 'shadow-xs', 'ring-2', 'ring-blue-100');
+                card.classList.add('border-slate-200', 'bg-white');
+            });
+            const parent = el.closest('.durasi-card');
+            if (parent) {
+                parent.classList.remove('border-slate-200', 'bg-white');
+                parent.classList.add('border-[#00509d]', 'bg-blue-50/50', 'shadow-xs', 'ring-2', 'ring-blue-100');
+            }
+        }
+        window.updateDurasiCards = updateDurasiCards;
+
         document.addEventListener('DOMContentLoaded', function() {
             const form = document.querySelector('form[action="{{ route('lowongan.saya.store') }}"]');
             if (!form) return;

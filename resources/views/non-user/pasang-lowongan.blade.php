@@ -47,7 +47,7 @@
                 <div class="bg-[#004080] text-white p-6 flex flex-col justify-between min-h-[160px]">
                     <span class="text-2xl font-bold text-white/90">01</span>
                     <p class="text-xs sm:text-sm font-medium leading-relaxed mt-4">
-                        Pilih paket pemasangan lowongan sesuai yang anda inginkan
+                        Daftarkan atau masuk ke akun perusahaan Anda
                     </p>
                 </div>
 
@@ -55,7 +55,7 @@
                 <div class="bg-[#0066cc] text-white p-6 flex flex-col justify-between min-h-[160px]">
                     <span class="text-2xl font-bold text-white/90">02</span>
                     <p class="text-xs sm:text-sm font-medium leading-relaxed mt-4">
-                        Kirim materi lowongan via formulir website atau whatsapp kami
+                        Isi detail lowongan, kualifikasi, dan rentang gaji via formulir
                     </p>
                 </div>
 
@@ -63,7 +63,7 @@
                 <div class="bg-[#004d99] text-white p-6 flex flex-col justify-between min-h-[160px]">
                     <span class="text-2xl font-bold text-white/90">03</span>
                     <p class="text-xs sm:text-sm font-medium leading-relaxed mt-4">
-                        Anda akan diberi instruksi pembayaran
+                        Pilih publikasi gratis (30 hari) atau optimalkan dengan VIP (hingga 90 hari)
                     </p>
                 </div>
 
@@ -71,7 +71,7 @@
                 <div class="bg-[#3399ff] text-white p-6 flex flex-col justify-between min-h-[160px]">
                     <span class="text-2xl font-bold text-white/90">04</span>
                     <p class="text-xs sm:text-sm font-medium leading-relaxed mt-4">
-                        Lowongan anda siap di publish!
+                        Lowongan Anda langsung terbit dan tayang di AreaKerja!
                     </p>
                 </div>
             </div>
