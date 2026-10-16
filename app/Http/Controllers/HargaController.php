@@ -9,14 +9,7 @@ class HargaController extends Controller
 {
     public function index()
     {
-        // Ambil data harga koin dari paket lowongan di database
-        $pakets = PaketLowongan::orderBy('harga_koin')->get();
-
-        $koin = $pakets->map(fn($p) => (object)[
-            'id'    => $p->id,
-            'nama'  => $p->nama,
-            'harga' => $p->harga_koin,
-        ]);
+        $koin = SuperAdminController::getFinanceKoinList();
 
         // Harga pembayaran (top-up) — jika ada tabel harga_pembayarans bisa diganti
         $pembayaran = collect([
@@ -34,13 +27,7 @@ class HargaController extends Controller
 
     public function edit_koin()
     {
-        $pakets = PaketLowongan::orderBy('harga_koin')->get();
-
-        $koin = $pakets->map(fn($p) => (object)[
-            'id'    => $p->id,
-            'nama'  => $p->nama,
-            'harga' => $p->harga_koin,
-        ]);
+        $koin = SuperAdminController::getFinanceKoinList();
 
         return view('finance.paket-harga.edit-koin', [
             'title' => 'Edit Harga Koin',
@@ -50,31 +37,30 @@ class HargaController extends Controller
 
     public function update_koin(Request $request)
     {
-        if ($request->has('id') && $request->has('harga')) {
-            $ids = $request->input('id');
-            $hargas = $request->input('harga');
+        if ($request->has('keys') && $request->has('hargas')) {
+            $keys = $request->input('keys');
+            $hargas = $request->input('hargas');
 
-            foreach ($ids as $index => $id) {
+            foreach ($keys as $index => $key) {
                 if (isset($hargas[$index])) {
-                    PaketLowongan::where('id', $id)->update([
-                        'harga_koin' => max(0, (int)$hargas[$index]),
-                    ]);
+                    \App\Models\SiteSetting::set($key, (string) max(0, (int) $hargas[$index]));
                 }
             }
-
-            return redirect()->route('finance.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');
-        }
-
-        $request->validate([
-            'pakets'         => 'required|array',
-            'pakets.*.id'    => 'required|exists:paket_lowongans,id',
-            'pakets.*.harga' => 'required|integer|min:0',
-        ]);
-
-        foreach ($request->pakets as $item) {
-            PaketLowongan::where('id', $item['id'])->update([
-                'harga_koin' => $item['harga'],
-            ]);
+        } elseif ($request->has('id') && $request->has('harga')) {
+            $defaultKeys = [
+                1 => 'harga_koin_buka_cv',
+                2 => 'harga_koin_iklan_3_hari',
+                3 => 'harga_koin_iklan_7_hari',
+                4 => 'harga_koin_iklan_14_hari',
+                5 => 'harga_koin_iklan_30_hari',
+                6 => 'harga_koin_boost_lowongan',
+                7 => 'harga_koin_berlangganan',
+            ];
+            foreach ($request->id as $index => $id) {
+                if (isset($defaultKeys[$id]) && isset($request->harga[$index])) {
+                    \App\Models\SiteSetting::set($defaultKeys[$id], (string) max(0, (int) $request->harga[$index]));
+                }
+            }
         }
 
         return redirect()->route('finance.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');

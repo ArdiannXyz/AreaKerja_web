@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\CVController;
 use App\Http\Controllers\EmailSubController;
 use App\Http\Controllers\EmailVerificationController;
@@ -118,6 +119,14 @@ Route::get('/images/syarat-dan-ketentuan-banner.png', function () {
 Route::get('/syarat-dan-ketentuan', function () {
     return view('layouts.syarat-dan-ketentuan');
 })->name('syarat.ketentuan');
+
+Route::get('/faq', [PelamarController::class, 'bantuan'])->name('faq');
+
+// BANTUAN & LIVE CHAT DENGAN ADMIN (PERSISTEN)
+Route::controller(BantuanChatController::class)->middleware('auth')->group(function () {
+    Route::get('/bantuan/chat', 'userIndex')->name('bantuan.chat');
+    Route::post('/bantuan/chat/send', 'userSend')->name('bantuan.chat.send');
+});
 
 // EMAIL SUBSCRIBER
 Route::controller(EmailSubController::class)->group(function () {

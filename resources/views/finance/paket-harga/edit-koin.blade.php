@@ -11,7 +11,7 @@
                         <i class="ph ph-arrow-left text-base"></i>
                     </a>
                     <div>
-                        <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight leading-tight">Edit Tarif Pasang Lowongan</h1>
+                        <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight leading-tight">Edit Tarif Koin Layanan</h1>
                         <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Finance / Paket Harga / Edit Tarif Koin</p>
                     </div>
                 </div>
@@ -34,8 +34,8 @@
                         <i class="ph-fill ph-coins"></i>
                     </div>
                     <div>
-                        <h2 class="text-base font-extrabold text-slate-900">Tarif Koin Lowongan</h2>
-                        <p class="text-xs text-slate-500">Sesuaikan jumlah koin yang dibutuhkan untuk masing-masing tier</p>
+                        <h2 class="text-base font-extrabold text-slate-900">Tarif Koin Layanan Perusahaan</h2>
+                        <p class="text-xs text-slate-500">Sesuaikan jumlah koin yang dibutuhkan untuk membuka CV, moderasi iklan, booster, dan VIP</p>
                     </div>
                 </div>
             </div>
@@ -48,29 +48,37 @@
                     <table class="w-full text-left text-xs sm:text-sm">
                         <thead class="bg-slate-50/80 text-slate-600 font-bold border-b border-slate-100">
                             <tr>
-                                <th class="px-6 py-3.5">Nama Paket Lowongan</th>
+                                <th class="px-6 py-3.5">Nama Layanan</th>
                                 <th class="px-6 py-3.5 text-right">Tarif Koin</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
                             @foreach ($koin as $k)
                                 <tr class="hover:bg-blue-50/20 transition">
-                                    <td class="px-6 py-4 font-bold text-slate-800">
+                                    <td class="px-6 py-4 text-slate-800">
                                         <div class="flex items-center gap-2.5">
-                                            @if (str_contains(strtolower($k->nama), 'gold') || str_contains(strtolower($k->nama), 'vip'))
-                                                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
-                                            @elseif (str_contains(strtolower($k->nama), 'silver'))
-                                                <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                                            @if (str_contains(strtolower($k->nama), 'cv'))
+                                                <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                                            @elseif (str_contains(strtolower($k->nama), 'iklan'))
+                                                <span class="w-2.5 h-2.5 rounded-full bg-rose-500"></span>
+                                            @elseif (str_contains(strtolower($k->nama), 'vip') || str_contains(strtolower($k->nama), 'berlangganan'))
+                                                <span class="w-2.5 h-2.5 rounded-full bg-amber-500"></span>
                                             @else
-                                                <span class="w-2.5 h-2.5 rounded-full bg-amber-700"></span>
+                                                <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                                             @endif
-                                            <span>{{ $k->nama }}</span>
+                                            <div>
+                                                <p class="font-bold text-slate-800">{{ $k->nama }}</p>
+                                                @if(!empty($k->deskripsi))
+                                                    <p class="text-[11px] text-slate-500 mt-0.5">{{ $k->deskripsi }}</p>
+                                                @endif
+                                            </div>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-right">
                                         <div class="inline-flex items-center bg-slate-50 px-3.5 py-2 rounded-xl border border-slate-200 gap-2 focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-blue-100 focus-within:bg-white transition">
+                                            <input type="hidden" name="keys[]" value="{{ $k->key ?? '' }}">
                                             <input type="hidden" name="id[]" value="{{ $k->id }}">
-                                            <input type="number" name="harga[]" min="0"
+                                            <input type="number" name="hargas[]" min="0" required
                                                 class="bg-transparent w-24 text-right text-slate-900 font-extrabold text-sm sm:text-base border-0 border-none ring-0 focus:ring-0 focus:outline-none p-0 shadow-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                                                 style="border: none !important; box-shadow: none !important; outline: none !important; padding: 0 !important; background: transparent !important;"
                                                 value="{{ $k->harga }}">

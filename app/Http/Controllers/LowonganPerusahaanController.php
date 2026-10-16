@@ -63,6 +63,9 @@ class LowonganPerusahaanController extends Controller
     public function paketform()
     {
         $perusahaan = Auth::user()->perusahaan;
+        $isVip = $perusahaan ? $perusahaan->isVip() : false;
+        $activeCount = $perusahaan ? $perusahaan->activeLowonganCount() : 0;
+        $maxActive = $perusahaan ? $perusahaan->maxActiveLowongan() : 2;
         $pakets = PaketLowongan::whereIn('nama', ['Gold', 'Silver', 'Bronze'])->get();
 
         if ($pakets->isEmpty()) {
@@ -101,7 +104,7 @@ class LowonganPerusahaanController extends Controller
             $paket->harga = $paket->harga_koin ?? 100;
         }
 
-        return view('perusahaan.pasang-lowongan', compact('perusahaan', 'pakets'));
+        return view('perusahaan.pasang-lowongan', compact('perusahaan', 'pakets', 'isVip', 'activeCount', 'maxActive'));
     }
 
     public function createForm()
@@ -113,34 +116,37 @@ class LowonganPerusahaanController extends Controller
             $alamats = $perusahaan->alamatPerusahaan()->get();
         }
 
+        $isVip = $perusahaan ? $perusahaan->isVip() : false;
+        $activeLowonganCount = $perusahaan ? $perusahaan->activeLowonganCount() : 0;
+        $maxActiveLowongan = $perusahaan ? $perusahaan->maxActiveLowongan() : 2;
+
         $pakets = PaketLowongan::whereIn('nama', ['Bronze', 'Silver', 'Gold'])
             ->orderByRaw("FIELD(nama, 'Bronze', 'Silver', 'Gold')")
             ->get();
 
-        if ($pakets->isEmpty()) {
-            $defaultPakets = [
-                ['nama' => 'Bronze', 'deskripsi' => '1 Kali Publikasi di semua jaringan Areakerja.com', 'harga_koin' => 50, 'batas_listing' => 14, 'benefit' => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram"],
-                ['nama' => 'Silver', 'deskripsi' => '3 Kali Publikasi di semua jaringan Areakerja.com', 'harga_koin' => 100, 'batas_listing' => 21, 'benefit' => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram"],
-                ['nama' => 'Gold',   'deskripsi' => '5 Kali Publikasi di semua jaringan Areakerja.com', 'harga_koin' => 150, 'batas_listing' => 30, 'benefit' => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram"],
-            ];
-            foreach ($defaultPakets as $dp) {
-                try {
-                    PaketLowongan::firstOrCreate(['nama' => $dp['nama']], $dp);
-                } catch (\Throwable $e) {
-                    // ignore
-                }
-            }
-            $pakets = PaketLowongan::whereIn('nama', ['Bronze', 'Silver', 'Gold'])
-                ->orderByRaw("FIELD(nama, 'Bronze', 'Silver', 'Gold')")
-                ->get();
-        }
-
-        return view('perusahaan.lowongan-saya.tambah-lowongan', compact('pakets', 'categories', 'perusahaan', 'alamats'));
+        return view('perusahaan.lowongan-saya.tambah-lowongan', compact(
+            'pakets', 'categories', 'perusahaan', 'alamats', 'isVip', 'activeLowonganCount', 'maxActiveLowongan'
+        ));
     }
 
     public function store(StoreLowonganRequest $request)
     {
         $perusahaan = Auth::user()->perusahaan;
+        $isVip = $perusahaan ? $perusahaan->isVip() : false;
+        $maxAllowed = $perusahaan ? $perusahaan->maxActiveLowongan() : 2;
+        $currentActive = $perusahaan ? $perusahaan->activeLowonganCount() : 0;
+
+        // Validasi kuota lowongan aktif (Gratis: max 2, VIP: max 20)
+        if ($currentActive >= $maxAllowed) {
+            $msg = $isVip
+                ? "Anda telah mencapai batas kuota maksimal {$maxAllowed} lowongan aktif untuk akun VIP."
+                : "Anda telah mencapai batas kuota {$maxAllowed} lowongan aktif untuk akun Biasa (Gratis). Silakan upgrade ke langganan VIP untuk memasang hingga 20 lowongan aktif.";
+
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['kuota' => $msg])
+                ->with('error', $msg);
+        }
 
         $valid = $request->validated();
 
@@ -152,40 +158,31 @@ class LowonganPerusahaanController extends Controller
 
         $valid['perusahaan_id'] = $perusahaan->id;
         $valid['slug'] = Str::slug($request->nama . '-' . time());
+        $valid['published_at'] = now();
+        $valid['status'] = 'buka';
 
-        // Handle selected package purchase
-        if (!empty($valid['paket_id'])) {
-            $paket = PaketLowongan::find($valid['paket_id']);
-            if ($paket) {
-                $biayaKoin = $paket->harga_koin ?? 50;
-                if (($perusahaan->koin_perusahaan ?? 0) < $biayaKoin) {
-                    return redirect()->back()
-                        ->withInput()
-                        ->with('koin_kurang', true)
-                        ->withErrors(['paket_id' => 'Koin Anda tidak mencukupi untuk memilih paket ' . $paket->nama . ' (' . $biayaKoin . ' Koin). Silakan top up koin terlebih dahulu.']);
-                }
-
-                $perusahaan->decrement('koin_perusahaan', $biayaKoin);
-                $valid['published_at'] = now();
-                $valid['expired_at'] = now()->addDays($paket->batas_listing ?? 14);
-
-                try {
-                    CatatanKoin::create([
-                        'user_id'    => Auth::id(),
-                        'no_referensi' => 'KN-' . strtoupper(uniqid()),
-                        'pesanan'    => 'Pembelian Paket ' . $paket->nama . ' untuk lowongan: ' . $valid['nama'],
-                        'dari'       => 'Perusahaan',
-                        'sumber_dana' => 'Koin Perusahaan',
-                        'total'      => -$biayaKoin,
-                    ]);
-                } catch (\Throwable $e) {
-                    // ignore
-                }
-            }
+        // Durasi otomatis & Job Booster sesuai Tier (Freemium vs VIP Glints):
+        // Akun Biasa: Masa aktif 7 hari (1 minggu), kuota pelamar harian maks 5.
+        // VIP: Masa aktif 30 hari (1 bulan), unlimited pelamar, Job Booster otomatis aktif (selalu top).
+        if ($isVip) {
+            $valid['expired_at'] = now()->addDays(30);
+            $valid['boosted_until'] = $perusahaan->tanggal_expired && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired)
+                ? $perusahaan->tanggal_expired
+                : now()->addDays(30);
+        } else {
+            $valid['expired_at'] = now()->addDays(7);
+            $valid['boosted_until'] = null;
         }
 
+        $valid['batas_lamaran'] = $valid['expired_at']->toDateString();
+
         LowonganPerusahaan::create($valid);
-        return redirect()->route('lowongan.saya.perusahaan')->with('success', 'Lowongan berhasil ditambahkan dan langsung dipublikasikan!');
+
+        $successMsg = $isVip
+            ? 'Lowongan VIP berhasil diterbitkan! Masa aktif 30 hari dan Job Booster otomatis aktif (selalu teratas di pencarian).'
+            : 'Lowongan berhasil diterbitkan secara gratis! Masa aktif berlaku selama 7 hari.';
+
+        return redirect()->route('lowongan.saya.perusahaan')->with('success', $successMsg);
     }
 
     public function show(Perusahaan $perusahaan, LowonganPerusahaan $lowongan)

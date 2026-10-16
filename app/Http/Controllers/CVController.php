@@ -56,8 +56,9 @@ class CVController extends Controller
                     ->exists();
 
                 if (!$hasBoughtCv && !$hasRecruited) {
+                    $hargaCv = (int) \App\Models\SiteSetting::get('harga_koin_buka_cv', 5);
                     return redirect()->route('perusahaan.kandidat.ak')
-                        ->with('error', 'Silakan buka CV kandidat terlebih dahulu seharga 5 koin.');
+                        ->with('error', "Silakan buka CV kandidat terlebih dahulu seharga {$hargaCv} koin.");
                 }
             }
         }

@@ -196,7 +196,7 @@
                 Buka dan unduh CV pelamar <span id="namaPelamarBeliCv" class="font-bold text-slate-800"></span> seharga:
             </p>
             <div class="bg-amber-50/70 border border-amber-200 rounded-2xl py-3 px-4 mb-3 flex items-center justify-center gap-2">
-                <span class="text-3xl font-black text-amber-500 font-mono">5</span>
+                <span class="text-3xl font-black text-amber-500 font-mono">{{ \App\Models\SiteSetting::get('harga_koin_buka_cv', 5) }}</span>
                 <span class="text-xs font-bold text-amber-800">Koin AreaKerja</span>
             </div>
             <p class="text-[11px] text-slate-400 mb-5">
@@ -215,7 +215,7 @@
         </div>
     </div>
 
-    <!-- Modal Koin Tidak Cukup untuk CV (Min 5 Koin) -->
+    <!-- Modal Koin Tidak Cukup untuk CV -->
     <div id="modalKoinKurangCv"
         class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-xs p-4 transition-all">
         <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-sm text-center animate-fade-in border border-slate-100">
@@ -226,7 +226,7 @@
             </div>
             <h3 class="text-lg font-extrabold text-slate-900 mb-1">Koin Tidak Mencukupi</h3>
             <p class="text-xs text-slate-500 mb-5 leading-relaxed">
-                Saldo koin perusahaan Anda tidak mencukupi untuk membuka CV kandidat ini (Minimal 5 koin). Silakan lakukan top up koin.
+                Saldo koin perusahaan Anda tidak mencukupi untuk membuka CV kandidat ini (Minimal {{ \App\Models\SiteSetting::get('harga_koin_buka_cv', 5) }} koin). Silakan lakukan top up koin.
             </p>
             <div class="flex items-center gap-3">
                 <button type="button" onclick="closeModalKoinKurangCv()"
@@ -337,7 +337,8 @@
                 selectedPelamarId = this.dataset.id;
                 selectedPelamarNama = this.dataset.nama || '';
 
-                if (currentCoins < 5) {
+                const minKoinCv = {{ (int) \App\Models\SiteSetting::get('harga_koin_buka_cv', 5) }};
+                if (currentCoins < minKoinCv) {
                     document.getElementById('modalKoinKurangCv').classList.remove('hidden');
                     return;
                 }

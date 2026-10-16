@@ -26,89 +26,13 @@
             </div>
         </section>
 
-        <!-- Pricing Tier Cards Section (Matching Figma preview_tier_cards.png) -->
+        <!-- Perbandingan Fitur Akun Biasa vs VIP Section -->
         <section class="py-12 max-w-6xl mx-auto px-4 sm:px-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-center items-stretch">
-
-                <!-- GOLD TIER CARD -->
-                <div class="bg-white border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden flex flex-col transition duration-300 hover:-translate-y-1">
-                    <div class="py-4 text-center bg-[#fca311]">
-                        <h3 class="text-2xl font-bold text-white tracking-wide">GOLD</h3>
-                    </div>
-                    <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-                        <div>
-                            <p class="text-lg font-bold text-slate-900 text-center mb-2">Lebih Banyak Benefit</p>
-                            <p class="text-xs sm:text-sm text-slate-600 text-center mb-6">5 Kali Publikasi di semua jaringan Areakerja.com</p>
-                            <div class="border-b border-slate-300 mb-6"></div>
-                            <ul class="text-sm font-medium text-slate-800 space-y-3.5 mb-8">
-                                @foreach (['Website & Aplikasi', 'Instagram Post & Story', 'Highlight Story Favorit', 'Google Jobs & Bisnis', 'Facebook Post & Story', 'Twitter', 'LinkedIn', 'Telegram'] as $item)
-                                    <li class="flex items-center gap-3">
-                                        <i class="ph-bold ph-check text-slate-900 text-base"></i>
-                                        <span>{{ $item }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        <a href="{{ route('login') }}"
-                            class="text-white font-bold py-3 px-6 rounded-xl block text-center shadow-sm hover:opacity-90 transition bg-[#fca311] text-sm">
-                            Pasang Lowongan
-                        </a>
-                    </div>
-                </div>
-
-                <!-- SILVER TIER CARD -->
-                <div class="bg-white border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden flex flex-col transition duration-300 hover:-translate-y-1">
-                    <div class="py-4 text-center bg-[#949ca4]">
-                        <h3 class="text-2xl font-bold text-white tracking-wide">Silver</h3>
-                    </div>
-                    <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-                        <div>
-                            <p class="text-lg font-bold text-slate-900 text-center mb-2">Lebih Banyak Benefit</p>
-                            <p class="text-xs sm:text-sm text-slate-600 text-center mb-6">3 Kali Publikasi di semua jaringan Areakerja.com</p>
-                            <div class="border-b border-slate-300 mb-6"></div>
-                            <ul class="text-sm font-medium text-slate-800 space-y-3.5 mb-8">
-                                @foreach (['Website & Aplikasi', 'Instagram Post & Story', 'Highlight Story Favorit', 'Google Jobs & Bisnis', 'Facebook Post & Story', 'Twitter', 'LinkedIn', 'Telegram'] as $item)
-                                    <li class="flex items-center gap-3">
-                                        <i class="ph-bold ph-check text-slate-900 text-base"></i>
-                                        <span>{{ $item }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        <a href="{{ route('login') }}"
-                            class="text-white font-bold py-3 px-6 rounded-xl block text-center shadow-sm hover:opacity-90 transition bg-[#727d88] text-sm">
-                            Pasang Lowongan
-                        </a>
-                    </div>
-                </div>
-
-                <!-- BRONZE TIER CARD -->
-                <div class="bg-white border border-slate-200/80 rounded-2xl shadow-xl overflow-hidden flex flex-col transition duration-300 hover:-translate-y-1">
-                    <div class="py-4 text-center bg-[#6c584c]">
-                        <h3 class="text-2xl font-bold text-white tracking-wide">Bronze</h3>
-                    </div>
-                    <div class="p-6 sm:p-8 flex-1 flex flex-col justify-between">
-                        <div>
-                            <p class="text-lg font-bold text-slate-900 text-center mb-2">Lebih Banyak Benefit</p>
-                            <p class="text-xs sm:text-sm text-slate-600 text-center mb-6">1 Kali Publikasi di semua jaringan Areakerja.com</p>
-                            <div class="border-b border-slate-300 mb-6"></div>
-                            <ul class="text-sm font-medium text-slate-800 space-y-3.5 mb-8">
-                                @foreach (['Website & Aplikasi', 'Instagram Post & Story', 'Highlight Story Favorit', 'Google Jobs & Bisnis', 'Facebook Post & Story', 'Twitter', 'LinkedIn', 'Telegram'] as $item)
-                                    <li class="flex items-center gap-3">
-                                        <i class="ph-bold ph-check text-slate-900 text-base"></i>
-                                        <span>{{ $item }}</span>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        </div>
-                        <a href="{{ route('login') }}"
-                            class="text-white font-bold py-3 px-6 rounded-xl block text-center shadow-sm hover:opacity-90 transition bg-[#58483e] text-sm">
-                            Pasang Lowongan
-                        </a>
-                    </div>
-                </div>
-
-            </div>
+            @include('components.tabel-perbandingan-vip', [
+                'isVip' => false,
+                'showCta' => true,
+                'ctaTarget' => 'link'
+            ])
         </section>
 
         <!-- Langkah - Langkah Section -->

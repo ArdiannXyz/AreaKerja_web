@@ -16,7 +16,7 @@
                         Semua
                     </a>
                     <a href="{{ route('perusahaan.event.index', ['status' => 'buka']) }}"
-                        class="px-4 py-2 rounded-xl transition {{ ($status ?? '') === 'buka' ? 'bg-[#00509d] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                        class="px-4 py-2 rounded-xl trans   ition {{ ($status ?? '') === 'buka' ? 'bg-[#00509d] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
                         Upcoming
                     </a>
                     <a href="{{ route('perusahaan.event.index', ['status' => 'tutup']) }}"

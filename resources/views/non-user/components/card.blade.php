@@ -9,6 +9,23 @@
             {{-- Header Badges & Bookmark Icon --}}
             <div class="flex items-start justify-between gap-3 mb-2">
                 <div class="flex flex-wrap items-center gap-1.5">
+                    @php
+                        $isVipCard = $d->perusahaan && $d->perusahaan->isVip();
+                        $isDailyLockedCard = $d->isDailyLocked();
+                    @endphp
+
+                    @if ($isVipCard)
+                        <span class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[11px] font-black px-2.5 py-0.5 rounded shadow-xs flex items-center gap-1">
+                            <i class="ph-fill ph-crown text-amber-200"></i> VIP Employer
+                        </span>
+                    @endif
+
+                    @if ($isDailyLockedCard)
+                        <span class="bg-amber-100 text-amber-900 border border-amber-200 text-[11px] font-bold px-2.5 py-0.5 rounded shadow-xs flex items-center gap-1">
+                            <i class="ph ph-lock-key text-amber-700"></i> Kuota Penuh Hari Ini
+                        </span>
+                    @endif
+
                     @if (($d->status ?? 'buka') === 'tutup')
                         <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2.5 py-0.5 rounded shadow-sm border border-rose-200">
                             Ditutup

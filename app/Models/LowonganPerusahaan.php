@@ -60,7 +60,32 @@ class LowonganPerusahaan extends Model
 
     public function getIsExpiredAttribute()
     {
-        return $this->expired_at && $this->expired_at->isPast();
+        if ($this->expired_at && $this->expired_at->isPast()) {
+            return true;
+        }
+        if ($this->batas_lamaran && Carbon::parse($this->batas_lamaran)->endOfDay()->isPast()) {
+            return true;
+        }
+        return false;
+    }
+
+    public function getTodayApplicantsCountAttribute(): int
+    {
+        return PelamarLowongan::where('lowongan_id', $this->id)
+            ->whereDate('created_at', Carbon::today())
+            ->where('status', '!=', 'saved')
+            ->count();
+    }
+
+    public function isDailyLocked(): bool
+    {
+        $perusahaan = $this->perusahaan;
+        $isVip = $perusahaan && $perusahaan->isVip();
+        if ($isVip) {
+            return false;
+        }
+
+        return $this->today_applicants_count >= 5;
     }
 
     public function getRouteKeyName()

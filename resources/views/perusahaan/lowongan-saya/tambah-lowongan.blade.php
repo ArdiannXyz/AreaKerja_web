@@ -33,6 +33,20 @@
             <!-- Form -->
             <div class="border shadow-md rounded-md p-6">
                 <h2 class="font-semibold text-lg mb-4">Tambah Lowongan</h2>
+
+                @if (session('error') || $errors->has('kuota'))
+                    <div class="mb-5 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-medium flex items-start gap-3">
+                        <i class="ph-fill ph-warning-circle text-rose-600 text-xl shrink-0 mt-0.5"></i>
+                        <div>
+                            <p class="font-bold text-rose-900">Batas Kuota Tercapai</p>
+                            <p class="mt-0.5">{{ session('error') ?? $errors->first('kuota') }}</p>
+                            <a href="{{ route('perusahaan.berlangganan') }}" class="inline-flex items-center gap-1 font-bold text-[#00509d] underline mt-2">
+                                <i class="ph-fill ph-crown text-amber-500"></i> Upgrade ke VIP Sekarang
+                            </a>
+                        </div>
+                    </div>
+                @endif
+
                 <form action="{{ route('lowongan.saya.store') }}" method="POST" class="space-y-5" novalidate>
                     @csrf
                     <!-- Judul & Alamat -->
@@ -202,89 +216,72 @@
                         @enderror
                     </div>
 
-                    <!-- Batas Waktu -->
-                    <div class="mt-4">
-                        <label class="text-sm font-medium">Batas Waktu Lamaran <span class="text-red-500">*</span></label>
-                        <input type="date" name="batas_lamaran" value="{{ old('batas_lamaran') }}" required
-                            min="{{ date('Y-m-d') }}"
-                            class="w-full sm:w-48 border border-gray-300 rounded-md px-3 py-2 mt-2 focus:ring-1 focus:ring-[#00509d] @error('batas_lamaran') border-red-500 @enderror">
-                        @error('batas_lamaran')
-                            <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Pilih Paket Publikasi Lowongan (Bronze, Silver, Gold) -->
+                    <!-- Masa Berlaku & Ketentuan Kuota Otomatis Sesuai Tier -->
                     <div class="mt-8 pt-6 border-t border-slate-200">
-                        <div class="flex items-center justify-between flex-wrap gap-2 mb-3">
-                            <div>
-                                <label class="block text-sm font-bold text-slate-800">
-                                    Pilih Paket Publikasi Lowongan <span class="text-[#00509d]">*</span>
-                                </label>
-                                <p class="text-xs text-slate-500 mt-0.5">Pilih salah satu paket (Bronze, Silver, atau Gold) untuk lowongan ini.</p>
-                            </div>
-                            <div class="flex items-center gap-1.5 px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-lg text-xs font-bold">
-                                <i class="ph ph-coins text-base text-amber-500"></i>
-                                Saldo Koin Anda: <span class="text-[#003d7a] font-extrabold">{{ $perusahaan->koin_perusahaan ?? 0 }} Koin</span>
-                            </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
-                            @php
-                                $pkgStyles = [
-                                    'Bronze' => ['badge' => 'bg-[#5F554B] text-white', 'border' => 'hover:border-[#5F554B]'],
-                                    'Silver' => ['badge' => 'bg-[#8A929A] text-white', 'border' => 'hover:border-[#8A929A]'],
-                                    'Gold'   => ['badge' => 'bg-[#F59E0B] text-white', 'border' => 'hover:border-[#F59E0B]'],
-                                ];
-                            @endphp
-
-                            @foreach ($pakets as $pkg)
-                                @php
-                                    $style = $pkgStyles[$pkg->nama] ?? ['badge' => 'bg-[#00509d] text-white', 'border' => 'hover:border-[#00509d]'];
-                                    $isSelected = old('paket_id') == $pkg->id || (!old('paket_id') && strtolower($pkg->nama) == 'bronze');
-                                @endphp
-                                <label class="relative flex flex-col justify-between border-2 rounded-2xl p-4 sm:p-5 cursor-pointer transition-all duration-200 shadow-xs hover:shadow-md {{ $style['border'] }} bg-white has-[:checked]:border-[#00509d] has-[:checked]:bg-blue-50/30 has-[:checked]:ring-2 has-[:checked]:ring-[#00509d]">
-                                    <input type="radio" name="paket_id" value="{{ $pkg->id }}" {{ $isSelected ? 'checked' : '' }} required class="sr-only">
-
+                        <div class="rounded-2xl p-5 {{ ($isVip ?? false) ? 'bg-gradient-to-r from-blue-50 via-white to-amber-50/40 border border-blue-200' : 'bg-slate-50 border border-slate-200' }}">
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-xl {{ ($isVip ?? false) ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-[#00509d]' }} flex items-center justify-center text-xl font-bold shrink-0">
+                                        <i class="{{ ($isVip ?? false) ? 'ph-fill ph-crown' : 'ph ph-briefcase' }}"></i>
+                                    </div>
                                     <div>
-                                        <div class="flex items-center justify-between mb-3">
-                                            <span class="px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider {{ $style['badge'] }}">
-                                                {{ $pkg->nama }}
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-xs font-black uppercase tracking-wider {{ ($isVip ?? false) ? 'text-amber-700' : 'text-slate-600' }}">
+                                                {{ ($isVip ?? false) ? 'Tier VIP Employer' : 'Tier Akun Biasa (Gratis)' }}
                                             </span>
-                                            <span class="text-sm font-black text-slate-800 flex items-center gap-1">
-                                                <i class="ph ph-coins text-amber-500"></i> {{ $pkg->harga_koin ?? 50 }} Koin
-                                            </span>
+                                            @if ($isVip ?? false)
+                                                <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-black rounded">VIP Aktif</span>
+                                            @endif
                                         </div>
-
-                                        <h4 class="font-extrabold text-sm text-slate-900 mb-1">
-                                            {{ $pkg->deskripsi ?? 'Publikasi Lowongan' }}
+                                        <h4 class="text-sm sm:text-base font-extrabold text-slate-900 mt-0.5">
+                                            Ketentuan Publikasi & Masa Berlaku Lowongan
                                         </h4>
-                                        <p class="text-xs text-slate-500 mb-3 font-medium">
-                                            Masa Aktif: <strong class="text-slate-800">{{ $pkg->batas_listing ?? 14 }} Hari</strong>
-                                        </p>
-
-                                        <ul class="text-[11px] text-slate-600 space-y-1.5 border-t border-slate-100 pt-3">
-                                            <li class="flex items-center gap-1.5">
-                                                <i class="ph ph-check-circle text-emerald-500 font-bold"></i> Website & Aplikasi
-                                            </li>
-                                            <li class="flex items-center gap-1.5">
-                                                <i class="ph ph-check-circle text-emerald-500 font-bold"></i> Multi Jaringan Medsos
-                                            </li>
-                                            <li class="flex items-center gap-1.5">
-                                                <i class="ph ph-check-circle text-emerald-500 font-bold"></i> Google Jobs & Bisnis
-                                            </li>
-                                        </ul>
                                     </div>
+                                </div>
+                                <div class="text-left sm:text-right">
+                                    <span class="text-xs font-bold text-slate-500">Kuota Lowongan Aktif:</span>
+                                    <p class="text-sm font-black text-[#00509d]">
+                                        {{ $activeLowonganCount ?? 0 }} / {{ $maxActiveLowongan ?? 2 }} Terpakai
+                                    </p>
+                                </div>
+                            </div>
 
-                                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#003d7a]">
-                                        <span>Pilih Paket {{ $pkg->nama }}</span>
-                                        <i class="ph ph-arrow-right"></i>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-3 border-t border-slate-200/80 text-xs">
+                                <div class="bg-white p-3 rounded-xl border border-slate-200/60 shadow-2xs">
+                                    <span class="text-slate-500 font-medium block">Masa Berlaku Tayang:</span>
+                                    <strong class="text-slate-900 font-extrabold text-sm text-[#00509d]">
+                                        {{ ($isVip ?? false) ? '30 Hari (1 Bulan)' : '7 Hari (1 Minggu)' }}
+                                    </strong>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">Kedaluwarsa otomatis: {{ now()->addDays(($isVip ?? false) ? 30 : 7)->translatedFormat('d F Y') }}</p>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border border-slate-200/60 shadow-2xs">
+                                    <span class="text-slate-500 font-medium block">Batas Pelamar Masuk:</span>
+                                    <strong class="text-slate-900 font-extrabold text-sm {{ ($isVip ?? false) ? 'text-emerald-700' : 'text-slate-800' }}">
+                                        {{ ($isVip ?? false) ? 'Unlimited (Tanpa Batas)' : 'Maksimal 5 / Hari' }}
+                                    </strong>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">{{ ($isVip ?? false) ? 'Bebas kandidat setiap saat' : 'Terkunci per hari jika penuh' }}</p>
+                                </div>
+                                <div class="bg-white p-3 rounded-xl border border-slate-200/60 shadow-2xs">
+                                    <span class="text-slate-500 font-medium block">Job Booster (Pencarian):</span>
+                                    <strong class="text-slate-900 font-extrabold text-sm {{ ($isVip ?? false) ? 'text-amber-600' : 'text-slate-600' }}">
+                                        {{ ($isVip ?? false) ? '⭐ Selalu Teratas (Top 1)' : 'Urutan Standar' }}
+                                    </strong>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">{{ ($isVip ?? false) ? 'Prioritas tertinggi di beranda' : 'Posisi penayangan reguler' }}</p>
+                                </div>
+                            </div>
+
+                            @if (!($isVip ?? false))
+                                <div class="mt-4 pt-3 border-t border-slate-200/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-amber-50/60 p-3 rounded-xl border border-amber-200/60">
+                                    <div class="text-xs text-amber-900 font-medium">
+                                        Ingin kuota hingga <strong>20 lowongan aktif</strong>, masa berlaku 30 hari, dan otomatis ranking teratas?
                                     </div>
-                                </label>
-                            @endforeach
+                                    <a href="{{ route('perusahaan.berlangganan') }}"
+                                        class="shrink-0 px-3 py-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-lg transition flex items-center gap-1 shadow-2xs">
+                                        <i class="ph-fill ph-crown text-amber-300"></i> Upgrade VIP
+                                    </a>
+                                </div>
+                            @endif
                         </div>
-                        @error('paket_id')
-                            <p class="text-red-500 text-xs mt-2 font-bold">{{ $message }}</p>
-                        @enderror
                     </div>
 
                     <div class="flex justify-center space-x-4 pt-8">

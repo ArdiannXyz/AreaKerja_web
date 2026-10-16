@@ -12,6 +12,7 @@ use App\Models\Perusahaan;
 use App\Models\Iklan;
 use App\Models\CatatanKoin;
 use App\Models\LowonganPerusahaan;
+use App\Models\SiteSetting;
 use App\Services\CoinTransactionService;
 use App\Http\Requests\StoreIklanRequest;
 
@@ -24,7 +25,7 @@ class IklanPerusahaanController extends Controller
                 'id' => 1,
                 'nama' => 'Paket Bronze',
                 'durasi' => 3,
-                'koin' => 150,
+                'koin' => (int) SiteSetting::get('harga_koin_iklan_3_hari', 150),
                 'badge' => 'Event Singkat',
                 'deskripsi' => 'Ideal untuk publikasi cepat dan promosi lowongan mendesak.',
             ],
@@ -32,7 +33,7 @@ class IklanPerusahaanController extends Controller
                 'id' => 2,
                 'nama' => 'Paket Silver',
                 'durasi' => 7,
-                'koin' => 300,
+                'koin' => (int) SiteSetting::get('harga_koin_iklan_7_hari', 300),
                 'badge' => 'Paling Diminati',
                 'deskripsi' => '1 minggu penuh di slot banner utama beranda untuk jangkauan optimal.',
             ],
@@ -40,7 +41,7 @@ class IklanPerusahaanController extends Controller
                 'id' => 3,
                 'nama' => 'Paket Gold',
                 'durasi' => 14,
-                'koin' => 550,
+                'koin' => (int) SiteSetting::get('harga_koin_iklan_14_hari', 550),
                 'badge' => 'Hemat 50 Koin',
                 'deskripsi' => '2 pekan penayangan berkelanjutan dengan impresi tinggi.',
             ],
@@ -48,7 +49,7 @@ class IklanPerusahaanController extends Controller
                 'id' => 4,
                 'nama' => 'Paket Platinum',
                 'durasi' => 30,
-                'koin' => 1000,
+                'koin' => (int) SiteSetting::get('harga_koin_iklan_30_hari', 1000),
                 'badge' => 'Maksimal 1 Bulan',
                 'deskripsi' => 'Sebulan penuh tampil terdepan untuk branding perusahaan secara masif.',
             ],

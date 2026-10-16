@@ -1030,6 +1030,13 @@ class PelamarController extends Controller
                 $q->whereNull('expired_at')
                     ->orWhere('expired_at', '>', now());
             })
+            ->orderByRaw("
+                CASE
+                    WHEN boosted_until IS NOT NULL AND boosted_until > NOW() THEN 0
+                    WHEN rekomendasi IS NOT NULL THEN 1
+                    ELSE 2
+                END
+            ")
             ->latest('published_at')
             ->paginate(12);
 

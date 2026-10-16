@@ -79,6 +79,16 @@ class User extends Authenticatable
         return $this->hasMany(Notifikasi::class, 'user_id', 'id');
     }
 
+    public function bantuanChat()
+    {
+        return $this->hasOne(BantuanChat::class, 'user_id', 'id');
+    }
+
+    public function bantuanMessages()
+    {
+        return $this->hasMany(BantuanMessage::class, 'sender_id', 'id');
+    }
+
     public function getFinanceAttribute()
     {
         $financeRecord = null;

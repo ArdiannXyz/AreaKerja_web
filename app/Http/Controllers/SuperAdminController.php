@@ -17,6 +17,7 @@ use App\Models\PelamarLowongan;
 use App\Models\PembeliKandidat;
 use App\Models\Perusahaan;
 use App\Models\Provinsi;
+use App\Models\SiteSetting;
 use App\Models\SuperAdmin;
 use App\Models\TalentHunter;
 use App\Models\User;
@@ -1601,13 +1602,7 @@ class SuperAdminController extends Controller
             ]);
         }
 
-        $koinList = collect([
-            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
-            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
-            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
-            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
-            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
-        ]);
+        $koinList = self::getFinanceKoinList();
 
         $pembayaranList = collect([
             (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
@@ -1775,15 +1770,64 @@ class SuperAdminController extends Controller
     }
 
     //HARGA KOIN
+    public static function getFinanceKoinList()
+    {
+        return collect([
+            (object)[
+                'id' => 1,
+                'key' => 'harga_koin_buka_cv',
+                'nama' => 'Buka CV Pelamar',
+                'deskripsi' => 'Tarif per berkas CV kandidat yang dibuka dan diunduh oleh perusahaan',
+                'harga' => (int) SiteSetting::get('harga_koin_buka_cv', 5),
+            ],
+            (object)[
+                'id' => 2,
+                'key' => 'harga_koin_iklan_3_hari',
+                'nama' => 'Moderasi Iklan (Paket 3 Hari)',
+                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 3 hari (Bronze)',
+                'harga' => (int) SiteSetting::get('harga_koin_iklan_3_hari', 150),
+            ],
+            (object)[
+                'id' => 3,
+                'key' => 'harga_koin_iklan_7_hari',
+                'nama' => 'Moderasi Iklan (Paket 7 Hari)',
+                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 7 hari (Silver)',
+                'harga' => (int) SiteSetting::get('harga_koin_iklan_7_hari', 300),
+            ],
+            (object)[
+                'id' => 4,
+                'key' => 'harga_koin_iklan_14_hari',
+                'nama' => 'Moderasi Iklan (Paket 14 Hari)',
+                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 14 hari (Gold)',
+                'harga' => (int) SiteSetting::get('harga_koin_iklan_14_hari', 550),
+            ],
+            (object)[
+                'id' => 5,
+                'key' => 'harga_koin_iklan_30_hari',
+                'nama' => 'Moderasi Iklan (Paket 30 Hari)',
+                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 30 hari (Platinum)',
+                'harga' => (int) SiteSetting::get('harga_koin_iklan_30_hari', 1000),
+            ],
+            (object)[
+                'id' => 6,
+                'key' => 'harga_koin_boost_lowongan',
+                'nama' => 'Boost Lowongan',
+                'deskripsi' => 'Mempromosikan lowongan agar selalu tampil di urutan teratas pencarian',
+                'harga' => (int) SiteSetting::get('harga_koin_boost_lowongan', 300),
+            ],
+            (object)[
+                'id' => 7,
+                'key' => 'harga_koin_berlangganan',
+                'nama' => 'Berlangganan VIP',
+                'deskripsi' => 'Akses kuota 20 lowongan aktif per bulan, auto booster, dan pelamar unlimited',
+                'harga' => (int) SiteSetting::get('harga_koin_berlangganan', 1000),
+            ],
+        ]);
+    }
+
     public function edit_koin()
     {
-        $koin = collect([
-            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
-            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
-            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
-            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
-            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
-        ]);
+        $koin = self::getFinanceKoinList();
 
         return view('super_admin.finance.edit-koin', [
             'title' => 'Edit Harga Koin',
@@ -1793,7 +1837,33 @@ class SuperAdminController extends Controller
 
     public function update_koin(Request $request)
     {
-        return redirect()->route('superadmin.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');
+        if ($request->has('keys') && $request->has('hargas')) {
+            $keys = $request->input('keys');
+            $hargas = $request->input('hargas');
+
+            foreach ($keys as $index => $key) {
+                if (isset($hargas[$index])) {
+                    SiteSetting::set($key, (string) max(0, (int) $hargas[$index]));
+                }
+            }
+        } elseif ($request->has('harga') && $request->has('id')) {
+            $defaultKeys = [
+                1 => 'harga_koin_buka_cv',
+                2 => 'harga_koin_iklan_3_hari',
+                3 => 'harga_koin_iklan_7_hari',
+                4 => 'harga_koin_iklan_14_hari',
+                5 => 'harga_koin_iklan_30_hari',
+                6 => 'harga_koin_boost_lowongan',
+                7 => 'harga_koin_berlangganan',
+            ];
+            foreach ($request->id as $index => $id) {
+                if (isset($defaultKeys[$id]) && isset($request->harga[$index])) {
+                    SiteSetting::set($defaultKeys[$id], (string) max(0, (int) $request->harga[$index]));
+                }
+            }
+        }
+
+        return redirect()->route('superadmin.paket-harga')->with('success', 'Tarif harga koin berhasil diperbarui.');
     }
 
     //HARGA PEMBAYARAN
