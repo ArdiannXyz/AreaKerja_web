@@ -84,8 +84,13 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse ($koin as $k)
                                 <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-5 py-3 text-gray-800 font-medium">{{ $k->nama }}</td>
-                                    <td class="px-5 py-3 text-right font-semibold text-[#00509d]">
+                                    <td class="px-5 py-3.5 text-gray-800">
+                                        <p class="font-semibold text-gray-800">{{ $k->nama }}</p>
+                                        @if(!empty($k->deskripsi))
+                                            <p class="text-[11px] text-gray-500 mt-0.5">{{ $k->deskripsi }}</p>
+                                        @endif
+                                    </td>
+                                    <td class="px-5 py-3.5 text-right font-bold text-[#00509d] whitespace-nowrap">
                                         {{ number_format($k->harga, 0, ',', '.') }} Koin
                                     </td>
                                 </tr>

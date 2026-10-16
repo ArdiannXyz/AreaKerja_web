@@ -374,10 +374,14 @@
                             {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }} Koin
                         </span>
                     </div>
+                    @php
+                        $firstPaket = collect($pakets)->first();
+                        $initialKoin = $firstPaket['koin'] ?? 300;
+                    @endphp
                     <div class="flex items-center justify-between">
                         <span class="text-slate-600 font-medium">Biaya Perpanjangan:</span>
                         <span id="biayaKoinText" class="font-extrabold text-rose-600 flex items-center gap-1">
-                            - 150 Koin
+                            - {{ number_format($initialKoin, 0, ',', '.') }} Koin
                         </span>
                     </div>
                     <div class="flex items-center justify-between pt-1.5 border-t border-blue-200/60 font-bold">
@@ -419,7 +423,7 @@
 
     <script>
         const userKoin = {{ $perusahaan->koin_perusahaan }};
-        let currentBiaya = 150;
+        let currentBiaya = {{ $initialKoin ?? 300 }};
 
         function selectPaket(koin) {
             currentBiaya = koin;

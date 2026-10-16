@@ -24,13 +24,6 @@ class IklanAdminController extends Controller
     public static function getPaketList()
     {
         return [
-            1 => [
-                'id' => 1,
-                'nama' => 'Paket Bronze',
-                'durasi' => 3,
-                'badge' => 'Event Singkat',
-                'deskripsi' => 'Publikasi cepat 3 hari untuk promosi mendesak.',
-            ],
             2 => [
                 'id' => 2,
                 'nama' => 'Paket Silver',

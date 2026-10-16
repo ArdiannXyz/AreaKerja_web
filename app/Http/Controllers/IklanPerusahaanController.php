@@ -12,6 +12,7 @@ use App\Models\Perusahaan;
 use App\Models\Iklan;
 use App\Models\CatatanKoin;
 use App\Models\LowonganPerusahaan;
+use App\Models\SiteSetting;
 use App\Services\CoinTransactionService;
 use App\Http\Requests\StoreIklanRequest;
 
@@ -20,19 +21,11 @@ class IklanPerusahaanController extends Controller
     public static function getPaketList()
     {
         return [
-            1 => [
-                'id' => 1,
-                'nama' => 'Paket Bronze',
-                'durasi' => 3,
-                'koin' => 150,
-                'badge' => 'Event Singkat',
-                'deskripsi' => 'Ideal untuk publikasi cepat dan promosi lowongan mendesak.',
-            ],
             2 => [
                 'id' => 2,
                 'nama' => 'Paket Silver',
                 'durasi' => 7,
-                'koin' => 300,
+                'koin' => (int) SiteSetting::get('harga_koin_iklan_7_hari', 300),
                 'badge' => 'Paling Diminati',
                 'deskripsi' => '1 minggu penuh di slot banner utama beranda untuk jangkauan optimal.',
             ],
@@ -40,7 +33,7 @@ class IklanPerusahaanController extends Controller
                 'id' => 3,
                 'nama' => 'Paket Gold',
                 'durasi' => 14,
-                'koin' => 550,
+                'koin' => (int) SiteSetting::get('harga_koin_iklan_14_hari', 550),
                 'badge' => 'Hemat 50 Koin',
                 'deskripsi' => '2 pekan penayangan berkelanjutan dengan impresi tinggi.',
             ],
@@ -48,7 +41,7 @@ class IklanPerusahaanController extends Controller
                 'id' => 4,
                 'nama' => 'Paket Platinum',
                 'durasi' => 30,
-                'koin' => 1000,
+                'koin' => (int) SiteSetting::get('harga_koin_iklan_30_hari', 1000),
                 'badge' => 'Maksimal 1 Bulan',
                 'deskripsi' => 'Sebulan penuh tampil terdepan untuk branding perusahaan secara masif.',
             ],
@@ -187,7 +180,7 @@ class IklanPerusahaanController extends Controller
         $iklan = Iklan::where('id', $id)->where('perusahaan_id', $perusahaan->id)->firstOrFail();
 
         $request->validate([
-            'paket_id' => 'required|integer|in:1,2,3,4',
+            'paket_id' => 'required|integer|in:2,3,4',
         ], [
             'paket_id.required' => 'Silakan pilih paket perpanjangan durasi.',
             'paket_id.in'       => 'Pilihan paket perpanjangan tidak valid.',

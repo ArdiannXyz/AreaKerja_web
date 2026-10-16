@@ -55,69 +55,14 @@
             </div>
         </div>
 
-        <!-- ================= BENEFIT SECTION ================= -->
-        <div class="w-full py-16 px-4 sm:px-6 lg:px-8 text-white relative overflow-hidden"
-            style="background: linear-gradient(135deg, #00509d 0%, #003366 100%);">
-            
-            <div class="max-w-6xl mx-auto">
-                <div class="text-center max-w-2xl mx-auto mb-12 space-y-3">
-                    <span class="px-3 py-1 rounded-full bg-white/10 text-blue-200 text-xs font-extrabold uppercase tracking-wider">
-                        Keuntungan Mitra
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
-                        Benefit Berlangganan Di AreaKerja
-                    </h2>
-                    <p class="text-xs sm:text-sm text-blue-100 font-medium">
-                        Solusi terpadu untuk percepatan dan efisiensi proses *hiring* perusahaan Anda.
-                    </p>
-                </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <!-- Benefit 1 -->
-                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
-                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
-                            <i class="ph-fill ph-calendar-star text-amber-400"></i>
-                        </div>
-                        <h3 class="text-base font-extrabold text-white mb-2">Event Eksklusif</h3>
-                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
-                            Diundang khusus ke dalam bursa kerja dan webinar rekrutmen yang diadakan oleh AreaKerja.
-                        </p>
-                    </div>
-
-                    <!-- Benefit 2 -->
-                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
-                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
-                            <i class="ph-fill ph-chats-circle text-sky-300"></i>
-                        </div>
-                        <h3 class="text-base font-extrabold text-white mb-2">Konsultasi Lifetime</h3>
-                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
-                            Dukungan konsultasi berkelanjutan dari spesialis HR dalam menyaring pekerja yang tepat.
-                        </p>
-                    </div>
-
-                    <!-- Benefit 3 -->
-                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
-                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
-                            <i class="ph-fill ph-megaphone-simple text-emerald-300"></i>
-                        </div>
-                        <h3 class="text-base font-extrabold text-white mb-2">Prioritas Listing</h3>
-                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
-                            Lowongan pekerjaan perusahaan akan diposisikan di daftar teratas untuk menarik pelamar aktif.
-                        </p>
-                    </div>
-
-                    <!-- Benefit 4 -->
-                    <div class="bg-white/10 backdrop-blur-xs border border-white/15 rounded-3xl p-6 text-center flex flex-col items-center hover:bg-white/15 transition group">
-                        <div class="w-14 h-14 rounded-2xl bg-white/20 text-white flex items-center justify-center text-2xl mb-4 group-hover:scale-110 transition shadow-inner">
-                            <i class="ph-fill ph-users-three text-rose-300"></i>
-                        </div>
-                        <h3 class="text-base font-extrabold text-white mb-2">Database Terverifikasi</h3>
-                        <p class="text-xs text-blue-100 font-normal leading-relaxed">
-                            Akses cepat ke profil dan portofolio kandidat siap kerja yang telah divalidasi tim.
-                        </p>
-                    </div>
-                </div>
-            </div>
+        <!-- ================= PERBANDINGAN FITUR (BIASA VS VIP) ================= -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
+            @include('components.tabel-perbandingan-vip', [
+                'isVip' => $perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired),
+                'showCta' => true,
+                'ctaTarget' => 'modal'
+            ])
         </div>
 
         <!-- ================= SUBSCRIPTION PRICING CARD ================= -->

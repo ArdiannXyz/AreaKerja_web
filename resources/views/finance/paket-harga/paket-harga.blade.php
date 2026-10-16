@@ -68,8 +68,8 @@
                                 <i class="ph-fill ph-coins"></i>
                             </div>
                             <div>
-                                <h2 class="text-base font-extrabold text-slate-900">Paket Pasang Lowongan</h2>
-                                <p class="text-xs text-slate-500">Tarif koin berdasarkan kategori paket lowongan</p>
+                                <h2 class="text-base font-extrabold text-slate-900">Paket Tarif Koin Layanan</h2>
+                                <p class="text-xs text-slate-500">Tarif koin untuk fitur perusahaan (buka CV, moderasi iklan, booster, VIP)</p>
                             </div>
                         </div>
 
@@ -85,7 +85,7 @@
                         <table class="w-full text-left text-xs sm:text-sm">
                             <thead class="bg-slate-50/80 text-slate-600 font-bold border-b border-slate-100">
                                 <tr>
-                                    <th class="px-4 py-3.5">Nama Paket Lowongan</th>
+                                    <th class="px-4 py-3.5">Nama Layanan</th>
                                     <th class="px-4 py-3.5 text-right">Tarif Koin</th>
                                 </tr>
                             </thead>

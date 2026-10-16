@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
 use App\Http\Controllers\LowonganPerusahaanController;
@@ -145,6 +146,14 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/header-image', 'headerImageIndexAdmin')->name('admin.header.image');
         Route::put('/header-image/{nama}', 'headerImageUpdate')->name('admin.header.update');
         Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('admin.header.destroy');
+    });
+
+    // LAYANAN BANTUAN & KELUHAN
+    Route::controller(BantuanChatController::class)->group(function () {
+        Route::get('/bantuan', 'adminIndex')->name('admin.bantuan.index');
+        Route::get('/bantuan/{id}', 'adminShow')->name('admin.bantuan.show');
+        Route::post('/bantuan/{id}/reply', 'adminReply')->name('admin.bantuan.reply');
+        Route::post('/bantuan/{id}/status', 'adminToggleStatus')->name('admin.bantuan.status');
     });
 });
 

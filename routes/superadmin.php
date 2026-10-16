@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\EmailSubController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
@@ -236,6 +237,14 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/iklan/{id}/reject', 'rejectSuper')->name('superadmin.iklan.reject');
         Route::post('/iklan/{id}/perpanjang', 'perpanjangSuper')->name('superadmin.iklan.perpanjang');
         Route::delete('/iklan/{id}', 'destroySuper')->name('superadmin.iklan.destroy');
+    });
+
+    // LAYANAN BANTUAN & KELUHAN (SUPER ADMIN)
+    Route::controller(BantuanChatController::class)->group(function () {
+        Route::get('/bantuan', 'adminIndex')->name('superadmin.bantuan.index');
+        Route::get('/bantuan/{id}', 'adminShow')->name('superadmin.bantuan.show');
+        Route::post('/bantuan/{id}/reply', 'adminReply')->name('superadmin.bantuan.reply');
+        Route::post('/bantuan/{id}/status', 'adminToggleStatus')->name('superadmin.bantuan.status');
     });
 });
 

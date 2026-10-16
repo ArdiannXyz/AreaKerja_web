@@ -31,8 +31,9 @@ class StoreLowonganRequest extends FormRequest
             'deskripsi'        => 'required|string',
             'tanggung_jawab'   => 'nullable|string',
             'syarat_pekerjaan' => 'required|string',
-            'batas_lamaran'    => 'required|date',
-            'paket_id'         => 'nullable|exists:paket_lowongans,id',
+            'batas_lamaran'    => 'nullable|date',
+            'paket_id'         => 'nullable',
+            'durasi_hari'      => 'nullable|integer|in:30,60,90',
         ];
     }
 
@@ -50,7 +51,6 @@ class StoreLowonganRequest extends FormRequest
             'gaji_akhir.required'       => 'Gaji akhir wajib diisi dengan nominal angka valid.',
             'deskripsi.required'        => 'Deskripsi lowongan pekerjaan wajib diisi.',
             'syarat_pekerjaan.required' => 'Persyaratan pekerjaan wajib diisi.',
-            'batas_lamaran.required'    => 'Batas akhir lamaran wajib ditentukan.',
         ];
     }
 }

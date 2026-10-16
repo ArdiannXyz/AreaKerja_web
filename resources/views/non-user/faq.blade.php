@@ -1,4 +1,4 @@
-﻿@extends('layouts.index')
+@extends(Auth::check() && Auth::user()->role === 'perusahaan' ? 'layouts.index-perusahaan' : 'layouts.index')
 @section('content')
     <div class="bg-white text-gray-800 mt-16">
 
@@ -111,8 +111,34 @@
             <!-- Tombol bawah -->
             <div class="flex justify-center mt-12">
                 <button class="bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2 rounded-md text-sm md:text-base">
-                    Lihat Semua FAQ â†’
+                    Lihat Semua FAQ &rarr;
                 </button>
+            </div>
+
+            <!-- Banner Tidak Menemukan Jawaban? Hubungi Admin -->
+            <div class="mt-14 bg-gradient-to-r from-blue-50 via-sky-50 to-blue-50 border border-blue-200/90 rounded-2xl p-6 md:p-8 shadow-xs relative overflow-hidden">
+                <div class="absolute -right-8 -bottom-8 w-44 h-44 bg-[#00509d]/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
+                    <div class="flex items-start sm:items-center gap-4 text-left w-full md:w-auto">
+                        <div class="w-14 h-14 rounded-2xl bg-[#00509d] text-white flex items-center justify-center text-3xl shadow-md shrink-0">
+                            <i class="ph ph-headset"></i>
+                        </div>
+                        <div>
+                            <span class="inline-block px-2.5 py-0.5 rounded-full bg-blue-100 text-[#00509d] text-xs font-semibold uppercase tracking-wider mb-1">Pusat Bantuan</span>
+                            <h3 class="text-xl md:text-2xl font-bold text-gray-900 leading-tight">Tidak menemukan jawaban?</h3>
+                            <p class="text-sm md:text-base text-gray-600 mt-1 max-w-xl">
+                                Hubungi admin sekarang untuk menyampaikan pertanyaan, kendala teknis, atau keluhan permasalahan akun Anda secara langsung.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-auto flex flex-col sm:flex-row items-center gap-3 shrink-0">
+                        <a href="{{ route('bantuan.chat') }}"
+                           class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition-all active:scale-95 text-sm md:text-base">
+                            <i class="ph ph-chats-circle text-xl"></i>
+                            <span>Hubungi Admin</span>
+                        </a>
+                    </div>
+                </div>
             </div>
 
         </div>

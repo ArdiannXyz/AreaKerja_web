@@ -275,6 +275,14 @@
                                 <span>Link & Header</span>
                             </a>
                         </div>
+
+                        <div class="{{ request()->is('admin/bantuan*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md mb-1.5">
+                            <a href="{{ route('admin.bantuan.index') }}"
+                                class="flex font-semibold items-center gap-2.5 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-200">
+                                <i class="{{ request()->is('admin/bantuan*') ? 'ph-fill ph-chats-circle' : 'ph ph-chats-circle' }} text-lg"></i>
+                                <span>Bantuan</span>
+                            </a>
+                        </div>
                     </nav>
                 </div>
             </div>
@@ -415,6 +423,12 @@
                                 <i class="ph ph-megaphone"></i>
                             </div>
                             <span class="text-[11px] leading-tight">Iklan</span>
+                        </a>
+                        <a href="{{ route('admin.bantuan.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/bantuan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-chats-circle"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Bantuan</span>
                         </a>
                         <a href="{{ route('admin.profile') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/profile*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
                             <div class="w-11 h-11 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl shadow-xs">

@@ -123,6 +123,28 @@ class Perusahaan extends Model
         return $this->verification_status === 'approved';
     }
 
+    public function isVip(): bool
+    {
+        return (int) $this->is_berlangganan === 1 
+            && !is_null($this->tanggal_expired) 
+            && \Carbon\Carbon::now()->lt($this->tanggal_expired);
+    }
+
+    public function maxActiveLowongan(): int
+    {
+        return $this->isVip() ? 20 : 2;
+    }
+
+    public function activeLowonganCount(): int
+    {
+        return $this->pasanglowongan()
+            ->where('status', '!=', 'tutup')
+            ->where(function ($q) {
+                $q->whereNull('expired_at')->orWhere('expired_at', '>', now());
+            })
+            ->count();
+    }
+
     public function getRouteKeyName()
     {
         return 'slug';

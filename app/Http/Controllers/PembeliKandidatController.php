@@ -9,6 +9,7 @@ use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
 use App\Models\PembelianCv;
 use App\Models\Perusahaan;
+use App\Models\SiteSetting;
 use App\Services\CoinTransactionService;
 use App\Services\NotificationService;
 use App\Http\Requests\BeliKandidatRequest;
@@ -47,13 +48,13 @@ class PembeliKandidatController extends Controller
             ]);
         }
 
-        $hargaCv = 5; // 5 koin per CV sesuai permintaan
+        $hargaCv = (int) SiteSetting::get('harga_koin_buka_cv', 5);
 
         if ($perusahaan->koin_perusahaan < $hargaCv) {
             return response()->json([
                 'status'    => 'error',
                 'type'      => 'coin_insufficient',
-                'message'   => 'Koin perusahaan tidak mencukupi untuk membuka CV (Minimal 5 koin). Silakan top up koin terlebih dahulu.',
+                'message'   => "Koin perusahaan tidak mencukupi untuk membuka CV (Minimal {$hargaCv} koin). Silakan top up koin terlebih dahulu.",
                 'sisa_koin' => $perusahaan->koin_perusahaan,
             ], 400);
         }
@@ -83,7 +84,7 @@ class PembeliKandidatController extends Controller
 
             return response()->json([
                 'status'       => 'success',
-                'message'      => 'CV ' . $pelamar->nama_pelamar . ' berhasil dibuka seharga 5 koin!',
+                'message'      => 'CV ' . $pelamar->nama_pelamar . " berhasil dibuka seharga {$hargaCv} koin!",
                 'download_url' => route('cv.download', $pelamar->id),
                 'sisa_koin'    => $perusahaan->koin_perusahaan,
             ]);

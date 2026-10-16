@@ -28,12 +28,25 @@
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
 
+            @php
+                $isDailyLocked = $data->isDailyLocked();
+                $isVipCompany = $data->perusahaan && $data->perusahaan->isVip();
+            @endphp
+
             @if ($data->status === 'tutup')
                 <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl flex items-center gap-3 shadow-sm">
                     <i class="ph ph-lock-key text-rose-600 text-2xl shrink-0"></i>
                     <div>
                         <p class="font-bold text-sm text-rose-900">Pendaftaran Ditutup (Kuota Terpenuhi)</p>
                         <p class="text-xs text-rose-700 mt-0.5">Perusahaan telah menutup pendaftaran untuk lowongan ini.</p>
+                    </div>
+                </div>
+            @elseif ($isDailyLocked)
+                <div class="bg-amber-50 border border-amber-200 text-amber-900 p-4 rounded-2xl flex items-center gap-3 shadow-sm">
+                    <i class="ph-fill ph-lock-key text-amber-600 text-2xl shrink-0"></i>
+                    <div>
+                        <p class="font-bold text-sm text-amber-950">Kuota Pelamar Hari Ini Telah Penuh (5/5)</p>
+                        <p class="text-xs text-amber-800 mt-0.5">Lowongan ini telah mencapai batas 5 pelamar hari ini (Akun Reguler). Lowongan terkunci untuk hari ini dan akan dibuka kembali besok pagi.</p>
                     </div>
                 </div>
             @endif
@@ -49,7 +62,14 @@
                         @endif
                     </div>
                     <div>
-                        <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">{{ $data->nama }}</h1>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <h1 class="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">{{ $data->nama }}</h1>
+                            @if ($isVipCompany)
+                                <span class="inline-flex items-center gap-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-black text-xs px-2.5 py-0.5 rounded shadow-2xs">
+                                    <i class="ph-fill ph-crown text-amber-200"></i> ⭐ VIP Employer
+                                </span>
+                            @endif
+                        </div>
                         <p class="text-sm font-semibold text-slate-600 mt-1">{{ $data->perusahaan->nama_perusahaan }}</p>
                         <p class="text-xs text-slate-500 mt-1">{{ $data->alamat }}</p>
                     </div>
@@ -68,7 +88,7 @@
                                 $statusLower = strtolower($statusLamaran ?? '');
                                 $sudahMelamar = !empty($statusLamaran) && in_array($statusLower, ['pending', 'diterima', 'ditolak', 'proses', 'dikelola']);
                                 $isTutup = ($data->status === 'tutup');
-                                $disableButton = $isExpired || $sudahMelamar || $isTutup;
+                                $disableButton = $isExpired || $sudahMelamar || $isTutup || $isDailyLocked;
                             @endphp
 
                             <button @click="showConfirm = true"
@@ -80,6 +100,8 @@
                                     Ditutup
                                 @elseif ($isExpired)
                                     Batas Waktu Berakhir
+                                @elseif ($isDailyLocked)
+                                    Kuota Hari Ini Penuh (5/5)
                                 @else
                                     Lamar cepat
                                 @endif
@@ -123,10 +145,16 @@
                                 </button>
                             </div>
                         @else
-                            <a href="{{ route('login') }}"
-                                class="flex-1 md:flex-initial bg-[#004e98] hover:bg-[#003d7a] text-white font-bold text-sm px-8 py-2.5 rounded-lg shadow-sm transition text-center">
-                                Lamar cepat
-                            </a>
+                            @if ($isDailyLocked)
+                                <button disabled class="flex-1 md:flex-initial bg-slate-400 text-white font-bold text-sm px-8 py-2.5 rounded-lg shadow-sm cursor-not-allowed">
+                                    Kuota Hari Ini Penuh (5/5)
+                                </button>
+                            @else
+                                <a href="{{ route('login') }}"
+                                    class="flex-1 md:flex-initial bg-[#004e98] hover:bg-[#003d7a] text-white font-bold text-sm px-8 py-2.5 rounded-lg shadow-sm transition text-center">
+                                    Lamar cepat
+                                </a>
+                            @endif
                             <a href="{{ route('login') }}"
                                 class="w-10 h-10 bg-[#004e98] hover:bg-[#003d7a] text-white rounded-lg flex items-center justify-center shadow-sm transition">
                                 <i class="ph ph-bookmark-simple text-xl"></i>

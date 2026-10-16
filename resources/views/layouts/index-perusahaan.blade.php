@@ -648,6 +648,14 @@
                                 </li>
 
                                 <li>
+                                    <a href="{{ route('faq') }}"
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-question mr-2 text-[#00509d] text-lg"></i>
+                                        FAQ
+                                    </a>
+                                </li>
+
+                                <li>
                                     <a href="{{ route('syarat.ketentuan') }}"
                                         class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
                                         <i class="ph ph-file-text mr-2 text-[#00509d] text-lg"></i>

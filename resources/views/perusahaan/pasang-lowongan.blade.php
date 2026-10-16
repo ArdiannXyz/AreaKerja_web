@@ -22,102 +22,60 @@
         </div>
     </section>
 
-    <!-- Pricing / Paket Lowongan Cards Section -->
-    <section class="py-16 bg-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6">
-            @php
-                $warnaHeader = [
-                    'Gold'   => 'bg-[#F59E0B]',
-                    'Silver' => 'bg-[#8A929A]',
-                    'Bronze' => 'bg-[#5F554B]',
-                ];
-                $warnaBtn = [
-                    'Gold'   => 'bg-[#F59E0B] hover:bg-amber-600',
-                    'Silver' => 'bg-[#8A929A] hover:bg-slate-600',
-                    'Bronze' => 'bg-[#5F554B] hover:bg-stone-800',
-                ];
-            @endphp
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch justify-center max-w-5xl mx-auto">
-                @foreach ($pakets as $paket)
-                    <div class="bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1">
-                        
-                        <!-- Header Paket -->
-                        <div class="py-3.5 text-center {{ $warnaHeader[$paket->nama] ?? 'bg-[#00509d]' }}">
-                            <h3 class="text-xl font-bold text-white uppercase tracking-wider">
-                                {{ $paket->nama }}
-                            </h3>
-                        </div>
-
-                        <!-- Card Content -->
-                        <div class="p-6 sm:p-7 flex-1 flex flex-col justify-between">
-                            <div>
-                                <h4 class="text-base font-bold text-gray-900 mb-1 text-center">
-                                    Lebih Banyak Benefit
-                                </h4>
-                                <p class="text-xs text-gray-500 mb-4 text-center font-medium leading-relaxed">
-                                    {{ $paket->deskripsi }}
-                                </p>
-
-                                <hr class="my-4 border-gray-200">
-
-                                <ul class="text-xs text-gray-700 space-y-3 mb-6">
-                                    @if (!empty($paket->benefit))
-                                        @foreach (explode("\n", $paket->benefit) as $item)
-                                            @if(trim($item))
-                                                <li class="flex items-center gap-2.5">
-                                                    <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                                    <span class="font-medium text-slate-800">{{ trim($item) }}</span>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                    @else
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">Website & Aplikasi</span>
-                                        </li>
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">Instagram Post & Story</span>
-                                        </li>
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">Highlight Story Favorit</span>
-                                        </li>
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">Google Jobs & Bisnis</span>
-                                        </li>
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">Facebook Post & Story</span>
-                                        </li>
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">Twitter</span>
-                                        </li>
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">LinkedIn</span>
-                                        </li>
-                                        <li class="flex items-center gap-2.5">
-                                            <i class="ph ph-check text-slate-800 text-sm font-bold shrink-0"></i>
-                                            <span class="font-medium text-slate-800">Telegram</span>
-                                        </li>
-                                    @endif
-                                </ul>
-                            </div>
-
-                            <!-- Button Pasang Lowongan -->
-                            <button type="button"
-                                onclick="openModal({{ $paket->id }}, '{{ $paket->nama }}', {{ $paket->harga }})"
-                                class="{{ $warnaBtn[$paket->nama] ?? 'bg-[#00509d] hover:bg-[#003d7a]' }} text-white font-semibold py-2.5 rounded-lg w-full transition duration-200 shadow-sm text-sm">
-                                Pasang Lowongan
-                            </button>
-                        </div>
+    <!-- Status Kuota Lowongan Perusahaan -->
+    <section class="max-w-6xl mx-auto px-4 sm:px-6 -mt-10 relative z-20">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-lg border border-slate-200/90 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-4">
+                <div class="w-16 h-16 rounded-2xl {{ ($isVip ?? false) ? 'bg-amber-50 text-amber-600 border border-amber-200' : 'bg-blue-50 text-[#00509d] border border-blue-200' }} flex items-center justify-center text-3xl font-bold shrink-0 shadow-inner">
+                    <i class="{{ ($isVip ?? false) ? 'ph-fill ph-crown' : 'ph ph-briefcase' }}"></i>
+                </div>
+                <div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-black uppercase tracking-wider {{ ($isVip ?? false) ? 'text-amber-600' : 'text-slate-500' }}">
+                            {{ ($isVip ?? false) ? 'Member VIP AreaKerja' : 'Akun Biasa (Gratis)' }}
+                        </span>
+                        @if ($isVip ?? false)
+                            <span class="bg-emerald-100 text-emerald-800 text-[10px] font-black px-2 py-0.5 rounded">Aktif</span>
+                        @endif
                     </div>
-                @endforeach
+                    <h3 class="text-lg sm:text-xl font-black text-slate-900 mt-0.5">
+                        Kuota Lowongan Aktif: <span class="text-[#00509d]">{{ $activeCount ?? 0 }}</span> / {{ $maxActive ?? 2 }} Lowongan
+                    </h3>
+                    <p class="text-xs text-slate-500 mt-1 max-w-xl">
+                        @if ($isVip ?? false)
+                            Masa aktif lowongan lebih fleksibel (hingga 90 hari), tanpa batas pelamar harian, dan fitur Job Booster selalu aktif teratas di pencarian.
+                        @else
+                            Masa aktif lowongan 30 hari (maks. 5 pelamar/hari). Upgrade ke VIP untuk memilih durasi 60 hingga 90 hari, kuota 20 lowongan aktif & unlimited pelamar.
+                        @endif
+                    </p>
+                </div>
             </div>
+
+            <div class="flex flex-wrap items-center gap-3 w-full md:w-auto justify-end">
+                @if (!($isVip ?? false))
+                    <a href="{{ route('perusahaan.berlangganan') }}"
+                        class="px-5 py-3 bg-amber-50 hover:bg-amber-100 border border-amber-300 text-amber-900 rounded-xl text-xs font-black transition flex items-center gap-2 shadow-2xs hover:scale-102 active:scale-98">
+                        <i class="ph-fill ph-crown text-amber-500 text-base"></i>
+                        <span>Upgrade ke VIP</span>
+                    </a>
+                @endif
+                <a href="{{ route('lowongan.create.form') }}"
+                    class="px-6 py-3 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-xl text-xs font-black transition flex items-center gap-2 shadow-sm hover:scale-102 active:scale-98">
+                    <i class="ph-bold ph-plus-circle text-base"></i>
+                    <span>Pasang Lowongan Sekarang</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Perbandingan Fitur Akun Biasa vs VIP -->
+    <section class="py-12 bg-white">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6">
+            @include('components.tabel-perbandingan-vip', [
+                'isVip' => $isVip ?? false,
+                'showCta' => true,
+                'ctaTarget' => 'link'
+            ])
         </div>
     </section>
 
@@ -132,7 +90,7 @@
                 <div class="bg-[#002855] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">01</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Pilih paket pemasangan lowongan sesuai yang anda inginkan
+                        Daftarkan atau masuk ke akun perusahaan Anda
                     </p>
                 </div>
 
@@ -140,7 +98,7 @@
                 <div class="bg-[#003d7a] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">02</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Kirim materi lowongan via formulir website atau whatsapp kami
+                        Isi detail lowongan, kualifikasi, dan rentang gaji via formulir
                     </p>
                 </div>
 
@@ -148,7 +106,7 @@
                 <div class="bg-[#00509d] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">03</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Anda akan diberi instruksi pembayaran
+                        Pilih publikasi gratis (30 hari) atau optimalkan dengan VIP (hingga 90 hari)
                     </p>
                 </div>
 
@@ -156,7 +114,7 @@
                 <div class="bg-[#1e73be] p-6 text-white flex flex-col justify-start min-h-[140px]">
                     <h3 class="text-2xl font-black mb-2">04</h3>
                     <p class="text-xs sm:text-sm font-normal leading-relaxed text-white/95">
-                        Lowongan anda siap di publish!
+                        Lowongan Anda langsung terbit dan tayang di AreaKerja!
                     </p>
                 </div>
             </div>
