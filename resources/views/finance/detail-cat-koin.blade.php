@@ -9,14 +9,14 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <a href="{{ route('finance.catatan') }}"
-                       class="w-10 h-10 rounded-2xl bg-slate-50 border border-slate-200/80 hover:bg-white/20/50 hover:border-[#00509d]/40 flex items-center justify-center text-white transition shadow-2xs">
+                       class="w-10 h-10 rounded-2xl bg-white/10 border border-white/20 hover:bg-white/20 flex items-center justify-center text-white transition shadow-2xs">
                         <i class="ph ph-arrow-left text-lg font-bold"></i>
                     </a>
                     <div>
                         <div class="flex items-center gap-1.5 text-[11px] text-blue-100 font-medium">
-                            <a href="{{ route('finance.dashboard') }}" class="hover:text-[#00509d]">Finance</a>
+                            <a href="{{ route('finance.dashboard') }}" class="hover:text-white">Finance</a>
                             <span>/</span>
-                            <a href="{{ route('finance.catatan') }}" class="hover:text-[#00509d]">Catatan</a>
+                            <a href="{{ route('finance.catatan') }}" class="hover:text-white">Catatan</a>
                             <span>/</span>
                             <span class="text-white font-semibold">Riwayat</span>
                         </div>

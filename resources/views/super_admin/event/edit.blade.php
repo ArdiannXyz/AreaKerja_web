@@ -6,12 +6,15 @@
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="flex items-center gap-3 flex-1">
                 <a href="{{ route('superadmin.eventform') }}"
-                   class="w-8 h-8 rounded-xl bg-white/10 hover:bg-slate-200 flex items-center justify-center text-white transition flex-shrink-0">
-                    <i class="ph ph-arrow-left text-sm"></i>
+                   class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                   title="Kembali ke Event">
+                    <i class="ph ph-arrow-left text-base"></i>
                 </a>
                 <div>
-                    <p class="text-xs text-blue-100">Event / <span class="text-blue-100 font-medium">Edit Event</span></p>
-                    <h1 class="text-lg sm:text-xl font-semibold text-white tracking-tight leading-tight">Edit Event</h1>
+                    <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight leading-tight flex items-center gap-2">
+                        <i class="ph ph-pencil-simple text-white/80 text-lg sm:text-2xl"></i> Edit Event
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Event / Edit Event</p>
                 </div>
             </div>
             <div class="flex items-center gap-3 w-full sm:w-auto justify-end">

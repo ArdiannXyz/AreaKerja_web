@@ -13,7 +13,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-file-text text-[#00509d] text-lg sm:text-2xl"></i> Laporan Transaksi
+                        <i class="ph ph-file-text text-white/80 text-lg sm:text-2xl"></i> Laporan Transaksi
                     </h1>
                     <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Laporan penghasilan harian dan rekapan aktivitas transaksi finansial dalam 12 bulan terakhir.</p>
                 </div>
@@ -81,17 +81,14 @@
             </div>
 
             <form method="GET" action="{{ route('finance.laporan') }}" class="flex items-center gap-2 w-full sm:w-auto">
-                <div class="relative w-full sm:w-auto">
-                    <select name="bulan" onchange="this.form.submit()"
-                        class="w-full sm:w-auto appearance-none bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-xl px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] cursor-pointer shadow-2xs">
-                        @foreach ($bulanList as $key => $nama)
-                            <option value="{{ $key }}" {{ $bulan == $key ? 'selected' : '' }}>
-                                Bulan {{ $nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                    <i class="ph ph-caret-down absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-xs font-bold"></i>
-                </div>
+                <select name="bulan" onchange="this.form.submit()"
+                    class="w-full sm:w-auto bg-slate-50 border border-slate-200 text-slate-700 text-xs sm:text-sm font-bold rounded-xl px-4 py-2.5 pr-10 focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] cursor-pointer shadow-2xs">
+                    @foreach ($bulanList as $key => $nama)
+                        <option value="{{ $key }}" {{ $bulan == $key ? 'selected' : '' }}>
+                            Bulan {{ $nama }}
+                        </option>
+                    @endforeach
+                </select>
             </form>
         </div>
 

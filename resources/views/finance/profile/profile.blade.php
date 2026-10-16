@@ -7,7 +7,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-user text-[#00509d] text-lg sm:text-2xl"></i> Profil Finance
+                        <i class="ph ph-user text-white/80 text-lg sm:text-2xl"></i> Profil Finance
                     </h1>
                     <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Informasi akun dan data finance Anda</p>
                 </div>

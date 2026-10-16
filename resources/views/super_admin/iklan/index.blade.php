@@ -9,7 +9,7 @@
                 <div class="flex items-center gap-3">
                     <div>
                         <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                            <i class="ph ph-megaphone text-[#00509d] text-2xl"></i> Moderasi Iklan Beranda
+                            <i class="ph ph-megaphone text-white/80 text-2xl"></i> Moderasi Iklan Beranda
                         </h1>
                         <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Review pengajuan banner iklan perusahaan, verifikasi kelayakan konten, dan kelola penayangan</p>
                     </div>

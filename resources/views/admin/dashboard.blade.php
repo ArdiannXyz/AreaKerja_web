@@ -7,9 +7,9 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-squares-four text-[#00509d] text-lg sm:text-2xl"></i> Dashboard Overview
+                        <i class="ph ph-squares-four text-white/80 text-lg sm:text-2xl"></i> Dashboard Overview
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Selamat datang kembali, <span class="text-[#00509d] font-semibold">{{ Auth::user()->username }}</span>! Ringkasan aktivitas sistem hari ini.</p>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Selamat datang kembali, <span class="text-white font-bold">{{ Auth::user()->username }}</span>! Ringkasan aktivitas sistem hari ini.</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('admin.components.notif_button')

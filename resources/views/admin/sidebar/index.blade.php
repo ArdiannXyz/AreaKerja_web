@@ -267,6 +267,14 @@
                                 <span>Moderasi Iklan</span>
                             </a>
                         </div>
+
+                        <div class="{{ request()->is('admin/social-links*') || request()->is('admin/header-image*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md mb-1.5">
+                            <a href="{{ route('admin.social.index') }}"
+                                class="flex font-semibold items-center gap-2.5 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-200">
+                                <i class="{{ request()->is('admin/social-links*') || request()->is('admin/header-image*') ? 'ph-fill ph-link' : 'ph ph-link' }} text-lg"></i>
+                                <span>Link & Header</span>
+                            </a>
+                        </div>
                     </nav>
                 </div>
             </div>
@@ -413,6 +421,12 @@
                                 <i class="ph ph-user"></i>
                             </div>
                             <span class="text-[11px] leading-tight">Profil</span>
+                        </a>
+                        <a href="{{ route('admin.social.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/social-links*') || request()->is('admin/header-image*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-cyan-100 text-cyan-600 flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-link"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Link & Header</span>
                         </a>
                     </div>
                 </div>

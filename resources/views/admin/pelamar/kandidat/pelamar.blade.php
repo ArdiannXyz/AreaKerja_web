@@ -7,7 +7,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-users text-[#00509d] text-lg sm:text-2xl"></i> Data Pelamar
+                        <i class="ph ph-users text-white/80 text-lg sm:text-2xl"></i> Data Pelamar
                     </h1>
                     <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola data pelamar & kandidat aktif sistem</p>
                 </div>
@@ -72,7 +72,7 @@
                 }
             }" @click.outside="open = false">
 
-                <form x-ref="kandidatSearchForm" action="{{ route('admin.kandidat') }}" method="GET" autocomplete="off" class="flex items-center gap-2 w-full">
+                <form x-ref="kandidatSearchForm" action="{{ route('admin.kandidat') }}" method="GET" autocomplete="off" class="flex items-center w-full">
                     <div class="h-10 flex items-center w-full bg-white rounded-xl overflow-hidden border border-slate-200 focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition shadow-xs">
                         <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-base leading-none"></i>
                         <input type="text" name="q" x-model="query"
@@ -93,10 +93,8 @@
                                 <i class="ph ph-x text-[10px] font-bold"></i>
                             </a>
                         </template>
+                        <button type="submit" class="hidden"></button>
                     </div>
-                    <button type="submit" class="bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-semibold px-4 h-10 rounded-xl transition shadow-xs flex-shrink-0 flex items-center gap-1.5">
-                        Cari
-                    </button>
                 </form>
 
                 <!-- Autocomplete Dropdown -->
