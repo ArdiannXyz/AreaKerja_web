@@ -28,10 +28,11 @@ class SuperAdminPaketHargaTest extends TestCase
         $response = $this->actingAs($superadmin)->get(route('superadmin.paket-harga'));
         $response->assertStatus(200);
 
-        // Lowongan bronze/silver/gold must not be present
+        // Lowongan bronze/silver/gold and Iklan 3 Hari must not be present
         $response->assertDontSee('Pasang Lowongan Bronze');
         $response->assertDontSee('Pasang Lowongan Silver');
         $response->assertDontSee('Pasang Lowongan Gold');
+        $response->assertDontSee('Paket 3 Hari');
 
         // Buka CV and Moderasi Iklan must be present
         $response->assertSee('Buka CV Pelamar');
@@ -56,14 +57,14 @@ class SuperAdminPaketHargaTest extends TestCase
         $editResponse = $this->actingAs($superadmin)->get(route('superadmin.paket-harga.edit-koin'));
         $editResponse->assertStatus(200);
         $editResponse->assertDontSee('Pasang Lowongan Bronze');
+        $editResponse->assertDontSee('Paket 3 Hari');
         $editResponse->assertSee('Buka CV Pelamar');
-        $editResponse->assertSee('Moderasi Iklan');
+        $editResponse->assertSee('Moderasi Iklan (Paket 7 Hari)');
 
-        // Update prices: set Buka CV to 12 koin, Iklan 3 Hari to 220 koin
+        // Update prices: set Buka CV to 12 koin, Iklan 7 Hari to 350 koin
         $updateResponse = $this->actingAs($superadmin)->put(route('superadmin.paket-harga.update-koin'), [
             'keys' => [
                 'harga_koin_buka_cv',
-                'harga_koin_iklan_3_hari',
                 'harga_koin_iklan_7_hari',
                 'harga_koin_iklan_14_hari',
                 'harga_koin_iklan_30_hari',
@@ -72,7 +73,6 @@ class SuperAdminPaketHargaTest extends TestCase
             ],
             'hargas' => [
                 12,
-                220,
                 350,
                 600,
                 1200,
@@ -84,11 +84,12 @@ class SuperAdminPaketHargaTest extends TestCase
         $updateResponse->assertRedirect(route('superadmin.paket-harga'));
 
         $this->assertEquals(12, (int) SiteSetting::get('harga_koin_buka_cv'));
-        $this->assertEquals(220, (int) SiteSetting::get('harga_koin_iklan_3_hari'));
+        $this->assertEquals(350, (int) SiteSetting::get('harga_koin_iklan_7_hari'));
 
         // Check dynamic price reflection in IklanPerusahaanController
         $iklanPakets = IklanPerusahaanController::getPaketList();
-        $this->assertEquals(220, $iklanPakets[1]['koin']);
+        $this->assertArrayNotHasKey(1, $iklanPakets);
+        $this->assertEquals(350, $iklanPakets[2]['koin']);
     }
 }
 

@@ -21,14 +21,6 @@ class IklanPerusahaanController extends Controller
     public static function getPaketList()
     {
         return [
-            1 => [
-                'id' => 1,
-                'nama' => 'Paket Bronze',
-                'durasi' => 3,
-                'koin' => (int) SiteSetting::get('harga_koin_iklan_3_hari', 150),
-                'badge' => 'Event Singkat',
-                'deskripsi' => 'Ideal untuk publikasi cepat dan promosi lowongan mendesak.',
-            ],
             2 => [
                 'id' => 2,
                 'nama' => 'Paket Silver',
@@ -188,7 +180,7 @@ class IklanPerusahaanController extends Controller
         $iklan = Iklan::where('id', $id)->where('perusahaan_id', $perusahaan->id)->firstOrFail();
 
         $request->validate([
-            'paket_id' => 'required|integer|in:1,2,3,4',
+            'paket_id' => 'required|integer|in:2,3,4',
         ], [
             'paket_id.required' => 'Silakan pilih paket perpanjangan durasi.',
             'paket_id.in'       => 'Pilihan paket perpanjangan tidak valid.',

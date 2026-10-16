@@ -1782,41 +1782,34 @@ class SuperAdminController extends Controller
             ],
             (object)[
                 'id' => 2,
-                'key' => 'harga_koin_iklan_3_hari',
-                'nama' => 'Moderasi Iklan (Paket 3 Hari)',
-                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 3 hari (Bronze)',
-                'harga' => (int) SiteSetting::get('harga_koin_iklan_3_hari', 150),
-            ],
-            (object)[
-                'id' => 3,
                 'key' => 'harga_koin_iklan_7_hari',
                 'nama' => 'Moderasi Iklan (Paket 7 Hari)',
                 'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 7 hari (Silver)',
                 'harga' => (int) SiteSetting::get('harga_koin_iklan_7_hari', 300),
             ],
             (object)[
-                'id' => 4,
+                'id' => 3,
                 'key' => 'harga_koin_iklan_14_hari',
                 'nama' => 'Moderasi Iklan (Paket 14 Hari)',
                 'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 14 hari (Gold)',
                 'harga' => (int) SiteSetting::get('harga_koin_iklan_14_hari', 550),
             ],
             (object)[
-                'id' => 5,
+                'id' => 4,
                 'key' => 'harga_koin_iklan_30_hari',
                 'nama' => 'Moderasi Iklan (Paket 30 Hari)',
                 'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 30 hari (Platinum)',
                 'harga' => (int) SiteSetting::get('harga_koin_iklan_30_hari', 1000),
             ],
             (object)[
-                'id' => 6,
+                'id' => 5,
                 'key' => 'harga_koin_boost_lowongan',
                 'nama' => 'Boost Lowongan',
                 'deskripsi' => 'Mempromosikan lowongan agar selalu tampil di urutan teratas pencarian',
                 'harga' => (int) SiteSetting::get('harga_koin_boost_lowongan', 300),
             ],
             (object)[
-                'id' => 7,
+                'id' => 6,
                 'key' => 'harga_koin_berlangganan',
                 'nama' => 'Berlangganan VIP',
                 'deskripsi' => 'Akses kuota 20 lowongan aktif per bulan, auto booster, dan pelamar unlimited',
@@ -1849,12 +1842,11 @@ class SuperAdminController extends Controller
         } elseif ($request->has('harga') && $request->has('id')) {
             $defaultKeys = [
                 1 => 'harga_koin_buka_cv',
-                2 => 'harga_koin_iklan_3_hari',
-                3 => 'harga_koin_iklan_7_hari',
-                4 => 'harga_koin_iklan_14_hari',
-                5 => 'harga_koin_iklan_30_hari',
-                6 => 'harga_koin_boost_lowongan',
-                7 => 'harga_koin_berlangganan',
+                2 => 'harga_koin_iklan_7_hari',
+                3 => 'harga_koin_iklan_14_hari',
+                4 => 'harga_koin_iklan_30_hari',
+                5 => 'harga_koin_boost_lowongan',
+                6 => 'harga_koin_berlangganan',
             ];
             foreach ($request->id as $index => $id) {
                 if (isset($defaultKeys[$id]) && isset($request->harga[$index])) {

@@ -237,12 +237,11 @@ class SuperAdminFinanceController extends Controller
         } elseif ($request->has('harga') && $request->has('id')) {
             $defaultKeys = [
                 1 => 'harga_koin_buka_cv',
-                2 => 'harga_koin_iklan_3_hari',
-                3 => 'harga_koin_iklan_7_hari',
-                4 => 'harga_koin_iklan_14_hari',
-                5 => 'harga_koin_iklan_30_hari',
-                6 => 'harga_koin_boost_lowongan',
-                7 => 'harga_koin_berlangganan',
+                2 => 'harga_koin_iklan_7_hari',
+                3 => 'harga_koin_iklan_14_hari',
+                4 => 'harga_koin_iklan_30_hari',
+                5 => 'harga_koin_boost_lowongan',
+                6 => 'harga_koin_berlangganan',
             ];
             foreach ($request->id as $index => $id) {
                 if (isset($defaultKeys[$id]) && isset($request->harga[$index])) {
