@@ -7,7 +7,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <a href="{{ route('admin.recruitment', $recruitment->lowonganPerusahaan->perusahaan_id) }}"
-                       class="w-9 h-9 rounded-xl bg-white/10 hover:bg-slate-200 flex items-center justify-center text-white transition flex-shrink-0"
+                       class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
                        title="Kembali ke Daftar Recruitment">
                         <i class="ph ph-arrow-left text-base"></i>
                     </a>

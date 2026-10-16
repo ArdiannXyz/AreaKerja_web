@@ -12,7 +12,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-money text-[#00509d] text-lg sm:text-2xl"></i> Data Transaksi Tunai
+                        <i class="ph ph-money text-white/80 text-lg sm:text-2xl"></i> Data Transaksi Tunai
                     </h1>
                     <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola dan pantau riwayat transaksi tunai pengguna</p>
                 </div>
@@ -47,25 +47,16 @@
             <!-- Filter No Referensi -->
             <div class="w-full md:w-auto">
                 <form method="GET" class="flex items-center gap-2">
-                    <div class="relative w-full md:w-64">
-                        <select name="no_referensi"
-                            class="w-full pl-4 pr-10 h-10 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs appearance-none cursor-pointer text-slate-700">
-                            <option value="">Semua No. Referensi</option>
-                            @foreach ($noReferensiList as $ref)
-                                <option value="{{ $ref }}" {{ ($selectedRef ?? '') == $ref ? 'selected' : '' }}>
-                                    {{ $ref }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
-                            <i class="ph ph-caret-down text-base leading-none"></i>
-                        </div>
-                    </div>
-
-                    <button type="submit"
-                        class="bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-semibold px-5 h-10 rounded-xl transition shadow-xs flex items-center justify-center flex-shrink-0">
-                        Filter
-                    </button>
+                    <select name="no_referensi" onchange="this.form.submit()"
+                        class="w-full md:w-64 pl-4 pr-10 h-10 text-sm rounded-xl border border-slate-200 bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition shadow-xs cursor-pointer text-slate-700">
+                        <option value="">Semua No. Referensi</option>
+                        @foreach ($noReferensiList as $ref)
+                            <option value="{{ $ref }}" {{ ($selectedRef ?? '') == $ref ? 'selected' : '' }}>
+                                {{ $ref }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <button type="submit" class="hidden"></button>
                 </form>
             </div>
         </div>

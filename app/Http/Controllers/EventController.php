@@ -193,7 +193,22 @@ class EventController extends Controller
             $validated['image'] = $request->file('image')->store('events', 'public');
         }
 
-        Event::create($validated);
+        $kegiatanWaktu = $request->input('kegiatan_waktu', []);
+        $kegiatanNama = $request->input('kegiatan_nama', []);
+        unset($validated['kegiatan_waktu'], $validated['kegiatan_nama']);
+
+        $event = Event::create($validated);
+
+        if (!empty($kegiatanWaktu) && is_array($kegiatanWaktu)) {
+            foreach ($kegiatanWaktu as $i => $waktu) {
+                if (!empty($waktu) && !empty($kegiatanNama[$i])) {
+                    $event->kegiatan()->create([
+                        'waktu' => $waktu,
+                        'kegiatan' => $kegiatanNama[$i],
+                    ]);
+                }
+            }
+        }
 
         $route = $this->isSuperAdmin($request) ? 'superadmin.eventform' : 'admin.eventform';
         return redirect()->route($route)->with('success', 'Event berhasil disimpan.');

@@ -7,14 +7,13 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <a href="{{ route('superadmin.add.user') }}"
-                        class="p-2 rounded-xl border border-gray-200 hover:bg-gray-100 text-gray-600 transition duration-150">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
+                        class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                        title="Kembali ke Kelola Akun">
+                        <i class="ph ph-arrow-left text-base"></i>
                     </a>
                     <div>
-                        <h1 class="text-base sm:text-xl font-bold text-gray-800">Tambah Pengguna Baru</h1>
-                        <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Daftarkan akun baru untuk Admin, Finance, Perusahaan, atau Pelamar</p>
+                        <h1 class="text-base sm:text-xl font-bold text-white">Tambah Pengguna Baru</h1>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Daftarkan akun baru untuk Admin, Finance, Perusahaan, atau Pelamar</p>
                     </div>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">

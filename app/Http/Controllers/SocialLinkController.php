@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Storage;
 class SocialLinkController extends Controller
 {
     /**
-     * Display social links and banner header management.
+     * Display social links and banner header management (Super Admin).
      */
     public function index()
     {
@@ -24,11 +24,33 @@ class SocialLinkController extends Controller
     }
 
     /**
-     * Alias for headerImageIndex to match named routes.
+     * Display social links and banner header management (Admin).
+     */
+    public function indexAdmin()
+    {
+        $socials = SiteSettingService::getSocials();
+        $headers = SiteSettingService::getHeaders();
+
+        return view('admin.social.banner', [
+            'socials' => $socials,
+            'headers' => $headers,
+        ]);
+    }
+
+    /**
+     * Alias for headerImageIndex to match named routes (Super Admin).
      */
     public function headerImageIndex()
     {
         return $this->index();
+    }
+
+    /**
+     * Alias for headerImageIndexAdmin to match named routes (Admin).
+     */
+    public function headerImageIndexAdmin()
+    {
+        return $this->indexAdmin();
     }
 
     /**

@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
 use App\Http\Controllers\LowonganPerusahaanController;
+use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\TipsKerjaController;
 use App\Http\Controllers\VerifikasiPerusahaanController;
 use Illuminate\Support\Facades\Route;
@@ -135,6 +136,15 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::post('/iklan/{id}/reject', 'reject')->name('admin.iklan.reject');
         Route::post('/iklan/{id}/perpanjang', 'perpanjang')->name('admin.iklan.perpanjang');
         Route::delete('/iklan/{id}', 'destroy')->name('admin.iklan.destroy');
+    });
+
+    // LINK & HEADER (SOCIAL LINK) CONTROLLER
+    Route::controller(SocialLinkController::class)->group(function () {
+        Route::get('/social-links', 'indexAdmin')->name('admin.social.index');
+        Route::post('/social-links', 'update')->name('admin.social.update');
+        Route::get('/header-image', 'headerImageIndexAdmin')->name('admin.header.image');
+        Route::put('/header-image/{nama}', 'headerImageUpdate')->name('admin.header.update');
+        Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('admin.header.destroy');
     });
 });
 

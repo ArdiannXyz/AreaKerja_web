@@ -7,7 +7,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-chart-line-up text-[#00509d] text-lg sm:text-2xl"></i> Omset Perusahaan
+                        <i class="ph ph-chart-line-up text-white/80 text-lg sm:text-2xl"></i> Omset Perusahaan
                     </h1>
                     <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Pantau pertumbuhan pendapatan, tren omset per periode, dan ekspor data laporan keuangan.</p>
                 </div>

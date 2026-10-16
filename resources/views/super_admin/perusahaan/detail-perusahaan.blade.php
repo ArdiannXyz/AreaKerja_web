@@ -6,9 +6,9 @@
         <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="flex items-center gap-3">
                 <a href="{{ route('superadmin.perusahaan') }}"
-                   class="w-8 h-8 rounded-xl bg-white/10 hover:bg-slate-200 flex items-center justify-center text-white transition flex-shrink-0"
+                   class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
                    title="Kembali ke Data Perusahaan">
-                    <i class="ph ph-arrow-left text-sm"></i>
+                    <i class="ph ph-arrow-left text-base"></i>
                 </a>
                 <div>
                     <p class="text-xs text-blue-100">Perusahaan / <span class="text-blue-100 font-medium">Detail</span></p>
@@ -19,14 +19,14 @@
             <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end flex-wrap">
                 <!-- Tambah Lowongan -->
                 <a href="{{ route('superadmin.lowongan.create.form', $perusahaan->id) }}"
-                   class="inline-flex items-center gap-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition shadow-sm">
+                   class="inline-flex items-center gap-1.5 bg-white text-[#00509d] hover:bg-blue-50 text-xs font-semibold px-3.5 py-2 rounded-xl transition shadow-sm">
                     <i class="ph ph-plus-circle text-sm"></i>
                     Tambah Lowongan
                 </a>
 
                 <!-- Edit Akun -->
                 <a href="{{ route('superadmin.edit.user', $perusahaan->user->id) }}"
-                   class="inline-flex items-center gap-1.5 border border-slate-200 bg-white hover:bg-slate-50 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition">
+                   class="inline-flex items-center gap-1.5 bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition">
                     <i class="ph ph-pencil-simple text-sm"></i>
                     Edit Akun
                 </a>
