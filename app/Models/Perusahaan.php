@@ -138,6 +138,7 @@ class Perusahaan extends Model
     public function activeLowonganCount(): int
     {
         return $this->pasanglowongan()
+            ->publik()
             ->where('status', '!=', 'tutup')
             ->where(function ($q) {
                 $q->whereNull('expired_at')->orWhere('expired_at', '>', now());

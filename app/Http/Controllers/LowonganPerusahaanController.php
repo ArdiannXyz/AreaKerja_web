@@ -246,6 +246,8 @@ class LowonganPerusahaanController extends Controller
             'batas_lamaran'    => 'nullable|date',
             'deskripsi'        => 'nullable|string',
             'syarat_pekerjaan' => 'nullable|string',
+            'pengalaman'       => 'nullable|string',
+            'pendidikan'       => 'nullable|string',
             'tanggung_jawab'   => 'nullable|string',
             'benefit'          => 'nullable|string',
         ]);
@@ -253,6 +255,10 @@ class LowonganPerusahaanController extends Controller
         $valid['perusahaan_id'] = Auth::user()->perusahaan->id;
         if ($request->filled('nama')) {
             $valid['slug'] = Str::slug($request->nama . '-' . time());
+        }
+
+        if ($lowongan->isDisembunyikan()) {
+            unset($valid['status']);
         }
 
         $lowongan->update($valid);
@@ -293,6 +299,10 @@ class LowonganPerusahaanController extends Controller
         $lowongan = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
             ->where('id', $id)
             ->firstOrFail();
+
+        if ($lowongan->isDisembunyikan()) {
+            return redirect()->back()->with('error', 'Lowongan ini sedang ditinjau moderator dan tidak dapat dibuka atau ditutup.');
+        }
 
         $newStatus = ($lowongan->status === 'tutup') ? 'buka' : 'tutup';
         $lowongan->update(['status' => $newStatus]);
@@ -441,6 +451,8 @@ class LowonganPerusahaanController extends Controller
             'batas_lamaran'    => 'nullable|date',
             'deskripsi'        => 'nullable|string',
             'syarat_pekerjaan' => 'nullable|string',
+            'pengalaman'       => 'nullable|string',
+            'pendidikan'       => 'nullable|string',
             'tanggung_jawab'   => 'nullable|string',
             'benefit'          => 'nullable|string',
         ]);

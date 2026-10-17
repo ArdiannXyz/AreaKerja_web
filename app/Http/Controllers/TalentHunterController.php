@@ -52,7 +52,14 @@ class TalentHunterController extends Controller
         $bankId = $request->daftar_bank_id;
         if (!$bankId) {
             $bank = DaftarBank::first();
-            $bankId = $bank ? $bank->id : 1;
+            if (!$bank) {
+                $bank = DaftarBank::create([
+                    'nama_bank'   => 'BCA',
+                    'no_rekening' => '1234567890',
+                    'atas_nama'   => 'PT Area Kerja',
+                ]);
+            }
+            $bankId = $bank->id;
         } else {
             $bank = DaftarBank::find($bankId);
         }

@@ -24,10 +24,10 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @include('layouts.sweetalert-theme')
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
     <script src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         *, *::before, *::after {
@@ -268,6 +268,18 @@
                             </a>
                         </div>
 
+                        @php $pendingLowonganReports = \App\Models\Report::pending()->count(); @endphp
+                        <div class="{{ request()->is('admin/reports*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md mb-1.5">
+                            <a href="{{ route('admin.reports.index') }}"
+                                class="flex font-semibold items-center gap-2.5 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-200">
+                                <i class="{{ request()->is('admin/reports*') ? 'ph-fill ph-flag' : 'ph ph-flag' }} text-lg"></i>
+                                <span>Laporan Lowongan</span>
+                                @if ($pendingLowonganReports > 0)
+                                    <span class="ml-auto text-[10px] font-bold bg-rose-500 text-white rounded-full px-1.5 py-0.5">{{ $pendingLowonganReports }}</span>
+                                @endif
+                            </a>
+                        </div>
+
                         <div class="{{ request()->is('admin/social-links*') || request()->is('admin/header-image*') ? 'bg-white text-[#00509d]' : 'text-white' }} rounded-md mb-1.5">
                             <a href="{{ route('admin.social.index') }}"
                                 class="flex font-semibold items-center gap-2.5 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-200">
@@ -429,6 +441,12 @@
                                 <i class="ph ph-chats-circle"></i>
                             </div>
                             <span class="text-[11px] leading-tight">Bantuan</span>
+                        </a>
+                        <a href="{{ route('admin.reports.index') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/reports*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shadow-xs relative">
+                                <i class="ph ph-flag"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Laporan</span>
                         </a>
                         <a href="{{ route('admin.profile') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('admin/profile*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
                             <div class="w-11 h-11 rounded-xl bg-violet-100 text-violet-600 flex items-center justify-center text-xl shadow-xs">

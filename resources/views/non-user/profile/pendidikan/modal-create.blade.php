@@ -26,9 +26,27 @@
 
                     <div>
                         <label class="block text-xs font-bold text-slate-700 mb-1.5">Pendidikan / Jenjang <span class="text-red-500">*</span></label>
-                        <input type="text" name="pendidikan" placeholder="Contoh: S1 / D3 / SMA"
-                            class="w-full border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition"
-                            required>
+                        <div class="relative">
+                            <select name="pendidikan" required
+                                class="w-full appearance-none border border-slate-300 rounded-xl px-3.5 py-2.5 pr-10 text-sm bg-white text-slate-900 focus:ring-2 focus:ring-blue-100 focus:border-[#00509d] focus:outline-none transition cursor-pointer">
+                                <option value="" disabled selected>Pilih Jenjang Pendidikan</option>
+                                <option value="SD">SD</option>
+                                <option value="SMP">SMP</option>
+                                <option value="SMA/SMK">SMA / SMK</option>
+                                <option value="D1">D1</option>
+                                <option value="D2">D2</option>
+                                <option value="D3">D3</option>
+                                <option value="D4">D4</option>
+                                <option value="S1">S1</option>
+                                <option value="S2">S2</option>
+                                <option value="S3">S3</option>
+                            </select>
+                            <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3.5 text-slate-400">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </div>
+                        </div>
                     </div>
 
                     <div>

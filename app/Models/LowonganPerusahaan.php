@@ -10,6 +10,8 @@ class LowonganPerusahaan extends Model
 {
     use HasFactory;
 
+    public const STATUS_DISEMBUNYIKAN = 'disembunyikan';
+
     protected $table = 'lowongan_perusahaans';
 
     protected $fillable = [
@@ -24,8 +26,11 @@ class LowonganPerusahaan extends Model
         'alamat',
         'kategori',
         'status',
+        'status_sebelum_moderasi',
         'batas_lamaran',
         'syarat_pekerjaan',
+        'pengalaman',
+        'pendidikan',
         'tanggung_jawab',
         'benefit',
         'paket_id',
@@ -91,5 +96,26 @@ class LowonganPerusahaan extends Model
     public function getRouteKeyName()
     {
         return 'slug';
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'lowongan_id');
+    }
+
+    public function isDisembunyikan(): bool
+    {
+        return $this->status === self::STATUS_DISEMBUNYIKAN;
+    }
+
+    public function scopePublik($query)
+    {
+        return $query
+            ->where($this->getTable() . '.status', '!=', self::STATUS_DISEMBUNYIKAN)
+            ->whereHas('perusahaan.user', function ($q) {
+                $q->where(function ($status) {
+                    $status->whereNull('status')->orWhere('status', '!=', 1);
+                });
+            });
     }
 }

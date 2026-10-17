@@ -3,6 +3,7 @@
 use App\Http\Controllers\KandidatController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\PelamarLowonganController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\PembeliKandidatController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\PengalamanOrgController;
@@ -53,6 +54,10 @@ Route::prefix('pelamar')->middleware('auth', 'role:pelamar', 'CheckUserStatus')-
         // lamar
         Route::post('/lamar-cepat/{lowongan}', 'storeQuick')->name('lamar.cepat');
     });
+
+    Route::post('/lowongan/{lowongan}/report', [ReportController::class, 'store'])
+        ->middleware('throttle:reports')
+        ->name('pelamar.lowongan.report');
 
     // PROFILE CONTROLLER
     Route::controller(ProfileController::class)->group(function () {

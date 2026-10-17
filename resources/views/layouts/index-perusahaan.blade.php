@@ -22,6 +22,7 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @include('layouts.sweetalert-theme')
     <script src="//unpkg.com/alpinejs" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -261,6 +262,49 @@
                 }
             } catch (error) {
                 console.error("markAsRead error:", error);
+            }
+        };
+
+        window.handleNotifClick = async function(bacaUrl, redirectUrl, el) {
+            try {
+                if (bacaUrl) {
+                    try {
+                        await fetch(bacaUrl, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                                "Accept": "application/json"
+                            },
+                            keepalive: true
+                        });
+                    } catch (err) {
+                        console.error("baca notif error:", err);
+                    }
+                }
+
+                if (redirectUrl && redirectUrl !== '#' && redirectUrl !== '') {
+                    window.location.href = redirectUrl;
+                    return;
+                }
+
+                if (el) {
+                    el.classList.remove("bg-white", "font-medium", "text-gray-900");
+                    el.classList.add("bg-gray-50/80", "text-gray-600");
+                    const badges = document.querySelectorAll('#notif-badge, .notif-badge');
+                    badges.forEach(badge => {
+                        let count = parseInt(badge.textContent);
+                        if (count > 1) {
+                            badge.textContent = count - 1;
+                        } else {
+                            badge.remove();
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("handleNotifClick error:", error);
+                if (redirectUrl && redirectUrl !== '#' && redirectUrl !== '') {
+                    window.location.href = redirectUrl;
+                }
             }
         };
 

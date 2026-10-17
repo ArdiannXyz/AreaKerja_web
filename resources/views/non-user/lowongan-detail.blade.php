@@ -23,10 +23,22 @@
         showSuccess: false,
         showConfirmTerima: false,
         showConfirmTolak: false,
-        showAlasan: false
+        showAlasan: false,
+        showReport: {{ ($errors->has('alasan') || $errors->has('deskripsi') || $errors->has('bukti') || $errors->has('lowongan_id')) ? 'true' : 'false' }}
     }">
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
+
+            @if (session('success'))
+                <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 p-4 rounded-2xl text-sm font-semibold">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 p-4 rounded-2xl text-sm font-semibold">
+                    {{ session('error') }}
+                </div>
+            @endif
 
             @php
                 $isDailyLocked = $data->isDailyLocked();
@@ -157,6 +169,17 @@
                                 class="w-10 h-10 bg-[#004e98] hover:bg-[#003d7a] text-white rounded-lg flex items-center justify-center shadow-sm transition active:scale-95 group">
                                 <i class="ph ph-share-network text-xl group-hover:scale-110 transition-transform"></i>
                             </button>
+
+                            @if (Auth::user()->role === 'pelamar')
+                                @php $sudahLapor = $hasPendingReport ?? false; @endphp
+                                <button type="button"
+                                    @click="{{ $sudahLapor ? '' : 'showReport = true' }}"
+                                    @if ($sudahLapor) disabled @endif
+                                    title="{{ $sudahLapor ? 'Laporan sedang ditinjau' : 'Laporkan lowongan' }}"
+                                    class="w-10 h-10 {{ $sudahLapor ? 'bg-slate-300 cursor-not-allowed' : 'bg-white border border-rose-200 hover:bg-rose-50 text-rose-600' }} rounded-lg flex items-center justify-center shadow-sm transition">
+                                    <i class="ph ph-flag text-xl"></i>
+                                </button>
+                            @endif
                         @else
                             @if ($isDailyLocked)
                                 <button disabled class="flex-1 md:flex-initial bg-slate-400 text-white font-bold text-sm px-8 py-2.5 rounded-lg shadow-sm cursor-not-allowed">
@@ -200,20 +223,39 @@
                     <p class="text-xs text-slate-400 mt-0.5">Informasi terkait perusahaan yang anda tuju</p>
                 </div>
 
-                <!-- Jenis Lowongan -->
-                <div>
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">Jenis Lowongan</h3>
-                    <p class="text-sm text-slate-600 font-normal">
-                        {{ $data->jenis ?? 'Full time' }}
-                    </p>
-                </div>
+                <!-- Grid Informasi Utama Lowongan -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 pb-4 border-b border-slate-100">
+                    <!-- Jenis Lowongan -->
+                    <div class="p-3 bg-slate-50 rounded-xl">
+                        <span class="text-xs text-slate-400 font-semibold block mb-0.5">Jenis Pekerjaan</span>
+                        <p class="text-sm font-bold text-slate-800">
+                            {{ $data->jenis ?? 'Full Time' }}
+                        </p>
+                    </div>
 
-                <!-- Lokasi -->
-                <div>
-                    <h3 class="text-sm font-bold text-slate-800 mb-1">Lokasi</h3>
-                    <p class="text-sm text-slate-600 font-normal">
-                        {{ $data->alamat ?? 'Yogyakarta' }}
-                    </p>
+                    <!-- Tingkat Pengalaman -->
+                    <div class="p-3 bg-slate-50 rounded-xl">
+                        <span class="text-xs text-slate-400 font-semibold block mb-0.5">Tingkat Pengalaman</span>
+                        <p class="text-sm font-bold text-slate-800">
+                            {{ $data->pengalaman ?? 'Semua Pengalaman' }}
+                        </p>
+                    </div>
+
+                    <!-- Minimal Pendidikan -->
+                    <div class="p-3 bg-slate-50 rounded-xl">
+                        <span class="text-xs text-slate-400 font-semibold block mb-0.5">Minimal Pendidikan</span>
+                        <p class="text-sm font-bold text-slate-800">
+                            {{ $data->pendidikan ?? 'Semua Jenjang' }}
+                        </p>
+                    </div>
+
+                    <!-- Lokasi -->
+                    <div class="p-3 bg-slate-50 rounded-xl">
+                        <span class="text-xs text-slate-400 font-semibold block mb-0.5">Lokasi Penempatan</span>
+                        <p class="text-sm font-bold text-slate-800 truncate" title="{{ $data->alamat }}">
+                            {{ $data->alamat ?? 'Indonesia' }}
+                        </p>
+                    </div>
                 </div>
 
                 <!-- Requirement -->
@@ -355,6 +397,47 @@
                 <button @click="showSuccess = false; window.location.reload();" class="px-6 py-2.5 bg-[#004e98] text-white font-semibold rounded-xl text-sm transition">Tutup</button>
             </div>
         </div>
+
+        @auth
+            @if (Auth::user()->role === 'pelamar')
+                <div x-show="showReport" class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4" x-cloak>
+                    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl" @click.outside="showReport = false">
+                        <h2 class="text-lg font-bold mb-1 text-slate-800">Laporkan Lowongan</h2>
+                        <p class="text-sm text-slate-500 mb-4">Laporan ditinjau admin. Lowongan hanya disembunyikan jika terbukti menyimpang.</p>
+                        <form action="{{ route('pelamar.lowongan.report', $data->slug ?? $data->id) }}" method="POST" enctype="multipart/form-data" class="space-y-3">
+                            @csrf
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Alasan</label>
+                                <select name="alasan" required class="w-full rounded-xl border-slate-200 text-sm">
+                                    <option value="">Pilih alasan</option>
+                                    @foreach (\App\Models\Report::ALASAN as $value => $label)
+                                        <option value="{{ $value }}" @selected(old('alasan') === $value)>{{ $label }}</option>
+                                    @endforeach
+                                </select>
+                                @error('alasan') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Penjelasan</label>
+                                <textarea name="deskripsi" rows="4" required minlength="10" maxlength="1000"
+                                    class="w-full rounded-xl border-slate-200 text-sm"
+                                    placeholder="Jelaskan mengapa lowongan ini bermasalah (min. 10 karakter)">{{ old('deskripsi') }}</textarea>
+                                @error('deskripsi') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-600 mb-1">Bukti gambar (opsional)</label>
+                                <input type="file" name="bukti" accept="image/*" class="w-full text-sm">
+                                @error('bukti') <p class="text-xs text-rose-600 mt-1">{{ $message }}</p> @enderror
+                            </div>
+                            @error('lowongan_id') <p class="text-xs text-rose-600">{{ $message }}</p> @enderror
+                            <div class="flex justify-end gap-2 pt-2">
+                                <button type="button" @click="showReport = false" class="px-4 py-2 bg-slate-200 rounded-xl text-sm font-semibold">Batal</button>
+                                <button class="px-4 py-2 bg-rose-600 text-white rounded-xl text-sm font-semibold">Kirim laporan</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            @endif
+        @endauth
 
     </div>
 

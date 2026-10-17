@@ -79,6 +79,11 @@ class User extends Authenticatable
         return $this->hasMany(Notifikasi::class, 'user_id', 'id');
     }
 
+    public function reports()
+    {
+        return $this->hasMany(Report::class, 'reporter_user_id');
+    }
+
     public function bantuanChat()
     {
         return $this->hasOne(BantuanChat::class, 'user_id', 'id');

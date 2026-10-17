@@ -148,11 +148,32 @@
             </div>
 
             {{-- Rentang Gaji (Solid Navy Blue Background Bar) --}}
-            <div class="my-2.5">
+            <div class="my-2.5 flex flex-wrap items-center gap-2">
                 <span class="inline-block bg-[#004e98] text-white font-bold px-3 py-1.5 rounded-sm text-xs shadow-sm">
                     Rp. {{ number_format($d->gaji_awal, 0, ',', '.') }} per bulan
                 </span>
             </div>
+
+            {{-- Badges Kualifikasi (Jenis, Pengalaman, Pendidikan) --}}
+            @if(!empty($d->jenis) || !empty($d->pengalaman) || !empty($d->pendidikan))
+                <div class="flex flex-wrap items-center gap-1.5 mb-2.5">
+                    @if (!empty($d->jenis))
+                        <span class="inline-flex items-center gap-1 bg-blue-50 text-[#00509d] border border-blue-100 text-[11px] font-semibold px-2 py-0.5 rounded">
+                            <i class="ph ph-briefcase"></i> {{ $d->jenis }}
+                        </span>
+                    @endif
+                    @if (!empty($d->pengalaman))
+                        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-[11px] font-medium px-2 py-0.5 rounded">
+                            <i class="ph ph-clock"></i> {{ $d->pengalaman }}
+                        </span>
+                    @endif
+                    @if (!empty($d->pendidikan))
+                        <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[11px] font-medium px-2 py-0.5 rounded">
+                            <i class="ph ph-graduation-cap"></i> Min. {{ $d->pendidikan }}
+                        </span>
+                    @endif
+                </div>
+            @endif
 
             {{-- Indicator Lamar Cepat --}}
             <div class="flex items-center gap-2 text-xs font-bold text-[#004e98] my-2.5">
