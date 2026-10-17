@@ -52,15 +52,8 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/kandidat', 'halKandidat')->name('admin.kandidat');
         Route::get('/kandidat/{id}', 'detailKandidat')->name('admin.detail.kandidat');
 
-        // finance redirect
-        Route::get('/finance', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
-        })->name('admin.finance');
-        Route::get('/finance/tunai', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
-        })->name('admin.finance.cash');
-
         // provinsi kota kecamatan
+
         Route::get('/get-kota/{provinsi_id}', 'getKota')->name('admin.get.kota');
         Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('admin.get.kecamatan');
 

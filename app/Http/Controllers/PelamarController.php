@@ -151,9 +151,6 @@ class PelamarController extends Controller
             if ($role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
-            if ($role === 'finance') {
-                return redirect()->route('finance.dashboard');
-            }
             if ($role === 'perusahaan') {
                 return redirect()->route('perusahaan.dashboard');
             }
@@ -872,11 +869,17 @@ class PelamarController extends Controller
     public function transaksi($id)
     {
         $transaksi = CatatanCash::with(['bank'])->findOrFail($id);
+
+        if ($transaksi->status === 'pending' && $transaksi->xendit_id) {
+            $transaksi = app(\App\Services\XenditService::class)->syncInvoiceStatus($transaksi);
+        }
+
         return view('kandidat.transaksi-tf-bank', [
             "transaksi" => $transaksi,
             'daftarBank' => DaftarBank::all(),
         ]);
     }
+
 
     public function uploadBukti(Request $request, $id)
     {
@@ -955,8 +958,33 @@ class PelamarController extends Controller
             'expired_at'     => now()->addHours(24),
         ]);
 
+        // Buat invoice di Xendit Payment Gateway
+        app(\App\Services\XenditService::class)->createInvoice(
+            $transaksi,
+            route('kandidat.transaksi', $transaksi->id),
+            route('kandidat.transaksi', $transaksi->id)
+        );
+
+        $transaksi->refresh();
         return redirect()->route('kandidat.transaksi', $transaksi->id);
     }
+
+    public function checkStatusKandidat($id)
+    {
+        $transaksi = CatatanCash::findOrFail($id);
+
+        if ($transaksi->status === 'pending' && $transaksi->xendit_id) {
+            $transaksi = app(\App\Services\XenditService::class)->syncInvoiceStatus($transaksi);
+        }
+
+        return response()->json([
+            'status'     => $transaksi->status,
+            'is_paid'    => in_array($transaksi->status, ['diterima', 'lunas', 'selesai']),
+            'is_expired' => $transaksi->status === 'expired',
+            'paid_at'    => $transaksi->paid_at ? $transaksi->paid_at->translatedFormat('d F Y H:i:s') : null,
+        ]);
+    }
+
 
 
 

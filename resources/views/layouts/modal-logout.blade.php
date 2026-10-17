@@ -3,7 +3,6 @@
     $logoutUrl = match ($userRole) {
         'super_admin' => route('logout_superadmin'),
         'admin'       => route('logout_admin'),
-        'finance'     => route('logout_finance'),
         'perusahaan'  => route('logout_perusahaan'),
         default       => route('logout_pelamar'),
     };

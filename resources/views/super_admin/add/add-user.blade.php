@@ -12,7 +12,7 @@
                         <i class="ph ph-user-gear text-white/80 text-lg sm:text-2xl"></i> Kelola Akun
                     </h1>
                     <p class="text-xs text-blue-100 mt-0.5">
-                        Manajemen data pengguna, admin, finance, perusahaan, dan pelamar di AreaKerja
+                        Manajemen data pengguna, admin, perusahaan, dan pelamar di AreaKerja
                     </p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
@@ -39,7 +39,7 @@
                         :class="tab === 'adminFinance' ? 'bg-white text-[#00509d] shadow-xs' : 'text-slate-500 hover:text-slate-800'"
                         class="h-full flex-1 sm:flex-initial px-4 rounded-lg transition duration-150 flex items-center justify-center gap-1.5">
                         <i class="ph ph-shield-check text-sm"></i>
-                        Admin & Finance ({{ count($usersAdminFinance) }})
+                        Admin ({{ count($usersAdminFinance) }})
                     </button>
                     <button @click="tab = 'perusahaanPelamar'"
                         :class="tab === 'perusahaanPelamar' ? 'bg-white text-[#00509d] shadow-xs' : 'text-slate-500 hover:text-slate-800'"
@@ -57,7 +57,8 @@
                             x-show="tab === 'adminFinance'" 
                             x-model="searchAdmin" 
                             autocomplete="off"
-                            placeholder="Cari admin / finance..."
+                            placeholder="Cari admin..."
+
                             class="w-full h-full px-2.5 text-xs sm:text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400"
                             style="border: none !important; outline: none !important; box-shadow: none !important;">
                         <input type="text" 
@@ -104,7 +105,7 @@
                                 x-show="!searchAdmin || '{{ strtolower($user->role . ' ' . $user->username . ' ' . $user->email) }}'.includes(searchAdmin.toLowerCase())">
                                 <td class="px-5 py-3.5">
                                     <span class="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold
-                                        {{ $user->role === 'superadmin' ? 'bg-purple-100 text-purple-700' : ($user->role === 'finance' ? 'bg-amber-100 text-amber-700' : 'bg-blue-100 text-blue-700') }}">
+                                        {{ $user->role === 'superadmin' ? 'bg-purple-100 text-purple-700' : 'bg-blue-100 text-blue-700' }}">
                                         {{ ucfirst($user->role) }}
                                     </span>
                                 </td>
@@ -141,8 +142,9 @@
                         @empty
                             <tr>
                                 <td colspan="4" class="py-8 text-center text-slate-400 text-xs">
-                                    Belum ada data Admin atau Finance
+                                    Belum ada data Admin
                                 </td>
+
                             </tr>
                         @endforelse
                     </tbody>

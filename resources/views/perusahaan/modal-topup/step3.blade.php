@@ -10,10 +10,10 @@
                 </div>
                 <div>
                     <div class="flex items-center gap-2">
-                        <h2 class="text-base font-extrabold text-slate-900">Rincian Pembayaran</h2>
-                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-extrabold rounded-full">Langkah 3/3</span>
+                        <h2 class="text-base font-extrabold text-slate-900">Konfirmasi Pembayaran</h2>
+                        <span class="px-2 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-extrabold rounded-full">Langkah 2/2</span>
                     </div>
-                    <p class="text-xs text-slate-500">Konfirmasi transaksi sebelum diproses</p>
+                    <p class="text-xs text-slate-500">Konfirmasi paket koin yang akan dibeli</p>
                 </div>
             </div>
             <button type="button" onclick="closeAllModal()"
@@ -30,16 +30,16 @@
                     <span id="detailPengirim" class="font-extrabold text-slate-900 text-right">-</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-slate-500">Penerima</span>
-                    <span id="detailPenerima" class="font-extrabold text-slate-900">PT. Area Kerja</span>
+                    <span class="font-bold text-slate-500">Paket Koin</span>
+                    <span id="detailKoinNama" class="font-extrabold text-[#00509d]">-</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="font-bold text-slate-500">Metode Pembayaran</span>
-                    <span class="bg-[#00509d] text-white text-[11px] font-extrabold px-3 py-1 rounded-lg shadow-2xs" id="detailBank">-</span>
+                    <span class="bg-[#00509d] text-white text-[11px] font-extrabold px-3 py-1 rounded-lg shadow-2xs" id="detailBank">Xendit Payment Gateway</span>
                 </div>
                 <div class="flex justify-between items-center">
-                    <span class="font-bold text-slate-500">Tanggal / Waktu</span>
-                    <span id="detailWaktu" class="font-semibold text-slate-700">-</span>
+                    <span class="font-bold text-slate-500">Pilihan Saluran</span>
+                    <span class="text-slate-600 font-semibold text-right">QRIS, VA (BCA, Mandiri, BRI, BNI), E-Wallet</span>
                 </div>
                 <div class="flex justify-between items-center pt-2 border-t border-slate-200">
                     <span class="font-bold text-slate-500">Nominal Deposit</span>
@@ -47,7 +47,7 @@
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="font-bold text-slate-500">Biaya Administrasi</span>
-                    <span id="detailAdmin" class="font-semibold text-slate-600">Rp 2.000</span>
+                    <span id="detailAdmin" class="font-semibold text-emerald-600">Gratis</span>
                 </div>
                 <div class="border-t border-dashed border-slate-300 my-2"></div>
                 <div class="flex justify-between items-center">
@@ -59,7 +59,7 @@
 
         <!-- Footer -->
         <div class="px-6 py-4 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between gap-3 shrink-0">
-            <button type="button" onclick="goToStep(2)"
+            <button type="button" onclick="goToStep(1)"
                 class="inline-flex items-center gap-1.5 px-4 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs transition">
                 <i class="ph ph-arrow-left font-bold text-sm"></i>
                 <span>Kembali</span>
@@ -67,7 +67,7 @@
             <button type="button" id="btnKonfirmasi"
                 class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold text-xs rounded-xl shadow-sm transition">
                 <i class="ph ph-check-circle font-bold text-base"></i>
-                <span>Selesaikan Pembayaran</span>
+                <span>Bayar Sekarang</span>
             </button>
         </div>
     </div>

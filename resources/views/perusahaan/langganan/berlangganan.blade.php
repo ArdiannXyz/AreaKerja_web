@@ -30,18 +30,25 @@
                                     <i class="ph-fill ph-check-circle"></i>
                                 </div>
                                 <div class="text-left">
-                                    <p class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Status Langganan Aktif</p>
+                                    <p class="text-xs font-extrabold uppercase tracking-wider text-emerald-700">Status Langganan VIP Aktif</p>
                                     <p class="text-xs sm:text-sm font-bold text-slate-700">
                                         Berlaku hingga {{ \Carbon\Carbon::parse($perusahaan->tanggal_expired)->translatedFormat('d F Y') }}
                                     </p>
                                 </div>
                             </div>
+                            <div class="mt-3">
+                                <a href="#paketLanggananSection"
+                                    class="inline-flex items-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white px-6 py-2.5 rounded-xl shadow-xs text-xs font-extrabold transition">
+                                    <i class="ph-bold ph-arrows-clockwise text-amber-300"></i>
+                                    <span>Perpanjang Paket VIP</span>
+                                </a>
+                            </div>
                         @else
-                            <button onclick="openModal()"
+                            <a href="#paketLanggananSection"
                                 class="inline-flex items-center gap-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-3.5 rounded-2xl shadow-sm hover:shadow-md transition text-sm font-extrabold transform active:scale-98">
                                 <i class="ph-bold ph-lightning text-amber-400 text-base"></i>
-                                <span>Mulai Berlangganan</span>
-                            </button>
+                                <span>Pilih Paket Berlangganan</span>
+                            </a>
                         @endif
                     </div>
                 </div>
@@ -65,52 +72,89 @@
             ])
         </div>
 
-        <!-- ================= SUBSCRIPTION PRICING CARD ================= -->
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-            <div class="bg-white rounded-3xl border-2 border-[#00509d] p-8 sm:p-12 shadow-sm flex flex-col lg:flex-row justify-between items-center gap-10">
-                <div class="max-w-xl space-y-4">
-                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-blue-50 text-[#00509d] text-xs font-extrabold">
-                        <i class="ph-fill ph-sparkle"></i>
-                        <span>Akses Lengkap 1 Tahun Penuh</span>
-                    </div>
+        <!-- ================= SUBSCRIPTION PRICING CARDS ================= -->
+        <div id="paketLanggananSection" class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-100 text-[#00509d] text-xs font-black tracking-wide uppercase">
+                    <i class="ph-fill ph-crown text-amber-500 text-sm"></i>
+                    <span>Pilihan Durasi Berlangganan VIP</span>
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                    Pilih Paket VIP Sesuai Kebutuhan Anda
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-600 font-medium">
+                    Tersedia opsi 1 Bulan, 3 Bulan, 6 Bulan, hingga 12 Bulan (1 Tahun) dengan keistimewaan tanpa batas.
+                </p>
+            </div>
 
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                        Paket Langganan Tahunan
-                    </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                @foreach ($paketLangganan as $key => $paket)
+                    @php
+                        $isPopular = !empty($paket['popular']);
+                        $isUserVip = $perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired);
+                    @endphp
+                    <div class="bg-white rounded-3xl p-6 sm:p-7 border {{ $isPopular ? 'border-2 border-[#00509d] shadow-lg relative bg-gradient-to-b from-blue-50/30 via-white to-white' : 'border border-slate-200/90 shadow-xs' }} flex flex-col justify-between transition hover:shadow-md hover:-translate-y-1">
+                        @if ($isPopular)
+                            <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2">
+                                <span class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs flex items-center gap-1">
+                                    <i class="ph-fill ph-sparkle text-amber-200"></i> Paling Hemat
+                                </span>
+                            </div>
+                        @endif
 
-                    <p class="text-sm text-slate-600 font-medium leading-relaxed">
-                        Investasi cerdas untuk seluruh kebutuhan rekrutmen perusahaan. Nikmati seluruh fitur premium tanpa biaya tambahan tersembunyi.
-                    </p>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black px-2.5 py-1 rounded-lg border {{ $paket['badge_color'] ?? 'bg-blue-50 text-[#00509d] border-blue-200' }}">
+                                    {{ $paket['badge'] }}
+                                </span>
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Durasi</span>
+                            </div>
 
-                    <div class="pt-2 flex items-center gap-3">
-                        <div class="flex items-center gap-2 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
-                            <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-6 h-6 object-contain">
-                            <span class="text-2xl font-black text-[#00509d]">{{ number_format($hargaLangganan, 0, ',', '.') }}</span>
-                            <span class="text-xs font-extrabold text-amber-700">Koin / Tahun</span>
+                            <div>
+                                <h3 class="text-xl font-black text-slate-900">{{ $paket['nama'] }}</h3>
+                                <p class="text-xs text-slate-500 mt-1 min-h-[36px] leading-relaxed">
+                                    {{ $paket['deskripsi'] }}
+                                </p>
+                            </div>
+
+                            <div class="py-3 border-y border-slate-100 flex items-baseline gap-2">
+                                <div class="flex items-center gap-1.5">
+                                    <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-6 h-6 object-contain">
+                                    <span class="text-3xl font-black text-[#00509d]">{{ number_format($paket['harga'], 0, ',', '.') }}</span>
+                                </div>
+                                <span class="text-xs font-bold text-slate-500">Koin</span>
+                            </div>
+
+                            {{-- Fitur Utama --}}
+                            <ul class="space-y-2.5 text-xs text-slate-600">
+                                <li class="flex items-center gap-2">
+                                    <i class="ph-fill ph-check-circle text-emerald-600 text-sm shrink-0"></i>
+                                    <span class="font-bold text-slate-800">20 Lowongan Aktif</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="ph-fill ph-check-circle text-emerald-600 text-sm shrink-0"></i>
+                                    <span>Pelamar Tanpa Batas Harian</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="ph-fill ph-check-circle text-emerald-600 text-sm shrink-0"></i>
+                                    <span>Auto Job Booster Teratas</span>
+                                </li>
+                                <li class="flex items-center gap-2">
+                                    <i class="ph-fill ph-check-circle text-emerald-600 text-sm shrink-0"></i>
+                                    <span>Masa Tayang Lowongan Max 90 Hari</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div class="mt-6 pt-4 border-t border-slate-100">
+                            <button type="button" onclick="openModal('{{ $key }}')"
+                                class="w-full py-3 px-4 rounded-2xl font-black text-xs transition flex items-center justify-center gap-2 {{ $isPopular ? 'bg-[#00509d] hover:bg-[#003d7a] text-white shadow-sm' : 'bg-blue-50 hover:bg-blue-100 text-[#00509d] border border-blue-100' }}">
+                                <i class="ph-bold {{ $isUserVip ? 'ph-arrows-clockwise' : 'ph-crown' }}"></i>
+                                <span>{{ $isUserVip ? 'Perpanjang (' . $paket['nama'] . ')' : 'Pilih Paket' }}</span>
+                            </button>
                         </div>
                     </div>
-
-                    <div class="pt-4">
-                        @if ($perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired))
-                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-100 text-emerald-800 text-xs font-bold rounded-xl">
-                                <i class="ph-fill ph-check text-base"></i>
-                                <span>Paket Anda sedang aktif</span>
-                            </div>
-                        @else
-                            <button onclick="openModal()"
-                                class="inline-flex items-center gap-2 bg-[#00509d] hover:bg-[#003d7a] text-white px-8 py-3.5 rounded-2xl shadow-sm text-sm font-extrabold transition transform active:scale-98">
-                                <span>Langganan Sekarang</span>
-                                <i class="ph-bold ph-arrow-right"></i>
-                            </button>
-                        @endif
-                    </div>
-                </div>
-
-                <div class="w-full lg:w-1/2 flex justify-center">
-                    <img src="{{ asset('images/jempol.png') }}"
-                        alt="Ilustrasi Sukses" 
-                        class="w-full max-w-[320px] sm:max-w-[380px] h-auto object-contain">
-                </div>
+                @endforeach
             </div>
         </div>
 
@@ -118,7 +162,7 @@
 
     <!-- ================= MODAL 1: CHECKOUT PEMBAYARAN ================= -->
     <div id="modalBayar" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-6 sm:p-7 relative border border-slate-100 transform transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 sm:p-7 relative border border-slate-100 transform transition-all">
             <!-- Close Button -->
             <button onclick="closeModal()"
                 class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition focus:outline-none">
@@ -131,25 +175,42 @@
                     <i class="ph-fill ph-crown"></i>
                 </div>
                 <div>
-                    <h2 class="text-base font-black text-slate-900">Konfirmasi Langganan</h2>
-                    <p class="text-xs text-slate-500 font-medium">Pembayaran paket tahunan AreaKerja</p>
+                    <h2 class="text-base font-black text-slate-900">Konfirmasi Berlangganan VIP</h2>
+                    <p class="text-xs text-slate-500 font-medium">Pilih durasi paket langganan AreaKerja</p>
                 </div>
             </div>
 
-            <!-- Price Card -->
+            <!-- Duration Selector Tabs -->
+            <div class="mb-4">
+                <label class="block text-xs font-bold text-slate-600 mb-2">Pilih Durasi Paket:</label>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="durasiSelector">
+                    @foreach ($paketLangganan as $key => $p)
+                        <button type="button" onclick="selectPaket('{{ $key }}')" id="tab_paket_{{ $key }}"
+                            class="durasi-tab-btn py-2.5 px-2 rounded-xl text-center border transition flex flex-col items-center justify-center text-slate-700 bg-slate-50 border-slate-200 hover:bg-slate-100">
+                            <span class="text-xs font-black">{{ $p['nama'] }}</span>
+                            <span class="text-[10px] font-extrabold mt-0.5 text-[#00509d]">{{ number_format($p['harga'], 0, ',', '.') }} Koin</span>
+                        </button>
+                    @endforeach
+                </div>
+            </div>
+
+            <!-- Price Detail Card -->
             <div class="bg-blue-50/60 border border-blue-200/80 rounded-2xl p-4 mb-4">
                 <div class="flex justify-between items-center mb-1">
-                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Tagihan Tahunan</span>
-                    <span class="px-2 py-0.5 bg-blue-100 text-[#00509d] text-[10px] font-black rounded-md">12 Bulan</span>
+                    <span id="modalPaketJudul" class="text-xs font-extrabold uppercase tracking-wider text-slate-700">VIP 12 Bulan (1 Tahun)</span>
+                    <span id="modalPaketBadge" class="px-2.5 py-0.5 bg-blue-100 text-[#00509d] text-[10px] font-black rounded-md">Paling Hemat</span>
                 </div>
-                <div class="flex items-center gap-2 mt-2">
+                <p id="modalPaketDeskripsi" class="text-[11px] text-slate-500 mt-1 mb-2 leading-relaxed">
+                    Akses VIP tanpa batas selama setahun penuh dengan penghematan koin maksimal.
+                </p>
+                <div class="flex items-center gap-2 mt-2 pt-2 border-t border-blue-100">
                     <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-7 h-7 object-contain">
-                    <span class="text-2xl font-black text-[#00509d]">{{ number_format($hargaLangganan, 0, ',', '.') }}</span>
+                    <span id="modalPaketHarga" class="text-2xl font-black text-[#00509d]">{{ number_format($hargaLangganan, 0, ',', '.') }}</span>
                     <span class="text-xs font-bold text-slate-600">Koin</span>
                 </div>
             </div>
 
-            <!-- Current Coin Balance -->
+            <!-- Current Coin Balance & Validation -->
             <div class="bg-slate-50 border border-slate-200/80 rounded-2xl p-4 mb-6">
                 <div class="flex items-center justify-between">
                     <div>
@@ -165,6 +226,9 @@
                         <span>Top Up Koin</span>
                     </button>
                 </div>
+                <div id="saldoKoinStatus" class="mt-2.5 pt-2 border-t border-slate-200 text-[11px] font-bold flex items-center gap-1.5">
+                    {{-- Dynamically populated via selectPaket() --}}
+                </div>
             </div>
 
             <!-- Action Button -->
@@ -172,7 +236,7 @@
                 <button id="btnBayar" type="button"
                     class="w-full bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold py-3 rounded-2xl shadow-xs hover:shadow-md transition text-sm flex items-center justify-center gap-2">
                     <i class="ph-bold ph-check"></i>
-                    <span>Bayar Sekarang ({{ $hargaLangganan }} Koin)</span>
+                    <span>Bayar Sekarang ({{ number_format($hargaLangganan, 0, ',', '.') }} Koin)</span>
                 </button>
                 <button type="button" onclick="closeModal()"
                     class="w-full bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold py-2.5 rounded-2xl transition text-xs">
@@ -193,8 +257,8 @@
             <h2 class="text-xl font-black text-slate-900 tracking-tight mb-1">
                 Pembayaran Sukses!
             </h2>
-            <p class="text-xs sm:text-sm text-slate-600 font-medium">
-                Selamat, status langganan perusahaan Anda di <span class="font-bold text-[#00509d]">areakerja.com</span> telah aktif selama 1 tahun ke depan.
+            <p id="modalSuksesDesc" class="text-xs sm:text-sm text-slate-600 font-medium">
+                Selamat, status langganan VIP perusahaan Anda di <span class="font-bold text-[#00509d]">areakerja.com</span> telah aktif.
             </p>
 
             <!-- Email Notification Box -->
@@ -246,8 +310,8 @@
             </div>
 
             <h2 class="text-lg font-black text-slate-900 mb-1">Saldo Koin Tidak Cukup</h2>
-            <p class="text-xs text-slate-600 font-medium mb-6">
-                Saldo koin perusahaan Anda tidak mencukupi untuk berlangganan (Dibutuhkan {{ $hargaLangganan }} Koin).
+            <p id="modalErrorKoinDesc" class="text-xs text-slate-600 font-medium mb-6">
+                Saldo koin perusahaan Anda tidak mencukupi untuk berlangganan. Silakan top up koin terlebih dahulu.
             </p>
 
             <div class="space-y-2">
@@ -265,7 +329,57 @@
 
     <!-- ================= JAVASCRIPT LOGIC ================= -->
     <script>
-        function openModal() {
+        const paketList = @json($paketLangganan);
+        const userKoin = {{ (int) $perusahaan->koin_perusahaan }};
+        let currentPaketKey = '{{ $defaultPaket['id'] ?? '12_bulan' }}';
+
+        function selectPaket(key) {
+            if (!paketList[key]) return;
+            currentPaketKey = key;
+            const paket = paketList[key];
+
+            // Update Tab Styles
+            document.querySelectorAll('.durasi-tab-btn').forEach(btn => {
+                btn.className = 'durasi-tab-btn py-2.5 px-2 rounded-xl text-center border transition flex flex-col items-center justify-center text-slate-700 bg-slate-50 border-slate-200 hover:bg-slate-100';
+            });
+            const activeTab = document.getElementById('tab_paket_' + key);
+            if (activeTab) {
+                activeTab.className = 'durasi-tab-btn py-2.5 px-2 rounded-xl text-center border-2 border-[#00509d] bg-blue-50/80 text-[#00509d] shadow-2xs flex flex-col items-center justify-center font-black';
+            }
+
+            // Update Price Details
+            const judulEl = document.getElementById('modalPaketJudul');
+            const badgeEl = document.getElementById('modalPaketBadge');
+            const descEl = document.getElementById('modalPaketDeskripsi');
+            const hargaEl = document.getElementById('modalPaketHarga');
+            const btnBayar = document.getElementById('btnBayar');
+            const statusEl = document.getElementById('saldoKoinStatus');
+
+            if (judulEl) judulEl.textContent = paket.judul;
+            if (badgeEl) badgeEl.textContent = paket.badge;
+            if (descEl) descEl.textContent = paket.deskripsi;
+            if (hargaEl) hargaEl.textContent = Number(paket.harga).toLocaleString('id-ID');
+
+            if (statusEl) {
+                if (userKoin >= paket.harga) {
+                    const sisa = userKoin - paket.harga;
+                    statusEl.className = 'mt-2.5 pt-2 border-t border-slate-200 text-[11px] font-bold flex items-center gap-1.5 text-emerald-700';
+                    statusEl.innerHTML = '<i class="ph-fill ph-check-circle text-emerald-600 text-sm"></i> Saldo koin cukup (Tersisa ' + sisa.toLocaleString('id-ID') + ' Koin setelah pembayaran)';
+                } else {
+                    const kurang = paket.harga - userKoin;
+                    statusEl.className = 'mt-2.5 pt-2 border-t border-slate-200 text-[11px] font-bold flex items-center gap-1.5 text-rose-600';
+                    statusEl.innerHTML = '<i class="ph-fill ph-warning-circle text-rose-500 text-sm"></i> Saldo kurang ' + kurang.toLocaleString('id-ID') + ' Koin';
+                }
+            }
+
+            if (btnBayar) {
+                btnBayar.innerHTML = '<i class="ph-bold ph-check"></i> <span>Bayar Sekarang (' + Number(paket.harga).toLocaleString('id-ID') + ' Koin)</span>';
+            }
+        }
+
+        function openModal(key) {
+            const targetKey = key && paketList[key] ? key : currentPaketKey;
+            selectPaket(targetKey);
             const m = document.getElementById('modalBayar');
             if (m) m.style.display = 'flex';
         }
@@ -275,7 +389,12 @@
             if (m) m.style.display = 'none';
         }
 
-        function showErrorKoin() {
+        function showErrorKoin(requiredKoin) {
+            const descEl = document.getElementById('modalErrorKoinDesc');
+            if (descEl) {
+                const koinNeeded = requiredKoin || (paketList[currentPaketKey] ? paketList[currentPaketKey].harga : 0);
+                descEl.textContent = 'Saldo koin perusahaan Anda tidak mencukupi untuk berlangganan (Dibutuhkan ' + Number(koinNeeded).toLocaleString('id-ID') + ' Koin).';
+            }
             const m = document.getElementById('modalErrorKoin');
             if (m) m.style.display = 'flex';
         }
@@ -285,7 +404,11 @@
             if (m) m.style.display = 'none';
         }
 
-        function openSukses() {
+        function openSukses(paket, tanggalExpired) {
+            const descEl = document.getElementById('modalSuksesDesc');
+            if (descEl && paket) {
+                descEl.innerHTML = 'Selamat, status <span class="font-bold text-[#00509d]">' + paket.judul + '</span> perusahaan Anda di <span class="font-bold text-[#00509d]">areakerja.com</span> telah aktif' + (tanggalExpired ? ' hingga ' + tanggalExpired : '') + '.';
+            }
             const m = document.getElementById('modalSukses');
             if (m) m.style.display = 'flex';
         }
@@ -304,9 +427,14 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            selectPaket(currentPaketKey);
+
             const btnBayar = document.getElementById('btnBayar');
             if (btnBayar) {
                 btnBayar.addEventListener('click', function() {
+                    const paket = paketList[currentPaketKey];
+                    if (!paket) return;
+
                     btnBayar.disabled = true;
                     btnBayar.innerHTML = '<i class="ph ph-spinner animate-spin text-lg"></i> Memproses...';
 
@@ -317,12 +445,14 @@
                             'Accept': 'application/json',
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({})
+                        body: JSON.stringify({
+                            paket: currentPaketKey
+                        })
                     })
                     .then(res => res.json())
                     .then(data => {
                         btnBayar.disabled = false;
-                        btnBayar.innerHTML = '<i class="ph-bold ph-check"></i> <span>Bayar Sekarang ({{ $hargaLangganan }} Koin)</span>';
+                        btnBayar.innerHTML = '<i class="ph-bold ph-check"></i> <span>Bayar Sekarang (' + Number(paket.harga).toLocaleString('id-ID') + ' Koin)</span>';
 
                         if (!data.success && data.type === 'verification') {
                             closeModal();
@@ -338,13 +468,13 @@
 
                         if (data.error === 'koin_kurang') {
                             closeModal();
-                            showErrorKoin();
+                            showErrorKoin(data.required || paket.harga);
                             return;
                         }
 
                         if (data.success) {
                             closeModal();
-                            openSukses();
+                            openSukses(data.paket || paket, data.tanggal_expired);
 
                             const sendEmail = document.getElementById('sendEmailToggle');
                             if (sendEmail && sendEmail.checked) {
@@ -359,14 +489,14 @@
                                 });
                             }
                         } else {
-                            showErrorKoin();
+                            showErrorKoin(paket.harga);
                         }
                     })
                     .catch(err => {
                         btnBayar.disabled = false;
-                        btnBayar.innerHTML = '<i class="ph-bold ph-check"></i> <span>Bayar Sekarang ({{ $hargaLangganan }} Koin)</span>';
+                        btnBayar.innerHTML = '<i class="ph-bold ph-check"></i> <span>Bayar Sekarang (' + Number(paket.harga).toLocaleString('id-ID') + ' Koin)</span>';
                         console.error(err);
-                        showErrorKoin();
+                        showErrorKoin(paket.harga);
                     });
                 });
             }

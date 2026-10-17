@@ -110,24 +110,7 @@ class UserTestSeeder extends Seeder
             );
 
             // =====================================================
-            // 3. FINANCE (1 User)
-            // =====================================================
-            User::updateOrCreate(
-                ['email' => 'finance@gmail.com'],
-                [
-                    'username'           => 'finance',
-                    'nama_lengkap'       => 'Finance Manager',
-                    'telepon'            => '081122334477',
-                    'password'           => Hash::make('123'),
-                    'role'               => 'finance',
-                    'verified'           => 1,
-                    'status'             => 0,
-                    'alasan_freeze_akun' => null,
-                ]
-            );
-
-            // =====================================================
-            // 4. PERUSAHAAN (6 Companies)
+            // 3. PERUSAHAAN (6 Companies)
             // =====================================================
             $perusahaansData = [
                 [

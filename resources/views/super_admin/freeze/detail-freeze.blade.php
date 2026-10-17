@@ -34,7 +34,6 @@
                         $profileImg = null;
                         if ($data->pelamar && $data->pelamar->img_profile) $profileImg = $data->pelamar->img_profile;
                         elseif ($data->perusahaan && $data->perusahaan->img_profile) $profileImg = $data->perusahaan->img_profile;
-                        elseif ($data->finance && $data->finance->img_profile) $profileImg = $data->finance->img_profile;
                         elseif ($data->admin && $data->admin->img_profile) $profileImg = $data->admin->img_profile;
                         elseif ($data->superadmin && $data->superadmin->img_profile) $profileImg = $data->superadmin->img_profile;
                     @endphp
@@ -56,9 +55,8 @@
                         <div class="flex flex-wrap gap-2 mt-2">
                             <span class="inline-flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-semibold
                                 {{ in_array($data->role, ['superadmin', 'super_admin']) ? 'bg-purple-100 text-purple-700' :
-                                   ($data->role === 'finance' ? 'bg-amber-100 text-amber-700' :
                                    ($data->role === 'perusahaan' ? 'bg-emerald-100 text-emerald-700' :
-                                   ($data->role === 'pelamar' ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-700'))) }}">
+                                   ($data->role === 'pelamar' ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-700')) }}">
                                 <i class="ph ph-user-circle text-sm"></i>
                                 {{ ucfirst($data->role) }}
                             </span>
@@ -143,14 +141,24 @@
                     <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider mb-1">Alamat</p>
                     @php
                         $provinsi = null; $kota = null; $kecamatan = null; $desa = null; $kode_pos = null; $detail = null;
-                        $alamat = $data->finance ?? null;
+                        $alamat = null;
+                        if ($data->role === 'pelamar') {
+                            $alamat = $data->pelamar;
+                        } elseif ($data->role === 'perusahaan') {
+                            $alamat = $data->perusahaan;
+                        } elseif ($data->role === 'admin') {
+                            $alamat = $data->admin;
+                        } elseif ($data->role === 'superadmin' || $data->role === 'super_admin') {
+                            $alamat = $data->superadmin;
+                        }
+
                         if ($alamat) {
-                            $provinsi = $alamat->provinsi->nama ?? null;
-                            $kota = $alamat->kota->nama ?? null;
-                            $kecamatan = $alamat->kecamatan->nama ?? null;
+                            $provinsi = is_object($alamat->provinsi ?? null) ? ($alamat->provinsi->nama ?? null) : ($alamat->provinsi ?? null);
+                            $kota = is_object($alamat->kota ?? null) ? ($alamat->kota->nama ?? null) : ($alamat->kota ?? null);
+                            $kecamatan = is_object($alamat->kecamatan ?? null) ? ($alamat->kecamatan->nama ?? null) : ($alamat->kecamatan ?? null);
                             $desa = $alamat->desa ?? null;
                             $kode_pos = $alamat->kode_pos ?? null;
-                            $detail = $alamat->detail_alamat ?? null;
+                            $detail = $alamat->detail_alamat ?? $alamat->alamat ?? null;
                         }
                         $bagian = array_filter([$desa, $kecamatan, $kota, $provinsi, $kode_pos]);
                     @endphp

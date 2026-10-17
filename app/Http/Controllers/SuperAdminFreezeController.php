@@ -45,17 +45,6 @@ class SuperAdminFreezeController extends Controller
                             ->orWhereHas('kota', function ($ktq) use ($search) {
                                 $ktq->where('nama', 'like', "%{$search}%");
                             });
-                    })
-                    // Finance (wilayah)
-                    ->orWhereHas('finance', function ($fq) use ($search) {
-                        $fq->where('detail_alamat', 'like', "%{$search}%")
-                            ->orWhere('desa', 'like', "%{$search}%")
-                            ->orWhereHas('provinsi', function ($fprq) use ($search) {
-                                $fprq->where('nama', 'like', "%{$search}%");
-                            })
-                            ->orWhereHas('kota', function ($fktq) use ($search) {
-                                $fktq->where('nama', 'like', "%{$search}%");
-                            });
                     });
 
                 // Filter status aktif vs beku

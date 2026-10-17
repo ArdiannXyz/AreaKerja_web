@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
-use Tests\TestCase;
 use App\Models\Event;
 use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Tests\TestCase;
 
 class EventStatusFilterTest extends TestCase
 {
+    use DatabaseTransactions;
     public function test_upcoming_filter_only_shows_truly_upcoming_events()
     {
         // Past event with status buka (simulating the bug where past event is not yet closed)

@@ -38,8 +38,6 @@
             @php
                 if ($user->role === 'admin') {
                     $detail = $user->admin;
-                } elseif ($user->role === 'finance') {
-                    $detail = $user->finance;
                 } elseif ($user->role === 'perusahaan') {
                     $detail = $user->perusahaan;
                 } elseif ($user->role === 'pelamar') {
@@ -48,6 +46,7 @@
                     $detail = null;
                 }
             @endphp
+
 
 
 
@@ -96,8 +95,6 @@
                     <select name="role" id="roleSelect"
                         class="w-full border-2 border-gray-400 rounded-md px-3 py-2 overflow-hidden text-ellipsis" required>
                         <option value="admin" {{ old('role', $user->role) == 'admin' ? 'selected' : '' }}>Admin</option>
-                        <option value="finance" {{ old('role', $user->role) == 'finance' ? 'selected' : '' }}>Finance
-                        </option>
                         <option value="perusahaan" {{ old('role', $user->role) == 'perusahaan' ? 'selected' : '' }}>
                             Perusahaan</option>
                         <option value="pelamar" {{ old('role', $user->role) == 'pelamar' ? 'selected' : '' }}>Pelamar
@@ -105,8 +102,8 @@
                     </select>
                 </div>
 
+                <!-- ================= FORM ADMIN ================= -->
 
-                <!-- ================= FORM ADMIN / FINANCE ================= -->
                 <div id="form-alamat" class="space-y-4 w-full min-w-0">
 
                     <!-- Nama Lengkap -->
@@ -425,10 +422,10 @@
 
             const roleImages = {
                 "admin": "{{ asset('images/admin-default.png') }}",
-                "finance": "{{ asset('images/finance-default.png') }}",
                 "perusahaan": "{{ asset('images/company-default.png') }}",
                 "pelamar": "{{ asset('images/pelamar-default.png') }}"
             };
+
 
             function toggleForms(role) {
                 // ambil semua input dari setiap form

@@ -5,11 +5,12 @@ namespace Tests\Feature;
 use App\Models\LowonganPerusahaan;
 use App\Models\Perusahaan;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;
 
 class LowonganFilterSearchTest extends TestCase
 {
+    use DatabaseTransactions;
     /**
      * Test filter pencarian lowongan berdasarkan jenis, pengalaman, dan pendidikan.
      */

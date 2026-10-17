@@ -159,9 +159,6 @@
                                 } elseif ($d->role == 'perusahaan') {
                                     $perusahaanObj = $d->perusahaan;
                                     $provinsi = is_object($perusahaanObj) ? ($perusahaanObj->provinsi ?? $perusahaanObj->kota ?? '-') : '-';
-                                } elseif ($d->role == 'finance') {
-                                    $finObj = $d->finance;
-                                    $provinsi = is_object($finObj) ? (is_object($finObj->provinsi ?? null) ? ($finObj->provinsi->nama ?? '-') : ($finObj->provinsi ?? '-')) : '-';
                                 } elseif ($d->role == 'admin') {
                                     $admObj = $d->admin;
                                     $provinsi = is_object($admObj) ? (is_object($admObj->provinsi ?? null) ? ($admObj->provinsi->nama ?? '-') : ($admObj->provinsi ?? '-')) : '-';
@@ -177,9 +174,8 @@
                                 <td class="px-3.5 py-3">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-semibold
                                         {{ in_array($d->role, ['superadmin', 'super_admin']) ? 'bg-purple-100 text-purple-700' : 
-                                           ($d->role === 'finance' ? 'bg-amber-100 text-amber-700' : 
-                                           ($d->role === 'perusahaan' ? 'bg-emerald-100 text-emerald-700' : 
-                                           ($d->role === 'pelamar' ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-700'))) }}">
+                                            ($d->role === 'perusahaan' ? 'bg-emerald-100 text-emerald-700' : 
+                                            ($d->role === 'pelamar' ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-700')) }}">
                                         {{ ucfirst($d->role) }}
                                     </span>
                                 </td>

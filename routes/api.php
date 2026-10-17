@@ -57,6 +57,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/packages/subscription', [PaymentApiController::class, 'subscriptionPackages'])->name('api.packages.subscription');
     Route::get('/payments/channels', [PaymentApiController::class, 'paymentChannels'])->name('api.payments.channels');
     Route::post('/payments/callback', [PaymentApiController::class, 'paymentCallback'])->name('api.payments.callback');
+    Route::post('/xendit/callback', [\App\Http\Controllers\Payment\XenditCallbackController::class, 'handle'])->name('api.xendit.callback');
+
 
 
     /*

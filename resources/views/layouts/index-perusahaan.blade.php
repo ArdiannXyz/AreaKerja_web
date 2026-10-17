@@ -808,9 +808,7 @@
 
     <!-- ================= MODAL STEP 1 ================= -->
     @include('perusahaan.modal-topup.step1')
-    <!-- ================= MODAL STEP 2 ================= -->
-    @include('perusahaan.modal-topup.step2')
-    <!-- ================= MODAL STEP 3 ================= -->
+    <!-- ================= MODAL STEP 3 (KONFIRMASI LANGKAH 2) ================= -->
     @include('perusahaan.modal-topup.step3')
 
 
@@ -834,16 +832,20 @@
     {{-- TOP UP --}}
     <script>
         //redirect
-        document.getElementById('btnKonfirmasi').addEventListener('click', function() {
-            if (!selectedKoin || !selectedBank) {
+        document.getElementById('btnKonfirmasi')?.addEventListener('click', function() {
+            if (!selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Pilih Paket & Pembayaran',
-                    text: 'Silakan pilih paket dan metode pembayaran dulu.',
+                    title: 'Pilih Paket Koin',
+                    text: 'Silakan pilih paket koin terlebih dahulu.',
                     confirmButtonText: 'Mengerti'
                 });
                 return;
             }
+
+            const btn = document.getElementById('btnKonfirmasi');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph ph-circle-notch animate-spin text-base"></i> Memproses Tagihan...';
 
             fetch("{{ route('catatan_cash.store') }}", {
                     method: "POST",
@@ -853,8 +855,7 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        harga_pembayaran_id: document.querySelector(".paketCoin:checked").value,
-                        daftar_bank_id: document.querySelector(".metodePembayaran:checked").value,
+                        harga_pembayaran_id: document.querySelector(".paketCoin:checked") ? document.querySelector(".paketCoin:checked").value : null,
                     })
                 })
                 .then(async res => {
@@ -981,20 +982,11 @@
 
         function goToStep(step) {
             // Validasi sebelum pindah step
-            if (step === 2 && !selectedKoin) {
+            if ((step === 2 || step === 3) && !selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Pilih Paket Koin',
                     text: 'Silakan pilih salah satu paket koin terlebih dahulu!',
-                    confirmButtonColor: '#00509d'
-                });
-                return;
-            }
-            if (step === 3 && !selectedBank) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Pilih Pembayaran',
-                    text: 'Silakan pilih metode pembayaran terlebih dahulu!',
                     confirmButtonColor: '#00509d'
                 });
                 return;
@@ -1009,28 +1001,17 @@
 
             updateButtons();
 
-            // Step 2: update summary
-            if (step === 2) {
-                const summaryKoin = document.getElementById('step2KoinSummary');
-                const summaryHarga = document.getElementById('step2HargaSummary');
-                if (summaryKoin) summaryKoin.innerText = Number(selectedKoin).toLocaleString('id-ID');
-                if (summaryHarga) summaryHarga.innerText = 'Rp ' + Number(selectedHarga).toLocaleString('id-ID');
-            }
-
             // Step 3: update detail pembayaran
             if (step === 3) {
-                const biayaAdmin = 2000;
-                const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
+                const totalBayar = selectedHarga ?? 0;
 
                 const detailPengirim = document.getElementById('detailPengirim');
-                const detailBank = document.getElementById('detailBank');
-                const detailWaktu = document.getElementById('detailWaktu');
+                const detailKoinNama = document.getElementById('detailKoinNama');
                 const detailHarga = document.getElementById('detailHarga');
                 const detailTotal = document.getElementById('detailTotal');
 
                 if (detailPengirim) detailPengirim.innerText = "{{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}";
-                if (detailBank) detailBank.innerText = selectedBank ?? '-';
-                if (detailWaktu) detailWaktu.innerText = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                if (detailKoinNama) detailKoinNama.innerText = Number(selectedKoin).toLocaleString('id-ID') + ' Koin AreaKerja';
                 if (detailHarga) detailHarga.innerText = "Rp " + (selectedHarga ?? 0).toLocaleString('id-ID');
                 if (detailTotal) detailTotal.innerText = "Rp " + totalBayar.toLocaleString('id-ID');
             }

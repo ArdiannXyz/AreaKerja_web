@@ -54,9 +54,9 @@ class TalentHunterController extends Controller
             $bank = DaftarBank::first();
             if (!$bank) {
                 $bank = DaftarBank::create([
-                    'nama_bank'   => 'BCA',
-                    'no_rekening' => '1234567890',
-                    'atas_nama'   => 'PT Area Kerja',
+                    'nama_bank' => 'Xendit Payment',
+                    'no_rek'    => 'XENDIT',
+                    'owner'     => 'PT Area Kerja',
                 ]);
             }
             $bankId = $bank->id;
@@ -92,17 +92,28 @@ class TalentHunterController extends Controller
             'expired_at'     => now()->addHours(24),
         ]);
 
+        // Buat invoice Xendit
+        app(\App\Services\XenditService::class)->createInvoice(
+            $transaksi,
+            route('catatan_cash.show', $transaksi->id),
+            route('catatan_cash.show', $transaksi->id)
+        );
+
+        $transaksi->refresh();
         $nominalFormat = 'Rp ' . number_format($talentHunter->gaji_ditawarkan, 0, ',', '.');
+        $redirectUrl = route('catatan_cash.show', $transaksi->id);
 
         return response()->json([
             'success'      => true,
-            'message'      => 'Pengajuan Talent Hunter berhasil dibuat! Mengalihkan ke form transaksi...',
-            'redirect_url' => route('catatan_cash.show', $transaksi->id),
+            'message'      => 'Pengajuan Talent Hunter berhasil dibuat! Mengalihkan ke halaman pembayaran...',
+            'redirect_url' => $redirectUrl,
+            'checkout_url' => $transaksi->checkout_url,
             'no_referensi' => $noReferensi,
             'nominal'      => $nominalFormat,
             'transaksi_id' => $transaksi->id,
         ]);
     }
+
 
     public function index()
     {
