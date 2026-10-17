@@ -26,6 +26,7 @@
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}?v=6">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @include('layouts.sweetalert-theme')
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -84,6 +85,49 @@
                 }
             } catch (error) {
                 console.error("markAsRead error:", error);
+            }
+        };
+
+        window.handleNotifClick = async function(bacaUrl, redirectUrl, el) {
+            try {
+                if (bacaUrl) {
+                    try {
+                        await fetch(bacaUrl, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                                "Accept": "application/json"
+                            },
+                            keepalive: true
+                        });
+                    } catch (err) {
+                        console.error("baca notif error:", err);
+                    }
+                }
+
+                if (redirectUrl && redirectUrl !== '#' && redirectUrl !== '') {
+                    window.location.href = redirectUrl;
+                    return;
+                }
+
+                if (el) {
+                    el.classList.remove("bg-white", "font-medium", "text-gray-900");
+                    el.classList.add("bg-gray-50/80", "text-gray-600");
+                    const badges = document.querySelectorAll('#notif-badge, .notif-badge');
+                    badges.forEach(badge => {
+                        let count = parseInt(badge.textContent);
+                        if (count > 1) {
+                            badge.textContent = count - 1;
+                        } else {
+                            badge.remove();
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("handleNotifClick error:", error);
+                if (redirectUrl && redirectUrl !== '#' && redirectUrl !== '') {
+                    window.location.href = redirectUrl;
+                }
             }
         };
 
@@ -549,8 +593,8 @@
     <header style="background-color: #00509d;" class="text-white border-b border-blue-800 shadow-sm fixed top-0 left-0 w-full z-50 transition-all duration-200">
         <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10 h-20 flex items-center justify-between">
 
-            <!-- Logo & Hamburger (Kiri) -->
-            <div class="flex items-center gap-3 shrink-0">
+            <!-- Logo (Kiri) -->
+            <div class="flex-1 flex items-center gap-3 shrink-0">
                 <!-- Logo -->
                 <a href="{{ route('beranda') }}" class="flex items-center gap-2 sm:gap-2.5">
                     <img src="{{ asset('images/logo_area_kerja_putih.png') }}" alt="Areakerja Logo" class="h-5 sm:h-5 lg:h-6 object-contain">
@@ -558,16 +602,11 @@
                 </a>
             </div>
 
-            <!-- Menu Desktop & Laptop (Tengah) - Tampil di layar >= 768px -->
-            <nav class="hidden md:flex items-center font-semibold text-xs lg:text-[14px] xl:text-[15px] text-white gap-3 lg:gap-5 xl:gap-8 ml-4 lg:ml-7 xl:ml-10 mr-auto">
+            <!-- Menu Desktop & Laptop (Tengah di antara Logo dan Notif/Profile) - Tampil di layar >= 768px -->
+            <nav class="hidden md:flex items-center justify-center font-semibold text-xs lg:text-[14px] xl:text-[15px] text-white gap-4 lg:gap-6 xl:gap-8 shrink-0 px-4">
                 <a href="{{ route('beranda') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ Route::is('beranda') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
-                    Beranda
+                    Lowongan Kerja
                 </a>
-                @if (Auth::user()?->role !== 'pelamar')
-                    <a href="{{ url('/talent-hunter') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->is('talent-hunter*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
-                        Talent Hunter
-                    </a>
-                @endif
                 <a href="{{ route('pelamar.event.index') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('pelamar.event.*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Event
                 </a>
@@ -577,15 +616,16 @@
                 <a href="{{ route('pelamar.daftar-kandidat') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('pelamar.daftar-kandidat*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Daftar Kandidat
                 </a>
-                @if (Auth::user()?->role !== 'pelamar')
-                    <a href="{{ url('/lowongan') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->is('lowongan*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
-                        Pasang Lowongan
-                    </a>
-                @endif
+                <a href="{{ route('faq') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('faq*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
+                    FAQ
+                </a>
+                <a href="{{ route('syarat.ketentuan') }}" class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('syarat.ketentuan*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
+                    Syarat & Ketentuan
+                </a>
             </nav>
 
-            <!-- Aksi (Kanan) -->
-            <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+            <!-- Aksi: Notifikasi & Profile / Masuk (Kanan) -->
+            <div class="flex-1 flex items-center justify-end gap-3 sm:gap-4 shrink-0">
                 <!-- Hamburger Button (HANYA MUNCUL DI HP < 768px di kanan) -->
                 <button @click="openMenu = !openMenu" type="button" class="flex md:hidden p-2 rounded-xl text-white hover:bg-white/10 focus:outline-none" aria-label="Toggle Menu">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
@@ -643,12 +683,6 @@
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Beranda
                         </a>
-                        @if (Auth::user()?->role !== 'pelamar')
-                            <a href="{{ url('/talent-hunter') }}" @click="openMenu = false"
-                                class="block py-2 hover:translate-x-1.5 transition duration-200">
-                                Talent Hunter
-                            </a>
-                        @endif
                         <a href="{{ route('pelamar.event.index') }}" @click="openMenu = false"
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Event
@@ -661,12 +695,14 @@
                             class="block py-2 hover:translate-x-1.5 transition duration-200">
                             Daftar Kandidat
                         </a>
-                        @if (Auth::user()?->role !== 'pelamar')
-                            <a href="{{ url('/lowongan') }}" @click="openMenu = false"
-                                class="block py-2 hover:translate-x-1.5 transition duration-200">
-                                Pasang Lowongan
-                            </a>
-                        @endif
+                        <a href="{{ route('faq') }}" @click="openMenu = false"
+                            class="block py-2 hover:translate-x-1.5 transition duration-200">
+                            FAQ
+                        </a>
+                        <a href="{{ route('syarat.ketentuan') }}" @click="openMenu = false"
+                            class="block py-2 hover:translate-x-1.5 transition duration-200">
+                            Syarat & Ketentuan
+                        </a>
                     </nav>
 
                     <!-- Divider -->
@@ -1035,6 +1071,7 @@
     </style>
 
     @include('layouts.modal-logout')
+    @include('components.modal-share-glints')
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="{{ asset('js/non_user.js') }}"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>

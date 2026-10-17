@@ -31,6 +31,8 @@ class StoreLowonganRequest extends FormRequest
             'deskripsi'        => 'required|string',
             'tanggung_jawab'   => 'nullable|string',
             'syarat_pekerjaan' => 'required|string',
+            'pengalaman'       => 'nullable|string|max:100',
+            'pendidikan'       => 'nullable|string|max:100',
             'batas_lamaran'    => 'nullable|date',
             'paket_id'         => 'nullable',
             'durasi_hari'      => 'nullable|integer|in:30,60,90',

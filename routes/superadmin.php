@@ -8,6 +8,7 @@ use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
 use App\Http\Controllers\LowonganPerusahaanController;
 use App\Http\Controllers\ManajemenLowonganController;
+use App\Http\Controllers\ModerasiReportController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\PengalamanOrgController;
@@ -133,8 +134,8 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
 
     // ADMIN CONTROLLER
     Route::controller(AdminController::class)->group(function () {
-        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('superadmin.get.kota')->middleware('auth');
-        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('superadmin.get.kecamatan')->middleware('auth');
+        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('superadmin.get.kota');
+        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('superadmin.get.kecamatan');
     });
 
     // LOWONGAN CONTROLLER
@@ -237,6 +238,12 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/iklan/{id}/reject', 'rejectSuper')->name('superadmin.iklan.reject');
         Route::post('/iklan/{id}/perpanjang', 'perpanjangSuper')->name('superadmin.iklan.perpanjang');
         Route::delete('/iklan/{id}', 'destroySuper')->name('superadmin.iklan.destroy');
+    });
+
+    Route::controller(ModerasiReportController::class)->group(function () {
+        Route::get('/reports', 'index')->name('superadmin.reports.index');
+        Route::get('/reports/{report}', 'show')->name('superadmin.reports.show');
+        Route::post('/reports/{report}/review', 'review')->name('superadmin.reports.review');
     });
 
     // LAYANAN BANTUAN & KELUHAN (SUPER ADMIN)

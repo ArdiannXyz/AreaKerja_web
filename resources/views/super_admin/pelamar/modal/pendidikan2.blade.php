@@ -1,4 +1,4 @@
-﻿<!-- Main modal -->
+<!-- Main modal -->
 <div id="create_pendidikanmodal2" tabindex="-1" aria-hidden="true"
     class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-md max-h-full">
@@ -33,10 +33,21 @@
 
 
                     <div>
-                        <label class="block text-sm font-medium text-gray-900 mb-1">Pendidikan</label>
-                        <input type="text" name="pendidikan"
-                            class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600"
-                            required>
+                        <label class="block text-sm font-medium text-gray-900 mb-1">Pendidikan <span class="text-red-500">*</span></label>
+                        <select name="pendidikan" required
+                            class="w-full border rounded-lg px-3 py-2 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-blue-600 cursor-pointer">
+                            <option value="" disabled selected>Pilih Jenjang Pendidikan</option>
+                            <option value="SD">SD</option>
+                            <option value="SMP">SMP</option>
+                            <option value="SMA/SMK">SMA / SMK</option>
+                            <option value="D1">D1</option>
+                            <option value="D2">D2</option>
+                            <option value="D3">D3</option>
+                            <option value="D4">D4</option>
+                            <option value="S1">S1</option>
+                            <option value="S2">S2</option>
+                            <option value="S3">S3</option>
+                        </select>
                     </div>
 
                     <div>

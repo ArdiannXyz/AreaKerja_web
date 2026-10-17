@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
+use App\Http\Controllers\ModerasiReportController;
 use App\Http\Controllers\LowonganPerusahaanController;
 use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\TipsKerjaController;
@@ -60,8 +61,8 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         })->name('admin.finance.cash');
 
         // provinsi kota kecamatan
-        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('admin.get.kota')->middleware('auth');
-        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('admin.get.kecamatan')->middleware('auth');
+        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('admin.get.kota');
+        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('admin.get.kecamatan');
 
         // perusahaan admin
         Route::get('/perusahaan', 'halPerusahaan')->name('admin.perusahaan');
@@ -146,6 +147,12 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::get('/header-image', 'headerImageIndexAdmin')->name('admin.header.image');
         Route::put('/header-image/{nama}', 'headerImageUpdate')->name('admin.header.update');
         Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('admin.header.destroy');
+    });
+
+    Route::controller(ModerasiReportController::class)->group(function () {
+        Route::get('/reports', 'index')->name('admin.reports.index');
+        Route::get('/reports/{report}', 'show')->name('admin.reports.show');
+        Route::post('/reports/{report}/review', 'review')->name('admin.reports.review');
     });
 
     // LAYANAN BANTUAN & KELUHAN

@@ -102,9 +102,11 @@
                             <select name="jenis" required
                                 class="border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] w-full @error('jenis') border-red-500 @enderror">
                                 <option value="" disabled {{ old('jenis') ? '' : 'selected' }}>Pilih Jenis Lowongan</option>
-                                <option value="Fulltime" {{ old('jenis') == 'Fulltime' ? 'selected' : '' }}>Full Time</option>
-                                <option value="Middletime" {{ old('jenis') == 'Middletime' ? 'selected' : '' }}>Middle Time</option>
+                                <option value="Full Time" {{ old('jenis') == 'Full Time' || old('jenis') == 'Fulltime' ? 'selected' : '' }}>Full Time</option>
+                                <option value="Magang" {{ old('jenis') == 'Magang' ? 'selected' : '' }}>Magang (Internship)</option>
                                 <option value="Freelance" {{ old('jenis') == 'Freelance' ? 'selected' : '' }}>Freelance</option>
+                                <option value="Kontrak" {{ old('jenis') == 'Kontrak' ? 'selected' : '' }}>Kontrak</option>
+                                <option value="Part Time" {{ old('jenis') == 'Part Time' ? 'selected' : '' }}>Part Time</option>
                             </select>
                             @error('jenis')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
@@ -136,6 +138,39 @@
                                 placeholder="Contoh: BPJS, THR, Bonus"
                                 class="w-full border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] @error('benefit') border-red-500 @enderror" />
                             @error('benefit')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
+
+                    <!-- Tingkat Pengalaman & Minimal Pendidikan -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium">Tingkat Pengalaman</label>
+                            <select name="pengalaman"
+                                class="border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] w-full @error('pengalaman') border-red-500 @enderror">
+                                <option value="">Semua Tingkat Pengalaman / Tanpa Pengalaman</option>
+                                <option value="Fresh Graduate" {{ old('pengalaman') == 'Fresh Graduate' ? 'selected' : '' }}>Fresh Graduate / < 1 Tahun</option>
+                                <option value="1-3 Tahun" {{ old('pengalaman') == '1-3 Tahun' ? 'selected' : '' }}>1 - 3 Tahun</option>
+                                <option value="3-5 Tahun" {{ old('pengalaman') == '3-5 Tahun' ? 'selected' : '' }}>3 - 5 Tahun</option>
+                                <option value="> 5 Tahun" {{ old('pengalaman') == '> 5 Tahun' ? 'selected' : '' }}>> 5 Tahun</option>
+                            </select>
+                            @error('pengalaman')
+                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="text-sm font-medium">Minimal Pendidikan</label>
+                            <select name="pendidikan"
+                                class="border border-gray-300 rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] w-full @error('pendidikan') border-red-500 @enderror">
+                                <option value="">Semua Jenjang Pendidikan</option>
+                                <option value="SMA/SMK" {{ old('pendidikan') == 'SMA/SMK' ? 'selected' : '' }}>SMA / SMK</option>
+                                <option value="D3" {{ old('pendidikan') == 'D3' ? 'selected' : '' }}>D3 (Diploma)</option>
+                                <option value="S1" {{ old('pendidikan') == 'S1' ? 'selected' : '' }}>S1 (Sarjana)</option>
+                                <option value="S2" {{ old('pendidikan') == 'S2' ? 'selected' : '' }}>S2 (Magister)</option>
+                            </select>
+                            @error('pendidikan')
                                 <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                             @enderror
                         </div>

@@ -31,6 +31,13 @@ class PelamarLowonganController extends Controller
             ], 403);
         }
 
+        if ($lowongan->isDisembunyikan()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lowongan ini tidak lagi ditayangkan.',
+            ], 404);
+        }
+
         // ---------------------------------------------------------
         //  **CEK BATAS LAMARAN EXPIRED**
         // ---------------------------------------------------------

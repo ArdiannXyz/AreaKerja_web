@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Models\DaftarBank;
 use App\Models\Notifikasi;
+use App\Models\Report;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -75,6 +77,11 @@ class AppServiceProvider extends ServiceProvider
         // Sidebar Admin
         View::composer('admin.sidebar.index', function ($view) {
             $view->with('provinsis', collect());
+            $view->with('pendingReportsCount', $this->pendingReportsCount());
+        });
+
+        View::composer('super_admin.sidebar.index', function ($view) {
+            $view->with('pendingReportsCount', $this->pendingReportsCount());
         });
 
         // Perusahaan Layout
@@ -82,5 +89,20 @@ class AppServiceProvider extends ServiceProvider
             $user = auth()->user();
             $view->with('perusahaan', $user ? $user->perusahaan : null);
         });
+    }
+
+    /**
+     * Menghitung laporan pending untuk badge sidebar
+     */
+    private function pendingReportsCount(): int
+    {
+        try {
+            if (\Illuminate\Support\Facades\Schema::hasTable('reports')) {
+                return \App\Models\Report::where('status', \App\Models\Report::STATUS_PENDING)->count();
+            }
+        } catch (\Throwable $e) {
+            // Abaikan jika database belum siap
+        }
+        return 0;
     }
 }

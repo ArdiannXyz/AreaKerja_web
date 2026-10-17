@@ -135,7 +135,11 @@
                                 <div>
                                     <div class="flex items-center gap-2 flex-wrap mb-1">
                                         <p class="text-xs font-semibold text-slate-500">{{ Auth::user()->perusahaan->nama_perusahaan }}</p>
-                                        @if ($d->status === 'tutup')
+                                        @if ($d->status === 'disembunyikan')
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200">
+                                                <i class="ph-bold ph-flag text-xs"></i> Ditinjau moderator
+                                            </span>
+                                        @elseif ($d->status === 'tutup')
                                             <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 bg-rose-50 text-rose-700 text-xs font-bold rounded-full border border-rose-200">
                                                 <i class="ph-bold ph-lock-key text-xs"></i> Pendaftaran Ditutup (Kuota Terpenuhi)
                                             </span>
@@ -154,6 +158,7 @@
 
                             <!-- Tombol Aksi (Tutup/Buka, Edit, Hapus) -->
                             <div class="flex items-center gap-2 shrink-0 flex-wrap">
+                                @if ($d->status !== 'disembunyikan')
                                 <form action="{{ route('lowongan.toggleStatus', $d->id) }}" method="POST" class="inline">
                                     @csrf
                                     @method('PUT')
@@ -167,6 +172,7 @@
                                         </button>
                                     @endif
                                 </form>
+                                @endif
 
                                 <a href="{{ route('lowongan.edit.form', ['perusahaan' => Auth::user()->perusahaan->slug, 'lowongan' => $d->slug]) }}" class="h-8.5 px-3 bg-white hover:bg-amber-50 border border-amber-300 text-amber-700 text-xs font-semibold rounded-lg shadow-2xs transition flex items-center gap-1">
                                     <i class="ph ph-pencil-simple text-sm text-amber-600"></i> Edit

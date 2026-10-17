@@ -16,6 +16,7 @@ class JobApiController extends Controller
     public function index(Request $request)
     {
         $query = LowonganPerusahaan::with(['perusahaan'])
+            ->publik()
             ->whereNotNull('published_at')
             ->where('expired_at', '>', now());
 
@@ -35,7 +36,30 @@ class JobApiController extends Controller
 
         // Filter job type (Full-time, Part-time, etc.)
         if ($request->filled('jenis')) {
-            $query->where('jenis', $request->jenis);
+            $clean = strtolower($request->jenis);
+            if ($clean === 'kontrak') {
+                $query->where(function ($sub) {
+                    $sub->where('jenis', 'like', '%kontrak%')
+                        ->orWhere('jenis', 'like', '%contract%');
+                });
+            } elseif ($clean === 'magang') {
+                $query->where(function ($sub) {
+                    $sub->where('jenis', 'like', '%magang%')
+                        ->orWhere('jenis', 'like', '%intern%');
+                });
+            } else {
+                $query->where('jenis', 'like', "%{$request->jenis}%");
+            }
+        }
+
+        // Filter pengalaman
+        if ($request->filled('pengalaman')) {
+            $query->where('pengalaman', 'like', "%{$request->pengalaman}%");
+        }
+
+        // Filter pendidikan
+        if ($request->filled('pendidikan')) {
+            $query->where('pendidikan', 'like', "%{$request->pendidikan}%");
         }
 
         // Filter location
@@ -67,8 +91,10 @@ class JobApiController extends Controller
     public function show($id)
     {
         $job = LowonganPerusahaan::with(['perusahaan'])
-            ->where('id', $id)
-            ->orWhere('slug', $id)
+            ->publik()
+            ->where(function ($q) use ($id) {
+                $q->where('id', $id)->orWhere('slug', $id);
+            })
             ->firstOrFail();
 
         return response()->json([
@@ -92,7 +118,7 @@ class JobApiController extends Controller
         }
 
         $pelamar = $user->pelamar;
-        $job = LowonganPerusahaan::findOrFail($id);
+        $job = LowonganPerusahaan::publik()->findOrFail($id);
 
         // Check if already applied (status other than 'saved')
         $existing = PelamarLowongan::where('pelamar_id', $pelamar->id)
@@ -165,7 +191,7 @@ class JobApiController extends Controller
         }
 
         $pelamar = $user->pelamar;
-        $job = LowonganPerusahaan::findOrFail($id);
+        $job = LowonganPerusahaan::publik()->findOrFail($id);
 
         $savedRecord = PelamarLowongan::where('pelamar_id', $pelamar->id)
             ->where('lowongan_id', $job->id)
@@ -283,7 +309,7 @@ class JobApiController extends Controller
     public function companyDetail($id)
     {
         $company = Perusahaan::withCount(['pasanglowongan' => function ($q) {
-            $q->whereNotNull('published_at')->where('expired_at', '>', now());
+            $q->publik()->whereNotNull('published_at')->where('expired_at', '>', now());
         }])
         ->where('id', $id)
         ->orWhere('slug', $id)
@@ -303,6 +329,7 @@ class JobApiController extends Controller
         $company = Perusahaan::where('id', $id)->orWhere('slug', $id)->firstOrFail();
 
         $jobs = $company->pasanglowongan()
+            ->publik()
             ->whereNotNull('published_at')
             ->where('expired_at', '>', now())
             ->latest()

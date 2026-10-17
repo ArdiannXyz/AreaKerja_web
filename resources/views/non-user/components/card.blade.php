@@ -49,74 +49,76 @@
                     @endif
                 </div>
 
-                {{-- Bookmark Button --}}
-                @auth
-                    @php
-                        $sudahSimpan = Auth::user()->pelamar
-                            ? Auth::user()->pelamar->simpanLowongans()->where('lowongan_id', $d->id)->exists()
-                            : false;
-                    @endphp
+                {{-- Bookmark Icon --}}
+                <div class="flex items-center shrink-0" @click.stop>
+                    @auth
+                        @php
+                            $sudahSimpan = Auth::user()->pelamar
+                                ? Auth::user()->pelamar->simpanLowongans()->where('lowongan_id', $d->id)->exists()
+                                : false;
+                        @endphp
 
-                    <div x-data="{ saved: {{ $sudahSimpan ? 'true' : 'false' }}, loading: false }" @click.stop class="shrink-0">
-                        <button type="button"
-                            @click.prevent.stop="
-                                if (loading) return;
-                                loading = true;
-                                let targetUrl = saved ? '/pelamar/simpan-lowongan/{{ $d->id }}' : '{{ route('simpan-lowongan.store') }}';
-                                let reqMethod = saved ? 'DELETE' : 'POST';
+                        <div x-data="{ saved: {{ $sudahSimpan ? 'true' : 'false' }}, loading: false }">
+                            <button type="button"
+                                @click.prevent.stop="
+                                    if (loading) return;
+                                    loading = true;
+                                    let targetUrl = saved ? '/pelamar/simpan-lowongan/{{ $d->id }}' : '{{ route('simpan-lowongan.store') }}';
+                                    let reqMethod = saved ? 'DELETE' : 'POST';
+                                    
+                                    fetch(targetUrl, {
+                                        method: reqMethod,
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: reqMethod === 'POST' ? JSON.stringify({ lowongan_id: {{ $d->id }} }) : null
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        loading = false;
+                                        if (data.success) {
+                                            saved = !saved;
+                                            Swal.fire({
+                                                toast: true,
+                                                position: 'top-end',
+                                                icon: 'success',
+                                                title: saved ? 'Lowongan disimpan' : 'Dihapus dari simpanan',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                toast: true,
+                                                position: 'top-end',
+                                                icon: 'error',
+                                                title: data.message || 'Gagal menyimpan',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                        }
+                                    })
+                                    .catch(err => {
+                                        loading = false;
+                                        console.error(err);
+                                    });
+                                "
+                                class="transition p-1 text-slate-400 hover:text-[#00509d] cursor-pointer"
+                                :title="saved ? 'Hapus dari Simpan' : 'Simpan Lowongan'">
                                 
-                                fetch(targetUrl, {
-                                    method: reqMethod,
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                                    },
-                                    body: reqMethod === 'POST' ? JSON.stringify({ lowongan_id: {{ $d->id }} }) : null
-                                })
-                                .then(res => res.json())
-                                .then(data => {
-                                    loading = false;
-                                    if (data.success) {
-                                        saved = !saved;
-                                        Swal.fire({
-                                            toast: true,
-                                            position: 'top-end',
-                                            icon: 'success',
-                                            title: saved ? 'Lowongan disimpan' : 'Dihapus dari simpanan',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            toast: true,
-                                            position: 'top-end',
-                                            icon: 'error',
-                                            title: data.message || 'Gagal menyimpan',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                    }
-                                })
-                                .catch(err => {
-                                    loading = false;
-                                    console.error(err);
-                                });
-                            "
-                            class="transition p-1 text-slate-400 hover:text-[#00509d] cursor-pointer"
-                            :title="saved ? 'Hapus dari Simpan' : 'Simpan Lowongan'">
-                            
-                            <i x-show="!saved" class="ph ph-bookmark-simple text-2xl text-slate-400 hover:text-[#00509d] transition"></i>
-                            <i x-show="saved" class="ph-fill ph-bookmark-simple text-2xl text-[#00509d] transition"></i>
-                        </button>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}" @click.stop
-                        class="p-1 text-slate-400 hover:text-[#00509d] transition shrink-0"
-                        title="Simpan Lowongan">
-                        <i class="ph ph-bookmark-simple text-2xl"></i>
-                    </a>
-                @endauth
+                                <i x-show="!saved" class="ph ph-bookmark-simple text-2xl text-slate-400 hover:text-[#00509d] transition"></i>
+                                <i x-show="saved" class="ph-fill ph-bookmark-simple text-2xl text-[#00509d] transition"></i>
+                            </button>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" @click.stop
+                            class="p-1 text-slate-400 hover:text-[#00509d] transition shrink-0"
+                            title="Simpan Lowongan">
+                            <i class="ph ph-bookmark-simple text-2xl"></i>
+                        </a>
+                    @endauth
+                </div>
             </div>
 
             {{-- Job Title --}}
@@ -146,11 +148,32 @@
             </div>
 
             {{-- Rentang Gaji (Solid Navy Blue Background Bar) --}}
-            <div class="my-2.5">
+            <div class="my-2.5 flex flex-wrap items-center gap-2">
                 <span class="inline-block bg-[#004e98] text-white font-bold px-3 py-1.5 rounded-sm text-xs shadow-sm">
                     Rp. {{ number_format($d->gaji_awal, 0, ',', '.') }} per bulan
                 </span>
             </div>
+
+            {{-- Badges Kualifikasi (Jenis, Pengalaman, Pendidikan) --}}
+            @if(!empty($d->jenis) || !empty($d->pengalaman) || !empty($d->pendidikan))
+                <div class="flex flex-wrap items-center gap-1.5 mb-2.5">
+                    @if (!empty($d->jenis))
+                        <span class="inline-flex items-center gap-1 bg-blue-50 text-[#00509d] border border-blue-100 text-[11px] font-semibold px-2 py-0.5 rounded">
+                            <i class="ph ph-briefcase"></i> {{ $d->jenis }}
+                        </span>
+                    @endif
+                    @if (!empty($d->pengalaman))
+                        <span class="inline-flex items-center gap-1 bg-slate-100 text-slate-700 text-[11px] font-medium px-2 py-0.5 rounded">
+                            <i class="ph ph-clock"></i> {{ $d->pengalaman }}
+                        </span>
+                    @endif
+                    @if (!empty($d->pendidikan))
+                        <span class="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 text-[11px] font-medium px-2 py-0.5 rounded">
+                            <i class="ph ph-graduation-cap"></i> Min. {{ $d->pendidikan }}
+                        </span>
+                    @endif
+                </div>
+            @endif
 
             {{-- Indicator Lamar Cepat --}}
             <div class="flex items-center gap-2 text-xs font-bold text-[#004e98] my-2.5">

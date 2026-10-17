@@ -165,11 +165,15 @@ class WilayahService
             return null;
         }
 
+        $input = trim((string)$query);
+        $districts = self::getDistricts();
+
         return $districts->first(function ($d) use ($input) {
             return $d->id === $input
                 || (is_numeric($input) && (int)$d->id === (int)$input)
                 || strcasecmp($d->nama, $input) === 0
-                || strcasecmp($d->name, $input) === 0;
+                || strcasecmp($d->name, $input) === 0
+                || ($d->alt_name && strcasecmp($d->alt_name, $input) === 0);
         });
     }
 

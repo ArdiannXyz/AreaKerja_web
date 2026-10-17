@@ -609,7 +609,7 @@
                             icon: 'warning',
                             title: 'Perhatian',
                             text: 'Email wajib diisi.',
-                            confirmButtonColor: '#ff7a00'
+                            confirmButtonColor: '#00509d'
                         });
                     }
                     return;
@@ -644,14 +644,13 @@
 
                     var icon = res.data.status || (res.ok ? 'success' : 'error');
                     var title = icon === 'success' ? 'Berhasil!' : (icon === 'info' ? 'Informasi' : 'Perhatian');
-                    var color = icon === 'success' ? '#ff7a00' : (icon === 'info' ? '#0054a6' : '#dc2626');
 
                     if (typeof Swal !== 'undefined') {
                         Swal.fire({
                             icon: icon,
                             title: title,
                             text: res.data.message || 'Permintaan diproses.',
-                            confirmButtonColor: color
+                            confirmButtonColor: '#00509d'
                         });
                     } else {
                         alert(res.data.message);
@@ -671,7 +670,7 @@
                             icon: 'error',
                             title: 'Terjadi Kesalahan',
                             text: 'Gagal menghubungi server. Silakan coba lagi.',
-                            confirmButtonColor: '#dc2626'
+                            confirmButtonColor: '#00509d'
                         });
                     }
                 });
@@ -685,7 +684,7 @@
                     icon: 'success',
                     title: 'Berhasil!',
                     text: "{{ session('success') }}",
-                    confirmButtonColor: '#ff7a00'
+                    confirmButtonColor: '#00509d'
                 });
             }
         @elseif (session('info'))
@@ -694,7 +693,7 @@
                     icon: 'info',
                     title: 'Informasi',
                     text: "{{ session('info') }}",
-                    confirmButtonColor: '#0054a6'
+                    confirmButtonColor: '#00509d'
                 });
             }
         @elseif (session('error'))
@@ -703,7 +702,7 @@
                     icon: 'error',
                     title: 'Gagal',
                     text: "{{ session('error') }}",
-                    confirmButtonColor: '#dc2626'
+                    confirmButtonColor: '#00509d'
                 });
             }
         @elseif ($errors->has('email'))
@@ -712,7 +711,7 @@
                     icon: 'warning',
                     title: 'Perhatian',
                     text: "{{ $errors->first('email') }}",
-                    confirmButtonColor: '#ff7a00'
+                    confirmButtonColor: '#00509d'
                 });
             }
         @endif

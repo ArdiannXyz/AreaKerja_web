@@ -17,39 +17,130 @@
                     </p>
                 </div>
 
-                {{-- Search Bar Container --}}
+                {{-- Search Bar Container dengan Filter Terintegrasi --}}
                 <div class="w-full flex justify-center mb-4">
-                    <div class="w-full max-w-4xl">
+                    <div class="w-full max-w-5xl">
                         <form action="{{ route('lowongan.search') }}" method="GET">
-                            <div class="bg-white p-1.5 md:p-2 rounded-2xl shadow-xl flex flex-col md:flex-row items-center gap-1.5 md:gap-2">
+                            <div class="bg-white rounded-2xl shadow-2xl p-3 md:p-3.5 border border-white/30 text-left">
+                                
+                                {{-- Baris Utama Pencarian: Posisi & Button Cari --}}
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                                    
+                                    {{-- Posisi / Kata Kunci --}}
+                                    <div class="flex-1 flex items-center gap-2.5 px-3.5 py-2.5 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/10 focus-within:bg-white">
+                                        <i class="ph ph-magnifying-glass text-lg text-slate-400"></i>
+                                        <input type="text" name="posisi" value="{{ request('posisi', $posisi ?? '') }}"
+                                            placeholder="Posisi lowongan, keahlian, atau kata kunci..."
+                                            class="w-full border-none focus:ring-0 text-xs sm:text-sm text-slate-800 placeholder-slate-400 bg-transparent font-medium p-0 focus:outline-none">
+                                    </div>
 
-                                {{-- Posisi / Kata Kunci --}}
-                                <div class="flex items-center gap-2.5 px-3 py-1.5 w-full md:w-1/2">
-                                    <i class="ph ph-magnifying-glass text-lg text-slate-400"></i>
-                                    <input type="text" name="posisi" value="{{ request('posisi') }}"
-                                        placeholder="Posisi lowongan, kata kunci, ..."
-                                        class="w-full border-none focus:ring-0 text-xs md:text-sm text-slate-800 placeholder-slate-400 bg-transparent font-medium p-0">
+                                    <input type="hidden" name="kategori" id="kategoriInput" value="{{ request('kategori', $kategori ?? '') }}">
+                                    @if(request('lokasi'))
+                                        <input type="hidden" name="lokasi" value="{{ request('lokasi') }}">
+                                    @endif
+
+                                    {{-- Button Search --}}
+                                    <button type="submit"
+                                        class="w-full sm:w-auto bg-[#00509d] hover:bg-[#003d7a] text-white font-bold text-xs sm:text-sm px-7 py-2.5 sm:py-3 rounded-xl shadow-md hover:shadow-lg transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer">
+                                        <i class="ph ph-magnifying-glass font-bold text-base"></i>
+                                        <span>Cari Lowongan</span>
+                                    </button>
+
                                 </div>
 
-                                {{-- Separator --}}
-                                <div class="hidden md:block h-6 w-px bg-slate-200"></div>
+                                {{-- Baris Filter Sejajar: Provinsi, Kota, Jenis, Pengalaman, Pendidikan --}}
+                                <div class="mt-2.5 pt-2.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2 text-xs">
+                                    <div class="flex flex-wrap items-center gap-2 sm:gap-2.5">
+                                        <span class="inline-flex items-center gap-1 font-bold text-slate-500 uppercase tracking-wider text-[11px] mr-1">
+                                            <i class="ph ph-sliders-horizontal text-slate-400 text-sm"></i> Filter:
+                                        </span>
 
-                                {{-- Lokasi --}}
-                                <div class="flex items-center gap-2.5 px-3 py-1.5 w-full md:w-1/2">
-                                    <i class="ph ph-map-pin text-lg text-slate-400"></i>
-                                    <input type="text" name="lokasi" value="{{ request('lokasi') }}"
-                                        placeholder="Kota, provinsi, kode pos, eta..."
-                                        class="w-full border-none focus:ring-0 text-xs md:text-sm text-slate-800 placeholder-slate-400 bg-transparent font-medium p-0">
+                                        {{-- Filter Provinsi (API Wilayah) --}}
+                                        <div class="relative flex items-center bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition focus-within:border-[#00509d]">
+                                            <i class="ph ph-map-pin text-sm text-slate-400 ml-2.5 pointer-events-none shrink-0"></i>
+                                            <select name="provinsi" id="filterProvinsi"
+                                                style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important;"
+                                                class="border-0 border-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-slate-700 font-semibold pl-1.5 pr-7 py-1.5 cursor-pointer text-xs max-w-[150px] truncate">
+                                                <option value="">Semua Provinsi</option>
+                                                @if(isset($provinsis))
+                                                    @foreach ($provinsis as $p)
+                                                        <option value="{{ $p->id }}" data-nama="{{ $p->nama }}"
+                                                            {{ (string)request('provinsi', $provinsi ?? '') === (string)$p->id || strcasecmp(request('provinsi', $provinsi ?? ''), $p->nama) === 0 ? 'selected' : '' }}>
+                                                            {{ $p->nama }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
+                                            </select>
+                                            <i class="ph ph-caret-down absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
+                                        </div>
+
+                                        {{-- Filter Kota (API Wilayah Dinamis) --}}
+                                        <div class="relative flex items-center bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition focus-within:border-[#00509d]">
+                                            <i class="ph ph-buildings text-sm text-slate-400 ml-2.5 pointer-events-none shrink-0"></i>
+                                            <select name="kota" id="filterKota"
+                                                style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important;"
+                                                class="border-0 border-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-slate-700 font-semibold pl-1.5 pr-7 py-1.5 cursor-pointer text-xs max-w-[150px] truncate">
+                                                <option value="">Semua Kota</option>
+                                                @if (!empty(request('kota', $kota ?? '')))
+                                                    <option value="{{ request('kota', $kota ?? '') }}" selected>
+                                                        {{ request('kota', $kota ?? '') }}
+                                                    </option>
+                                                @endif
+                                            </select>
+                                            <i class="ph ph-caret-down absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
+                                        </div>
+
+                                        {{-- Filter Jenis Lowongan --}}
+                                        <div class="relative flex items-center bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition focus-within:border-[#00509d]">
+                                            <select name="jenis"
+                                                style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important;"
+                                                class="border-0 border-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-slate-700 font-semibold pl-2.5 pr-7 py-1.5 cursor-pointer text-xs">
+                                                <option value="" {{ empty(request('jenis', $jenis ?? '')) ? 'selected' : '' }}>💼 Semua Jenis</option>
+                                                <option value="Magang" {{ request('jenis', $jenis ?? '') == 'Magang' ? 'selected' : '' }}>🎓 Magang</option>
+                                                <option value="Freelance" {{ request('jenis', $jenis ?? '') == 'Freelance' ? 'selected' : '' }}>💻 Freelance</option>
+                                                <option value="Kontrak" {{ in_array(request('jenis', $jenis ?? ''), ['Kontrak', 'Contract']) ? 'selected' : '' }}>📄 Kontrak</option>
+                                                <option value="Full Time" {{ in_array(request('jenis', $jenis ?? ''), ['Full Time', 'Fulltime']) ? 'selected' : '' }}>🏢 Full Time</option>
+                                            </select>
+                                            <i class="ph ph-caret-down absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
+                                        </div>
+
+                                        {{-- Filter Pengalaman --}}
+                                        <div class="relative flex items-center bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition focus-within:border-[#00509d]">
+                                            <select name="pengalaman"
+                                                style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important;"
+                                                class="border-0 border-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-slate-700 font-semibold pl-2.5 pr-7 py-1.5 cursor-pointer text-xs">
+                                                <option value="" {{ empty(request('pengalaman', $pengalaman ?? '')) ? 'selected' : '' }}>⏱️ Pengalaman</option>
+                                                <option value="Fresh Graduate" {{ request('pengalaman', $pengalaman ?? '') == 'Fresh Graduate' ? 'selected' : '' }}>Fresh Graduate / < 1 Thn</option>
+                                                <option value="1-3 Tahun" {{ request('pengalaman', $pengalaman ?? '') == '1-3 Tahun' ? 'selected' : '' }}>1 - 3 Tahun</option>
+                                                <option value="3-5 Tahun" {{ request('pengalaman', $pengalaman ?? '') == '3-5 Tahun' ? 'selected' : '' }}>3 - 5 Tahun</option>
+                                                <option value="> 5 Tahun" {{ request('pengalaman', $pengalaman ?? '') == '> 5 Tahun' ? 'selected' : '' }}>&gt; 5 Tahun</option>
+                                            </select>
+                                            <i class="ph ph-caret-down absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
+                                        </div>
+
+                                        {{-- Filter Pendidikan --}}
+                                        <div class="relative flex items-center bg-slate-50 hover:bg-slate-100 rounded-lg border border-slate-200 transition focus-within:border-[#00509d]">
+                                            <select name="pendidikan"
+                                                style="-webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important;"
+                                                class="border-0 border-none ring-0 focus:ring-0 focus:outline-none bg-transparent text-slate-700 font-semibold pl-2.5 pr-7 py-1.5 cursor-pointer text-xs">
+                                                <option value="" {{ empty(request('pendidikan', $pendidikan ?? '')) ? 'selected' : '' }}>🎓 Pendidikan</option>
+                                                <option value="SMA/SMK" {{ request('pendidikan', $pendidikan ?? '') == 'SMA/SMK' ? 'selected' : '' }}>SMA / SMK</option>
+                                                <option value="D3" {{ request('pendidikan', $pendidikan ?? '') == 'D3' ? 'selected' : '' }}>D3 (Diploma)</option>
+                                                <option value="S1" {{ request('pendidikan', $pendidikan ?? '') == 'S1' ? 'selected' : '' }}>S1 (Sarjana)</option>
+                                                <option value="S2" {{ request('pendidikan', $pendidikan ?? '') == 'S2' ? 'selected' : '' }}>S2 (Magister)</option>
+                                            </select>
+                                            <i class="ph ph-caret-down absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-[10px]"></i>
+                                        </div>
+                                    </div>
+
+                                    {{-- Reset Filter Button --}}
+                                    @if(request('jenis') || request('pengalaman') || request('pendidikan') || request('provinsi') || request('kota') || request('posisi') || request('lokasi') || request('kategori'))
+                                        <a href="{{ route('lowongan.search') }}"
+                                            class="inline-flex items-center gap-1 text-rose-600 hover:text-rose-700 hover:bg-rose-50 font-semibold px-2.5 py-1.5 rounded-lg transition border border-rose-200 text-xs">
+                                            <i class="ph ph-arrow-counter-clockwise"></i> Reset Filter
+                                        </a>
+                                    @endif
                                 </div>
-
-                                <input type="hidden" name="kategori" id="kategoriInput">
-                                <input type="hidden" name="jenis" id="jenisInput">
-
-                                {{-- Button Search --}}
-                                <button type="submit"
-                                    class="w-full md:w-auto bg-[#004e98] hover:bg-[#003d7a] text-white font-bold text-xs md:text-sm px-6 py-2.5 md:py-3 rounded-xl shadow-sm transition-all duration-200 whitespace-nowrap flex items-center justify-center gap-2 cursor-pointer">
-                                    <span>Cari Lowongan Kerja</span>
-                                </button>
 
                             </div>
                         </form>
@@ -197,6 +288,59 @@
 
         <!-- Tabs Section -->
         <div x-data="{ tab: 'umpan' }" class="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-16">
+
+            {{-- Active Filter Bar --}}
+            @if (!empty($adaPencarian) || request('jenis') || request('pengalaman') || request('pendidikan') || request('provinsi') || request('kota'))
+                <div class="mb-6 p-3.5 bg-blue-50/80 border border-blue-200/80 rounded-2xl flex flex-wrap items-center justify-between gap-3 shadow-2xs">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+                            <i class="ph ph-funnel text-[#00509d] text-sm"></i> Filter aktif:
+                        </span>
+                        @if(request('posisi', $posisi ?? null))
+                            <span class="inline-flex items-center gap-1 bg-white text-[#00509d] border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-2xs">
+                                Posisi: "{{ request('posisi', $posisi) }}"
+                            </span>
+                        @endif
+                        @if(request('lokasi', $lokasi ?? null))
+                            <span class="inline-flex items-center gap-1 bg-white text-[#00509d] border border-blue-200 text-xs font-semibold px-2.5 py-1 rounded-lg shadow-2xs">
+                                Lokasi: "{{ request('lokasi', $lokasi) }}"
+                            </span>
+                        @endif
+                        @if(request('provinsi', $provinsi ?? null))
+                            @php
+                                $provVal = request('provinsi', $provinsi);
+                                $provLabel = is_numeric($provVal) ? (\App\Services\WilayahService::findProvince($provVal)?->nama ?? $provVal) : $provVal;
+                            @endphp
+                            <span class="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-2xs">
+                                📍 Provinsi: {{ $provLabel }}
+                            </span>
+                        @endif
+                        @if(request('kota', $kota ?? null))
+                            <span class="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-2xs">
+                                🏙️ Kota: {{ request('kota', $kota) }}
+                            </span>
+                        @endif
+                        @if(request('jenis', $jenis ?? null))
+                            <span class="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-2xs">
+                                Jenis: {{ request('jenis', $jenis) }}
+                            </span>
+                        @endif
+                        @if(request('pengalaman', $pengalaman ?? null))
+                            <span class="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-2xs">
+                                Pengalaman: {{ request('pengalaman', $pengalaman) }}
+                            </span>
+                        @endif
+                        @if(request('pendidikan', $pendidikan ?? null))
+                            <span class="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-lg shadow-2xs">
+                                Pendidikan: {{ request('pendidikan', $pendidikan) }}
+                            </span>
+                        @endif
+                    </div>
+                    <a href="{{ route('lowongan.search') }}" class="text-xs font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1">
+                        <i class="ph ph-x-circle text-base"></i> Reset Semua Filter
+                    </a>
+                </div>
+            @endif
 
             {{-- Tab Headers --}}
             <div class="border-b border-slate-200 mb-8">
@@ -368,6 +512,34 @@
             input.value = value;
         }
 
+        async function loadKotas(provinsiId, selectedKota = '') {
+            const kotaSelect = document.getElementById('filterKota');
+            if (!kotaSelect) return;
+
+            if (!provinsiId) {
+                kotaSelect.innerHTML = '<option value="">Semua Kota</option>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`/get-kota/${encodeURIComponent(provinsiId)}`);
+                if (!res.ok) return;
+                const data = await res.json();
+
+                let html = '<option value="">Semua Kota</option>';
+                data.forEach(item => {
+                    const isSelected = selectedKota && (
+                        selectedKota.toLowerCase() === item.nama.toLowerCase() ||
+                        selectedKota.toLowerCase() === item.id.toLowerCase()
+                    );
+                    html += `<option value="${item.nama}" ${isSelected ? 'selected' : ''}>${item.nama}</option>`;
+                });
+                kotaSelect.innerHTML = html;
+            } catch (err) {
+                console.error('Gagal memuat daftar kota:', err);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             const kategori = "{{ request('kategori') }}";
             const jenis = "{{ request('jenis') }}";
@@ -378,6 +550,24 @@
 
             if (jenis) {
                 document.querySelector(`[data-jenis="${jenis}"]`)?.click();
+            }
+
+            const filterProvinsi = document.getElementById('filterProvinsi');
+            const filterKota = document.getElementById('filterKota');
+            const selectedKota = "{{ request('kota', $kota ?? '') }}";
+
+            if (filterProvinsi) {
+                if (filterProvinsi.value) {
+                    loadKotas(filterProvinsi.value, selectedKota);
+                }
+
+                filterProvinsi.addEventListener('change', function() {
+                    if (filterKota) {
+                        filterKota.value = '';
+                        filterKota.innerHTML = '<option value="">Memuat kota...</option>';
+                    }
+                    loadKotas(this.value, '');
+                });
             }
         });
     </script>

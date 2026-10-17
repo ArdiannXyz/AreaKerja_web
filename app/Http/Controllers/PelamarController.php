@@ -10,8 +10,10 @@ use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
 use App\Models\Perusahaan;
+use App\Models\Report;
 use App\Models\RiwayatPendidikan;
 use App\Models\TipsKerja;
+use App\Services\WilayahService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -50,6 +52,13 @@ class PelamarController extends Controller
             abort(404);
         }
 
+        $viewer = auth()->user();
+        $isOwner = $viewer && $lowongan->perusahaan && $viewer->id === $lowongan->perusahaan->user_id;
+        $isModerator = $viewer && in_array($viewer->role, ['admin', 'super_admin'], true);
+        if ($lowongan->isDisembunyikan() && ! $isOwner && ! $isModerator) {
+            abort(404);
+        }
+
         $pelamar = auth()->user()?->pelamar;
 
         $pelamarLowongan = null;
@@ -78,6 +87,7 @@ class PelamarController extends Controller
         }
 
         $Data = LowonganPerusahaan::with('perusahaan')
+            ->publik()
             ->whereNotNull('published_at')
             ->where(function ($q) {
                 $q->whereNull('expired_at')
@@ -87,6 +97,7 @@ class PelamarController extends Controller
             ->get();
 
         $lowonganLain = LowonganPerusahaan::where('id', '!=', $lowongan->id)
+            ->publik()
             ->whereNotNull('published_at')
             ->where(function ($q) {
                 $q->whereNull('expired_at')
@@ -96,14 +107,22 @@ class PelamarController extends Controller
             ->take(3)
             ->get();
 
+        $hasPendingReport = $viewer && $viewer->role === 'pelamar'
+            ? Report::where('reporter_user_id', $viewer->id)
+                ->where('lowongan_id', $lowongan->id)
+                ->pending()
+                ->exists()
+            : false;
+
         return view('non-user.lowongan-detail', [
-            'data'          => $lowongan,
-            'Data'          => $Data,
-            'isSaved'       => $isSaved,
-            'lowonganLain'  => $lowonganLain,
-            'tawaran'       => $tawaran,
-            'isExpired'     => $isExpired,
-            'statusLamaran' => $statusLamaran,
+            'data'             => $lowongan,
+            'Data'             => $Data,
+            'isSaved'          => $isSaved,
+            'lowonganLain'     => $lowonganLain,
+            'tawaran'          => $tawaran,
+            'isExpired'        => $isExpired,
+            'statusLamaran'    => $statusLamaran,
+            'hasPendingReport' => $hasPendingReport,
         ]);
     }
 
@@ -164,6 +183,7 @@ class PelamarController extends Controller
 
         $Data = LowonganPerusahaan::with('perusahaan')
             ->whereHas('perusahaan')
+            ->publik()
             ->whereNotNull('published_at')
             ->where('status', '!=', 'tutup')
             ->where(function ($q) {
@@ -235,11 +255,21 @@ class PelamarController extends Controller
         }
 
         return view('non-user.home', [
-            "Data" => $Data,
+            "Data"         => $Data,
             "KategoriList" => $KategoriList,
-            "kategori" => $kategori,
-            "jenisList" => $jenisList,
-            "activeAds" => $activeAds,
+            "kategori"     => $kategori,
+            "jenisList"    => $jenisList,
+            "activeAds"    => $activeAds,
+            "posisi"       => null,
+            "lokasi"       => null,
+            "provinsi"     => null,
+            "kota"         => null,
+            "provinsis"    => WilayahService::getProvinces(),
+            "jenis"        => null,
+            "pengalaman"   => null,
+            "pendidikan"   => null,
+            "adaPencarian" => false,
+            "riwayat"      => session()->get('riwayat_full', []),
         ]);
     }
 
@@ -942,12 +972,18 @@ class PelamarController extends Controller
             session()->put('last_non_search_url', $previous);
         }
 
-        $posisi = $request->posisi;
-        $lokasi = $request->lokasi;
-        $kategori = $request->kategori;
-        $jenis    = $request->jenis;
+        $posisi     = $request->posisi;
+        $lokasi     = $request->lokasi;
+        $provinsi   = $request->provinsi;
+        $kota       = $request->kota;
+        $kategori   = $request->kategori;
+        $jenis      = $request->jenis;
+        $pengalaman = $request->pengalaman;
+        $pendidikan = $request->pendidikan;
 
-        $adaPencarian = $posisi || $lokasi || $kategori || $jenis;
+        $provinsis = WilayahService::getProvinces();
+
+        $adaPencarian = $posisi || $lokasi || $provinsi || $kota || $kategori || $jenis || $pengalaman || $pendidikan;
 
         $jenisList = LowonganPerusahaan::query()
             ->whereNotNull('jenis')
@@ -964,22 +1000,23 @@ class PelamarController extends Controller
         if ($KategoriList->isEmpty()) {
             $KategoriList = collect(['IT & Software', 'Marketing', 'Finance', 'Desain & Kreatif', 'Operasional', 'Sales']);
         }
-        // $kategori = session()->get('kategori_filter'); // jaga konsistensi filter kategori
 
-        // Jika posisi & lokasi kosong → tampilkan normal saja
+        // Jika tidak ada parameter pencarian atau filter -> tampilkan default terurut
         if (!$adaPencarian) {
 
             $lowongan = LowonganPerusahaan::with(['perusahaan'])
+                ->publik()
                 ->whereNotNull('published_at')
+                ->where('status', '!=', 'tutup')
                 ->where(function ($q) {
                     $q->whereNull('expired_at')
                         ->orWhere('expired_at', '>', now());
                 })
                 ->orderByRaw("
                     CASE
-                        WHEN boosted_until IS NOT NULL AND rekomendasi IS NOT NULL THEN 0
-                        WHEN boosted_until IS NOT NULL AND rekomendasi IS NULL THEN 1
-                        WHEN boosted_until IS NULL AND rekomendasi IS NOT NULL THEN 2
+                        WHEN boosted_until IS NOT NULL AND boosted_until > NOW() AND rekomendasi IS NOT NULL THEN 0
+                        WHEN boosted_until IS NOT NULL AND boosted_until > NOW() THEN 1
+                        WHEN rekomendasi IS NOT NULL THEN 2
                         ELSE 3
                     END
                 ")
@@ -991,8 +1028,13 @@ class PelamarController extends Controller
                 'lowongan'     => $lowongan,
                 'posisi'       => null,
                 'lokasi'       => null,
+                'provinsi'     => null,
+                'kota'         => null,
+                'provinsis'    => $provinsis,
                 'kategori'     => null,
                 'jenis'        => null,
+                'pengalaman'   => null,
+                'pendidikan'   => null,
                 'riwayat'      => session()->get('riwayat_full', []),
                 'KategoriList' => $KategoriList,
                 'jenisList'    => $jenisList,
@@ -1000,14 +1042,58 @@ class PelamarController extends Controller
             ]);
         }
 
-        // Cari lowongan
+        // Query cari lowongan dengan filter
         $lowongan = LowonganPerusahaan::query()
             ->with(['perusahaan'])
+            ->publik()
+            ->where('status', '!=', 'tutup')
             ->when($kategori, function ($q) use ($kategori) {
                 $q->where('kategori', $kategori);
             })
             ->when($jenis, function ($q) use ($jenis) {
-                $q->where('jenis', $jenis);
+                $clean = strtolower($jenis);
+                if ($clean === 'kontrak') {
+                    $q->where(function ($sub) {
+                        $sub->where('jenis', 'like', '%kontrak%')
+                            ->orWhere('jenis', 'like', '%contract%');
+                    });
+                } elseif ($clean === 'magang') {
+                    $q->where(function ($sub) {
+                        $sub->where('jenis', 'like', '%magang%')
+                            ->orWhere('jenis', 'like', '%intern%');
+                    });
+                } else {
+                    $q->where('jenis', 'like', "%{$jenis}%");
+                }
+            })
+            ->when($pengalaman, function ($q) use ($pengalaman) {
+                $q->where('pengalaman', 'like', "%{$pengalaman}%");
+            })
+            ->when($pendidikan, function ($q) use ($pendidikan) {
+                $q->where('pendidikan', 'like', "%{$pendidikan}%");
+            })
+            ->when($provinsi, function ($q) use ($provinsi) {
+                $provNama = is_numeric($provinsi) ? (WilayahService::findProvince($provinsi)?->nama ?? $provinsi) : $provinsi;
+                $q->where(function ($sub) use ($provNama) {
+                    $sub->where('alamat', 'like', "%{$provNama}%")
+                        ->orWhereHas('perusahaan', function ($p) use ($provNama) {
+                            $p->where('provinsi', 'like', "%{$provNama}%")
+                              ->orWhere('alamat', 'like', "%{$provNama}%");
+                        });
+                });
+            })
+            ->when($kota, function ($q) use ($kota) {
+                $kotaNama = is_numeric($kota) ? (WilayahService::findRegency($kota)?->nama ?? $kota) : $kota;
+                $cleanKota = preg_replace('/^(kota|kabupaten|kab\.)\s+/i', '', trim($kotaNama));
+                $q->where(function ($sub) use ($kotaNama, $cleanKota) {
+                    $sub->where('alamat', 'like', "%{$kotaNama}%")
+                        ->orWhere('alamat', 'like', "%{$cleanKota}%")
+                        ->orWhereHas('perusahaan', function ($p) use ($kotaNama, $cleanKota) {
+                            $p->where('kota', 'like', "%{$kotaNama}%")
+                              ->orWhere('kota', 'like', "%{$cleanKota}%")
+                              ->orWhere('alamat', 'like', "%{$cleanKota}%");
+                        });
+                });
             })
             ->when($posisi, function ($q) use ($posisi) {
                 $q->where(function ($q2) use ($posisi) {
@@ -1046,11 +1132,15 @@ class PelamarController extends Controller
         if ($adaPencarian) {
 
             $riwayat = collect($riwayat)
-                ->reject(function ($item) use ($posisi, $lokasi, $kategori, $jenis) {
+                ->reject(function ($item) use ($posisi, $lokasi, $provinsi, $kota, $kategori, $jenis, $pengalaman, $pendidikan) {
                     return ($item['posisi'] ?? null) === $posisi &&
                         ($item['lokasi'] ?? null) === $lokasi &&
+                        ($item['provinsi'] ?? null) === $provinsi &&
+                        ($item['kota'] ?? null) === $kota &&
                         ($item['kategori'] ?? null) === $kategori &&
-                        ($item['jenis'] ?? null) === $jenis;
+                        ($item['jenis'] ?? null) === $jenis &&
+                        ($item['pengalaman'] ?? null) === $pengalaman &&
+                        ($item['pendidikan'] ?? null) === $pendidikan;
                 })
                 ->values()
                 ->toArray();
@@ -1061,8 +1151,12 @@ class PelamarController extends Controller
                 array_unshift($riwayat, [
                     'posisi'        => $posisi,
                     'lokasi'        => $lokasi,
+                    'provinsi'      => $provinsi,
+                    'kota'          => $kota,
                     'kategori'      => $kategori,
                     'jenis'         => $jenis,
+                    'pengalaman'    => $pengalaman,
+                    'pendidikan'    => $pendidikan,
                     'lowongan_ids'  => $lowongan->pluck('id')->toArray(),
                 ]);
             }
@@ -1074,15 +1168,20 @@ class PelamarController extends Controller
 
 
         return view('non-user.home', [
-            'Data' => $lowongan,
-            'lowongan' => $lowongan,
-            'posisi' => $posisi,
-            'lokasi' => $lokasi,
-            'riwayat' => $riwayat,
+            'Data'         => $lowongan,
+            'lowongan'     => $lowongan,
+            'posisi'       => $posisi,
+            'lokasi'       => $lokasi,
+            'provinsi'     => $provinsi,
+            'kota'         => $kota,
+            'provinsis'    => $provinsis,
+            'riwayat'      => $riwayat,
             'KategoriList' => $KategoriList,
-            'kategori' => $kategori,
-            'jenis' => $jenis,
-            'jenisList' => $jenisList,
+            'kategori'     => $kategori,
+            'jenis'        => $jenis,
+            'pengalaman'   => $pengalaman,
+            'pendidikan'   => $pendidikan,
+            'jenisList'    => $jenisList,
             "adaPencarian" => $adaPencarian,
         ]);
     }

@@ -94,6 +94,7 @@ class AuthController extends Controller
 
         $Data = LowonganPerusahaan::with('perusahaan')
             ->whereHas('perusahaan')
+            ->publik()
             ->whereNotNull('published_at')
             ->where('status', '!=', 'tutup')
             ->where(function ($q) {
@@ -132,6 +133,16 @@ class AuthController extends Controller
             "kategori"     => $kategori,
             "jenisList"    => $jenisList,
             "activeAds"    => $activeAds,
+            "posisi"       => null,
+            "lokasi"       => null,
+            "provinsi"     => null,
+            "kota"         => null,
+            "provinsis"    => \App\Services\WilayahService::getProvinces(),
+            "jenis"        => null,
+            "pengalaman"   => null,
+            "pendidikan"   => null,
+            "adaPencarian" => false,
+            "riwayat"      => session()->get('riwayat_full', []),
         ]);
     }
 

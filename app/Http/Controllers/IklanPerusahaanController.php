@@ -94,6 +94,7 @@ class IklanPerusahaanController extends Controller
 
         // Ambil lowongan aktif perusahaan untuk opsi pintasan URL
         $lowongans = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
+            ->publik()
             ->where('status', '!=', 'tutup')
             ->latest()
             ->get();

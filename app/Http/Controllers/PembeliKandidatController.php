@@ -147,7 +147,7 @@ class PembeliKandidatController extends Controller
                 );
 
                 // 2. Hubungkan pelamar ke lowongan
-                PelamarLowongan::updateOrCreate(
+                $pelamarLowongan = PelamarLowongan::updateOrCreate(
                     [
                         'pelamar_id'  => $pelamar->id,
                         'lowongan_id' => $lowongan->id,
@@ -163,7 +163,11 @@ class PembeliKandidatController extends Controller
                         $pelamar->user_id,
                         'Penawaran Rekrutmen Baru',
                         $perusahaan->nama_perusahaan . ' telah merekrut Anda untuk lowongan ' . $lowongan->nama,
-                        ['perusahaan_id' => $perusahaan->id]
+                        [
+                            'perusahaan_id'       => $perusahaan->id,
+                            'lowongan_id'         => $lowongan->id,
+                            'pelamar_lowongan_id' => $pelamarLowongan->id,
+                        ]
                     );
                 }
             });
@@ -222,19 +226,29 @@ class PembeliKandidatController extends Controller
         $user = auth()->user();
         $pelamar = $user?->pelamar;
 
-        $perusahaanModel = Perusahaan::where('slug', $perusahaan)->orWhere('id', $perusahaan)->first();
-        $lowonganModel = LowonganPerusahaan::where(function ($q) use ($lowongan) {
-            $q->where('slug', $lowongan);
-            if (is_numeric($lowongan)) {
-                $q->orWhere('id', (int) $lowongan);
+        $perusahaanModel = $perusahaan instanceof Perusahaan
+            ? $perusahaan
+            : Perusahaan::where('slug', $perusahaan)->orWhere('id', $perusahaan)->first();
+
+        if ($lowongan instanceof LowonganPerusahaan) {
+            $lowonganModel = $lowongan;
+            if (!$lowonganModel->relationLoaded('perusahaan')) {
+                $lowonganModel->load('perusahaan');
             }
-        });
+        } else {
+            $lowonganQuery = LowonganPerusahaan::where(function ($q) use ($lowongan) {
+                $q->where('slug', $lowongan);
+                if (is_numeric($lowongan)) {
+                    $q->orWhere('id', (int) $lowongan);
+                }
+            });
 
-        if ($perusahaanModel) {
-            $lowonganModel->where('perusahaan_id', $perusahaanModel->id);
+            if ($perusahaanModel) {
+                $lowonganQuery->where('perusahaan_id', $perusahaanModel->id);
+            }
+
+            $lowonganModel = $lowonganQuery->with('perusahaan')->first();
         }
-
-        $lowonganModel = $lowonganModel->with('perusahaan')->first();
 
         if (!$lowonganModel) {
             abort(404, 'Lowongan tidak ditemukan.');
@@ -349,7 +363,10 @@ class PembeliKandidatController extends Controller
                                 $perusahaan->user_id,
                                 'Penawaran Rekrutmen Ditolak',
                                 "Kandidat {$namaPelamar} menolak tawaran Anda.{$alasanTxt} Saldo +100 koin telah dikembalikan ke akun Anda.",
-                                ['perusahaan_id' => $perusahaan->id]
+                                [
+                                    'perusahaan_id' => $perusahaan->id,
+                                    'lowongan_id'   => $tawaran->lowongan_id ?? null,
+                                ]
                             );
                         }
                     }
