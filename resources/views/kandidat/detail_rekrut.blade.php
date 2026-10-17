@@ -96,6 +96,32 @@
                                     </form>
                                 @endif
                             </div>
+
+                            {{-- Tombol Bagikan Lowongan (Glints Style) --}}
+                            @php
+                                $shareRekrutUrl = route('detail.lowongan.non.user', [
+                                    'perusahaan' => $lowongan->perusahaan->slug ?? 'perusahaan',
+                                    'lowongan' => $lowongan->slug ?? $lowongan->id,
+                                ]);
+                                $shareRekrutText = "Lowongan Kerja: {$lowongan->nama} di " . ($lowongan->perusahaan->nama_perusahaan ?? 'Perusahaan');
+                            @endphp
+                            <button type="button"
+                                @click="
+                                    if (navigator.share) {
+                                        navigator.share({
+                                            title: '{{ addslashes($lowongan->nama) }}',
+                                            text: '{{ addslashes($shareRekrutText) }}',
+                                            url: '{{ $shareRekrutUrl }}'
+                                        }).catch(() => {});
+                                    } else {
+                                        navigator.clipboard.writeText('{{ $shareRekrutUrl }}');
+                                        Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tautan lowongan berhasil disalin!', showConfirmButton: false, timer: 1500 });
+                                    }
+                                "
+                                class="p-2 rounded-md bg-gray-200 hover:bg-[#00509d] hover:text-white text-gray-600 transition"
+                                title="Bagikan Lowongan">
+                                <i class="ph ph-share-network text-2xl"></i>
+                            </button>
                         @endauth
                     </div>
                 </div>

@@ -23,7 +23,9 @@
         showSuccess: false,
         showConfirmTerima: false,
         showConfirmTolak: false,
-        showAlasan: false
+        showAlasan: false,
+        showShareModal: false,
+        copied: false
     }">
 
         <div class="max-w-5xl mx-auto px-4 sm:px-6 space-y-6">
@@ -139,11 +141,19 @@
                                         })
                                         .catch(() => { loading = false; });
                                     "
-                                    class="w-10 h-10 bg-[#004e98] hover:bg-[#003d7a] text-white rounded-lg flex items-center justify-center shadow-sm transition">
+                                    class="w-10 h-10 bg-[#004e98] hover:bg-[#003d7a] text-white rounded-lg flex items-center justify-center shadow-sm transition"
+                                    title="Simpan Lowongan">
                                     <i x-show="!saved" class="ph ph-bookmark-simple text-xl"></i>
                                     <i x-show="saved" class="ph-fill ph-bookmark-simple text-xl"></i>
                                 </button>
                             </div>
+
+                            {{-- Tombol Bagikan Lowongan (Glints Style) --}}
+                            <button type="button" @click="showShareModal = true"
+                                title="Bagikan Lowongan"
+                                class="w-10 h-10 bg-[#004e98] hover:bg-[#003d7a] text-white rounded-lg flex items-center justify-center shadow-sm transition active:scale-95 group">
+                                <i class="ph ph-share-network text-xl group-hover:scale-110 transition-transform"></i>
+                            </button>
                         @else
                             @if ($isDailyLocked)
                                 <button disabled class="flex-1 md:flex-initial bg-slate-400 text-white font-bold text-sm px-8 py-2.5 rounded-lg shadow-sm cursor-not-allowed">
@@ -156,9 +166,17 @@
                                 </a>
                             @endif
                             <a href="{{ route('login') }}"
+                                title="Simpan Lowongan"
                                 class="w-10 h-10 bg-[#004e98] hover:bg-[#003d7a] text-white rounded-lg flex items-center justify-center shadow-sm transition">
                                 <i class="ph ph-bookmark-simple text-xl"></i>
                             </a>
+
+                            {{-- Tombol Bagikan Lowongan (Glints Style) untuk Tamu --}}
+                            <button type="button" @click="showShareModal = true"
+                                title="Bagikan Lowongan"
+                                class="w-10 h-10 bg-[#004e98] hover:bg-[#003d7a] text-white rounded-lg flex items-center justify-center shadow-sm transition active:scale-95 group">
+                                <i class="ph ph-share-network text-xl group-hover:scale-110 transition-transform"></i>
+                            </button>
                         @endauth
                     </div>
                 </div>
@@ -332,6 +350,116 @@
                 <h2 class="text-lg font-bold mb-2 text-slate-800">Lamaran Terkirim!</h2>
                 <p class="text-sm text-slate-600 mb-6">Lamaran Anda berhasil dikirim ke {{ $data->perusahaan->nama_perusahaan ?? 'Perusahaan' }}.</p>
                 <button @click="showSuccess = false; window.location.reload();" class="px-6 py-2.5 bg-[#004e98] text-white font-semibold rounded-xl text-sm transition">Tutup</button>
+            </div>
+        {{-- Modal Berbagi Pekerjaan (Persis Glints) --}}
+        <div x-show="showShareModal"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 flex items-center justify-center bg-black/60 z-50 p-4 backdrop-blur-xs"
+            x-cloak
+            @keydown.escape.window="showShareModal = false">
+            <div @click.away="showShareModal = false"
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                class="bg-white rounded-2xl p-6 sm:p-7 max-w-md w-full shadow-2xl relative">
+                
+                {{-- Header Modal --}}
+                <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900">Berbagi Pekerjaan</h3>
+                    <button type="button" @click="showShareModal = false"
+                        class="text-slate-400 hover:text-slate-600 transition p-1">
+                        <i class="ph ph-x text-xl font-bold"></i>
+                    </button>
+                </div>
+
+                @php
+                    $shareUrl = route('detail.lowongan.non.user', [
+                        'perusahaan' => $data->perusahaan->slug ?? 'perusahaan',
+                        'lowongan' => $data->slug ?? $data->id,
+                    ]);
+                    $shareText = "Lowongan Kerja: {$data->nama} di " . ($data->perusahaan->nama_perusahaan ?? 'Perusahaan');
+                @endphp
+
+                <div class="py-5 text-center">
+                    {{-- Subtitle --}}
+                    <p class="font-bold text-slate-800 text-sm sm:text-base mb-6">
+                        Bagikan pekerjaan ini dengan teman-temanmu!
+                    </p>
+
+                    {{-- 5 Lingkaran Ikon Media Sosial --}}
+                    <div class="flex items-center justify-center gap-3.5 mb-6">
+                        {{-- WhatsApp --}}
+                        <a href="https://api.whatsapp.com/send?text={{ urlencode($shareText . "\n" . $shareUrl) }}"
+                            target="_blank" rel="noopener noreferrer"
+                            class="w-12 h-12 rounded-full bg-[#25D366] hover:brightness-105 text-white flex items-center justify-center text-2xl transition shadow-xs hover:scale-105 active:scale-95"
+                            title="WhatsApp">
+                            <i class="ph-bold ph-whatsapp-logo"></i>
+                        </a>
+
+                        {{-- LinkedIn --}}
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($shareUrl) }}"
+                            target="_blank" rel="noopener noreferrer"
+                            class="w-12 h-12 rounded-full bg-[#0077b5] hover:brightness-105 text-white flex items-center justify-center text-2xl transition shadow-xs hover:scale-105 active:scale-95"
+                            title="LinkedIn">
+                            <i class="ph-bold ph-linkedin-logo"></i>
+                        </a>
+
+                        {{-- Telegram --}}
+                        <a href="https://t.me/share/url?url={{ urlencode($shareUrl) }}&text={{ urlencode($shareText) }}"
+                            target="_blank" rel="noopener noreferrer"
+                            class="w-12 h-12 rounded-full bg-[#0088cc] hover:brightness-105 text-white flex items-center justify-center text-2xl transition shadow-xs hover:scale-105 active:scale-95"
+                            title="Telegram">
+                            <i class="ph-bold ph-telegram-logo"></i>
+                        </a>
+
+                        {{-- Facebook --}}
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($shareUrl) }}"
+                            target="_blank" rel="noopener noreferrer"
+                            class="w-12 h-12 rounded-full bg-[#1877f2] hover:brightness-105 text-white flex items-center justify-center text-2xl transition shadow-xs hover:scale-105 active:scale-95"
+                            title="Facebook">
+                            <i class="ph-bold ph-facebook-logo"></i>
+                        </a>
+
+                        {{-- X / Twitter --}}
+                        <a href="https://twitter.com/intent/tweet?text={{ urlencode($shareText) }}&url={{ urlencode($shareUrl) }}"
+                            target="_blank" rel="noopener noreferrer"
+                            class="w-12 h-12 rounded-full bg-black hover:bg-slate-800 text-white flex items-center justify-center text-2xl transition shadow-xs hover:scale-105 active:scale-95"
+                            title="X (Twitter)">
+                            <i class="ph-bold ph-x-logo"></i>
+                        </a>
+                    </div>
+
+                    {{-- Input Tautan & Tombol Salin Link --}}
+                    <div class="flex items-stretch border border-slate-300 rounded-xl overflow-hidden bg-slate-50/70 focus-within:border-[#1877f2] focus-within:ring-2 focus-within:ring-blue-100 transition">
+                        <input type="text" readonly value="{{ $shareUrl }}"
+                            class="flex-1 bg-transparent px-3.5 py-2.5 text-xs sm:text-sm text-slate-600 outline-none border-none focus:ring-0 truncate select-all">
+                        <button type="button"
+                            @click="
+                                navigator.clipboard.writeText('{{ $shareUrl }}').then(() => {
+                                    copied = true;
+                                    Swal.fire({
+                                        toast: true,
+                                        position: 'top-end',
+                                        icon: 'success',
+                                        title: 'Tautan berhasil disalin!',
+                                        showConfirmButton: false,
+                                        timer: 1800
+                                    });
+                                    setTimeout(() => { copied = false; }, 2000);
+                                });
+                            "
+                            class="bg-[#1877f2] hover:bg-[#166fe5] text-white px-4 flex items-center justify-center transition active:scale-95 cursor-pointer shrink-0"
+                            title="Salin Tautan">
+                            <i :class="copied ? 'ph-bold ph-check' : 'ph-bold ph-link'" class="text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
 

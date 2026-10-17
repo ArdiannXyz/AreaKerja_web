@@ -49,74 +49,103 @@
                     @endif
                 </div>
 
-                {{-- Bookmark Button --}}
-                @auth
+                {{-- Actions: Share & Bookmark --}}
+                <div class="flex items-center gap-0.5 shrink-0" @click.stop>
+                    {{-- Share Button on Card --}}
                     @php
-                        $sudahSimpan = Auth::user()->pelamar
-                            ? Auth::user()->pelamar->simpanLowongans()->where('lowongan_id', $d->id)->exists()
-                            : false;
+                        $cardShareUrl = route('detail.lowongan.non.user', [
+                            'perusahaan' => $d->perusahaan->slug ?? 'perusahaan',
+                            'lowongan' => $d->slug ?? $d->id,
+                        ]);
+                        $cardShareText = "Lowongan Kerja: {$d->nama} di " . ($d->perusahaan->nama_perusahaan ?? 'Perusahaan');
                     @endphp
+                    <button type="button"
+                        @click.prevent.stop="
+                            if (navigator.share) {
+                                navigator.share({
+                                    title: '{{ addslashes($d->nama) }}',
+                                    text: '{{ addslashes($cardShareText) }}',
+                                    url: '{{ $cardShareUrl }}'
+                                }).catch(() => {});
+                            } else {
+                                navigator.clipboard.writeText('{{ $cardShareUrl }}');
+                                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tautan lowongan disalin!', showConfirmButton: false, timer: 1500 });
+                            }
+                        "
+                        class="p-1 text-slate-400 hover:text-[#00509d] transition cursor-pointer"
+                        title="Bagikan Lowongan">
+                        <i class="ph ph-share-network text-2xl"></i>
+                    </button>
 
-                    <div x-data="{ saved: {{ $sudahSimpan ? 'true' : 'false' }}, loading: false }" @click.stop class="shrink-0">
-                        <button type="button"
-                            @click.prevent.stop="
-                                if (loading) return;
-                                loading = true;
-                                let targetUrl = saved ? '/pelamar/simpan-lowongan/{{ $d->id }}' : '{{ route('simpan-lowongan.store') }}';
-                                let reqMethod = saved ? 'DELETE' : 'POST';
+                    {{-- Bookmark Button --}}
+                    @auth
+                        @php
+                            $sudahSimpan = Auth::user()->pelamar
+                                ? Auth::user()->pelamar->simpanLowongans()->where('lowongan_id', $d->id)->exists()
+                                : false;
+                        @endphp
+
+                        <div x-data="{ saved: {{ $sudahSimpan ? 'true' : 'false' }}, loading: false }">
+                            <button type="button"
+                                @click.prevent.stop="
+                                    if (loading) return;
+                                    loading = true;
+                                    let targetUrl = saved ? '/pelamar/simpan-lowongan/{{ $d->id }}' : '{{ route('simpan-lowongan.store') }}';
+                                    let reqMethod = saved ? 'DELETE' : 'POST';
+                                    
+                                    fetch(targetUrl, {
+                                        method: reqMethod,
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Accept': 'application/json',
+                                            'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
+                                        },
+                                        body: reqMethod === 'POST' ? JSON.stringify({ lowongan_id: {{ $d->id }} }) : null
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        loading = false;
+                                        if (data.success) {
+                                            saved = !saved;
+                                            Swal.fire({
+                                                toast: true,
+                                                position: 'top-end',
+                                                icon: 'success',
+                                                title: saved ? 'Lowongan disimpan' : 'Dihapus dari simpanan',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                        } else {
+                                            Swal.fire({
+                                                toast: true,
+                                                position: 'top-end',
+                                                icon: 'error',
+                                                title: data.message || 'Gagal menyimpan',
+                                                showConfirmButton: false,
+                                                timer: 1500
+                                            });
+                                        }
+                                    })
+                                    .catch(err => {
+                                        loading = false;
+                                        console.error(err);
+                                    });
+                                "
+                                class="transition p-1 text-slate-400 hover:text-[#00509d] cursor-pointer"
+                                :title="saved ? 'Hapus dari Simpan' : 'Simpan Lowongan'">
                                 
-                                fetch(targetUrl, {
-                                    method: reqMethod,
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json',
-                                        'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').getAttribute('content')
-                                    },
-                                    body: reqMethod === 'POST' ? JSON.stringify({ lowongan_id: {{ $d->id }} }) : null
-                                })
-                                .then(res => res.json())
-                                .then(data => {
-                                    loading = false;
-                                    if (data.success) {
-                                        saved = !saved;
-                                        Swal.fire({
-                                            toast: true,
-                                            position: 'top-end',
-                                            icon: 'success',
-                                            title: saved ? 'Lowongan disimpan' : 'Dihapus dari simpanan',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            toast: true,
-                                            position: 'top-end',
-                                            icon: 'error',
-                                            title: data.message || 'Gagal menyimpan',
-                                            showConfirmButton: false,
-                                            timer: 1500
-                                        });
-                                    }
-                                })
-                                .catch(err => {
-                                    loading = false;
-                                    console.error(err);
-                                });
-                            "
-                            class="transition p-1 text-slate-400 hover:text-[#00509d] cursor-pointer"
-                            :title="saved ? 'Hapus dari Simpan' : 'Simpan Lowongan'">
-                            
-                            <i x-show="!saved" class="ph ph-bookmark-simple text-2xl text-slate-400 hover:text-[#00509d] transition"></i>
-                            <i x-show="saved" class="ph-fill ph-bookmark-simple text-2xl text-[#00509d] transition"></i>
-                        </button>
-                    </div>
-                @else
-                    <a href="{{ route('login') }}" @click.stop
-                        class="p-1 text-slate-400 hover:text-[#00509d] transition shrink-0"
-                        title="Simpan Lowongan">
-                        <i class="ph ph-bookmark-simple text-2xl"></i>
-                    </a>
-                @endauth
+                                <i x-show="!saved" class="ph ph-bookmark-simple text-2xl text-slate-400 hover:text-[#00509d] transition"></i>
+                                <i x-show="saved" class="ph-fill ph-bookmark-simple text-2xl text-[#00509d] transition"></i>
+                            </button>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" @click.stop
+                            class="p-1 text-slate-400 hover:text-[#00509d] transition shrink-0"
+                            title="Simpan Lowongan">
+                            <i class="ph ph-bookmark-simple text-2xl"></i>
+                        </a>
+                    @endauth
+                </div>
             </div>
 
             {{-- Job Title --}}
