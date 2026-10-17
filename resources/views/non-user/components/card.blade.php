@@ -49,24 +49,8 @@
                     @endif
                 </div>
 
-                {{-- Actions: Share & Bookmark --}}
-                <div class="flex items-center gap-0.5 shrink-0" @click.stop>
-                    {{-- Share Button on Card --}}
-                    @php
-                        $cardShareUrl = route('detail.lowongan.non.user', [
-                            'perusahaan' => $d->perusahaan->slug ?? 'perusahaan',
-                            'lowongan' => $d->slug ?? $d->id,
-                        ]);
-                        $cardShareText = "Lowongan Kerja: {$d->nama} di " . ($d->perusahaan->nama_perusahaan ?? 'Perusahaan');
-                    @endphp
-                    <button type="button"
-                        @click.prevent.stop="openShareModal('{{ $cardShareUrl }}', '{{ addslashes($cardShareText) }}')"
-                        class="p-1 text-slate-400 hover:text-[#00509d] transition cursor-pointer"
-                        title="Bagikan Lowongan">
-                        <i class="ph ph-share-network text-2xl"></i>
-                    </button>
-
-                    {{-- Bookmark Button --}}
+                {{-- Bookmark Icon --}}
+                <div class="flex items-center shrink-0" @click.stop>
                     @auth
                         @php
                             $sudahSimpan = Auth::user()->pelamar

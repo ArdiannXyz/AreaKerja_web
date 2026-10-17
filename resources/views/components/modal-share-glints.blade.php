@@ -1,17 +1,17 @@
 {{-- Modal Berbagi Pekerjaan Persis Glints (Popup Link Saja) --}}
 <div x-data="{
-        open: false,
+        isShareModalOpen: false,
         shareUrl: '',
         shareText: '',
         copied: false,
-        openModal(url, text) {
+        triggerOpenShare(url, text) {
             this.shareUrl = url || window.location.href;
             this.shareText = text || 'Lowongan Kerja di AreaKerja';
-            this.open = true;
+            this.isShareModalOpen = true;
             this.copied = false;
         },
-        closeModal() {
-            this.open = false;
+        triggerCloseShare() {
+            this.isShareModalOpen = false;
         },
         copyLink() {
             if (!this.shareUrl) return;
@@ -29,7 +29,6 @@
                 }
                 setTimeout(() => { this.copied = false; }, 2000);
             }).catch(() => {
-                // Fallback copy
                 const el = document.createElement('textarea');
                 el.value = this.shareUrl;
                 document.body.appendChild(el);
@@ -41,12 +40,9 @@
             });
         }
     }"
-    x-init="
-        window.openShareModal = (url, text) => openModal(url, text);
-    "
-    @open-share-modal.window="openModal($event.detail.url, $event.detail.text)"
-    @keydown.escape.window="closeModal()"
-    x-show="open"
+    @open-share-modal.window="triggerOpenShare($event.detail.url, $event.detail.text)"
+    @keydown.escape.window="triggerCloseShare()"
+    x-show="isShareModalOpen"
     x-transition:enter="transition ease-out duration-200"
     x-transition:enter-start="opacity-0"
     x-transition:enter-end="opacity-100"
@@ -56,7 +52,7 @@
     class="fixed inset-0 flex items-center justify-center bg-black/60 z-[9999] p-4 backdrop-blur-xs"
     x-cloak>
 
-    <div @click.away="closeModal()"
+    <div @click.away="triggerCloseShare()"
         x-transition:enter="transition ease-out duration-200"
         x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100"
@@ -65,7 +61,7 @@
         {{-- Header Modal --}}
         <div class="flex items-center justify-between pb-3.5 border-b border-slate-100">
             <h3 class="text-base sm:text-lg font-bold text-slate-900">Berbagi Pekerjaan</h3>
-            <button type="button" @click="closeModal()"
+            <button type="button" @click="triggerCloseShare()"
                 class="text-slate-400 hover:text-slate-700 transition p-1 rounded-lg hover:bg-slate-100">
                 <i class="ph-bold ph-x text-xl"></i>
             </button>
@@ -136,3 +132,10 @@
     </div>
 </div>
 
+<script>
+    window.openShareModal = function(url, text) {
+        window.dispatchEvent(new CustomEvent('open-share-modal', {
+            detail: { url: url || window.location.href, text: text || 'Lowongan Kerja di AreaKerja' }
+        }));
+    };
+</script>
