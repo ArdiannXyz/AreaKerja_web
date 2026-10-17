@@ -12,7 +12,7 @@
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
                     <h1 class="text-base sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
-                        <i class="ph ph-wallet text-white/80 text-lg sm:text-2xl"></i> Finance & Keuangan
+                        <i class="ph ph-wallet text-white/80 text-lg sm:text-2xl"></i> Manajemen Keuangan
                     </h1>
                     <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola paket harga, riwayat transaksi, dan laporan pendapatan</p>
                 </div>

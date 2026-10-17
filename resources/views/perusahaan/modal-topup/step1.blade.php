@@ -11,7 +11,7 @@
                 <div>
                     <div class="flex items-center gap-2">
                         <h2 class="text-base font-extrabold text-slate-900">Top Up Koin AreaKerja</h2>
-                        <span class="px-2 py-0.5 bg-blue-100 text-[#00509d] text-[10px] font-extrabold rounded-full">Langkah 1/3</span>
+                        <span class="px-2 py-0.5 bg-blue-100 text-[#00509d] text-[10px] font-extrabold rounded-full">Langkah 1/2</span>
                     </div>
                     <p class="text-xs text-slate-500">Pilih paket koin sesuai kebutuhan perusahaan Anda</p>
                 </div>
@@ -61,9 +61,9 @@
                 class="px-5 py-2.5 border border-slate-300 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs transition">
                 Batal
             </button>
-            <button type="button" id="btnConfirmStep1" onclick="goToStep(2)"
+            <button type="button" id="btnConfirmStep1" onclick="goToStep(3)"
                 class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold text-xs rounded-xl shadow-sm transition disabled:opacity-50 disabled:cursor-not-allowed">
-                <span>Pilih Metode Pembayaran</span>
+                <span>Lanjut ke Pembayaran</span>
                 <i class="ph ph-arrow-right font-bold text-sm"></i>
             </button>
         </div>

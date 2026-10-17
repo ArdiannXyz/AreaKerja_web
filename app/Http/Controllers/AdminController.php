@@ -449,80 +449,8 @@ class AdminController extends Controller
 
 
 
-    //FINANCE
-    public function koinHal(Request $request)
-    {
-        $query = CatatanKoin::query();
-
-        if ($request->filled('no_referensi')) {
-            $query->where('no_referensi', $request->no_referensi);
-        }
-
-        $koin = $query->get();
-        $noReferensiList = catatanKoin::select('no_referensi')->distinct()->pluck('no_referensi');
-        return view('admin.finance.finance', [
-            'koin' => $koin,
-            'noReferensiList' => $noReferensiList,
-            'selectedRef' => $request->no_referensi
-        ]);
-    }
-
-    public function cashHal(Request $request)
-    {
-        $query = CatatanCash::with('user');
-
-        if ($request->no_referensi) {
-            $query->where('no_referensi', $request->no_referensi);
-        }
-
-        $cash = $query->orderBy('created_at', 'desc')->get();
-
-        $noReferensiList = CatatanCash::whereNotNull('no_referensi')
-            ->distinct()
-            ->pluck('no_referensi');
-
-        return view('admin.finance.finance-tunai', [
-            'cash' => $cash,
-            'noReferensiList' => $noReferensiList,
-            'selectedRef' => $request->no_referensi,
-        ]);
-    }
-
-
-    public function detail($id)
-    {
-        $transaksi = CatatanCash::with(['user', 'bank'])->findOrFail($id);
-
-        return response()->json([
-            'id' => $transaksi->id,
-            'user' => [
-                'username' => $transaksi->user->username ?? '-',
-                'email' => $transaksi->user->email ?? '-',
-            ],
-            'bank' => [
-                'nama_bank' => $transaksi->bank->nama_bank ?? '-',
-                'nomor_rekening' => $transaksi->bank->no_rek ?? '-', // disesuaikan dengan field di seeder
-            ],
-            'sumber_dana' => $transaksi->sumberDana ?? '-', // ambil langsung dari tabel catatan_cashs
-            'total' => $transaksi->total ?? 0,
-            'harga' => number_format($transaksi->hargaPembayaran->harga ?? 0, 0, ',', '.'),
-            'jumlah_koin' => $transaksi->hargaPembayaran->jumlah_koin ?? 0,
-            'status' => ucfirst($transaksi->status),
-            'created_at' => $transaksi->created_at->format('Y-m-d H:i:s'), // kirim format standar agar JS bisa parse
-        ]);
-    }
-
-
-    public function hal_detail()
-    {
-        $transaksi = CatatanCash::with(['user', 'bank'])->latest()->get();
-        return view('admin.finance.detail', compact('transaksi'));
-    }
-
-
-
-
     //PERUSAHAAN
+
     public function halPerusahaan(Request $request)
     {
         $query = Perusahaan::join('users', 'perusahaans.user_id', '=', 'users.id')

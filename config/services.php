@@ -49,4 +49,11 @@ return [
         'redirect' => env('LINKEDIN_REDIRECT_URI', 'http://127.0.0.1:8000/auth/linkedin/callback'),
     ],
 
+    'xendit' => [
+        'secret_key'    => env('XENDIT_SECRET_KEY'),
+        'public_key'    => env('XENDIT_PUBLIC_KEY'),
+        'webhook_token' => env('XENDIT_WEBHOOK_TOKEN'),
+    ],
+
 ];
+

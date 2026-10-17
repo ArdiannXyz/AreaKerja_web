@@ -584,11 +584,14 @@ class PerusahaanController extends Controller
     {
         $user = auth()->user();
         $perusahaan = Perusahaan::where('user_id', $user->id)->first();
-        $hargaLangganan = 1000; // 1.000 koin per tahun
 
         if (!$perusahaan) {
             abort(404, 'Data perusahaan tidak ditemukan.');
         }
+
+        $paketLangganan = Perusahaan::getPaketLanggananList();
+        $defaultPaket = $paketLangganan['12_bulan'] ?? reset($paketLangganan);
+        $hargaLangganan = $defaultPaket['harga'];
 
         $hargaPembayarans = collect([
             (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000, 'icon' => 'bitcoin.png'],
@@ -601,6 +604,8 @@ class PerusahaanController extends Controller
             'hargaPembayarans' => $hargaPembayarans,
             'daftarBank'       => DaftarBank::all(),
             'hargaLangganan'   => $hargaLangganan,
+            'paketLangganan'   => $paketLangganan,
+            'defaultPaket'     => $defaultPaket,
         ]);
     }
 
@@ -608,34 +613,64 @@ class PerusahaanController extends Controller
     {
         $user = Auth::user();
         $perusahaan = Perusahaan::where('user_id', $user->id)->first();
-        $hargaLangganan = 1000;
+
+        if (!$perusahaan) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data perusahaan tidak ditemukan.',
+            ], 404);
+        }
+
+        $paketKey = $request->input('paket', '12_bulan');
+        $paket = Perusahaan::getPaketLangganan($paketKey);
+
+        if (!$paket) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Pilihan paket berlangganan tidak valid.',
+            ], 422);
+        }
+
+        $hargaLangganan = (int) $paket['harga'];
+        $durasiBulan = (int) $paket['durasi_bulan'];
 
         if ($perusahaan->koin_perusahaan < $hargaLangganan) {
             return response()->json([
-                'success' => false,
-                'error'   => 'koin_kurang',
-                'message' => 'Koin tidak cukup untuk berlangganan. Silakan top up koin terlebih dahulu.',
+                'success'  => false,
+                'error'    => 'koin_kurang',
+                'message'  => 'Koin tidak cukup untuk berlangganan ' . $paket['nama'] . '. Silakan top up koin terlebih dahulu.',
+                'required' => $hargaLangganan,
+                'current'  => $perusahaan->koin_perusahaan,
             ], 400);
         }
 
         $perusahaan->koin_perusahaan -= $hargaLangganan;
         $perusahaan->is_berlangganan = 1;
         $perusahaan->tanggal_berlangganan = Carbon::now();
-        $perusahaan->tanggal_expired = Carbon::now()->addYear();
+
+        // Jika perusahaan saat ini masih dalam masa VIP aktif, perpanjang dari tanggal expired lama
+        $baseDate = ($perusahaan->tanggal_expired && Carbon::now()->lt($perusahaan->tanggal_expired))
+            ? Carbon::parse($perusahaan->tanggal_expired)
+            : Carbon::now();
+
+        $perusahaan->tanggal_expired = $baseDate->copy()->addMonths($durasiBulan);
         $perusahaan->save();
 
         CatatanKoin::create([
             'user_id'      => $user->id,
             'no_referensi' => 'SUB-' . strtoupper(Str::random(8)),
-            'pesanan'      => 'Berlangganan Tahunan',
+            'pesanan'      => 'Berlangganan ' . $paket['judul'],
             'dari'         => $perusahaan->nama_perusahaan,
             'sumber_dana'  => 'Pembayaran Langganan',
             'total'        => '-' . $hargaLangganan,
         ]);
 
         return response()->json([
-            'success' => true,
-            'message' => 'Berlangganan berhasil! Terima kasih telah berlangganan.',
+            'success'         => true,
+            'message'         => 'Berlangganan ' . $paket['judul'] . ' berhasil! Terima kasih telah berlangganan.',
+            'paket'           => $paket,
+            'tanggal_expired' => $perusahaan->tanggal_expired->translatedFormat('d F Y'),
+            'sisa_koin'       => $perusahaan->koin_perusahaan,
         ]);
     }
 

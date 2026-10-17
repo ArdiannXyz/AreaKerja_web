@@ -154,13 +154,16 @@ Route::controller(EventController::class)->group(function () {
     Route::post('/event/{id}/daftar', 'daftarEvent')->name('pelamar.event.daftar');
 });
 
+// XENDIT PAYMENT GATEWAY CALLBACK WEBHOOK
+Route::post('/payment/xendit/callback', [\App\Http\Controllers\Payment\XenditCallbackController::class, 'handle'])->name('xendit.callback');
+
 /*
 |--------------------------------------------------------------------------
 | Modular Role Routes
 |--------------------------------------------------------------------------
 */
 require __DIR__ . '/pelamar.php';
-require __DIR__ . '/finance.php';
 require __DIR__ . '/admin.php';
 require __DIR__ . '/superadmin.php';
 require __DIR__ . '/perusahaan.php';
+

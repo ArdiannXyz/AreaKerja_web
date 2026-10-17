@@ -177,7 +177,8 @@ class SuperAdminFinanceController extends Controller
             'tanggalCetak' => Carbon::now()->translatedFormat('F d, Y, H:i a'),
         ];
 
-        $html = View::make('finance.page-unduh-laporan-harian', $data)->render();
+        $html = View::make('super_admin.finance.page-unduh-laporan-harian', $data)->render();
+
         $htmlWithCss = '
         <!DOCTYPE html>
         <html lang="id">
@@ -231,7 +232,14 @@ class SuperAdminFinanceController extends Controller
 
             foreach ($keys as $index => $key) {
                 if (isset($hargas[$index])) {
-                    SiteSetting::set($key, (string) max(0, (int) $hargas[$index]));
+                    $val = (string) max(0, (int) $hargas[$index]);
+                    SiteSetting::set($key, $val);
+                    if ($key === 'harga_koin_berlangganan_12_bulan') {
+                        SiteSetting::set('harga_koin_berlangganan', $val);
+                    }
+                    if ($key === 'harga_koin_berlangganan') {
+                        SiteSetting::set('harga_koin_berlangganan_12_bulan', $val);
+                    }
                 }
             }
         } elseif ($request->has('harga') && $request->has('id')) {
@@ -241,11 +249,18 @@ class SuperAdminFinanceController extends Controller
                 3 => 'harga_koin_iklan_14_hari',
                 4 => 'harga_koin_iklan_30_hari',
                 5 => 'harga_koin_boost_lowongan',
-                6 => 'harga_koin_berlangganan',
+                6 => 'harga_koin_berlangganan_1_bulan',
+                7 => 'harga_koin_berlangganan_3_bulan',
+                8 => 'harga_koin_berlangganan_6_bulan',
+                9 => 'harga_koin_berlangganan_12_bulan',
             ];
             foreach ($request->id as $index => $id) {
                 if (isset($defaultKeys[$id]) && isset($request->harga[$index])) {
-                    SiteSetting::set($defaultKeys[$id], (string) max(0, (int) $request->harga[$index]));
+                    $val = (string) max(0, (int) $request->harga[$index]);
+                    SiteSetting::set($defaultKeys[$id], $val);
+                    if ($defaultKeys[$id] === 'harga_koin_berlangganan_12_bulan') {
+                        SiteSetting::set('harga_koin_berlangganan', $val);
+                    }
                 }
             }
         }

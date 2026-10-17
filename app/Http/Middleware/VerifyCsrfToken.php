@@ -13,5 +13,9 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'auth/social/*',
+        'payment/xendit/callback',
+        'api/xendit/callback',
+        'api/v1/payment/callback',
     ];
+
 }

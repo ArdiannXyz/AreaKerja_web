@@ -9,9 +9,6 @@
     if ($role === 'admin') {
         $detail = $user->admin;
         $img = $detail?->img_profile;
-    } elseif ($role === 'finance') {
-        $detail = $user->finance;
-        $img = $detail?->img_profile;
     } elseif ($role === 'perusahaan') {
         $detail = $user->perusahaan;
         $img = $detail?->img_profile;
@@ -22,7 +19,6 @@
 
     $displayName = match($role) {
         'admin'      => $detail?->nama_lengkap ?? $user->nama_lengkap ?? $user->username,
-        'finance'    => $detail?->nama_lengkap ?? $user->nama_lengkap ?? $user->username,
         'perusahaan' => $detail?->nama_perusahaan ?? $user->nama_lengkap ?? $user->username,
         'pelamar'    => $detail?->nama_pelamar ?? $user->nama_lengkap ?? $user->username,
         default      => $user->nama_lengkap ?? $user->username,
@@ -35,12 +31,7 @@
             'icon' => 'ph-shield-check',
             'label' => 'Admin'
         ],
-        'finance' => [
-            'bg' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-            'hero' => 'bg-emerald-500/25 text-emerald-200 border-emerald-400/40',
-            'icon' => 'ph-wallet',
-            'label' => 'Finance'
-        ],
+
         'perusahaan' => [
             'bg' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
             'hero' => 'bg-indigo-500/25 text-indigo-200 border-indigo-400/40',
@@ -315,8 +306,9 @@
                     <span class="text-xs font-semibold text-slate-800 text-right">{{ $displayName }}</span>
                 </div>
 
-                {{-- ==================== ROLE: ADMIN / FINANCE ==================== --}}
-                @if (in_array($role, ['admin', 'finance']))
+                {{-- ==================== ROLE: ADMIN ==================== --}}
+                @if ($role === 'admin')
+
                     @php
                         $provNama = $detail?->provinsi->nama ?? (is_object($detail?->provinsi ?? null) ? $detail->provinsi->nama ?? null : (is_string($detail?->provinsi ?? null) ? $detail->provinsi : null));
                         $kotaNama = $detail?->kota->nama ?? (is_object($detail?->kota ?? null) ? $detail->kota->nama ?? null : (is_string($detail?->kota ?? null) ? $detail->kota : null));

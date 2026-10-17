@@ -35,9 +35,9 @@ class RoleMiddleware
             'pelamar'     => redirect()->route('beranda'),
             'perusahaan'  => redirect()->route('perusahaan.dashboard'),
             'admin'       => redirect()->route('admin.dashboard'),
-            'finance'     => redirect()->route('finance.dashboard'),
             'super_admin' => redirect()->route('superadmin.dashboard'),
             default       => abort(403),
         };
+
     }
 }

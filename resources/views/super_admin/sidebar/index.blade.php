@@ -310,7 +310,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M7 1.5H5.5C5.1 1.5 4.72 1.687 4.439 2.021C4.158 2.354 4 2.806 4 3.278V15.722C4 16.194 4.158 16.646 4.439 16.979C4.721 17.313 5.102 17.5 5.5 17.5H14.5C14.898 17.5 15.279 17.313 15.561 16.979C15.842 16.646 16 16.194 16 15.722V3.278C16 2.806 15.842 2.354 15.561 2.021C15.279 1.687 14.898 1.5 14.5 1.5H11.5M7 1.5V9.5L9.25 6.833 11.5 9.5V1.5H7Z" />
                             </svg>
-                            Finance
+                            Keuangan
                         </a>
                     </div>
                     <div
@@ -461,12 +461,12 @@
             @if($isPerusahaan)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
         </a>
 
-        {{-- 4. Finance --}}
+        {{-- 4. Keuangan --}}
         @php $isFinance = request()->is('super_admin/paket/harga*') || request()->is('super_admin/laporan*') || request()->is('super_admin/update/harga*'); @endphp
         <a href="{{ route('superadmin.paket-harga') }}"
            class="tap-effect flex flex-col items-center justify-center gap-0.5 flex-1 py-2 rounded-xl {{ $isFinance ? 'text-[#00509d]' : 'text-slate-400' }}">
             <i class="ph {{ $isFinance ? 'ph-fill ph-wallet' : 'ph-wallet' }} text-[22px] leading-none"></i>
-            <span class="text-[10px] {{ $isFinance ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Finance</span>
+            <span class="text-[10px] {{ $isFinance ? 'font-bold' : 'font-medium' }} leading-none tracking-tight">Keuangan</span>
             @if($isFinance)<span class="w-1 h-1 rounded-full bg-[#00509d]"></span>@endif
         </a>
 
@@ -545,7 +545,7 @@
                             <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-xs">
                                 <i class="ph ph-wallet"></i>
                             </div>
-                            <span class="text-[11px] leading-tight">Finance</span>
+                            <span class="text-[11px] leading-tight">Keuangan</span>
                         </a>
                     </div>
                 </div>

@@ -13,7 +13,8 @@
                     </a>
                     <div>
                         <h1 class="text-base sm:text-xl font-bold text-white">Tambah Pengguna Baru</h1>
-                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Daftarkan akun baru untuk Admin, Finance, Perusahaan, atau Pelamar</p>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Daftarkan akun baru untuk Admin, Perusahaan, atau Pelamar</p>
+
                     </div>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
@@ -113,7 +114,6 @@
                                 class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] outline-none transition bg-white">
                                 <option value="">-- Pilih Peran Akun --</option>
                                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="finance" {{ old('role') == 'finance' ? 'selected' : '' }}>Finance</option>
                                 <option value="perusahaan" {{ old('role') == 'perusahaan' ? 'selected' : '' }}>Perusahaan</option>
                                 <option value="pelamar" {{ old('role') == 'pelamar' ? 'selected' : '' }}>Pelamar</option>
                             </select>
@@ -121,7 +121,8 @@
                     </div>
                 </div>
 
-                <!-- ================= SECTION ADMIN / FINANCE ================= -->
+                <!-- ================= SECTION ADMIN ================= -->
+
                 <div id="form-alamat" class="space-y-5 pt-4">
                     <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
                         2. Biodata & Wilayah Penugasan

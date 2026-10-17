@@ -85,9 +85,12 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
     Route::controller(CatatanCashController::class)->middleware('perusahaan.verified')->group(function () {
         Route::post('/topup/store', 'store')->name('catatan_cash.store');
         Route::get('/topup/{id}', 'show')->name('catatan_cash.show');
+        Route::get('/topup/{id}/bayar', 'payNow')->name('catatan_cash.pay_now');
+        Route::get('/topup/{id}/status', 'checkStatus')->name('catatan_cash.status');
         Route::get('/transaksi/{id}', 'show')->name('perusahaan.transaksi');
         Route::post('/topup/{id}/upload-bukti', 'uploadBukti')->name('catatan_cash.upload_bukti');
     });
+
 
     // LOWONGAN CONTROLLER
     Route::controller(LowonganPerusahaanController::class)->group(function () {

@@ -68,7 +68,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/calon-kandidat/{id}/lulus', 'lulus')->name('superadmin.calon.lulus');
         Route::post('/calon-kandidat/{id}/gugur', 'gugur')->name('superadmin.calon.gugur');
 
-        // crud admin dan finance
+        // crud admin
         Route::get('/add/user', 'role')->name('superadmin.add.user');
         Route::get('/add/user/createForm', 'createForm')->name('superadmin.add.user.createForm');
         Route::post('/add/user/store', 'store')->name('superadmin.add.user.store');
@@ -92,7 +92,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::get('/paket/harga/edit/harga', 'edit_pembayaran')->name('superadmin.paket-harga.edit-pembayaran');
         Route::put('/update/harga/harga', 'update_pembayaran')->name('superadmin.paket-harga.update-pembayaran');
 
-        // Detail Laporan Finance
+        // Detail Laporan Keuangan
         Route::get('/laporan/detail/{tanggal}', 'detail_laporan')->name('superadmin.laporan.detail');
         Route::get('/laporan/{tanggal}/unduh', 'unduh_laporan_harian')->name('superadmin.laporan.unduh');
 

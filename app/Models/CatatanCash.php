@@ -21,12 +21,17 @@ class CatatanCash extends Model
         'total',
         'status',
         'bukti',
+        'checkout_url',
+        'xendit_id',
         'expired_at',
+        'paid_at',
     ];
 
     protected $casts = [
         'expired_at' => 'datetime',
+        'paid_at'    => 'datetime',
     ];
+
 
     public function user()
     {

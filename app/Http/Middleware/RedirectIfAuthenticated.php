@@ -28,10 +28,9 @@ class RedirectIfAuthenticated
                 return redirect('/');
             } elseif ($user->role == 'perusahaan') {
                 return redirect()->route('perusahaan.dashboard');
-            } elseif ($user->role == 'finance') {
-                return redirect()->route('finance.dashboard');
             }
         }
+
 
         return $next($request);
     }
