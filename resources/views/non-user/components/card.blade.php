@@ -60,18 +60,7 @@
                         $cardShareText = "Lowongan Kerja: {$d->nama} di " . ($d->perusahaan->nama_perusahaan ?? 'Perusahaan');
                     @endphp
                     <button type="button"
-                        @click.prevent.stop="
-                            if (navigator.share) {
-                                navigator.share({
-                                    title: '{{ addslashes($d->nama) }}',
-                                    text: '{{ addslashes($cardShareText) }}',
-                                    url: '{{ $cardShareUrl }}'
-                                }).catch(() => {});
-                            } else {
-                                navigator.clipboard.writeText('{{ $cardShareUrl }}');
-                                Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Tautan lowongan disalin!', showConfirmButton: false, timer: 1500 });
-                            }
-                        "
+                        @click.prevent.stop="openShareModal('{{ $cardShareUrl }}', '{{ addslashes($cardShareText) }}')"
                         class="p-1 text-slate-400 hover:text-[#00509d] transition cursor-pointer"
                         title="Bagikan Lowongan">
                         <i class="ph ph-share-network text-2xl"></i>

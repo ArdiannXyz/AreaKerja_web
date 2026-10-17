@@ -1035,6 +1035,7 @@
     </style>
 
     @include('layouts.modal-logout')
+    @include('components.modal-share-glints')
     <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
     <script src="{{ asset('js/non_user.js') }}"></script>
     <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
