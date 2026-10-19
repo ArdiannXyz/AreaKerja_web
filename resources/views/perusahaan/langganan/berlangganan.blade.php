@@ -91,24 +91,17 @@
                  x-data="{ selectedPaket: '{{ $defaultPaket['id'] ?? '12_bulan' }}' }">
                 @foreach ($paketLangganan as $key => $paket)
                     @php
-                        $isPopular = !empty($paket['popular']);
-                        $isUserVip = $perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired);
+                        $isPopular   = !empty($paket['popular']);
+                        $isUserVip   = $perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired);
+                        $badgeClass  = $paket['badge_color'] ?? 'bg-blue-50 text-[#00509d] border-blue-200';
+                        $borderBase  = $isPopular ? 'border-2 border-blue-200' : 'border border-slate-200/90';
                     @endphp
                     <div
                         x-on:click="selectedPaket = '{{ $key }}'; selectPaket('{{ $key }}')"
                         x-bind:class="selectedPaket === '{{ $key }}'
                             ? 'border-2 border-[#00509d] shadow-xl -translate-y-2 ring-4 ring-blue-100 bg-gradient-to-b from-blue-50/40 via-white to-white cursor-pointer'
-                            : '{{ $isPopular ? 'border-2 border-blue-200' : 'border border-slate-200/90' }} shadow-xs hover:shadow-md hover:-translate-y-1 cursor-pointer'"
+                            : '{{ $borderBase }} shadow-xs hover:shadow-md hover:-translate-y-1 cursor-pointer'"
                         class="bg-white rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 relative select-none">
-
-                        {{-- Popular Badge --}}
-                        @if ($isPopular)
-                            <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 z-10">
-                                <span class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs flex items-center gap-1 whitespace-nowrap">
-                                    <i class="ph-fill ph-sparkle text-amber-200"></i> Paling Hemat
-                                </span>
-                            </div>
-                        @endif
 
                         {{-- Selected Checkmark --}}
                         <div x-show="selectedPaket === '{{ $key }}'"
@@ -120,12 +113,22 @@
                         </div>
 
                         <div class="space-y-4">
-                            <div class="flex items-center justify-between">
-                                <span x-bind:class="selectedPaket === '{{ $key }}' ? 'bg-[#00509d] text-white border-[#00509d]' : '{{ str_replace('"', '\'', $paket['badge_color'] ?? 'bg-blue-50 text-[#00509d] border-blue-200') }}'"
-                                      class="text-xs font-black px-2.5 py-1 rounded-lg border transition-colors duration-200">
-                                    {{ $paket['badge'] }}
-                                </span>
-                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Durasi</span>
+                            {{-- Badge Row --}}
+                            <div class="flex items-center justify-between gap-2">
+                                <div class="flex items-center gap-1.5 flex-wrap">
+                                    {{-- Main badge (Starter VIP / Kuartalan / Semi-Annual / Paling Hemat) --}}
+                                    <span x-bind:class="selectedPaket === '{{ $key }}' ? 'bg-[#00509d] text-white border-[#00509d]' : '{{ $badgeClass }}'"
+                                          class="text-xs font-black px-2.5 py-1 rounded-lg border transition-colors duration-200 whitespace-nowrap">
+                                        {{ $paket['badge'] }}
+                                    </span>
+                                    {{-- "Paling Hemat" sparkle pill — inline, inside card, only for popular --}}
+                                    @if ($isPopular)
+                                        <span class="inline-flex items-center gap-0.5 bg-amber-100 text-amber-700 border border-amber-300 text-[10px] font-black px-2 py-0.5 rounded-full whitespace-nowrap">
+                                            <i class="ph-fill ph-sparkle text-amber-500 text-xs"></i> Terbaik
+                                        </span>
+                                    @endif
+                                </div>
+                                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider shrink-0">Durasi</span>
                             </div>
 
                             <div>
@@ -139,8 +142,7 @@
                                  class="py-3 border-y flex items-baseline gap-2 transition-colors duration-200">
                                 <div class="flex items-center gap-1.5">
                                     <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-6 h-6 object-contain">
-                                    <span x-bind:class="selectedPaket === '{{ $key }}' ? 'text-[#00509d]' : 'text-[#00509d]'"
-                                          class="text-3xl font-black">{{ number_format($paket['harga'], 0, ',', '.') }}</span>
+                                    <span class="text-3xl font-black text-[#00509d]">{{ number_format($paket['harga'], 0, ',', '.') }}</span>
                                 </div>
                                 <span class="text-xs font-bold text-slate-500">Koin</span>
                             </div>
@@ -178,6 +180,7 @@
                         </div>
                     </div>
                 @endforeach
+
             </div>
         </div>
 
