@@ -86,6 +86,36 @@ class SocialLinkController extends Controller
     }
 
     /**
+     * Update full social config (nama + icon + link) — supports add/delete/reorder.
+     */
+    public function updateConfig(Request $request)
+    {
+        $request->validate([
+            'socials'          => 'required|array|min:1',
+            'socials.*.nama'   => 'required|string|max:50',
+            'socials.*.icon'   => 'required|string|max:100',
+            'socials.*.link'   => 'nullable|url|max:500',
+        ], [
+            'socials.*.nama.required' => 'Nama platform sosial media wajib diisi.',
+            'socials.*.icon.required' => 'Ikon platform wajib dipilih.',
+            'socials.*.link.url'      => 'Format URL tidak valid.',
+        ]);
+
+        SiteSettingService::updateSocialsConfig($request->input('socials', []));
+
+        return back()->with('success', 'Pengaturan sosial media berhasil disimpan.');
+    }
+
+    /**
+     * Reset social config back to defaults.
+     */
+    public function resetConfig(Request $request)
+    {
+        SiteSettingService::resetSocialsConfig();
+        return back()->with('success', 'Sosial media dikembalikan ke pengaturan bawaan.');
+    }
+
+    /**
      * Update/upload header banner image.
      */
     public function headerImageUpdate(Request $request, $nama)

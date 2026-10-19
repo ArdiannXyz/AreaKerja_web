@@ -93,15 +93,35 @@ class SiteSettingService
 
     /**
      * Social media links default configurations.
+     * Each entry includes 'icon' — a Phosphor icon class (ph-fill ph-xxx).
      */
     public static function getDefaultSocials(): array
     {
         return [
-            1 => ['id' => 1, 'nama' => 'Facebook', 'link' => 'https://facebook.com/areakerja'],
-            2 => ['id' => 2, 'nama' => 'Youtube', 'link' => 'https://youtube.com/@areakerja'],
-            3 => ['id' => 3, 'nama' => 'Instagram', 'link' => 'https://instagram.com/areakerjacom'],
-            4 => ['id' => 4, 'nama' => 'Linkedin', 'link' => 'https://linkedin.com/company/areakerja'],
-            5 => ['id' => 5, 'nama' => 'Twitter', 'link' => 'https://twitter.com/areakerja'],
+            1 => ['id' => 1, 'nama' => 'Facebook',  'icon' => 'ph-fill ph-facebook-logo',  'link' => 'https://facebook.com/areakerja'],
+            2 => ['id' => 2, 'nama' => 'Youtube',   'icon' => 'ph-fill ph-youtube-logo',   'link' => 'https://youtube.com/@areakerja'],
+            3 => ['id' => 3, 'nama' => 'Instagram', 'icon' => 'ph-fill ph-instagram-logo', 'link' => 'https://instagram.com/areakerjacom'],
+            4 => ['id' => 4, 'nama' => 'Linkedin',  'icon' => 'ph-fill ph-linkedin-logo',  'link' => 'https://linkedin.com/company/areakerja'],
+            5 => ['id' => 5, 'nama' => 'Twitter',   'icon' => 'ph-fill ph-twitter-logo',   'link' => 'https://twitter.com/areakerja'],
+        ];
+    }
+
+    /**
+     * Available Phosphor social / brand icons for the admin icon picker.
+     */
+    public static function getAvailableIcons(): array
+    {
+        return [
+            'ph-fill ph-facebook-logo'  => 'Facebook',
+            'ph-fill ph-instagram-logo' => 'Instagram',
+            'ph-fill ph-twitter-logo'   => 'Twitter / X',
+            'ph-fill ph-linkedin-logo'  => 'LinkedIn',
+            'ph-fill ph-youtube-logo'   => 'YouTube',
+            'ph-fill ph-tiktok-logo'    => 'TikTok',
+            'ph-fill ph-whatsapp-logo'  => 'WhatsApp',
+            'ph-fill ph-telegram-logo'  => 'Telegram',
+            'ph-fill ph-github-logo'    => 'GitHub',
+            'ph-fill ph-globe'          => 'Website / Lainnya',
         ];
     }
 
@@ -236,14 +256,17 @@ class SiteSettingService
     }
 
     /**
-     * Get social links collection merged with stored links.
+     * Get all social links (defaults merged with stored overrides + custom entries).
+     * Returns a Collection of objects with: id, nama, icon, link.
      */
     public static function getSocials(): Collection
     {
-        $settings = self::getSettings();
-        $storedSocials = $settings['socials'] ?? [];
-        $defaults = self::getDefaultSocials();
+        $settings    = self::getSettings();
+        $storedSocials = $settings['socials_config'] ?? [];  // full config override
+        $storedLinks = $settings['socials'] ?? [];            // legacy link-only overrides
+        $defaults    = self::getDefaultSocials();
 
+        // Legacy SiteSetting DB map (still respected for backward compat)
         $socialMap = [
             1 => 'social_facebook',
             2 => 'social_youtube',
@@ -254,9 +277,18 @@ class SiteSettingService
 
         $result = collect();
 
+        // If full config is stored, use it directly (preserves order, icon, nama)
+        if (!empty($storedSocials)) {
+            foreach ($storedSocials as $item) {
+                $result->push((object) $item);
+            }
+            return $result;
+        }
+
+        // Fallback: merge defaults with legacy link overrides
         foreach ($defaults as $id => $item) {
-            if (isset($storedSocials[$id])) {
-                $item['link'] = $storedSocials[$id];
+            if (isset($storedLinks[$id])) {
+                $item['link'] = $storedLinks[$id];
             } elseif (isset($socialMap[$id]) && class_exists(\App\Models\SiteSetting::class)) {
                 $dbVal = \App\Models\SiteSetting::get($socialMap[$id]);
                 if ($dbVal) {
@@ -270,7 +302,7 @@ class SiteSettingService
     }
 
     /**
-     * Update social links.
+     * Update social links (link-only, legacy support).
      */
     public static function updateSocials(array $links): void
     {
@@ -295,4 +327,39 @@ class SiteSettingService
         $settings['socials'] = $storedSocials;
         self::saveSettings($settings);
     }
+
+    /**
+     * Replace the full social config (nama, icon, link for each entry).
+     * Used by the admin social management UI.
+     *
+     * @param array $socials  Array of ['nama'=>..., 'icon'=>..., 'link'=>...]
+     */
+    public static function updateSocialsConfig(array $socials): void
+    {
+        $settings = self::getSettings();
+
+        $config = [];
+        foreach (array_values($socials) as $idx => $item) {
+            $config[] = [
+                'id'   => $idx + 1,
+                'nama' => trim($item['nama'] ?? ''),
+                'icon' => trim($item['icon'] ?? 'ph-fill ph-globe'),
+                'link' => trim($item['link'] ?? ''),
+            ];
+        }
+
+        $settings['socials_config'] = $config;
+        self::saveSettings($settings);
+    }
+
+    /**
+     * Reset social config back to defaults.
+     */
+    public static function resetSocialsConfig(): void
+    {
+        $settings = self::getSettings();
+        unset($settings['socials_config']);
+        self::saveSettings($settings);
+    }
 }
+

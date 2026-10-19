@@ -1,9 +1,32 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-white min-h-screen p-4 sm:p-10 mt-20">
         <!-- Judul -->
         <h2 class="text-xl font-semibold text-gray-800">Edit Alamat Perusahaan</h2>
         <hr class="border-t-2 border-[#00509d] mt-1 mb-6" />
+
+        <!-- Alerts -->
+        @if (session('success'))
+            <div class="p-3 my-4 bg-green-100 text-green-700 rounded-md text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="p-3 my-4 bg-red-100 text-red-700 rounded-md text-sm">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (isset($errors) && $errors->any())
+            <div class="p-3 my-4 bg-red-100 text-red-700 rounded-md text-sm">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $err)
+                        <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <!-- Form -->
         <form action="{{ route('alamat.update.perusahaan', $data->id ?? 1) }}" method="POST" class="px-0 sm:px-12 space-y-5 w-full max-w-4xl">
@@ -48,16 +71,17 @@
                         @php
                             $selectedProv = (string)($data->provinsi_id ?? (is_object($data->provinsi ?? null) ? $data->provinsi->nama : ($data->provinsi ?? '')));
                         @endphp
-                        <option value="{{ $prov->id }}" {{ strcasecmp($selectedProv, $prov->id) === 0 || strcasecmp($selectedProv, $prov->nama) === 0 ? 'selected' : '' }}>
+                        <option value="{{ $prov->nama }}" {{ strcasecmp($selectedProv, $prov->id) === 0 || strcasecmp($selectedProv, $prov->nama) === 0 ? 'selected' : '' }}>
                             {{ $prov->nama }}
                         </option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- Kota -->
+            <!-- Kota / Kabupaten -->
             <div>
-                <label class="block text-sm font-medium text-gray-800 mb-1">Kota / Kabupaten <span class="text-red-500">*</span></label>
+                <label class="block text-sm font-medium text-gray-800 mb-1">Kota / Kabupaten <span
+                        class="text-red-500">*</span></label>
                 <select id="kotaSelect" name="kota"
                     class="w-full border border-[#00509d] rounded-md px-4 py-3 outline-none focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Pilih Kota</option>
@@ -66,22 +90,6 @@
                     @endphp
                     @if (!empty($kotaVal))
                         <option value="{{ $kotaVal }}" selected>{{ $kotaVal }}</option>
-                    @endif
-                </select>
-            </div>
-
-            <!-- Kecamatan -->
-            <div>
-                <label class="block text-sm font-medium text-gray-800 mb-1">Kecamatan <span
-                        class="text-red-500">*</span></label>
-                <select id="kecamatanSelect" name="kecamatan"
-                    class="w-full border border-[#00509d] rounded-md px-4 py-3 outline-none focus:ring-1 focus:ring-[#00509d]">
-                    <option value="">Pilih Kecamatan</option>
-                    @php
-                        $kecVal = is_object($data->kecamatan ?? null) ? $data->kecamatan->nama : ($data->kecamatan ?? '');
-                    @endphp
-                    @if (!empty($kecVal))
-                        <option value="{{ $kecVal }}" selected>{{ $kecVal }}</option>
                     @endif
                 </select>
             </div>
@@ -113,13 +121,11 @@
         document.addEventListener('DOMContentLoaded', function() {
             const provinsiSelect = document.getElementById('provinsiSelect');
             const kotaSelect = document.getElementById('kotaSelect');
-            const kecamatanSelect = document.getElementById('kecamatanSelect');
 
-            // Ganti provinsi â†’ load kota
+            // Ganti provinsi → load kota
             provinsiSelect.addEventListener('change', function() {
                 const provinsiId = this.value;
                 kotaSelect.innerHTML = '<option value="">Memuat...</option>';
-                kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
 
                 fetch(`/get-kota/${encodeURIComponent(provinsiId)}`)
                     .then(res => res.json())
@@ -130,23 +136,6 @@
                     })
                     .catch(err => {
                         kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
-                    });
-            });
-
-            // Ganti kota â†’ load kecamatan
-            kotaSelect.addEventListener('change', function() {
-                const kotaId = this.value;
-                kecamatanSelect.innerHTML = '<option value="">Memuat...</option>';
-
-                fetch(`/get-kecamatan/${encodeURIComponent(kotaId)}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-                        const options = data.map(k => `<option value="${k.nama}">${k.nama}</option>`);
-                        kecamatanSelect.insertAdjacentHTML('beforeend', options.join(''));
-                    })
-                    .catch(err => {
-                        kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
                     });
             });
         });

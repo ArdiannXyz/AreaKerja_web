@@ -22,7 +22,7 @@
                         <div class="flex items-center gap-2.5">
                             <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-[#00509d] border border-blue-200">
                                 <i class="ph ph-briefcase"></i>
-                                {{ $simpanlowongan->count() }} Lowongan Tersimpan
+                                {{ ($simpanlowongan instanceof \Illuminate\Contracts\Pagination\Paginator ? $simpanlowongan->total() : $simpanlowongan->count()) }} Lowongan Tersimpan
                             </span>
                             <a href="{{ route('beranda') }}"
                                 class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#00509d] hover:bg-white border border-slate-200/80 shadow-2xs transition">
@@ -90,11 +90,9 @@
                         @endif
                     </div>
 
-                    @if ($simpanlowongan->count() > 6)
-                        <div class="flex justify-center mt-8 mb-12">
-                            <button class="bg-[#004e98] hover:bg-[#003d7a] text-white font-bold px-8 py-3 rounded-xl shadow-sm hover:shadow transition text-sm">
-                                Muat lebih banyak...
-                            </button>
+                    @if ($simpanlowongan instanceof \Illuminate\Contracts\Pagination\Paginator && $simpanlowongan->hasPages())
+                        <div class="mt-8 mb-12 flex justify-center">
+                            {{ $simpanlowongan->links() }}
                         </div>
                     @endif
                 @else

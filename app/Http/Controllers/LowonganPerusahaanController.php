@@ -35,76 +35,21 @@ class LowonganPerusahaanController extends Controller
 
     public function index(Request $request)
     {
-        $pakets = PaketLowongan::all();
         $jenisLowongan = LowonganPerusahaan::select('jenis')->distinct()->pluck('jenis');
 
         $query = LowonganPerusahaan::where('perusahaan_id', auth()->user()->perusahaan->id);
-
-        if ($request->paket) {
-            $query->where('paket_id', $request->paket);
-        }
 
         if ($request->jenis) {
             $query->where('jenis', $request->jenis);
         }
 
         $lowongans = $query->latest()->get();
-        $hargaBoost = 300;
 
         return view('perusahaan.lowongan-saya.lowongan-kosong', [
             "Data"          => $lowongans,
             'lowongans'     => $lowongans,
-            'pakets'        => $pakets,
             'jenisLowongan' => $jenisLowongan,
-            'hargaBoost'    => $hargaBoost,
         ]);
-    }
-
-    public function paketform()
-    {
-        $perusahaan = Auth::user()->perusahaan;
-        $isVip = $perusahaan ? $perusahaan->isVip() : false;
-        $activeCount = $perusahaan ? $perusahaan->activeLowonganCount() : 0;
-        $maxActive = $perusahaan ? $perusahaan->maxActiveLowongan() : 2;
-        $pakets = PaketLowongan::whereIn('nama', ['Gold', 'Silver', 'Bronze'])->get();
-
-        if ($pakets->isEmpty()) {
-            $pakets = collect([
-                (object)[
-                    'id'            => 1,
-                    'nama'          => 'Gold',
-                    'deskripsi'     => '5 Kali Publikasi di semua jaringan Areakerja.com',
-                    'harga'         => 150,
-                    'harga_koin'    => 150,
-                    'batas_listing' => 30,
-                    'benefit'       => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram",
-                ],
-                (object)[
-                    'id'            => 2,
-                    'nama'          => 'Silver',
-                    'deskripsi'     => '3 Kali Publikasi di semua jaringan Areakerja.com',
-                    'harga'         => 100,
-                    'harga_koin'    => 100,
-                    'batas_listing' => 21,
-                    'benefit'       => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram",
-                ],
-                (object)[
-                    'id'            => 3,
-                    'nama'          => 'Bronze',
-                    'deskripsi'     => '1 Kali Publikasi di semua jaringan Areakerja.com',
-                    'harga'         => 50,
-                    'harga_koin'    => 50,
-                    'batas_listing' => 14,
-                    'benefit'       => "Website & Aplikasi\nInstagram Post & Story\nHighlight Story Favorit\nGoogle Jobs & Bisnis\nFacebook Post & Story\nTwitter\nLinkedIn\nTelegram",
-                ],
-            ]);
-        }
-
-        foreach ($pakets as $paket) {
-            $paket->harga = $paket->harga_koin ?? 100;
-        }
-
-        return view('perusahaan.pasang-lowongan', compact('perusahaan', 'pakets', 'isVip', 'activeCount', 'maxActive'));
     }
 
     public function createForm()
@@ -160,6 +105,7 @@ class LowonganPerusahaanController extends Controller
         $valid['slug'] = Str::slug($request->nama . '-' . time());
         $valid['published_at'] = now();
         $valid['status'] = 'buka';
+        $valid['gaji_hidden'] = $request->has('gaji_hidden') ? 1 : 0;
 
         // Durasi otomatis & Job Booster sesuai Tier (Freemium vs VIP):
         // Akun Biasa: Masa aktif 30 hari (1 bulan), kuota pelamar harian maks 5.
@@ -256,6 +202,7 @@ class LowonganPerusahaanController extends Controller
         if ($request->filled('nama')) {
             $valid['slug'] = Str::slug($request->nama . '-' . time());
         }
+        $valid['gaji_hidden'] = $request->has('gaji_hidden') ? 1 : 0;
 
         if ($lowongan->isDisembunyikan()) {
             unset($valid['status']);
@@ -321,68 +268,6 @@ class LowonganPerusahaanController extends Controller
         return redirect()->route('lowongan.saya.perusahaan')->with('success', 'Pendidikan berhasil dihapus.');
     }
 
-    public function beliPaket(Request $request)
-    {
-        $request->validate([
-            'paket_id'    => 'required|exists:paket_lowongans,id',
-            'lowongan_id' => 'required|exists:lowongan_perusahaans,id',
-        ]);
-
-        $user = Auth::user();
-        $perusahaan = $user->perusahaan;
-        $paket = PaketLowongan::findOrFail($request->paket_id);
-        $biayaKoin = $paket->harga_koin ?? 100;
-
-        if ($perusahaan->koin_perusahaan < $biayaKoin) {
-            return redirect()->route('paket.form')->with('koin_kurang', true);
-        }
-
-        $lowongan = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
-            ->where('id', $request->lowongan_id)
-            ->firstOrFail();
-
-        try {
-            $pesanSukses = DB::transaction(function () use ($perusahaan, $paket, $lowongan, $biayaKoin, $user) {
-                // 1. Potong koin via CoinTransactionService
-                $coinService = app(CoinTransactionService::class);
-                $coinService->deduct(
-                    $perusahaan,
-                    $biayaKoin,
-                    'Pembelian Paket ' . $paket->nama,
-                    'Saldo Koin Perusahaan',
-                    'KOIN-' . now()->format('YmdHis') . '-' . $user->id,
-                    $perusahaan->nama_perusahaan
-                );
-
-                // 2. Update status & expired_at lowongan
-                if ($lowongan->published_at && $lowongan->expired_at && $lowongan->expired_at > now()) {
-                    $lowongan->update([
-                        'paket_id'   => $paket->id,
-                        'expired_at' => $lowongan->expired_at->addDays($paket->batas_listing),
-                    ]);
-                    return 'Paket berhasil dibeli. Masa aktif lowongan berhasil diperpanjang ' . $paket->batas_listing . ' hari.';
-                } else {
-                    $lowongan->update([
-                        'paket_id'     => $paket->id,
-                        'published_at' => now(),
-                        'expired_at'   => now()->addDays($paket->batas_listing),
-                    ]);
-                    return 'Paket ' . $paket->nama . ' berhasil dibeli! Lowongan Anda kini telah AKTIF dan terbit selama ' . $paket->batas_listing . ' hari.';
-                }
-            });
-
-            return redirect()->route('lowongan.saya.perusahaan')->with('success', $pesanSukses);
-        } catch (\Throwable $e) {
-            Log::error("Gagal memproses pembelian paket lowongan: " . $e->getMessage(), [
-                'perusahaan_id' => $perusahaan->id,
-                'lowongan_id'   => $lowongan->id,
-                'paket_id'      => $paket->id,
-            ]);
-
-            return redirect()->route('paket.form')->with('error', 'Terjadi kesalahan sistem saat memproses pembelian paket.');
-        }
-    }
-
     public function toggleRekomendasi($id)
     {
         $lowongan = LowonganPerusahaan::findOrFail($id);
@@ -394,12 +279,10 @@ class LowonganPerusahaanController extends Controller
 
     public function createSuper($id)
     {
-        $pakets = PaketLowongan::all();
         $perusahaan = Perusahaan::findOrFail($id);
         $categories = $this->getCategories();
         return view('super_admin.perusahaan.tambah-lowongan', [
             'perusahaan' => $perusahaan,
-            'pakets'     => $pakets,
             'categories' => $categories,
         ]);
     }

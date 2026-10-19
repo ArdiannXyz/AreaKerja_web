@@ -216,6 +216,18 @@
                                 placeholder="Terisi otomatis dari rentang gaji di atas"
                                 class="w-full sm:w-80 bg-slate-200/80 border border-slate-300 text-slate-800 font-bold rounded-md px-3.5 py-2 cursor-not-allowed outline-none text-xs select-none" />
                         </div>
+
+                        @if ($isVip ?? false)
+                            <div class="pt-3 border-t border-slate-200 flex items-center gap-3">
+                                <input type="checkbox" name="gaji_hidden" id="gaji_hidden" value="1"
+                                    {{ old('gaji_hidden', $data->gaji_hidden ?? false) ? 'checked' : '' }}
+                                    class="w-4 h-4 rounded border-slate-300 text-[#00509d] focus:ring-[#00509d]">
+                                <label for="gaji_hidden" class="text-sm text-slate-600">
+                                    <i class="ph ph-eye-slash text-[#00509d] mr-1"></i>
+                                    Sembunyikan gaji dari calon kandidat (Fitur Eksklusif VIP)
+                                </label>
+                            </div>
+                        @endif
                     </div>
 
                     <!-- Deskripsi -->

@@ -95,10 +95,28 @@ class Iklan extends Model
      */
     public function getBannerUrlAttribute(): string
     {
-        if (str_starts_with($this->gambar_banner, 'http')) {
+        if (empty($this->gambar_banner)) {
+            return asset('images/auth_banner.png');
+        }
+
+        if (str_starts_with($this->gambar_banner, 'http://') || str_starts_with($this->gambar_banner, 'https://')) {
             return $this->gambar_banner;
         }
 
-        return asset('storage/' . $this->gambar_banner);
+        if (str_starts_with($this->gambar_banner, 'images/')) {
+            if (file_exists(public_path($this->gambar_banner))) {
+                return asset($this->gambar_banner);
+            }
+        }
+
+        if (file_exists(public_path('storage/' . $this->gambar_banner))) {
+            return asset('storage/' . $this->gambar_banner);
+        }
+
+        if (file_exists(public_path($this->gambar_banner))) {
+            return asset($this->gambar_banner);
+        }
+
+        return asset('images/auth_banner.png');
     }
 }

@@ -285,31 +285,23 @@
                 </p>
             </div>
 
-            <!-- Pilih Rekening / Metode Pembayaran -->
+            <!-- Ringkasan Metode Pembayaran Otomatis -->
             <div class="text-left mb-5">
-                <label class="block text-xs font-bold text-slate-700 mb-2">Pilih Rekening Tujuan / Pembayaran:</label>
-                <div class="space-y-2">
-                    @foreach($daftarBank as $index => $bank)
-                        <label class="bankChoice flex items-center justify-between p-3 border rounded-xl cursor-pointer hover:bg-blue-50/50 transition {{ $index === 0 ? 'border-[#00509d] bg-blue-50/30 ring-1 ring-[#00509d]' : 'border-slate-200' }}">
-                            <div class="flex items-center gap-3">
-                                @if($bank->logo_image)
-                                    <img src="{{ asset($bank->logo_image) }}" alt="{{ $bank->nama_bank }}" class="w-8 h-8 object-contain">
-                                @else
-                                    <div class="w-8 h-8 rounded-lg bg-blue-100 text-[#00509d] font-bold text-xs flex items-center justify-center">
-                                        {{ substr($bank->nama_bank, 0, 3) }}
-                                    </div>
-                                @endif
-                                <div>
-                                    <p class="font-bold text-xs text-slate-900">{{ $bank->nama_bank }}</p>
-                                    <p class="text-[11px] text-slate-500 font-mono">{{ $bank->no_rek }} (a/n {{ $bank->owner }})</p>
-                                </div>
-                            </div>
-                            <input type="radio" name="selected_bank" value="{{ $bank->id }}" class="bankRadio hidden peer" {{ $index === 0 ? 'checked' : '' }}>
-                            <span class="w-4 h-4 rounded-full border-2 border-slate-300 peer-checked:border-[#00509d] peer-checked:bg-[#00509d] flex items-center justify-center">
-                                <span class="w-1.5 h-1.5 bg-white rounded-full"></span>
-                            </span>
-                        </label>
-                    @endforeach
+                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Metode Pembayaran</span>
+                        <span class="bg-[#00509d] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                            Xendit Payment Gateway
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Pilihan Saluran</span>
+                        <span class="text-slate-700 font-semibold text-right text-[11px]">QRIS, VA Bank (BCA, Mandiri, BRI, BNI), E-Wallet</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Biaya Admin</span>
+                        <span class="text-emerald-600 font-semibold">Gratis</span>
+                    </div>
                 </div>
             </div>
 
@@ -364,21 +356,6 @@
             }
         }
 
-        // Pilihan bank interaktif
-        document.querySelectorAll('.bankRadio').forEach(radio => {
-            radio.addEventListener('change', function() {
-                document.querySelectorAll('.bankChoice').forEach(card => {
-                    card.classList.remove('border-[#00509d]', 'bg-blue-50/30', 'ring-1', 'ring-[#00509d]');
-                    card.classList.add('border-slate-200');
-                });
-                const parent = this.closest('.bankChoice');
-                if (parent) {
-                    parent.classList.remove('border-slate-200');
-                    parent.classList.add('border-[#00509d]', 'bg-blue-50/30', 'ring-1', 'ring-[#00509d]');
-                }
-            });
-        });
-
         const isVerified = @json(optional($perusahaan)->verification_status === 'approved');
 
         let formDataTH = null;
@@ -429,11 +406,6 @@
                     confirmButtonColor: '#00509d'
                 });
                 return;
-            }
-
-            const selectedBank = document.querySelector('.bankRadio:checked')?.value;
-            if (selectedBank) {
-                formDataTH.set('daftar_bank_id', selectedBank);
             }
 
             const btn = this;

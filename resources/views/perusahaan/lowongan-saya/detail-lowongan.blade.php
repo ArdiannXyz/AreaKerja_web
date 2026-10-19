@@ -145,11 +145,15 @@
                                 fill="black" fill-opacity="0.6" />
                         </svg>
                         <div>
-                            <p class="text-sm font-semibold">Jenis lowongan</p>
-                            <span
-                                class="inline-block bg-gray-200 text-gray-700 rounded px-3 py-1 text-xs mt-2 break-words">
-                                {{ $data->jenis }}
-                            </span>
+                            <p class="text-sm font-semibold">Gaji</p>
+                            @if ($data->gaji_hidden)
+                                <span class="inline-block bg-slate-100 text-slate-500 rounded px-3 py-1 text-xs mt-2">Gaji tidak ditampilkan</span>
+                            @else
+                                <span
+                                    class="inline-block bg-gray-200 text-gray-700 rounded px-3 py-1 text-xs mt-2 break-words">
+                                    Rp. {{ $data->gaji_awal }} - Rp. {{ $data->gaji_akhir }}
+                                </span>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -239,8 +243,11 @@
                                 <div class="mt-1">
                                     <span
                                         class="inline-block bg-gray-200 border rounded px-3 py-1 text-xs text-gray-700 whitespace-nowrap">
-                                        Rp. {{ number_format($ll->gaji_awal, 0, ',', '.') }} - Rp.
-                                        {{ number_format($ll->gaji_akhir, 0, ',', '.') }}
+                                        @if ($ll->gaji_hidden)
+                                            Gaji tidak ditampilkan
+                                        @else
+                                            Rp. {{ number_format($ll->gaji_awal, 0, ',', '.') }} - Rp. {{ number_format($ll->gaji_akhir, 0, ',', '.') }}
+                                        @endif
                                     </span>
                                 </div>
                             </div>

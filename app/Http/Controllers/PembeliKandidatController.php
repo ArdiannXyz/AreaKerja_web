@@ -124,6 +124,33 @@ class PembeliKandidatController extends Controller
             ], 403);
         }
 
+        // 1. Cek apakah CV kandidat sudah dibuka / diunduh terlebih dahulu
+        $hasBoughtCv = PembelianCv::where('perusahaan_id', $perusahaan->id)
+            ->where('pelamar_id', $pelamar->id)
+            ->exists();
+
+        if (!$hasBoughtCv) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Anda harus mengunduh CV kandidat terlebih dahulu sebelum dapat merekrutnya.'
+            ], 422);
+        }
+
+        // 2. Cek apakah kandidat sudah pernah direkrut sebelumnya oleh perusahaan ini
+        $alreadyRecruited = PelamarLowongan::where('pelamar_id', $pelamar->id)
+            ->whereHas('lowongan_perusahaan', function ($q) use ($perusahaan) {
+                $q->where('perusahaan_id', $perusahaan->id);
+            })
+            ->whereIn('status', ['pending', 'diterima'])
+            ->exists();
+
+        if ($alreadyRecruited) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Kandidat ini sudah pernah Anda rekrut.'
+            ], 422);
+        }
+
         $harga = 100; // 100 koin per pembelian kandidat
 
         if ($perusahaan->koin_perusahaan < $harga) {

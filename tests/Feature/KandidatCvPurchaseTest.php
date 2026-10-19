@@ -2,7 +2,9 @@
 
 namespace Tests\Feature;
 
+use App\Models\LowonganPerusahaan;
 use App\Models\Pelamar;
+use App\Models\PelamarLowongan;
 use App\Models\PembelianCv;
 use App\Models\Perusahaan;
 use App\Models\User;
@@ -155,6 +157,138 @@ class KandidatCvPurchaseTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Download');
+    }
+
+    public function test_cannot_recruit_kandidat_without_downloading_cv_first(): void
+    {
+        [$user, $perusahaan] = $this->createPerusahaanWithCoins(150);
+        $kandidat = $this->createKandidat();
+        $lowongan = LowonganPerusahaan::create([
+            'perusahaan_id' => $perusahaan->id,
+            'nama'          => 'Frontend Developer',
+            'slug'          => 'frontend-dev-' . uniqid(),
+            'jenis'         => 'Full-time',
+            'status'        => 'aktif',
+        ]);
+
+        $response = $this->actingAs($user)->postJson(route('kandidat.beli'), [
+            'pelamar_id'             => $kandidat->id,
+            'lowongan_perusahaan_id' => $lowongan->id,
+        ]);
+
+        $response->assertStatus(422);
+        $this->assertDatabaseMissing('pelamar_lowongans', [
+            'pelamar_id'  => $kandidat->id,
+            'lowongan_id' => $lowongan->id,
+        ]);
+        $perusahaan->refresh();
+        $this->assertEquals(150, $perusahaan->koin_perusahaan);
+    }
+
+    public function test_can_recruit_kandidat_after_downloading_cv(): void
+    {
+        [$user, $perusahaan] = $this->createPerusahaanWithCoins(150);
+        $kandidat = $this->createKandidat();
+        $lowongan = LowonganPerusahaan::create([
+            'perusahaan_id' => $perusahaan->id,
+            'nama'          => 'Backend Developer',
+            'slug'          => 'backend-dev-' . uniqid(),
+            'jenis'         => 'Full-time',
+            'status'        => 'aktif',
+        ]);
+
+        // 1. Unduh / beli CV terlebih dahulu (5 koin)
+        $this->actingAs($user)->postJson(route('perusahaan.kandidat.beli-cv', $kandidat->id));
+        $perusahaan->refresh();
+        $this->assertEquals(145, $perusahaan->koin_perusahaan);
+
+        // 2. Rekrut kandidat (100 koin)
+        $response = $this->actingAs($user)->postJson(route('kandidat.beli'), [
+            'pelamar_id'             => $kandidat->id,
+            'lowongan_perusahaan_id' => $lowongan->id,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'status'  => 'success',
+                'message' => 'Kandidat berhasil direkrut!',
+            ]);
+
+        $this->assertDatabaseHas('pelamar_lowongans', [
+            'pelamar_id'  => $kandidat->id,
+            'lowongan_id' => $lowongan->id,
+            'status'      => 'pending',
+        ]);
+
+        $perusahaan->refresh();
+        $this->assertEquals(45, $perusahaan->koin_perusahaan);
+    }
+
+    public function test_cannot_recruit_same_kandidat_twice(): void
+    {
+        [$user, $perusahaan] = $this->createPerusahaanWithCoins(250);
+        $kandidat = $this->createKandidat();
+        $lowongan = LowonganPerusahaan::create([
+            'perusahaan_id' => $perusahaan->id,
+            'nama'          => 'Fullstack Developer',
+            'slug'          => 'fullstack-dev-' . uniqid(),
+            'jenis'         => 'Full-time',
+            'status'        => 'aktif',
+        ]);
+
+        // Buka CV kandidat
+        PembelianCv::create([
+            'perusahaan_id' => $perusahaan->id,
+            'pelamar_id'    => $kandidat->id,
+            'koin'          => 5,
+        ]);
+
+        // Rekrut kandidat pertama kali
+        $response1 = $this->actingAs($user)->postJson(route('kandidat.beli'), [
+            'pelamar_id'             => $kandidat->id,
+            'lowongan_perusahaan_id' => $lowongan->id,
+        ]);
+        $response1->assertStatus(200);
+
+        $perusahaan->refresh();
+        $this->assertEquals(150, $perusahaan->koin_perusahaan);
+
+        // Mencoba merekrut kandidat yang sama untuk kedua kalinya
+        $response2 = $this->actingAs($user)->postJson(route('kandidat.beli'), [
+            'pelamar_id'             => $kandidat->id,
+            'lowongan_perusahaan_id' => $lowongan->id,
+        ]);
+
+        $response2->assertStatus(422);
+
+        // Koin tidak berkurang lagi
+        $perusahaan->refresh();
+        $this->assertEquals(150, $perusahaan->koin_perusahaan);
+    }
+
+    public function test_kandidat_page_shows_sudah_direkrut_for_recruited_kandidat(): void
+    {
+        [$user, $perusahaan] = $this->createPerusahaanWithCoins(150);
+        $kandidat = $this->createKandidat();
+        $lowongan = LowonganPerusahaan::create([
+            'perusahaan_id' => $perusahaan->id,
+            'nama'          => 'Mobile Developer',
+            'slug'          => 'mobile-dev-' . uniqid(),
+            'jenis'         => 'Full-time',
+            'status'        => 'aktif',
+        ]);
+
+        // Tandai sudah direkrut
+        PelamarLowongan::create([
+            'pelamar_id'  => $kandidat->id,
+            'lowongan_id' => $lowongan->id,
+            'status'      => 'pending',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('perusahaan.kandidat.ak'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Sudah Direkrut');
     }
 }
 

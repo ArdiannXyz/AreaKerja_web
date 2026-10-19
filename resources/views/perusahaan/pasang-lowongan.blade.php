@@ -175,76 +175,7 @@
         <i class="ph ph-caret-up text-2xl font-bold"></i>
     </a>
 
-    <!-- Modal Pembelian / Konfirmasi Paket -->
-    <div id="paketModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-xs flex items-center justify-center z-50 p-4">
-        <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6">
-            <!-- Modal Header -->
-            <div class="flex items-center justify-between mb-4 border-b border-gray-100 pb-3">
-                <h2 class="text-lg font-bold text-gray-800">Konfirmasi Pembelian Paket</h2>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 transition text-lg font-bold">
-                    âœ•
-                </button>
-            </div>
-
-            <form action="{{ route('paket.beli') }}" method="POST">
-                @csrf
-                <input type="hidden" name="paket_id" id="modal_paket_id">
-
-                <!-- Detail Paket Info -->
-                <div class="space-y-2 bg-blue-50/50 p-4 rounded-xl border border-blue-100 mb-4">
-                    <p class="text-xs text-gray-600 flex justify-between">
-                        <span>Paket Dipilih:</span>
-                        <span id="modal_paket_name" class="font-bold text-gray-900"></span>
-                    </p>
-                    <p class="text-xs text-gray-600 flex justify-between">
-                        <span>Biaya:</span>
-                        <span class="font-bold text-[#00509d]"><span id="modal_paket_price"></span> Koin</span>
-                    </p>
-                    <p class="text-xs text-gray-600 flex justify-between">
-                        <span>Saldo Koin Anda:</span>
-                        <span class="font-bold text-emerald-600">{{ $perusahaan->koin_perusahaan ?? 0 }} Koin</span>
-                    </p>
-                </div>
-
-                <!-- Dropdown Lowongan -->
-                <div class="mb-4">
-                    <div class="flex items-center justify-between mb-1.5">
-                        <label class="text-xs font-bold text-gray-700">Pilih Lowongan yang Dipasang</label>
-                        <a href="{{ route('lowongan.create.form') }}"
-                            class="text-xs text-[#00509d] hover:underline font-semibold">
-                            + Buat Baru
-                        </a>
-                    </div>
-                    <select name="lowongan_id" id="modal_lowongan_select" required
-                        class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-xs sm:text-sm focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] transition">
-                        <option value="">-- Pilih Draft Lowongan --</option>
-                        @if (!empty($perusahaan->pasanglowongan))
-                            @foreach ($perusahaan->pasanglowongan as $lowongan)
-                                <option value="{{ $lowongan->id }}">{{ $lowongan->nama }}</option>
-                            @endforeach
-                        @endif
-                        <option value="__create_new__" class="text-[#003d7a] font-semibold bg-blue-50">
-                            âž• [Buat Lowongan Baru]
-                        </option>
-                    </select>
-                </div>
-
-                <!-- Buttons -->
-                <div class="flex justify-end gap-3 pt-2">
-                    <button type="button" onclick="closeModal()"
-                        class="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl text-xs font-semibold transition">
-                        Batal
-                    </button>
-                    <button type="submit"
-                        class="px-5 py-2 bg-[#00509d] hover:bg-[#003d7a] text-white rounded-xl text-xs font-bold shadow-xs transition">
-                        Konfirmasi Pembelian
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    {{-- MODAL TIDAK CUKUP KOIN --}}
+    <!-- Why Choose Us (Kenapa Harus Area Kerja ?) -->
     <div x-data="{ open: {{ session('koin_kurang') ? 'true' : 'false' }} }" x-show="open" x-cloak
         class="fixed inset-0 flex items-center justify-center bg-black/50 z-50 p-4">
         <div x-transition class="bg-white p-6 sm:p-8 rounded-2xl shadow-xl max-w-sm w-full text-center">

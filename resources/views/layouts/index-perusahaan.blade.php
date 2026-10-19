@@ -581,8 +581,8 @@
                     class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Kandidat
                 </a>
-                <a href="{{ route('paket.form') }}"
-                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('paket.form*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
+                <a href="{{ route('lowongan.create.form') }}"
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->is('lowongan/create*') || request()->is('lowongan/edit*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Pasang Lowongan
                 </a>
                 <a href="{{ route('perusahaan.event.index') }}"
@@ -749,8 +749,8 @@
                         class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Kandidat
                     </a>
-                    <a href="{{ route('paket.form') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('paket.form*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
+                    <a href="{{ route('lowongan.create.form') }}"
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->is('lowongan/create*') || request()->is('lowongan/edit*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Pasang Lowongan
                     </a>
                     <a href="{{ route('perusahaan.iklan.index') }}"
@@ -1094,6 +1094,14 @@
                     <i class="ph ph-megaphone text-2xl {{ request()->routeIs('perusahaan.iklan*') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
                 </div>
                 <span class="text-[10px] font-semibold {{ request()->routeIs('perusahaan.iklan*') ? 'text-[#00509d]' : 'text-slate-500' }}">Iklan</span>
+            </a>
+
+            {{-- Pasang Lowongan --}}
+            <a href="{{ route('lowongan.create.form') }}" class="flex flex-col items-center justify-center gap-0.5 w-full h-full">
+                <div class="flex items-center justify-center w-11 h-11 transition-all {{ request()->routeIs('lowongan.create.form') ? 'bg-[#c1dcfd] rounded-2xl' : '' }}">
+                    <i class="ph ph-plus-circle text-2xl {{ request()->routeIs('lowongan.create.form') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
+                </div>
+                <span class="text-[10px] font-semibold {{ request()->routeIs('lowongan.create.form') ? 'text-[#00509d]' : 'text-slate-500' }}">Pasang Lowongan</span>
             </a>
 
             {{-- Profil --}}

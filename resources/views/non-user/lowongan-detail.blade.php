@@ -93,9 +93,13 @@
                 </div>
 
                 <div class="flex flex-col items-start md:items-end gap-3 w-full md:w-auto">
-                    <!-- Salary Plain Text -->
+                    <!-- Salary -->
                     <div class="text-slate-800 font-bold text-sm sm:text-base whitespace-nowrap">
-                        Rp. {{ number_format($data->gaji_awal, 0, ',', '.') }} - {{ number_format($data->gaji_akhir, 0, ',', '.') }} / Bulan
+                        @if (!empty($data->gaji_hidden))
+                            <span class="text-slate-500 font-semibold text-sm">Gaji tidak ditampilkan</span>
+                        @else
+                            Rp. {{ number_format($data->gaji_awal, 0, ',', '.') }} - {{ number_format($data->gaji_akhir, 0, ',', '.') }} / Bulan
+                        @endif
                     </div>
 
                     <!-- Tombol Lamar & Bookmark -->

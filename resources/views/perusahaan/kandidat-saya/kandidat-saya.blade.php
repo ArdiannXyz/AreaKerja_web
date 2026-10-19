@@ -1,7 +1,31 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <div class="max-w-6xl mt-24 mx-auto p-4 sm:p-7 rounded-lg">
         <h2 class="text-lg font-semibold mb-4">Kandidat Saya</h2>
+
+        @if (session('success'))
+            <div class="mb-4 p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm font-medium flex items-center gap-2">
+                <i class="ph ph-check-circle text-green-600 text-xl shrink-0"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="mb-4 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm font-medium flex items-center gap-2">
+                <i class="ph ph-warning-circle text-rose-600 text-xl shrink-0"></i>
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+
+        @if (isset($errors) && $errors->any())
+            <div class="mb-4 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-sm">
+                <ul class="list-disc list-inside space-y-1">
+                    @foreach ($errors->all() as $err)
+                        <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <!-- Header -->
         <div class="flex flex-col sm:flex-row items-center mb-4 gap-6">
             
@@ -36,16 +60,16 @@
         <div class="overflow-x-auto border border-gray-300 rounded-2xl mb-4 mt-8 shadow-lg">
             <table class="w-full border-collapse bg-white">
                 <thead>
-                    <tr>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Profil</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Nama</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Skill</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">CV</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Aksi</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Lowongan</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Ekspektasi Range Gaji</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Status</th>
-                        <th class="p-4 sm:p-5 text-center font-semibold">Sumber</th>
+                    <tr class="text-xs text-gray-600 uppercase tracking-wide bg-gray-50">
+                        <th class="p-3 text-center font-semibold">Profil</th>
+                        <th class="p-3 text-center font-semibold">Nama</th>
+                        <th class="p-3 text-center font-semibold">Skill</th>
+                        <th class="p-3 text-center font-semibold">CV</th>
+                        <th class="p-3 text-center font-semibold">Aksi</th>
+                        <th class="p-3 text-center font-semibold">Lowongan</th>
+                        <th class="p-3 text-center font-semibold">Ekspektasi Gaji</th>
+                        <th class="p-3 text-center font-semibold">Status</th>
+                        <th class="p-3 text-center font-semibold">Sumber</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -73,16 +97,16 @@
                                 $confirmBtn = 'Ya, Tolak!';
                             }
                         @endphp
-                        <tr class="border-b">
+                        <tr class="border-b hover:bg-gray-50 transition-colors text-sm text-gray-700">
                             <!-- Profil (Foto) -->
-                            <td class="p-3 text-center">
+                            <td class="p-2.5 text-center">
                                 <div class="flex justify-center">
                                     @if (!empty($pelamar->img_profile))
                                         <img src="{{ asset('storage/' . $pelamar->img_profile) }}"
-                                            alt="Foto Profile" class="w-10 h-10 rounded-full object-cover border border-gray-200 shadow-sm">
+                                            alt="Foto Profile" class="w-9 h-9 rounded-full object-cover border border-gray-200 shadow-sm">
                                     @else
-                                        <div class="w-10 h-10 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-800 shadow-sm">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-gray-800" fill="currentColor" viewBox="0 0 256 256">
+                                        <div class="w-9 h-9 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center text-gray-800 shadow-sm">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gray-800" fill="currentColor" viewBox="0 0 256 256">
                                                 <path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24ZM74.08,197.5a64,64,0,0,1,107.84,0,87.83,87.83,0,0,1-107.84,0ZM96,120a32,32,0,1,1,32,32A32,32,0,0,1,96,120Zm97.76,66.41a79.66,79.66,0,0,0-36.06-28.75,48,48,0,1,0-59.4,0,79.66,79.66,0,0,0-36.06,28.75,88,88,0,1,1,131.52,0Z"/>
                                             </svg>
                                         </div>
@@ -90,44 +114,48 @@
                                 </div>
                             </td>
                             <!-- Nama -->
-                            <td class="p-3 text-center">
+                            <td class="p-2.5 text-center">
                                 <span class="font-medium text-gray-800">{{ $pelamar->nama_pelamar }}</span>
                             </td>
                             <!-- Skill -->
-                            <td class="p-3 text-center">{{ $skillUtama }}</td>
+                            <td class="p-2.5 text-center text-gray-700">{{ $skillUtama }}</td>
                             <!-- CV -->
-                            <td class="p-3">
-                                <div class="flex flex-col items-center text-[#00509d]">
-                                    <button onclick="openConfirmModal({{ $pelamar->id }})">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="#fb923c">
-                                            <rect x="4" y="19" width="16" height="3" />
-                                            <rect x="10" y="3" width="4" height="11" />
-                                            <path d="M7 13l5 5 5-5z" />
-                                        </svg>
-                                    </button>
+                            <td class="p-2.5 text-center">
+                                <button onclick="openConfirmModal({{ $pelamar->id }})" class="text-gray-500 hover:text-gray-700 transition-colors" title="Unduh CV">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                                        <rect x="4" y="19" width="16" height="3" />
+                                        <rect x="10" y="3" width="4" height="11" />
+                                        <path d="M7 13l5 5 5-5z" />
+                                    </svg>
+                                </button>
+                            </td>
+                            <!-- Aksi -->
+                            <td class="p-2.5 text-center">
+                                <div class="flex flex-col items-center gap-1 justify-center">
+                                    <form action="{{ route('perusahaan.destroy.kandidat', $r->id) }}" method="POST"
+                                        onsubmit="confirmDeleteAction(event, this, '{{ addslashes($confirmTitle) }}', '{{ addslashes($confirmMsg) }}', '{{ addslashes($confirmBtn) }}')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit"
+                                            class="text-xs text-gray-600 hover:text-gray-900 hover:underline transition flex items-center gap-1"
+                                            title="{{ $actionLabel }}">
+                                            <span>{{ $actionLabel }}</span>
+                                        </button>
+                                    </form>
+                                    @if ($pelamar)
+                                        <button type="button"
+                                            onclick="openReportKandidatModal({{ $pelamar->id }}, '{{ addslashes($pelamar->nama_pelamar ?? 'Kandidat') }}', '{{ $r->lowongan_id ?? '' }}')"
+                                            class="text-xs text-gray-500 hover:text-gray-800 hover:underline transition flex items-center gap-1"
+                                            title="Laporkan Pelamar / Kandidat">
+                                            <span>Laporkan</span>
+                                        </button>
+                                    @endif
                                 </div>
                             </td>
-                            <!-- Aksi (Batalkan Rekrutan / Tolak Lamaran / Hapus) -->
-                            <td class="p-3 text-center">
-                                <form action="{{ route('perusahaan.destroy.kandidat', $r->id) }}" method="POST"
-                                    onsubmit="confirmDeleteAction(event, this, '{{ addslashes($confirmTitle) }}', '{{ addslashes($confirmMsg) }}', '{{ addslashes($confirmBtn) }}')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit"
-                                        class="px-2.5 py-1 text-xs font-semibold rounded-md transition flex items-center justify-center gap-1 mx-auto bg-red-50 text-red-600 hover:bg-red-100 border border-red-200"
-                                        title="{{ $actionLabel }}">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
-                                        </svg>
-                                        <span>{{ $actionLabel }}</span>
-                                    </button>
-                                </form>
-                            </td>
-                            <!-- Gaji -->
-                            <td class="p-3 text-center">{{ $r->lowonganPerusahaan->nama ?? $r->lowongan_perusahaan->nama }}
-                            </td>
-                            <td class="p-3 text-center">Rp. {{ number_format($pelamar->gaji_maksimal, 0, ',', '.') }}</td>
+                            <!-- Lowongan -->
+                            <td class="p-2.5 text-center text-gray-700">{{ $r->lowonganPerusahaan->nama ?? $r->lowongan_perusahaan->nama }}</td>
+                            <!-- Ekspektasi Gaji -->
+                            <td class="p-2.5 text-center text-gray-700">Rp. {{ number_format($pelamar->gaji_maksimal, 0, ',', '.') }}</td>
                             <!-- Status -->
                             <td class="p-3 text-center font-medium">
                                 @if (strtolower($r->status) === 'pending')
@@ -148,15 +176,11 @@
                                     </span>
                                 @endif
                             </td>
-                            <td class="p-3 text-center font-medium">
+                            <td class="p-2.5 text-center font-medium">
                                 @if ($pelamar && in_array(strtolower($pelamar->kategori ?? ''), ['kandidat aktif', 'kandidat', 'calon_kandidat', 'calon kandidat']))
-                                    <span class="text-purple-600 font-semibold bg-purple-50 px-2.5 py-1 rounded-md border border-purple-200 inline-block text-xs">
-                                        Pembelian Kandidat
-                                    </span>
+                                    <span class="text-gray-700 text-sm">Pembelian Kandidat</span>
                                 @else
-                                    <span class="text-blue-600 font-semibold bg-blue-50 px-2.5 py-1 rounded-md border border-blue-200 inline-block text-xs">
-                                        Melamar Lowongan
-                                    </span>
+                                    <span class="text-gray-700 text-sm">Melamar Lowongan</span>
                                 @endif
                             </td>
                         </tr>
@@ -205,9 +229,85 @@
         </div>
     </div>
 
+    <!-- Modal Laporkan Kandidat / Pelamar -->
+    <div id="modalReportKandidat" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4 z-[9999]">
+        <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-xl relative max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b mb-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center font-bold">
+                        <i class="ph ph-warning-octagon text-lg"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-slate-800">Laporkan Pelamar / Kandidat</h3>
+                </div>
+                <button type="button" onclick="closeReportKandidatModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+
+            <form id="formReportKandidat" method="POST" action="" enctype="multipart/form-data" class="space-y-4">
+                @csrf
+                <input type="hidden" name="lowongan_id" id="reportLowonganId" value="">
+
+                <div class="p-3 bg-slate-50 border rounded-xl text-xs text-slate-600">
+                    Melaporkan: <strong id="namaKandidatDilaporkan" class="text-slate-800 text-sm block mt-0.5"></strong>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Alasan Pelaporan <span class="text-rose-500">*</span></label>
+                    <select name="alasan" required class="w-full rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-rose-500 focus:ring-rose-500">
+                        <option value="">-- Pilih Alasan --</option>
+                        <option value="pemalsuan_dokumen">Pemalsuan dokumen / identitas / CV palsu</option>
+                        <option value="ghosting">Tidak hadir interview tanpa kabar (Ghosting)</option>
+                        <option value="pelanggaran_kontrak">Pelanggaran kontrak / indisipliner berat / PHK bermasalah</option>
+                        <option value="perilaku_buruk">Perilaku tidak pantas / pelecehan / ancaman</option>
+                        <option value="lainnya">Lainnya</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Kronologi / Penjelasan Masalah <span class="text-rose-500">*</span></label>
+                    <textarea name="deskripsi" rows="4" required minlength="10" maxlength="2000"
+                        placeholder="Jelaskan detail masalah (misal: portofolio atau riwayat pekerjaan di CV palsu, di-PHK bermasalah di tempat kerja sebelumnya, atau tindakan fraud)..."
+                        class="w-full rounded-xl border border-slate-300 p-3 text-sm focus:border-rose-500 focus:ring-rose-500"></textarea>
+                    <p class="text-[11px] text-slate-400 mt-1">Minimal 10 karakter, maksimal 2000 karakter.</p>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Bukti Pendukung <span class="text-slate-400 font-normal">(Opsional)</span></label>
+                    <label for="inputBuktiKandidat"
+                        class="flex flex-col items-center justify-center gap-2 w-full border-2 border-dashed border-slate-300 rounded-xl p-4 cursor-pointer hover:border-rose-400 hover:bg-rose-50 transition-colors group">
+                        <div class="w-9 h-9 rounded-full bg-slate-100 group-hover:bg-rose-100 flex items-center justify-center transition-colors">
+                            <i class="ph ph-upload-simple text-lg text-slate-400 group-hover:text-rose-500 transition-colors"></i>
+                        </div>
+                        <div class="text-center">
+                            <p id="buktiFileName" class="text-xs text-slate-500 group-hover:text-rose-600 transition-colors">
+                                Klik untuk pilih file
+                            </p>
+                            <p class="text-[11px] text-slate-400 mt-0.5">JPG, PNG, atau PDF · Maks. 5 MB</p>
+                        </div>
+                        <input id="inputBuktiKandidat" type="file" name="bukti" accept=".jpg,.jpeg,.png,.pdf" class="hidden"
+                            onchange="updateBuktiFileName(this)">
+                    </label>
+                </div>
+
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2 text-xs text-amber-800">
+                    <i class="ph ph-info text-base text-amber-600 shrink-0 mt-0.5"></i>
+                    <span>Laporan ini akan ditinjau langsung oleh Tim Moderasi AreaKerja sebelum diambil tindakan moderasi.</span>
+                </div>
+
+                <div class="flex items-center justify-end gap-2 pt-2 border-t">
+                    <button type="button" onclick="closeReportKandidatModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-sm transition cursor-pointer">
+                        Kirim Laporan
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     @include('layouts.footer')
 
-    {{-- CV --}}
+    {{-- CV & Laporkan Script --}}
     <script>
         let selectedId = null;
 
@@ -233,6 +333,44 @@
 
         function closeSuccessModal() {
             document.getElementById('successModal').classList.add('hidden');
+        }
+
+        // Modal Laporkan Kandidat
+        function updateBuktiFileName(input) {
+            const label = document.getElementById('buktiFileName');
+            if (input.files && input.files.length > 0) {
+                const file = input.files[0];
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                label.textContent = `${file.name} (${sizeMB} MB)`;
+                label.classList.add('text-rose-600', 'font-semibold');
+                label.classList.remove('text-slate-500');
+            } else {
+                label.textContent = 'Klik untuk pilih file';
+                label.classList.remove('text-rose-600', 'font-semibold');
+                label.classList.add('text-slate-500');
+            }
+        }
+
+        function openReportKandidatModal(pelamarId, namaPelamar, lowonganId) {
+            let form = document.getElementById('formReportKandidat');
+            let url = "{{ route('perusahaan.pelamar.report', ':id') }}";
+            form.action = url.replace(':id', pelamarId);
+            document.getElementById('namaKandidatDilaporkan').textContent = namaPelamar;
+            document.getElementById('reportLowonganId').value = lowonganId || '';
+            document.getElementById('modalReportKandidat').classList.remove('hidden');
+        }
+
+        function closeReportKandidatModal() {
+            document.getElementById('modalReportKandidat').classList.add('hidden');
+            // Reset file input
+            const fileInput = document.getElementById('inputBuktiKandidat');
+            if (fileInput) fileInput.value = '';
+            const label = document.getElementById('buktiFileName');
+            if (label) {
+                label.textContent = 'Klik untuk pilih file';
+                label.classList.remove('text-rose-600', 'font-semibold');
+                label.classList.add('text-slate-500');
+            }
         }
 
         // SweetAlert2 Konfirmasi Aksi (Batalkan Rekrutan / Tolak Lamaran / Hapus)

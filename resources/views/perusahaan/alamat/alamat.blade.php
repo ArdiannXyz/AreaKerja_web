@@ -16,9 +16,9 @@
                 <div>
                     <span class="text-lg font-semibold mb-1">{{ Auth::user()->perusahaan->nama_perusahaan }}</span>
                     <p class="text-lg text-gray-600">{{ Auth::user()->perusahaan->jenis_perusahaan }}</p>
-                    <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }},
-                        {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }},
-                        {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}</p>
+                    <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->kota ?? '-' }},
+                                        {{ Auth::user()->perusahaan->provinsi ?? '-' }},
+                                        {{ Auth::user()->perusahaan->alamat ?? '-' }}</p>
                 </div>
             </div>
 
@@ -91,8 +91,7 @@
                                 </div>
 
                                 <p class="text-gray-700 text-sm mt-2">
-                                    {{ $almtp->desa }}, {{ is_object($almtp->kecamatan ?? null) ? $almtp->kecamatan->nama : ($almtp->kecamatan ?? '-') }}, {{ is_object($almtp->kota ?? null) ? $almtp->kota->nama : ($almtp->kota ?? '-') }},
-                                    {{ is_object($almtp->provinsi ?? null) ? $almtp->provinsi->nama : ($almtp->provinsi ?? '-') }}, {{ $almtp->kode_pos }}
+                                    {{ $almtp->desa }}, {{ $almtp->kota->nama ?? '-' }}, {{ $almtp->provinsi->nama ?? '-' }}, {{ $almtp->kode_pos }}
                                 </p>
                                 <p class="text-gray-500 text-sm mt-1 mb-4">
                                     {{ $almtp->detail }}
@@ -182,9 +181,9 @@
                     <h1 class="font-semibold text-lg text-gray-800 m-2">{{ Auth::user()->perusahaan->nama_perusahaan }}
                     </h1>
                     <p class="text-lg text-gray-600 m-2">{{ Auth::user()->perusahaan->jenis_perusahaan }}</p>
-                    <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->alamatUtama->kota->nama ?? '-' }},
-                        {{ Auth::user()->perusahaan->alamatUtama->provinsi->nama ?? '-' }},
-                        {{ Auth::user()->perusahaan->alamatUtama->kecamatan->nama ?? '-' }}</p>
+                    <p class="text-sm text-gray-400">{{ Auth::user()->perusahaan->kota ?? '-' }},
+                                        {{ Auth::user()->perusahaan->provinsi ?? '-' }},
+                                        {{ Auth::user()->perusahaan->alamat ?? '-' }}</p>
                 </div>
             </div>
 
