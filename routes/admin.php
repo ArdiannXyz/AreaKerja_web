@@ -6,6 +6,7 @@ use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
 use App\Http\Controllers\ModerasiReportController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LowonganPerusahaanController;
 use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\TipsKerjaController;
@@ -51,6 +52,7 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         // kandidat
         Route::get('/kandidat', 'halKandidat')->name('admin.kandidat');
         Route::get('/kandidat/{id}', 'detailKandidat')->name('admin.detail.kandidat');
+        Route::post('/kandidat/{id}/report', [ReportController::class, 'storeKandidatReport'])->name('admin.kandidat.report');
 
         // provinsi kota kecamatan
 
@@ -137,6 +139,8 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
     Route::controller(SocialLinkController::class)->group(function () {
         Route::get('/social-links', 'indexAdmin')->name('admin.social.index');
         Route::post('/social-links', 'update')->name('admin.social.update');
+        Route::post('/social-links/config', 'updateConfig')->name('admin.social.config');
+        Route::post('/social-links/reset', 'resetConfig')->name('admin.social.reset');
         Route::get('/header-image', 'headerImageIndexAdmin')->name('admin.header.image');
         Route::put('/header-image/{nama}', 'headerImageUpdate')->name('admin.header.update');
         Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('admin.header.destroy');

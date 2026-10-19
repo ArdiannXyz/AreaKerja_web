@@ -151,11 +151,19 @@
                         </svg>
                         <span>Unduh CV</span>
                     </a>
+
+                    {{-- Laporkan Kandidat --}}
+                    <button type="button"
+                        onclick="openReportKandidatModal({{ $data->id }}, '{{ addslashes($data->nama_pelamar ?? 'Kandidat') }}')"
+                        class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-600 hover:bg-rose-100 text-xs font-semibold transition shadow-sm whitespace-nowrap">
+                        <i class="ph ph-flag text-base"></i>
+                        <span>Laporkan</span>
+                    </button>
                 </div>
             </div>
         </div>
 
-        {{-- MAIN TWO-COLUMN GRID --}}
+        {{-- LAPORAN KANDIDAT MODAL --}}
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             {{-- ================= LEFT COLUMN: CANDIDATE PROFILE INFO ================= --}}
@@ -667,9 +675,87 @@
             </div>
         </div>
 
+        {{-- LAPORAN KANDIDAT MODAL --}}
+        <div id="modalReportKandidat" class="hidden fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 px-4 z-[9999]">
+            <div class="bg-white p-6 rounded-2xl w-full max-w-lg shadow-xl relative max-h-[90vh] overflow-y-auto">
+                <div class="flex items-center justify-between pb-3 border-b mb-4">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-rose-100 text-rose-600 flex items-center justify-center font-bold">
+                            <i class="ph ph-warning-octagon text-lg"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-slate-800">Laporkan Kandidat</h3>
+                    </div>
+                    <button type="button" onclick="closeReportKandidatModal()" class="text-slate-400 hover:text-slate-600 text-xl font-bold cursor-pointer">&times;</button>
+                </div>
+
+                <form id="formReportKandidat" method="POST" action="" enctype="multipart/form-data" class="space-y-4">
+                    @csrf
+
+                    <div class="p-3 bg-slate-50 border rounded-xl text-xs text-slate-600">
+                        Melaporkan Kandidat: <strong id="namaKandidatDilaporkan" class="text-slate-800 text-sm block mt-0.5"></strong>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Alasan Pelaporan <span class="text-rose-500">*</span></label>
+                        <select name="alasan" required class="w-full rounded-xl border-slate-300 text-sm focus:border-rose-500 focus:ring-rose-500">
+                            <option value="">-- Pilih Alasan --</option>
+                            <option value="pemalsuan_dokumen">Pemalsuan dokumen / identitas / CV palsu</option>
+                            <option value="ghosting">Tidak hadir interview tanpa kabar (Ghosting)</option>
+                            <option value="pelanggaran_kontrak">Pelanggaran kontrak / indisipliner berat / PHK bermasalah</option>
+                            <option value="perilaku_buruk">Perilaku tidak pantas / pelecehan / ancaman</option>
+                            <option value="lainnya">Lainnya</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Kronologi / Penjelasan Masalah <span class="text-rose-500">*</span></label>
+                        <textarea name="deskripsi" rows="4" required minlength="10" maxlength="2000"
+                            placeholder="Jelaskan detail masalah (misal: portofolio atau riwayat pekerjaan di CV palsu, di-PHK bermasalah, atau tindakan fraud)..."
+                            class="w-full rounded-xl border-slate-300 text-sm focus:border-rose-500 focus:ring-rose-500"></textarea>
+                        <p class="text-[11px] text-slate-400 mt-1">Minimal 10 karakter, maksimal 2000 karakter.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Bukti Pendukung (Opsional)</label>
+                        <input type="file" name="bukti" accept=".jpg,.jpeg,.png,.pdf"
+                            class="w-full text-xs text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-700 hover:file:bg-rose-100 border border-slate-200 rounded-xl">
+                        <p class="text-[11px] text-slate-400 mt-1">Format: JPG, PNG, atau PDF (Surat PHK/SP/Chat/Bukti). Maks. 5 MB.</p>
+                    </div>
+
+                    <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl flex items-start gap-2 text-xs text-amber-800">
+                        <i class="ph ph-info text-base text-amber-600 shrink-0 mt-0.5"></i>
+                        <span>Laporan ini akan ditinjau langsung oleh Admin &amp; Super Admin sebelum diambil tindakan moderasi ke akun kandidat.</span>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-2 pt-2 border-t">
+                        <button type="button" onclick="closeReportKandidatModal()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-semibold cursor-pointer">
+                            Batal
+                        </button>
+                        <button type="submit" class="px-5 py-2 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold shadow-sm transition cursor-pointer">
+                            Kirim Laporan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {{-- Modals Notifikasi --}}
         @include('admin.notif.modal_notif')
         @include('admin.notif.modal_semua')
 
     </main>
+{{-- SCRIPTS CANDIDAT REPORT --}}
+<script>
+    function openReportKandidatModal(pelamarId, namaPelamar) {
+        let form = document.getElementById('formReportKandidat');
+        let url = "{{ route('admin.kandidat.report', ':id') }}";
+        form.action = url.replace(':id', pelamarId);
+        document.getElementById('namaKandidatDilaporkan').textContent = namaPelamar;
+        document.getElementById('modalReportKandidat').classList.remove('hidden');
+    }
+
+    function closeReportKandidatModal() {
+        document.getElementById('modalReportKandidat').classList.add('hidden');
+    }
+</script>
 @endsection

@@ -36,7 +36,190 @@ class PelamarController extends Controller
 
     public function bantuan()
     {
-        return view('non-user.faq');
+        $faqs = [
+            [
+                'slug'    => 'apa-itu-areakerja',
+                'title'   => 'Apa itu AreaKerja?',
+                'excerpt' => 'AreaKerja adalah platform rekrutmen digital yang menghubungkan pencari kerja dengan perusahaan terpercaya di seluruh Indonesia.',
+                'icon'    => 'ph-buildings',
+            ],
+            [
+                'slug'    => 'cara-melamar-pekerjaan',
+                'title'   => 'Bagaimana cara melamar pekerjaan di AreaKerja?',
+                'excerpt' => 'Proses melamar kerja di AreaKerja sangat mudah — daftar akun, lengkapi profil, cari lowongan, dan kirim lamaran hanya dalam beberapa klik.',
+                'icon'    => 'ph-paper-plane-tilt',
+            ],
+            [
+                'slug'    => 'apa-itu-kandidat',
+                'title'   => 'Apa itu Kandidat di AreaKerja?',
+                'excerpt' => 'Kandidat adalah pelamar yang telah memenuhi syarat dan dipilih oleh perusahaan untuk masuk ke proses rekrutmen lebih lanjut.',
+                'icon'    => 'ph-users',
+            ],
+            [
+                'slug'    => 'cara-daftar-kandidat',
+                'title'   => 'Bagaimana cara mendaftar sebagai Kandidat?',
+                'excerpt' => 'Pelajari langkah-langkah untuk mendaftarkan diri sebagai kandidat aktif dan membuka peluang rekrutmen langsung dari perusahaan.',
+                'icon'    => 'ph-user-plus',
+            ],
+            [
+                'slug'    => 'cara-ganti-sandi',
+                'title'   => 'Bagaimana cara mengganti kata sandi?',
+                'excerpt' => 'Lupa atau ingin mengganti kata sandi akun AreaKerja Anda? Ikuti panduan berikut agar akun Anda tetap aman.',
+                'icon'    => 'ph-lock-key',
+            ],
+            [
+                'slug'    => 'lowongan-tersimpan',
+                'title'   => 'Apa itu Lowongan Tersimpan?',
+                'excerpt' => 'Fitur Lowongan Tersimpan memungkinkan Anda menyimpan lowongan yang menarik untuk dilamar di lain waktu tanpa kehilangan informasinya.',
+                'icon'    => 'ph-bookmark',
+            ],
+        ];
+        return view('non-user.faq', compact('faqs'));
+    }
+
+    public function faqDetail(string $slug)
+    {
+        $details = [
+            'apa-itu-areakerja' => [
+                'title'    => 'Apa itu AreaKerja?',
+                'subtitle' => 'Platform rekrutmen digital terpercaya di Indonesia',
+                'image'    => 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=1200&q=80',
+                'sections' => [
+                    [
+                        'heading' => 'Tentang AreaKerja',
+                        'body'    => 'AreaKerja adalah platform rekrutmen digital yang dirancang untuk menghubungkan pencari kerja dengan perusahaan-perusahaan terpercaya di seluruh Indonesia. Dengan teknologi modern dan antarmuka yang mudah digunakan, AreaKerja hadir sebagai solusi rekrutmen yang efisien, transparan, dan terjangkau.',
+                    ],
+                    [
+                        'heading' => 'Apa yang Bisa Anda Lakukan di AreaKerja?',
+                        'body'    => "Sebagai <strong>Pencari Kerja</strong>, Anda dapat:\n• Mencari ribuan lowongan kerja dari berbagai industri\n• Menyimpan lowongan favorit untuk dilamar nanti\n• Melamar pekerjaan langsung dari platform\n• Mendaftar sebagai Kandidat untuk direkrut langsung oleh perusahaan\n\nSebagai <strong>Perusahaan</strong>, Anda dapat:\n• Memasang lowongan kerja secara mudah\n• Mencari kandidat berdasarkan skill dan pengalaman\n• Mengelola proses rekrutmen dari satu dashboard",
+                        'image'   => 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=1200&q=80',
+                    ],
+                    [
+                        'heading' => 'Mengapa Memilih AreaKerja?',
+                        'body'    => 'AreaKerja menawarkan kemudahan dan kecepatan dalam proses rekrutmen. Platform ini dilengkapi fitur pencarian canggih, sistem notifikasi real-time, dan dukungan tim moderasi yang memastikan setiap lowongan dan kandidat terverifikasi dengan baik.',
+                    ],
+                ],
+            ],
+            'cara-melamar-pekerjaan' => [
+                'title'    => 'Bagaimana cara melamar pekerjaan di AreaKerja?',
+                'subtitle' => 'Panduan langkah demi langkah melamar kerja dengan mudah',
+                'image'    => 'https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=1200&q=80',
+                'sections' => [
+                    [
+                        'heading' => 'Langkah 1 — Buat Akun',
+                        'body'    => 'Kunjungi areakerja.com dan klik tombol <strong>Daftar</strong>. Isi data diri Anda (nama, email, dan kata sandi), lalu verifikasi email yang dikirimkan ke inbox Anda.',
+                        'image'   => 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=1200&q=80',
+                    ],
+                    [
+                        'heading' => 'Langkah 2 — Lengkapi Profil',
+                        'body'    => "Setelah masuk, lengkapi profil Anda meliputi:\n• Foto profil yang profesional\n• Riwayat pendidikan\n• Pengalaman kerja\n• Skill / keahlian\n• Upload CV terbaru dalam format PDF",
+                        'image'   => 'https://images.unsplash.com/photo-1556155092-490a1ba16284?w=1200&q=80',
+                    ],
+                    [
+                        'heading' => 'Langkah 3 — Cari & Lamar Lowongan',
+                        'body'    => 'Gunakan fitur pencarian untuk menemukan lowongan yang sesuai dengan skill dan lokasi Anda. Klik tombol <strong>Lamar Sekarang</strong> pada lowongan yang diminati, lalu konfirmasi pengiriman lamaran Anda.',
+                    ],
+                    [
+                        'heading' => 'Langkah 4 — Pantau Status Lamaran',
+                        'body'    => 'Setelah melamar, pantau status lamaran Anda melalui menu <strong>Lamaran Saya</strong> di dashboard. Anda akan mendapatkan notifikasi ketika ada update dari perusahaan.',
+                    ],
+                ],
+            ],
+            'apa-itu-kandidat' => [
+                'title'    => 'Apa itu Kandidat di AreaKerja?',
+                'subtitle' => 'Pahami status Kandidat dan keuntungannya',
+                'image'    => 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1200&q=80',
+                'sections' => [
+                    [
+                        'heading' => 'Definisi Kandidat',
+                        'body'    => 'Kandidat di AreaKerja adalah pelamar yang telah mendaftarkan diri untuk masuk ke dalam database rekrutmen aktif. Berbeda dengan pelamar biasa yang menunggu lowongan dibuka, Kandidat dapat <em>ditemukan dan dihubungi langsung oleh perusahaan</em>.',
+                    ],
+                    [
+                        'heading' => 'Keuntungan Menjadi Kandidat',
+                        'body'    => "• <strong>Direkrut Langsung</strong> — Perusahaan dapat menemukan dan merekrut Anda tanpa Anda perlu melamar\n• <strong>Profil Lebih Menonjol</strong> — Profil Anda muncul di pencarian Talent Hunter perusahaan\n• <strong>Tawaran Eksklusif</strong> — Mendapatkan notifikasi tawaran kerja yang relevan\n• <strong>Proses Lebih Cepat</strong> — Rekrutmen langsung tanpa antrian panjang",
+                        'image'   => 'https://images.unsplash.com/photo-1543269865-cbf427effbad?w=1200&q=80',
+                    ],
+                    [
+                        'heading' => 'Kategori Kandidat',
+                        'body'    => "<strong>Calon Kandidat</strong> — Anda sedang dalam proses evaluasi awal dan menjalani pelatihan/uji kompetensi.\n\n<strong>Kandidat Aktif</strong> — Profil Anda sudah aktif dan dapat ditemukan oleh perusahaan melalui fitur Talent Hunter.",
+                    ],
+                ],
+            ],
+            'cara-daftar-kandidat' => [
+                'title'    => 'Bagaimana cara mendaftar sebagai Kandidat?',
+                'subtitle' => 'Ikuti panduan ini untuk menjadi Kandidat aktif di AreaKerja',
+                'image'    => 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1200&q=80',
+                'sections' => [
+                    [
+                        'heading' => 'Syarat Mendaftar Kandidat',
+                        'body'    => "Sebelum mendaftar sebagai Kandidat, pastikan profil Anda sudah lengkap:\n• ✅ Foto profil diunggah\n• ✅ CV terbaru (PDF) diunggah\n• ✅ Minimal 1 skill ditambahkan\n• ✅ Riwayat pendidikan terisi\n• ✅ Ekspektasi gaji diisi",
+                    ],
+                    [
+                        'heading' => 'Cara Mendaftar',
+                        'body'    => "1. Masuk ke akun AreaKerja Anda\n2. Klik menu <strong>Profil</strong> di pojok kanan atas\n3. Gulir ke bagian <strong>Status Kandidat</strong>\n4. Klik tombol <strong>Daftar Sebagai Kandidat</strong>\n5. Isi formulir pendaftaran dan unggah dokumen yang diminta\n6. Tunggu verifikasi dari tim AreaKerja (1-3 hari kerja)",
+                        'image'   => 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&q=80',
+                    ],
+                    [
+                        'heading' => 'Setelah Terdaftar',
+                        'body'    => 'Setelah diverifikasi, profil Anda akan aktif sebagai Kandidat dan dapat ditemukan oleh perusahaan yang menggunakan fitur Talent Hunter AreaKerja. Anda akan mendapat notifikasi jika ada perusahaan yang tertarik merekrut Anda.',
+                    ],
+                ],
+            ],
+            'cara-ganti-sandi' => [
+                'title'    => 'Bagaimana cara mengganti kata sandi?',
+                'subtitle' => 'Jaga keamanan akun Anda dengan mengganti kata sandi secara berkala',
+                'image'    => 'https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=1200&q=80',
+                'sections' => [
+                    [
+                        'heading' => 'Ganti Sandi dari Pengaturan Akun',
+                        'body'    => "1. Masuk ke akun AreaKerja Anda\n2. Klik foto profil di pojok kanan atas\n3. Pilih menu <strong>Pengaturan</strong>\n4. Gulir ke bagian <strong>Keamanan Akun</strong>\n5. Klik <strong>Ganti Kata Sandi</strong>\n6. Masukkan kata sandi lama, lalu kata sandi baru\n7. Klik <strong>Simpan Perubahan</strong>",
+                    ],
+                    [
+                        'heading' => 'Lupa Kata Sandi?',
+                        'body'    => "Jika Anda lupa kata sandi:\n1. Klik <strong>Lupa Kata Sandi?</strong> di halaman Login\n2. Masukkan email yang terdaftar\n3. Cek inbox email Anda untuk link reset\n4. Klik link tersebut dan buat kata sandi baru\n\nLink reset berlaku selama <strong>60 menit</strong> sejak dikirimkan.",
+                        'image'   => 'https://images.unsplash.com/photo-1614064641938-3bbee52942c7?w=1200&q=80',
+                    ],
+                    [
+                        'heading' => 'Tips Membuat Kata Sandi yang Kuat',
+                        'body'    => "• Minimal 8 karakter\n• Kombinasikan huruf besar, huruf kecil, angka, dan simbol\n• Jangan gunakan informasi pribadi (tanggal lahir, nama)\n• Gunakan kata sandi berbeda untuk setiap platform\n• Aktifkan verifikasi dua langkah jika tersedia",
+                    ],
+                ],
+            ],
+            'lowongan-tersimpan' => [
+                'title'    => 'Apa itu Lowongan Tersimpan?',
+                'subtitle' => 'Simpan lowongan favorit dan lamar kapan saja',
+                'image'    => 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?w=1200&q=80',
+                'sections' => [
+                    [
+                        'heading' => 'Tentang Fitur Lowongan Tersimpan',
+                        'body'    => 'Fitur <strong>Lowongan Tersimpan</strong> memungkinkan Anda menyimpan lowongan kerja yang menarik minat Anda untuk dipertimbangkan atau dilamar di kemudian hari. Dengan fitur ini, Anda tidak perlu mencari ulang lowongan yang pernah Anda lihat.',
+                        'image'   => 'https://images.unsplash.com/photo-1484480974693-6ca0a78fb36b?w=1200&q=80',
+                    ],
+                    [
+                        'heading' => 'Cara Menyimpan Lowongan',
+                        'body'    => "1. Temukan lowongan yang Anda minati\n2. Klik ikon <strong>Bookmark 🔖</strong> di kartu lowongan atau halaman detail\n3. Lowongan otomatis tersimpan di menu <strong>Lowongan Tersimpan</strong>\n4. Akses kapan saja melalui profil Anda",
+                    ],
+                    [
+                        'heading' => 'Mengelola Lowongan Tersimpan',
+                        'body'    => "Di halaman Lowongan Tersimpan, Anda dapat:\n• Melihat semua lowongan yang telah disimpan\n• Melamar langsung dari daftar tersimpan\n• Menghapus lowongan yang tidak lagi relevan\n\n<em>Catatan: Lowongan yang sudah kadaluarsa akan otomatis ditandai namun tetap tersimpan di daftar Anda.</em>",
+                    ],
+                ],
+            ],
+        ];
+
+        if (!isset($details[$slug])) {
+            abort(404);
+        }
+
+        $faq          = $details[$slug];
+        $allFaqs      = array_keys($details);
+        $currentIndex = array_search($slug, $allFaqs);
+        $prevSlug     = $currentIndex > 0 ? $allFaqs[$currentIndex - 1] : null;
+        $nextSlug     = $currentIndex < count($allFaqs) - 1 ? $allFaqs[$currentIndex + 1] : null;
+        $prevTitle    = $prevSlug ? $details[$prevSlug]['title'] : null;
+        $nextTitle    = $nextSlug ? $details[$nextSlug]['title'] : null;
+
+        return view('non-user.faq-detail', compact('faq', 'slug', 'prevSlug', 'nextSlug', 'prevTitle', 'nextTitle'));
     }
 
     public function syaratKetentuan()
@@ -237,7 +420,8 @@ class PelamarController extends Controller
             // -- Biasa → TERBARU DI ATAS
             ->orderBy('created_at', 'DESC')
 
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
 
         $jenisList = LowonganPerusahaan::query()
@@ -355,7 +539,8 @@ class PelamarController extends Controller
                     });
             })
             ->latest()
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
         return view('non-user.lowongan-tersimpan', compact('simpanlowongan'));
     }
@@ -371,7 +556,8 @@ class PelamarController extends Controller
                 ->where('pelamar_id', $pelamar->id)
                 ->where('status', '!=', 'saved')
                 ->latest()
-                ->get();
+                ->paginate(12)
+                ->withQueryString();
         }
 
         return view('non-user.lamaran-kerja', compact('lamaranList'));
@@ -870,8 +1056,18 @@ class PelamarController extends Controller
     {
         $transaksi = CatatanCash::with(['bank'])->findOrFail($id);
 
-        if ($transaksi->status === 'pending' && $transaksi->xendit_id) {
-            $transaksi = app(\App\Services\XenditService::class)->syncInvoiceStatus($transaksi);
+        if ($transaksi->status === 'pending') {
+            if ($transaksi->xendit_id) {
+                $transaksi = app(\App\Services\XenditService::class)->syncInvoiceStatus($transaksi);
+            }
+            if (!$transaksi->checkout_url) {
+                app(\App\Services\XenditService::class)->createInvoice(
+                    $transaksi,
+                    route('kandidat.transaksi', $transaksi->id),
+                    route('kandidat.transaksi', $transaksi->id)
+                );
+                $transaksi->refresh();
+            }
         }
 
         return view('kandidat.transaksi-tf-bank', [
@@ -927,7 +1123,7 @@ class PelamarController extends Controller
 
         $request->validate([
             'divisi' => 'required|string',
-            'daftar_bank_id' => 'required|exists:daftar_bank,id',
+            'daftar_bank_id' => 'nullable|exists:daftar_bank,id',
         ]);
 
         // Update divisi pelamar
@@ -935,11 +1131,25 @@ class PelamarController extends Controller
             $user->pelamar->update(['divisi' => $request->divisi]);
         }
 
-        $bank = DaftarBank::findOrFail($request->daftar_bank_id);
+        $bankId = $request->daftar_bank_id;
+        if (!$bankId) {
+            $bank = DaftarBank::first();
+            if (!$bank) {
+                $bank = DaftarBank::create([
+                    'nama_bank' => 'Xendit Payment',
+                    'no_rek'    => 'XENDIT',
+                    'owner'     => 'PT Area Kerja',
+                ]);
+            }
+            $bankId = $bank->id;
+        } else {
+            $bank = DaftarBank::find($bankId);
+        }
+
         $totalHarga = 200000; // Standar biaya komitmen pendaftaran kandidat AK
 
         // Sumber dana
-        $sumberDana = strtolower($bank->nama_bank) === 'qris'
+        $sumberDana = ($bank && strtolower($bank->nama_bank) === 'qris')
             ? 'Qris'
             : 'Transfer Bank';
 
@@ -1152,7 +1362,8 @@ class PelamarController extends Controller
                 END
             ")
             ->latest('published_at')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
 
 
         $riwayat = session()->get('riwayat_full', []);

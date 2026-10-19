@@ -111,7 +111,8 @@ class AuthController extends Controller
                 END
             ")
             ->latest('published_at')
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
         $jenisList = LowonganPerusahaan::query()
             ->whereNotNull('jenis')
@@ -237,7 +238,6 @@ class AuthController extends Controller
         $perusahaan = auth()->user()->perusahaan;
 
         $lowongans = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
-            ->with('paket')
             ->where(function ($q) {
                 $q->whereNull('published_at')
                     ->orWhereDate('expired_at', '>=', now());

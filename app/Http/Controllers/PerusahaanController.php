@@ -106,37 +106,36 @@ class PerusahaanController extends Controller
         $alamat_perusahaan = collect();
 
         if (Schema::hasTable('alamat_perusahaan')) {
-            $alamatList = AlamatPerusahaan::where('perusahaan_id', $perusahaan->id)->get();
+            $alamatList = AlamatPerusahaan::where('perusahaan_id', $perusahaan->id)->orderBy('utama', 'desc')->get();
 
-            // Jika tabel kosong tapi ada alamat di tabel perusahaans, buat record awal otomatis
-            if ($alamatList->isEmpty() && !empty($perusahaan->alamat)) {
-                $created = AlamatPerusahaan::create([
-                    'perusahaan_id' => $perusahaan->id,
-                    'label'         => 'Alamat Utama',
-                    'desa'          => $perusahaan->alamat,
-                    'detail'        => $perusahaan->alamat,
-                    'kota'          => $perusahaan->kota ?? 'Surabaya',
-                    'provinsi'      => $perusahaan->provinsi ?? 'Jawa Timur',
-                    'kecamatan'     => $perusahaan->kota ?? 'Surabaya',
-                    'kode_pos'      => '60111',
-                    'utama'         => 1,
-                ]);
-                $alamatList = collect([$created]);
-            }
-
-            $alamat_perusahaan = $alamatList->map(function ($almt) use ($perusahaan) {
+            $alamat_perusahaan = $alamatList->map(function ($almt) {
                 return (object)[
                     'id'        => $almt->id,
                     'label'     => $almt->label ?? ($almt->utama ? 'Alamat Utama' : 'Alamat'),
-                    'desa'      => $almt->desa ?? $almt->detail ?? '-',
-                    'detail'    => $almt->detail ?? $almt->desa ?? '-',
-                    'kecamatan' => (object)['nama' => $almt->kecamatan ?? '-'],
-                    'kota'      => (object)['nama' => $almt->kota ?? $perusahaan->kota ?? 'Surabaya'],
-                    'provinsi'  => (object)['nama' => $almt->provinsi ?? $perusahaan->provinsi ?? 'Jawa Timur'],
+                    'desa'      => $almt->desa ?? ($almt->detail ?? '-'),
+                    'detail'    => $almt->detail ?? ($almt->desa ?? '-'),
+                    'kota'      => (object)['nama' => $almt->kota ?? '-'],
+                    'provinsi'  => (object)['nama' => $almt->provinsi ?? '-'],
                     'kode_pos'  => $almt->kode_pos ?? '60111',
                     'utama'     => (bool)$almt->utama,
                 ];
             });
+        } else {
+            // Fallback: tabel belum di-create, gunakan alamat string di tabel perusahaans
+            if (! empty($perusahaan->alamat)) {
+                $alamat_perusahaan = collect([
+                    (object)[
+                        'id'        => 1,
+                        'label'     => 'Alamat Utama',
+                        'desa'      => $perusahaan->alamat,
+                        'detail'    => $perusahaan->alamat,
+                        'kota'      => (object)['nama' => $perusahaan->kota ?? 'Surabaya'],
+                        'provinsi'  => (object)['nama' => $perusahaan->provinsi ?? 'Jawa Timur'],
+                        'kode_pos'  => '60111',
+                        'utama'     => true,
+                    ]
+                ]);
+            }
         }
 
         $alamatCount = $alamat_perusahaan->count();
@@ -168,56 +167,44 @@ class PerusahaanController extends Controller
             return redirect()->route('login');
         }
 
-        $provinsiNama = $request->provinsi_id ?? $request->provinsi ?? '';
-        $kotaNama = $request->kota_id ?? $request->kota ?? '';
-        $kecamatanNama = $request->kecamatan_id ?? $request->kecamatan ?? '';
-
-        if (is_numeric($provinsiNama)) {
-            $provinsiNama = WilayahService::findProvince($provinsiNama)?->nama ?? $provinsiNama;
-        }
-        if (is_numeric($kotaNama)) {
-            $kotaNama = WilayahService::findRegency($kotaNama)?->nama ?? $kotaNama;
-        }
-        if (is_numeric($kecamatanNama)) {
-            $kecamatanNama = WilayahService::findDistrict($kecamatanNama)?->nama ?? $kecamatanNama;
-        }
-
-        if (Schema::hasTable('alamat_perusahaan')) {
+        try {
             $count = AlamatPerusahaan::where('perusahaan_id', $perusahaan->id)->count();
             if ($count >= 5) {
                 return redirect()->route('alamat.perusahaan')->with('error', 'Batas maksimal alamat (5 alamat) telah tercapai.');
             }
 
-            $isFirst = $count === 0;
+            $alamatDetail = $request->detail ?? $request->desa ?? $request->alamat ?? '';
+            $kotaValue = $request->kota ?? $request->kota_id ?? '';
+            $provinsiValue = $request->provinsi ?? $request->provinsi_id ?? '';
+            $label = $request->label ?: ($count === 0 ? 'Alamat Utama' : 'Alamat ' . ($count + 1));
+
+            $hasUtama = AlamatPerusahaan::where('perusahaan_id', $perusahaan->id)->where('utama', 1)->exists();
+            $isUtama = ($count === 0 || !$hasUtama);
 
             AlamatPerusahaan::create([
                 'perusahaan_id' => $perusahaan->id,
-                'label'         => $request->label ?? ($isFirst ? 'Alamat Utama' : 'Alamat'),
+                'label'         => $label,
                 'desa'          => $request->desa,
-                'kota'          => $kotaNama ?: $perusahaan->kota,
-                'provinsi'      => $provinsiNama ?: $perusahaan->provinsi,
-                'kecamatan'     => $kecamatanNama,
+                'kota'          => $kotaValue,
+                'provinsi'      => $provinsiValue,
                 'kode_pos'      => $request->kode_pos,
-                'detail'        => $request->detail ?? $request->desa,
-                'utama'         => $isFirst ? 1 : 0,
+                'detail'        => $alamatDetail,
+                'utama'         => $isUtama ? 1 : 0,
             ]);
 
-            if ($isFirst) {
+            if ($isUtama) {
                 $perusahaan->update([
-                    'alamat'   => $request->detail ?? $request->desa,
-                    'kota'     => $kotaNama ?: $perusahaan->kota,
-                    'provinsi' => $provinsiNama ?: $perusahaan->provinsi,
+                    'alamat'   => $alamatDetail ?: $perusahaan->alamat,
+                    'kota'     => $kotaValue ?: $perusahaan->kota,
+                    'provinsi' => $provinsiValue ?: $perusahaan->provinsi,
                 ]);
             }
-        } else {
-            $perusahaan->update([
-                'alamat'   => $request->detail ?? $request->desa,
-                'kota'     => $kotaNama ?: $perusahaan->kota,
-                'provinsi' => $provinsiNama ?: $perusahaan->provinsi,
-            ]);
-        }
 
-        return redirect()->route('alamat.perusahaan')->with('success', 'Alamat berhasil disimpan.');
+            return redirect()->route('alamat.perusahaan')->with('success', 'Alamat berhasil disimpan.');
+        } catch (\Throwable $e) {
+            Log::error('Gagal menyimpan alamat perusahaan: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan alamat: ' . $e->getMessage());
+        }
     }
 
     public function edit_alamat($id = null)
@@ -257,54 +244,29 @@ class PerusahaanController extends Controller
     public function update_alamat(Request $request, $id = null)
     {
         $perusahaan = Auth::user()->perusahaan;
-
-        $alamatDetail = $request->detail ?? $request->desa ?? $request->alamat ?? $perusahaan->alamat;
-        $kotaValue = $request->kota ?? $request->kota_id ?? $perusahaan->kota;
-        $provinsiValue = $request->provinsi ?? $request->provinsi_id ?? $perusahaan->provinsi;
-        $kecamatanValue = $request->kecamatan ?? $request->kecamatan_id ?? '';
-
-        if (is_numeric($provinsiValue) && file_exists(database_path('data/provinces.json'))) {
-            $provinces = json_decode(file_get_contents(database_path('data/provinces.json')), true);
-            foreach ($provinces as $p) {
-                if ((string)$p['id'] === (string)$provinsiValue) {
-                    $provinsiValue = ucwords(strtolower($p['name']));
-                    break;
-                }
-            }
+        if (!$perusahaan) {
+            return redirect()->route('login');
         }
 
-        if (is_numeric($kotaValue) && file_exists(database_path('data/regencies.json'))) {
-            $regencies = json_decode(file_get_contents(database_path('data/regencies.json')), true);
-            foreach ($regencies as $r) {
-                if ((string)$r['id'] === (string)$kotaValue) {
-                    $kotaValue = ucwords(strtolower($r['name']));
-                    break;
-                }
+        try {
+            $addr = null;
+            if (Schema::hasTable('alamat_perusahaan') && $id) {
+                $addr = AlamatPerusahaan::where('perusahaan_id', $perusahaan->id)->where('id', $id)->first();
             }
-        }
 
-        if (is_numeric($kecamatanValue) && file_exists(database_path('data/districts.json'))) {
-            $districts = json_decode(file_get_contents(database_path('data/districts.json')), true);
-            if (is_array($districts)) {
-                foreach ($districts as $d) {
-                    if ((string)$d['id'] === (string)$kecamatanValue) {
-                        $kecamatanValue = ucwords(strtolower($d['name']));
-                        break;
-                    }
-                }
-            }
-        }
+            $alamatDetail = $request->detail ?? $request->desa ?? $request->alamat ?? ($addr->detail ?? $perusahaan->alamat);
+            $kotaValue = $request->kota ?? $request->kota_id ?? ($addr->kota ?? $perusahaan->kota);
+            $provinsiValue = $request->provinsi ?? $request->provinsi_id ?? ($addr->provinsi ?? $perusahaan->provinsi);
+            $label = $request->label ?? ($addr->label ?? 'Alamat');
+            $kodePos = $request->kode_pos ?? ($addr->kode_pos ?? '60111');
 
-        if (Schema::hasTable('alamat_perusahaan') && $id) {
-            $addr = AlamatPerusahaan::where('perusahaan_id', $perusahaan->id)->where('id', $id)->first();
             if ($addr) {
                 $addr->update([
-                    'label'     => $request->label ?? $addr->label,
+                    'label'     => $label,
                     'desa'      => $request->desa ?? $addr->desa,
                     'kota'      => $kotaValue,
                     'provinsi'  => $provinsiValue,
-                    'kecamatan' => $kecamatanValue,
-                    'kode_pos'  => $request->kode_pos ?? $addr->kode_pos,
+                    'kode_pos'  => $kodePos,
                     'detail'    => $alamatDetail,
                 ]);
 
@@ -317,15 +279,18 @@ class PerusahaanController extends Controller
                 }
                 return redirect()->route('alamat.perusahaan')->with('success', 'Alamat berhasil diperbarui.');
             }
+
+            $perusahaan->update([
+                'alamat'   => $alamatDetail,
+                'kota'     => $kotaValue,
+                'provinsi' => $provinsiValue,
+            ]);
+
+            return redirect()->route('alamat.perusahaan')->with('success', 'Alamat berhasil diperbarui.');
+        } catch (\Throwable $e) {
+            Log::error('Gagal memperbarui alamat perusahaan: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal memperbarui alamat: ' . $e->getMessage());
         }
-
-        $perusahaan->update([
-            'alamat'   => $alamatDetail,
-            'kota'     => $kotaValue,
-            'provinsi' => $provinsiValue,
-        ]);
-
-        return redirect()->route('alamat.perusahaan')->with('success', 'Alamat berhasil diperbarui.');
     }
 
     public function destroy_alamat($id = null)
@@ -486,8 +451,16 @@ class PerusahaanController extends Controller
         $pelamars = $query->get();
 
         $boughtCvPelamarIds = [];
+        $recruitedPelamarIds = [];
         if ($perusahaan) {
             $boughtCvPelamarIds = PembelianCv::where('perusahaan_id', $perusahaan->id)
+                ->pluck('pelamar_id')
+                ->toArray();
+
+            $recruitedPelamarIds = PelamarLowongan::whereHas('lowongan_perusahaan', function ($q) use ($perusahaan) {
+                    $q->where('perusahaan_id', $perusahaan->id);
+                })
+                ->whereIn('status', ['pending', 'diterima'])
                 ->pluck('pelamar_id')
                 ->toArray();
         }
@@ -499,14 +472,15 @@ class PerusahaanController extends Controller
         ]);
 
         return view('perusahaan.kandidat-areakerja', [
-            'hargaPembayarans'   => $hargaPembayarans,
-            'daftarBank'         => DaftarBank::all(),
-            'skills'             => $skills,
-            'umurRange'          => $umurRange,
-            'genders'            => $genders,
-            'pelamars'           => $pelamars,
-            'perusahaan'         => $perusahaan,
-            'boughtCvPelamarIds' => $boughtCvPelamarIds,
+            'hargaPembayarans'    => $hargaPembayarans,
+            'daftarBank'          => DaftarBank::all(),
+            'skills'              => $skills,
+            'umurRange'           => $umurRange,
+            'genders'             => $genders,
+            'pelamars'            => $pelamars,
+            'perusahaan'          => $perusahaan,
+            'boughtCvPelamarIds'  => $boughtCvPelamarIds,
+            'recruitedPelamarIds' => $recruitedPelamarIds,
         ]);
     }
 

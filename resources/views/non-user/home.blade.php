@@ -416,17 +416,7 @@
             <div x-show="tab === 'umpan'" x-transition>
                 <section class="mb-10">
                     <div id="section-umpan-lowongan" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-stretch">
-                        @php
-                            $isSearchPage = request()->routeIs('lowongan.search') || !empty($adaPencarian);
-                            $validData = $Data instanceof \Illuminate\Contracts\Pagination\Paginator 
-                                ? $Data 
-                                : $Data->filter(function($d) {
-                                    return $d->published_at && (!$d->expired_at || $d->expired_at > now()) && $d->status !== 'tutup' && $d->perusahaan;
-                                });
-                            $displayData = $isSearchPage ? $validData : $validData->take(6);
-                        @endphp
-
-                        @forelse ($displayData as $d)
+                        @forelse ($Data as $d)
                             <div class="h-full" onclick="window.location='{{ route('detail.lowongan.non.user', ['perusahaan' => $d->perusahaan->slug ?? 'perusahaan', 'lowongan' => $d->slug ?? $d->id]) }}'">
                                 @include('non-user.components.card', ['lowongan' => $d])
                             </div>
@@ -439,23 +429,11 @@
                     </div>
                 </section>
 
-                @if (!$isSearchPage)
-                    <!-- Tombol Muat Lebih Banyak di Beranda (Hanya muncul jika total lowongan > 6) -->
-                    @if ($validData->count() > 6)
-                        <div class="flex justify-center mt-8">
-                            <a href="{{ route('lowongan.search') }}"
-                                class="bg-[#004e98] hover:bg-[#003d7a] text-white font-bold px-8 py-3 rounded-lg shadow-sm hover:shadow transition-all duration-200 text-xs sm:text-sm inline-flex items-center justify-center gap-2">
-                                <span>Muat lebih banyak....</span>
-                            </a>
-                        </div>
-                    @endif
-                @else
-                    <!-- Pagination di Halaman Search / Semua Lowongan -->
-                    @if ($Data instanceof \Illuminate\Contracts\Pagination\Paginator && $Data->hasPages())
-                        <div class="mt-8 flex justify-center">
-                            {{ $Data->appends(request()->query())->links() }}
-                        </div>
-                    @endif
+                <!-- Pagination Lowongan (12 per halaman jika melebihi) -->
+                @if ($Data instanceof \Illuminate\Contracts\Pagination\Paginator && $Data->hasPages())
+                    <div class="mt-8 flex justify-center">
+                        {{ $Data->links() }}
+                    </div>
                 @endif
             </div>
 

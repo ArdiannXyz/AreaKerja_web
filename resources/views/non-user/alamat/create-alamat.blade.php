@@ -275,8 +275,6 @@
                 });
             }
 
-            console.log("JS siap! Listener aktif.");
-
             // ===============================
             // STATUS PELAMAR (Trigger Modal 1)
             // ===============================
@@ -288,9 +286,6 @@
 
                     let selected = this.value;
                     let kategori = kategoriInput ? kategoriInput.value : null;
-
-                    console.log("Selected:", selected);
-                    console.log("Kategori:", kategori);
 
                     if (selected === 'Bekerja' && kategori === 'kandidat aktif') {
                         document.getElementById('modalPeringatan').classList.remove('hidden');

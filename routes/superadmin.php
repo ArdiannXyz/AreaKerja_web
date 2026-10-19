@@ -203,6 +203,8 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
     Route::controller(SocialLinkController::class)->group(function () {
         Route::get('/social-links', 'index')->name('superadmin.social.index')->middleware('auth');
         Route::post('/social-links', 'update')->name('superadmin.social.update')->middleware('auth');
+        Route::post('/social-links/config', 'updateConfig')->name('superadmin.social.config')->middleware('auth');
+        Route::post('/social-links/reset', 'resetConfig')->name('superadmin.social.reset')->middleware('auth');
         Route::get('/header-image', 'headerImageIndex')->name('superadmin.header.image')->middleware('auth');
         Route::put('/header-image/{nama}', 'headerImageUpdate')->name('superadmin.header.update')->middleware('auth');
         Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('superadmin.header.destroy')->middleware('auth');

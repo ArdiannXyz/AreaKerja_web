@@ -14,12 +14,6 @@
                         $isDailyLockedCard = $d->isDailyLocked();
                     @endphp
 
-                    @if ($isVipCard)
-                        <span class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[11px] font-black px-2.5 py-0.5 rounded shadow-xs flex items-center gap-1">
-                            <i class="ph-fill ph-crown text-amber-200"></i> VIP Employer
-                        </span>
-                    @endif
-
                     @if ($isDailyLockedCard)
                         <span class="bg-amber-100 text-amber-900 border border-amber-200 text-[11px] font-bold px-2.5 py-0.5 rounded shadow-xs flex items-center gap-1">
                             <i class="ph ph-lock-key text-amber-700"></i> Kuota Penuh Hari Ini
@@ -30,15 +24,11 @@
                         <span class="bg-rose-100 text-rose-700 text-[11px] font-bold px-2.5 py-0.5 rounded shadow-sm border border-rose-200">
                             Ditutup
                         </span>
-                    @else
-                        <span class="bg-[#d7ebfc] text-[#00509d] text-[11px] font-bold px-2.5 py-0.5 rounded shadow-sm">
-                            dibutuhkan segera
-                        </span>
                     @endif
 
                     @if (!is_null($d->boosted_until))
-                        <span class="bg-amber-100 text-amber-800 text-[11px] font-bold px-2.5 py-0.5 rounded shadow-sm">
-                            Boosted
+                        <span class="absolute top-0 left-0 bg-[#00509d] text-white text-[10px] font-bold px-2.5 py-1 rounded-tl-2xl rounded-br-lg shadow-sm flex items-center gap-1">
+                            <i class="ph-fill ph-rocket-launch text-xs"></i> Boosted
                         </span>
                     @endif
 
@@ -138,8 +128,11 @@
                     @endif
                 </div>
                 <div>
-                    <p class="text-xs font-bold text-slate-700 leading-tight">
+                    <p class="text-xs font-bold text-slate-700 leading-tight flex items-center gap-1">
                         {{ $d->perusahaan->nama_perusahaan ?? 'Perusahaan' }}
+                        @if ($isVipCard)
+                            <i class="ph-fill ph-crown text-amber-400 text-xs" title="VIP Employer"></i>
+                        @endif
                     </p>
                     <p class="text-[11px] text-slate-500 leading-tight mt-0.5">
                         {{ $d->alamat ?? $d->perusahaan->alamat ?? 'Jakarta' }}
@@ -149,9 +142,15 @@
 
             {{-- Rentang Gaji (Solid Navy Blue Background Bar) --}}
             <div class="my-2.5 flex flex-wrap items-center gap-2">
-                <span class="inline-block bg-[#004e98] text-white font-bold px-3 py-1.5 rounded-sm text-xs shadow-sm">
-                    Rp. {{ number_format($d->gaji_awal, 0, ',', '.') }} per bulan
-                </span>
+                @if (!empty($d->gaji_hidden))
+                    <span class="inline-block bg-gray-100 text-gray-500 font-semibold px-3 py-1.5 rounded-sm text-xs border border-gray-200">
+                        Gaji tidak ditampilkan
+                    </span>
+                @else
+                    <span class="inline-block bg-[#004e98] text-white font-bold px-3 py-1.5 rounded-sm text-xs shadow-sm">
+                        Rp. {{ number_format($d->gaji_awal, 0, ',', '.') }} per bulan
+                    </span>
+                @endif
             </div>
 
             {{-- Badges Kualifikasi (Jenis, Pengalaman, Pendidikan) --}}

@@ -67,7 +67,7 @@ Route::get('/', [AuthController::class, 'beranda']);
 // LOGIN & LOGOUT AUTH
 Route::controller(AuthController::class)->middleware('guest')->group(function () {
     Route::get('/login', 'login_non_user')->name('login');
-    Route::post('/loginproses', 'loginproses')->name('loginproses')->middleware('throttle:60,1');
+    Route::post('/loginproses', 'loginproses')->name('loginproses')->middleware('throttle:50,1');
 });
 
 Route::controller(AuthController::class)->group(function () {
@@ -121,6 +121,7 @@ Route::get('/syarat-dan-ketentuan', function () {
 })->name('syarat.ketentuan');
 
 Route::get('/faq', [PelamarController::class, 'bantuan'])->name('faq');
+Route::get('/faq/{slug}', [PelamarController::class, 'faqDetail'])->name('faq.detail');
 
 // BANTUAN & LIVE CHAT DENGAN ADMIN (PERSISTEN)
 Route::controller(BantuanChatController::class)->middleware('auth')->group(function () {
@@ -139,6 +140,7 @@ Route::controller(EmailSubController::class)->group(function () {
 Route::controller(PelamarController::class)->middleware('CheckUserStatus')->group(function () {
     Route::get('/pelamar/home', 'index')->name('beranda');
     Route::get('/pelamar/beranda', 'index')->name('pelamar.beranda');
+    Route::get('/pelamar/dashboard', 'index')->name('pelamar.dashboard');
     Route::get('/pelamar/detail-lowongan/{perusahaan}/{lowongan}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
     Route::get('/pelamar/daftar-kandidat', 'daftar_kandidat')->name('pelamar.daftar-kandidat');
     Route::get('/lowongan-tersimpan', 'lowongansimpanform')->name('lowongan.tersimpan');

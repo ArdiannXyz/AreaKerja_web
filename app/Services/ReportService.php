@@ -133,6 +133,61 @@ class ReportService
     }
 
     /**
+     * Admin melaporkan kandidat (kandidat/calon kandidat) melalui panel admin
+     */
+    public function storeKandidatReport(User $reporter, Pelamar $pelamar, array $data, ?UploadedFile $bukti = null): Report
+    {
+        if (!in_array($reporter->role, ['admin', 'super_admin'])) {
+            throw ValidationException::withMessages([
+                'pelamar_id' => 'Hanya admin atau super admin yang dapat melaporkan kandidat.',
+            ]);
+        }
+
+        if ($pelamar->user_id === $reporter->id) {
+            throw ValidationException::withMessages([
+                'pelamar_id' => 'Anda tidak dapat melaporkan akun sendiri.',
+            ]);
+        }
+
+        $alreadyPending = Report::where('reporter_user_id', $reporter->id)
+            ->where('pelamar_id', $pelamar->id)
+            ->pending()
+            ->exists();
+
+        if ($alreadyPending) {
+            throw ValidationException::withMessages([
+                'pelamar_id' => 'Anda sudah memiliki laporan yang sedang ditinjau untuk kandidat ini.',
+            ]);
+        }
+
+        $todayCount = Report::where('reporter_user_id', $reporter->id)
+            ->whereDate('created_at', now()->toDateString())
+            ->count();
+
+        if ($todayCount >= self::DAILY_LIMIT) {
+            throw ValidationException::withMessages([
+                'alasan' => 'Batas laporan harian telah tercapai. Coba lagi besok.',
+            ]);
+        }
+
+        $buktiPath = null;
+        if ($bukti) {
+            $buktiPath = $bukti->store('reports/kandidat', 'public');
+        }
+
+        return Report::create([
+            'tipe'             => Report::TIPE_PELAMAR,
+            'reporter_user_id' => $reporter->id,
+            'pelamar_id'       => $pelamar->id,
+            'reported_user_id' => $pelamar->user_id,
+            'alasan'           => $data['alasan'],
+            'deskripsi'        => $data['deskripsi'],
+            'bukti_path'       => $buktiPath,
+            'status'           => Report::STATUS_PENDING,
+        ]);
+    }
+
+    /**
      * Review laporan oleh Admin / Super Admin
      */
     public function review(Report $report, User $admin, string $action, ?string $notes = null, ?string $alasanFreeze = null): Report

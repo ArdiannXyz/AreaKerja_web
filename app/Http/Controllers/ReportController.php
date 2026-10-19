@@ -46,4 +46,19 @@ class ReportController extends Controller
 
         return back()->with('success', 'Laporan Anda terhadap pelamar berhasil dikirim dan akan segera ditinjau oleh tim moderasi AreaKerja.');
     }
+
+    /**
+     * Admin melaporkan kandidat
+     */
+    public function storeKandidatReport(StoreKandidatReportRequest $request, Pelamar $pelamar, ReportService $service): RedirectResponse
+    {
+        $service->storeKandidatReport(
+            $request->user(),
+            $pelamar,
+            $request->validated(),
+            $request->file('bukti')
+        );
+
+        return back()->with('success', 'Laporan Anda terhadap kandidat telah dikirim dan akan ditinjau oleh tim moderasi.');
+    }
 }

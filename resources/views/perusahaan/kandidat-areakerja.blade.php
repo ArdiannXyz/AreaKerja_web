@@ -137,6 +137,7 @@
                         @forelse ($pelamars as $p)
                             @php
                                 $isCvUnlocked = in_array($p->id, $boughtCvPelamarIds ?? []);
+                                $isAlreadyRecruited = in_array($p->id, $recruitedPelamarIds ?? []);
                                 $skillsList = $p->skill->isNotEmpty()
                                     ? $p->skill->pluck('skill')->take(2)->implode(', ')
                                     : ($p->skills ? (is_array($p->skills) ? implode(', ', array_slice($p->skills, 0, 2)) : $p->skills) : '-');
@@ -176,13 +177,22 @@
                                     </div>
                                 </td>
                                 <td class="py-4 px-6">
-                                    <div class="flex items-center justify-center gap-1.5">
-                                        <button type="button"
-                                            class="btn-rekrut w-24 py-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-lg text-xs transition shadow-sm cursor-pointer"
-                                            data-id="{{ $p->id }}"
-                                            data-nama="{{ $p->nama_pelamar }}">
-                                            Rekrut
-                                        </button>
+                                    <div class="flex items-center justify-center gap-1.5" id="rekrut-action-{{ $p->id }}">
+                                        @if ($isAlreadyRecruited)
+                                            <button type="button" disabled
+                                                class="w-28 py-1.5 bg-slate-100 border border-slate-200 text-slate-400 font-bold rounded-lg text-xs cursor-not-allowed shadow-none"
+                                                title="Kandidat ini sudah Anda rekrut">
+                                                Sudah Direkrut
+                                            </button>
+                                        @else
+                                            <button type="button"
+                                                class="btn-rekrut w-24 py-1.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-lg text-xs transition shadow-sm cursor-pointer"
+                                                data-id="{{ $p->id }}"
+                                                data-nama="{{ $p->nama_pelamar }}"
+                                                data-cv-unlocked="{{ $isCvUnlocked ? '1' : '0' }}">
+                                                Rekrut
+                                            </button>
+                                        @endif
                                         <button type="button"
                                             onclick="openReportKandidatModal({{ $p->id }}, '{{ addslashes($p->nama_pelamar ?? 'Kandidat') }}')"
                                             class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition cursor-pointer"
@@ -407,6 +417,17 @@
                         `;
                     }
 
+                    // Perbarui tombol rekrut kandidat ini agar dapat diklik langsung tanpa reload
+                    const rekrutBtn = document.querySelector(`#rekrut-action-${selectedPelamarId} .btn-rekrut`);
+                    if (rekrutBtn) {
+                        rekrutBtn.dataset.cvUnlocked = '1';
+                    }
+
+                    // Unduh / buka CV secara otomatis
+                    if (data.download_url) {
+                        window.open(data.download_url, '_blank');
+                    }
+
                     Swal.fire({
                         icon: 'success',
                         title: 'CV Berhasil Dibuka!',
@@ -448,6 +469,31 @@
             btn.addEventListener('click', function() {
                 selectedPelamarId = this.dataset.id;
                 selectedPelamarNama = this.dataset.nama || '';
+                const isCvUnlocked = this.dataset.cvUnlocked === '1';
+
+                if (!isCvUnlocked) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Unduh CV Terlebih Dahulu',
+                        text: 'Anda harus membuka dan mengunduh CV ' + selectedPelamarNama + ' terlebih dahulu sebelum dapat merekrutnya.',
+                        showCancelButton: true,
+                        confirmButtonText: 'Buka CV Sekarang',
+                        cancelButtonText: 'Batal',
+                        confirmButtonColor: '#00509d'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            const minKoinCv = {{ (int) \App\Models\SiteSetting::get('harga_koin_buka_cv', 5) }};
+                            if (currentCoins < minKoinCv) {
+                                document.getElementById('modalKoinKurangCv').classList.remove('hidden');
+                                return;
+                            }
+                            document.getElementById('namaPelamarBeliCv').textContent = selectedPelamarNama;
+                            document.getElementById('modalConfirmBeliCv').classList.remove('hidden');
+                        }
+                    });
+                    return;
+                }
+
                 document.getElementById('namaPelamarRekrut').textContent = selectedPelamarNama;
                 modalPilih.classList.remove('hidden');
             });
@@ -519,6 +565,21 @@
 
                 if (data.status === 'success' || data.success) {
                     updateCoinDisplay(Math.max(0, currentCoins - 100));
+
+                    // Ganti tombol Rekrut menjadi "Sudah Direkrut"
+                    const actionContainer = document.getElementById('rekrut-action-' + selectedPelamarId);
+                    if (actionContainer) {
+                        const rekrutBtn = actionContainer.querySelector('.btn-rekrut');
+                        if (rekrutBtn) {
+                            rekrutBtn.outerHTML = `
+                                <button type="button" disabled
+                                    class="w-28 py-1.5 bg-slate-100 border border-slate-200 text-slate-400 font-bold rounded-lg text-xs cursor-not-allowed shadow-none"
+                                    title="Kandidat ini sudah Anda rekrut">
+                                    Sudah Direkrut
+                                </button>
+                            `;
+                        }
+                    }
 
                     Swal.fire({
                         icon: 'success',

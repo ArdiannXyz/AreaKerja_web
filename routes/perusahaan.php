@@ -95,7 +95,6 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
     // LOWONGAN CONTROLLER
     Route::controller(LowonganPerusahaanController::class)->group(function () {
         Route::get('/lowongan', 'index')->name('lowongan.saya.perusahaan');
-        Route::get('/paket/form', 'paketform')->name('paket.form');
     });
 
     // LOWONGAN CONTROLLER (VERIFIED ONLY)
@@ -106,7 +105,6 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
         Route::put('/update/lowongan/{lowongan:id}', 'update')->name('lowongan.update');
         Route::delete('/lowongan/{lowongan:id}', 'destroy')->name('lowongan.destroy');
         Route::put('/lowongan/{id}/toggle-status', 'toggleStatus')->name('lowongan.toggleStatus');
-        Route::post('/paket/beli', 'beliPaket')->name('paket.beli');
         Route::post('/lowongan/{lowongan}/publish', 'publish')->name('lowongan.publish');
         Route::post('/boost-lowongan', 'boost')->name('boost.lowongan');
     });

@@ -21,7 +21,7 @@
                         <div class="flex items-center gap-2.5">
                             <span class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold bg-blue-50 text-[#00509d] border border-blue-200">
                                 <i class="ph ph-briefcase"></i>
-                                {{ $lamaranList->count() }} Lamaran Terkirim
+                                {{ ($lamaranList instanceof \Illuminate\Contracts\Pagination\Paginator ? $lamaranList->total() : $lamaranList->count()) }} Lamaran Terkirim
                             </span>
                             <a href="{{ route('beranda') }}"
                                 class="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold text-slate-600 hover:text-[#00509d] hover:bg-white border border-slate-200/80 shadow-2xs transition">
@@ -69,6 +69,12 @@
                             @endif
                         @endforeach
                     </div>
+
+                    @if ($lamaranList instanceof \Illuminate\Contracts\Pagination\Paginator && $lamaranList->hasPages())
+                        <div class="mt-8 mb-12 flex justify-center">
+                            {{ $lamaranList->links() }}
+                        </div>
+                    @endif
                 @else
                     {{-- Kosong Setelah Login --}}
                     <div class="max-w-md mx-auto my-12 p-8 md:p-10 bg-white rounded-3xl border border-slate-200/80 shadow-sm text-center flex flex-col items-center justify-center">

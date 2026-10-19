@@ -128,12 +128,22 @@
                             class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
                     </div>
                 </div>
-                {{-- <div>
-                    <label class="block font-medium mb-1">Periode</label>
-                    <select name="batas_lamaran" class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
-                        <option>Bulan</option>
-                    </select>
-                </div> --}}
+                <div class="col-span-2">
+                    <label class="block font-medium mb-1">Label Gaji</label>
+                    <input type="text" name="label_gaji" value="{{ $data->label_gaji }}"
+                        class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
+                </div>
+                @if ($isVip ?? false)
+                    <div class="col-span-2 pt-3 border-t border-slate-200 flex items-center gap-3">
+                        <input type="checkbox" name="gaji_hidden" id="gaji_hidden" value="1"
+                            {{ old('gaji_hidden', $data->gaji_hidden ?? false) ? 'checked' : '' }}
+                            class="w-4 h-4 rounded border-slate-300 text-[#00509d] focus:ring-[#00509d]">
+                        <label for="gaji_hidden" class="text-sm text-slate-600">
+                            <i class="ph ph-eye-slash text-[#00509d] mr-1"></i>
+                            Sembunyikan gaji dari calon kandidat (Fitur Eksklusif VIP)
+                        </label>
+                    </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-2 gap-6">

@@ -100,7 +100,7 @@
                 <p class="ak-pfooter-heading">Lowongan</p>
                 <ul class="space-y-2.5">
                     <li><a href="{{ route('lowongan.saya.perusahaan') }}" class="ak-pfooter-link">Lowongan Saya</a></li>
-                    <li><a href="{{ route('paket.form') }}" class="ak-pfooter-link">Pasang Lowongan</a></li>
+                    <li><a href="{{ route('lowongan.create.form') }}" class="ak-pfooter-link">Pasang Lowongan</a></li>
                     <li><a href="{{ route('perusahaan.event.index') }}" class="ak-pfooter-link">Event</a></li>
                 </ul>
             </div>

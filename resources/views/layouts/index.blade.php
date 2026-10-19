@@ -804,16 +804,8 @@
                                         <a href="{{ route('profile.index') }}"
                                             class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition"
                                             id="profile-link">
-                                            @if ($kategori === 'kandidat aktif')
-                                                <i class="ph ph-users mr-2 text-[#00509d] text-lg"></i>
-                                                <span>Kandidat</span>
-                                            @elseif ($kategori === 'calon kandidat')
-                                                <i class="ph ph-users mr-2 text-[#00509d] text-lg"></i>
-                                                <span>Calon Kandidat</span>
-                                            @else
-                                                <i class="ph ph-user mr-2 text-[#00509d] text-lg"></i>
-                                                <span>Profil Saya</span>
-                                            @endif
+                                            <i class="ph ph-user mr-2 text-[#00509d] text-lg"></i>
+                                            <span>Profil</span>
                                         </a>
                                     </li>
 
@@ -956,6 +948,7 @@
     {{-- Isi Halaman --}}
     <main class="page-content-wrapper">
         @yield('content')
+        @yield('container')
     </main>
 
     {{-- NOTIF --}}

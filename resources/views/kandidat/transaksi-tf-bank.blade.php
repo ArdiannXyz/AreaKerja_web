@@ -1,10 +1,10 @@
 @extends('layouts.index')
-@section('container')
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-8 mt-6">
+@section('content')
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-28 pb-16">
         <!-- Breadcrumb / Header -->
         <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <a href="{{ route('pelamar.dashboard') }}" class="text-xs text-slate-500 hover:text-[#00509d] inline-flex items-center gap-1 mb-2">
+                <a href="{{ route('pelamar.beranda') }}" class="text-xs text-slate-500 hover:text-[#00509d] inline-flex items-center gap-1 mb-2">
                     <i class="ph ph-arrow-left"></i> Kembali ke Beranda
                 </a>
                 <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Pembayaran Pendaftaran Kandidat</h1>
@@ -58,9 +58,9 @@
                 </div>
 
                 <div class="mt-8 flex justify-center gap-3">
-                    <a href="{{ route('pelamar.dashboard') }}"
+                    <a href="{{ route('pelamar.beranda') }}"
                        class="px-6 py-3 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-xl shadow transition">
-                        Masuk ke Dashboard Pelamar
+                        Masuk ke Beranda Pelamar
                     </a>
                 </div>
             </div>

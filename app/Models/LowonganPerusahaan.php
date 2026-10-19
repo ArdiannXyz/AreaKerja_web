@@ -33,11 +33,11 @@ class LowonganPerusahaan extends Model
         'pendidikan',
         'tanggung_jawab',
         'benefit',
-        'paket_id',
         'published_at',
         'expired_at',
         'boosted_until',
         'rekomendasi',
+        'gaji_hidden',
     ];
 
     protected $casts = [
@@ -45,13 +45,10 @@ class LowonganPerusahaan extends Model
         'expired_at'    => 'datetime',
         'boosted_until' => 'datetime',
         'batas_lamaran' => 'date',
+        'gaji_hidden'   => 'boolean',
     ];
 
-    public function paket()
-    {
-        return $this->belongsTo(PaketLowongan::class, 'paket_id', 'id');
-    }
-
+    // REMOVED: paket() relationship (package system removed)
     public function perusahaan()
     {
         return $this->belongsTo(Perusahaan::class, 'perusahaan_id', 'id');

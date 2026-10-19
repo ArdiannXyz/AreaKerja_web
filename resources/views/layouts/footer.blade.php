@@ -239,31 +239,17 @@
                     Temukan peluang kerja yang tepat dan bangun kariermu bersama AreaKerja.
                 </p>
 
-                @php
-                    $fbLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Facebook')->link : null) ?: '#';
-                    $igLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Instagram')->link : null) ?: '#';
-                    $twLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Twitter')->link : null) ?: '#';
-                    $inLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Linkedin')->link : null) ?: '#';
-                    $ytLink = (isset($socialLinks) ? $socialLinks->firstWhere('nama', 'Youtube')->link : null) ?: '#';
-                @endphp
-
-                {{-- Social Media --}}
+                {{-- Social Media (dynamic) --}}
                 <div class="flex items-center gap-2.5 pt-1">
-                    <a href="{{ $fbLink }}" target="_blank" class="ak-social-btn" aria-label="Facebook AreaKerja" rel="noopener noreferrer">
-                        <i class="ph-fill ph-facebook-logo" style="font-size:16px;"></i>
-                    </a>
-                    <a href="{{ $igLink }}" target="_blank" class="ak-social-btn" aria-label="Instagram AreaKerja" rel="noopener noreferrer">
-                        <i class="ph-fill ph-instagram-logo" style="font-size:16px;"></i>
-                    </a>
-                    <a href="{{ $twLink }}" target="_blank" class="ak-social-btn" aria-label="Twitter / X AreaKerja" rel="noopener noreferrer">
-                        <i class="ph-fill ph-twitter-logo" style="font-size:16px;"></i>
-                    </a>
-                    <a href="{{ $inLink }}" target="_blank" class="ak-social-btn" aria-label="LinkedIn AreaKerja" rel="noopener noreferrer">
-                        <i class="ph-fill ph-linkedin-logo" style="font-size:16px;"></i>
-                    </a>
-                    <a href="{{ $ytLink }}" target="_blank" class="ak-social-btn" aria-label="YouTube AreaKerja" rel="noopener noreferrer">
-                        <i class="ph-fill ph-youtube-logo" style="font-size:16px;"></i>
-                    </a>
+                    @if(isset($socialLinks) && $socialLinks->isNotEmpty())
+                        @foreach($socialLinks as $sl)
+                            @if(!empty($sl->link) && $sl->link !== '#')
+                                <a href="{{ $sl->link }}" target="_blank" class="ak-social-btn" aria-label="{{ $sl->nama }} AreaKerja" rel="noopener noreferrer">
+                                    <i class="{{ $sl->icon ?? 'ph-fill ph-globe' }}" style="font-size:16px;"></i>
+                                </a>
+                            @endif
+                        @endforeach
+                    @endif
                 </div>
             </div>
 
@@ -294,7 +280,7 @@
                 <p class="ak-footer-heading">Perusahaan</p>
                 <ul class="space-y-2.5">
                     <li>
-                        <a href="{{ route('paket.form') }}" class="ak-footer-link">Pasang Lowongan</a>
+                        <a href="{{ route('lowongan.create.form') }}" class="ak-footer-link">Pasang Lowongan</a>
                     </li>
                     <li>
                         <a href="{{ route('perusahaan.kandidat.ak') }}" class="ak-footer-link">Cari Kandidat</a>
@@ -453,7 +439,7 @@
                     </button>
                     <div id="mobile-perusahaan" class="ak-mobile-section-content" :class="open && 'open'">
                         <ul class="pt-3 space-y-3 pb-1">
-                            <li><a href="{{ route('paket.form') }}" class="ak-footer-link">Pasang Lowongan</a></li>
+                            <li><a href="{{ route('lowongan.create.form') }}" class="ak-footer-link">Pasang Lowongan</a></li>
                             <li><a href="{{ route('perusahaan.kandidat.ak') }}" class="ak-footer-link">Cari Kandidat</a></li>
                             <li><a href="{{ route('talent-hunter.index') }}" class="ak-footer-link">Talent Hunter</a></li>
                             <li><a href="{{ route('perusahaan.dashboard') }}" class="ak-footer-link">Dashboard</a></li>
@@ -522,23 +508,17 @@
                 <p class="text-white/35 text-[11px] mt-2">Gratis. Tanpa spam.</p>
             </div>
 
-            {{-- Social Media (Mobile) --}}
+            {{-- Social Media (Mobile, dynamic) --}}
             <div class="mt-6 flex items-center gap-2.5">
-                <a href="{{ $fbLink }}" target="_blank" class="ak-social-btn" aria-label="Facebook AreaKerja" rel="noopener noreferrer">
-                    <i class="ph-fill ph-facebook-logo" style="font-size:15px;"></i>
-                </a>
-                <a href="{{ $igLink }}" target="_blank" class="ak-social-btn" aria-label="Instagram AreaKerja" rel="noopener noreferrer">
-                    <i class="ph-fill ph-instagram-logo" style="font-size:15px;"></i>
-                </a>
-                <a href="{{ $twLink }}" target="_blank" class="ak-social-btn" aria-label="Twitter / X AreaKerja" rel="noopener noreferrer">
-                    <i class="ph-fill ph-twitter-logo" style="font-size:15px;"></i>
-                </a>
-                <a href="{{ $inLink }}" target="_blank" class="ak-social-btn" aria-label="LinkedIn AreaKerja" rel="noopener noreferrer">
-                    <i class="ph-fill ph-linkedin-logo" style="font-size:15px;"></i>
-                </a>
-                <a href="{{ $ytLink }}" target="_blank" class="ak-social-btn" aria-label="YouTube AreaKerja" rel="noopener noreferrer">
-                    <i class="ph-fill ph-youtube-logo" style="font-size:15px;"></i>
-                </a>
+                @if(isset($socialLinks) && $socialLinks->isNotEmpty())
+                    @foreach($socialLinks as $sl)
+                        @if(!empty($sl->link) && $sl->link !== '#')
+                            <a href="{{ $sl->link }}" target="_blank" class="ak-social-btn" aria-label="{{ $sl->nama }} AreaKerja" rel="noopener noreferrer">
+                                <i class="{{ $sl->icon ?? 'ph-fill ph-globe' }}" style="font-size:15px;"></i>
+                            </a>
+                        @endif
+                    @endforeach
+                @endif
             </div>
 
         </div>

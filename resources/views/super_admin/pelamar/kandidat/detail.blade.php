@@ -261,7 +261,7 @@
                         {{-- Tanggal Lahir --}}
                         <div class="flex items-start gap-3 p-2.5 rounded-xl bg-slate-50/60 border border-slate-100">
                             <div class="p-2 rounded-lg bg-white border border-slate-200/70 text-slate-500">
-                                <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg class="w-4 h-4 text-[#00509d]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                             </div>
@@ -608,7 +608,7 @@
                 <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
                     <div class="flex items-center justify-between pb-4 mb-5 border-b border-slate-100">
                         <div class="flex items-center gap-3">
-                            <div class="p-2 rounded-xl bg-purple-50 text-purple-600">
+                            <div class="p-2 rounded-xl bg-blue-50 text-[#00509d]">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
                                 </svg>
@@ -628,12 +628,12 @@
                             @foreach ($data->pengalaman_organisasi as $org)
                                 <div class="relative group">
                                     {{-- Timeline bullet --}}
-                                    <div class="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-white border-2 border-purple-600 group-hover:scale-125 transition"></div>
+                                    <div class="absolute -left-[29px] top-1 w-3.5 h-3.5 rounded-full bg-white border-2 border-[#00509d] group-hover:scale-125 transition"></div>
 
                                     <div class="bg-slate-50/70 hover:bg-slate-50 rounded-xl p-4 border border-slate-200/70 transition">
                                         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 mb-1.5">
                                             <h4 class="text-sm font-bold text-slate-900">
-                                                {{ $org->jabatan }} &mdash; <span class="text-purple-700 font-semibold">{{ $org->nama_organisasi }}</span>
+                                                {{ $org->jabatan }} &mdash; <span class="text-[#00509d] font-semibold">{{ $org->nama_organisasi }}</span>
                                             </h4>
                                             <span class="text-[11px] font-semibold text-slate-500 bg-white border border-slate-200 px-2 py-0.5 rounded-md self-start sm:self-auto">
                                                 {{ $org->tahun_awal }} - {{ $org->tahun_akhir ?: 'Sekarang' }}
@@ -657,26 +657,26 @@
                 </div>
 
                 {{-- 6. CV & Lampiran Berkas Banner --}}
-                <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 rounded-2xl p-6 text-white shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="bg-[#00509d] rounded-2xl p-6 text-white shadow-md flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div class="flex items-center gap-4 text-center sm:text-left">
-                        <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center flex-shrink-0 border border-white/20">
-                            <svg class="w-6 h-6 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-12 h-12 rounded-xl bg-white/15 flex items-center justify-center flex-shrink-0 border border-white/20">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                             </svg>
                         </div>
                         <div>
                             <h4 class="text-base font-bold">Curriculum Vitae (CV) Kandidat</h4>
-                            <p class="text-xs text-slate-300 mt-0.5">Tinjau atau unduh dokumen CV resmi format AreaKerja</p>
+                            <p class="text-xs text-white/70 mt-0.5">Tinjau atau unduh dokumen CV resmi format AreaKerja</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-2.5 flex-shrink-0">
                         <a href="{{ route('cv.preview', $data->id) }}" target="_blank"
-                            class="px-4 py-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/20 text-white text-xs font-semibold transition backdrop-blur-sm flex items-center gap-1.5">
-                            <svg class="w-4 h-4 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                            class="px-4 py-2 rounded-xl bg-white/15 hover:bg-white/25 border border-white/25 text-white text-xs font-semibold transition flex items-center gap-1.5">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             <span>Preview</span>
                         </a>
                         <a href="{{ route('cv.download', $data->id) }}"
-                            class="px-4 py-2 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
+                            class="px-4 py-2 rounded-xl bg-white text-[#00509d] hover:bg-blue-50 text-xs font-semibold transition shadow-sm flex items-center gap-1.5">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
                             <span>Unduh PDF</span>
                         </a>

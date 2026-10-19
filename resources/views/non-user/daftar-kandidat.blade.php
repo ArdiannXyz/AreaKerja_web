@@ -196,7 +196,6 @@
 
         <script>
             let selectedDivisi = null;
-            let selectedBank = null;
 
             function closeAllModal() {
                 document.querySelectorAll('[id^="modalStep"]').forEach(m => {
@@ -248,15 +247,6 @@
                         icon: 'warning',
                         title: 'Oops...',
                         text: 'Silakan pilih divisi terlebih dahulu!',
-                        confirmButtonColor: '#00509d'
-                    });
-                    return;
-                }
-                if (step === 3 && !selectedBank) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Oops...',
-                        text: 'Silakan pilih metode pembayaran terlebih dahulu!',
                         confirmButtonColor: '#00509d'
                     });
                     return;
