@@ -87,24 +87,42 @@
                 </p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+                 x-data="{ selectedPaket: '{{ $defaultPaket['id'] ?? '12_bulan' }}' }">
                 @foreach ($paketLangganan as $key => $paket)
                     @php
                         $isPopular = !empty($paket['popular']);
                         $isUserVip = $perusahaan->is_berlangganan && \Carbon\Carbon::now()->lt($perusahaan->tanggal_expired);
                     @endphp
-                    <div class="bg-white rounded-3xl p-6 sm:p-7 border {{ $isPopular ? 'border-2 border-[#00509d] shadow-lg relative bg-gradient-to-b from-blue-50/30 via-white to-white' : 'border border-slate-200/90 shadow-xs' }} flex flex-col justify-between transition hover:shadow-md hover:-translate-y-1">
+                    <div
+                        x-on:click="selectedPaket = '{{ $key }}'; selectPaket('{{ $key }}')"
+                        x-bind:class="selectedPaket === '{{ $key }}'
+                            ? 'border-2 border-[#00509d] shadow-xl -translate-y-2 ring-4 ring-blue-100 bg-gradient-to-b from-blue-50/40 via-white to-white cursor-pointer'
+                            : '{{ $isPopular ? 'border-2 border-blue-200' : 'border border-slate-200/90' }} shadow-xs hover:shadow-md hover:-translate-y-1 cursor-pointer'"
+                        class="bg-white rounded-3xl p-6 sm:p-7 flex flex-col justify-between transition-all duration-200 relative select-none">
+
+                        {{-- Popular Badge --}}
                         @if ($isPopular)
-                            <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2">
-                                <span class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs flex items-center gap-1">
+                            <div class="absolute -top-3.5 left-1/2 transform -translate-x-1/2 z-10">
+                                <span class="bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[11px] font-black uppercase tracking-wider px-3.5 py-1 rounded-full shadow-xs flex items-center gap-1 whitespace-nowrap">
                                     <i class="ph-fill ph-sparkle text-amber-200"></i> Paling Hemat
                                 </span>
                             </div>
                         @endif
 
+                        {{-- Selected Checkmark --}}
+                        <div x-show="selectedPaket === '{{ $key }}'"
+                             x-transition:enter="transition ease-out duration-200"
+                             x-transition:enter-start="opacity-0 scale-50"
+                             x-transition:enter-end="opacity-100 scale-100"
+                             class="absolute top-3.5 right-3.5 w-6 h-6 bg-[#00509d] rounded-full flex items-center justify-center shadow-sm z-10">
+                            <i class="ph-bold ph-check text-white text-[10px]"></i>
+                        </div>
+
                         <div class="space-y-4">
                             <div class="flex items-center justify-between">
-                                <span class="text-xs font-black px-2.5 py-1 rounded-lg border {{ $paket['badge_color'] ?? 'bg-blue-50 text-[#00509d] border-blue-200' }}">
+                                <span x-bind:class="selectedPaket === '{{ $key }}' ? 'bg-[#00509d] text-white border-[#00509d]' : '{{ str_replace('"', '\'', $paket['badge_color'] ?? 'bg-blue-50 text-[#00509d] border-blue-200') }}'"
+                                      class="text-xs font-black px-2.5 py-1 rounded-lg border transition-colors duration-200">
                                     {{ $paket['badge'] }}
                                 </span>
                                 <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Durasi</span>
@@ -117,10 +135,12 @@
                                 </p>
                             </div>
 
-                            <div class="py-3 border-y border-slate-100 flex items-baseline gap-2">
+                            <div x-bind:class="selectedPaket === '{{ $key }}' ? 'border-blue-200' : 'border-slate-100'"
+                                 class="py-3 border-y flex items-baseline gap-2 transition-colors duration-200">
                                 <div class="flex items-center gap-1.5">
                                     <img src="{{ asset('images/coin.png') }}" alt="Koin" class="w-6 h-6 object-contain">
-                                    <span class="text-3xl font-black text-[#00509d]">{{ number_format($paket['harga'], 0, ',', '.') }}</span>
+                                    <span x-bind:class="selectedPaket === '{{ $key }}' ? 'text-[#00509d]' : 'text-[#00509d]'"
+                                          class="text-3xl font-black">{{ number_format($paket['harga'], 0, ',', '.') }}</span>
                                 </div>
                                 <span class="text-xs font-bold text-slate-500">Koin</span>
                             </div>
@@ -146,9 +166,12 @@
                             </ul>
                         </div>
 
-                        <div class="mt-6 pt-4 border-t border-slate-100">
+                        <div class="mt-6 pt-4 border-t border-slate-100" x-on:click.stop>
                             <button type="button" onclick="openModal('{{ $key }}')"
-                                class="w-full py-3 px-4 rounded-2xl font-black text-xs transition flex items-center justify-center gap-2 {{ $isPopular ? 'bg-[#00509d] hover:bg-[#003d7a] text-white shadow-sm' : 'bg-blue-50 hover:bg-blue-100 text-[#00509d] border border-blue-100' }}">
+                                x-bind:class="selectedPaket === '{{ $key }}'
+                                    ? 'bg-[#00509d] hover:bg-[#003d7a] text-white shadow-sm'
+                                    : 'bg-blue-50 hover:bg-blue-100 text-[#00509d] border border-blue-100'"
+                                class="w-full py-3 px-4 rounded-2xl font-black text-xs transition-all duration-200 flex items-center justify-center gap-2">
                                 <i class="ph-bold {{ $isUserVip ? 'ph-arrows-clockwise' : 'ph-crown' }}"></i>
                                 <span>{{ $isUserVip ? 'Perpanjang (' . $paket['nama'] . ')' : 'Pilih Paket' }}</span>
                             </button>
