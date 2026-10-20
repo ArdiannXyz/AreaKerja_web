@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\JobApiController;
 use App\Http\Controllers\Api\V1\NotificationApiController;
 use App\Http\Controllers\Api\V1\PaymentApiController;
 use App\Http\Controllers\Api\V1\ProfileApiController;
+use App\Http\Controllers\Api\V1\ReportApiController;
 use App\Http\Controllers\Api\V1\TipsKerjaApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -56,6 +57,8 @@ Route::prefix('v1')->group(function () {
     Route::get('/packages/subscription', [PaymentApiController::class, 'subscriptionPackages'])->name('api.packages.subscription');
     Route::get('/payments/channels', [PaymentApiController::class, 'paymentChannels'])->name('api.payments.channels');
     Route::post('/payments/callback', [PaymentApiController::class, 'paymentCallback'])->name('api.payments.callback');
+    Route::post('/xendit/callback', [\App\Http\Controllers\Payment\XenditCallbackController::class, 'handle'])->name('api.xendit.callback');
+
 
 
     /*
@@ -92,6 +95,9 @@ Route::prefix('v1')->group(function () {
         Route::delete('/pelamar/educations/{id}', [ProfileApiController::class, 'deleteEducation'])->name('api.pelamar.educations.destroy');
 
         // --- Candidate Job Applications & Saved Jobs ---
+        Route::get('/reports/reasons', [ReportApiController::class, 'reasons'])->name('api.reports.reasons');
+        Route::post('/reports', [ReportApiController::class, 'store'])->middleware('throttle:reports')->name('api.reports.store');
+
         Route::post('/jobs/{id}/apply', [JobApiController::class, 'apply'])->name('api.jobs.apply');
         Route::get('/my-applications', [JobApiController::class, 'myApplications'])->name('api.jobs.myApplications');
         Route::get('/saved-jobs', [JobApiController::class, 'getSavedJobs'])->name('api.jobs.saved');

@@ -1,14 +1,16 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
 <main class="flex-1 min-w-0 max-w-full p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
     {{-- Header Bar --}}
     {{-- Header Bar --}}
-    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
         <div class="w-full sm:w-auto flex items-center justify-between">
             <div>
-                <h1 class="text-base sm:text-xl font-bold text-slate-800 tracking-tight">Data Perusahaan</h1>
-                <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+                <h1 class="text-base sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                    <i class="ph ph-buildings text-white/80 text-lg sm:text-2xl"></i> Data Perusahaan
+                </h1>
+                <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">
                     Kelola dan verifikasi seluruh mitra perusahaan
                 </p>
             </div>
@@ -115,14 +117,14 @@
                         <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0" style="font-size:16px;"></i>
                         <input type="text" name="search" x-model="query"
                             @focus="open = true"
-                            @input="open = true"
+                            @input="open = true; filterPerusahaanTable($event.target.value)"
                             autocomplete="off"
                             placeholder="Cari perusahaan, kota, status..."
                             class="flex-1 h-full px-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
                             style="border: none !important; outline: none !important; box-shadow: none !important;">
                         <template x-if="query.length > 0">
                             <a href="{{ route('superadmin.perusahaan', request()->except('search')) }}"
-                               @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.perusahaan', request()->except('search')) }}';"
+                               @click.prevent="query = ''; open = false; filterPerusahaanTable(''); window.location.href = '{{ route('superadmin.perusahaan', request()->except('search')) }}';"
                                class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
                                title="Hapus pencarian">
                                 <i class="ph ph-x text-[10px] font-bold"></i>
@@ -250,7 +252,7 @@
                 </thead>
                 <tbody class="divide-y divide-slate-50">
                     @forelse ($perusahaan as $i => $p)
-                        <tr class="hover:bg-slate-50/60 transition duration-150 group">
+                        <tr class="perusahaan-row hover:bg-slate-50/60 transition duration-150 group">
 
                             {{-- No --}}
                             <td class="px-4 py-3.5 text-center text-slate-400 text-xs font-medium">
@@ -526,6 +528,15 @@
             }
         }));
     });
+
+    function filterPerusahaanTable(val) {
+        const q = (val || '').toLowerCase().trim();
+        const rows = document.querySelectorAll('tr.perusahaan-row');
+        rows.forEach(row => {
+            const text = row.textContent.toLowerCase();
+            row.style.display = (!q || text.includes(q)) ? '' : 'none';
+        });
+    }
 </script>
 
 <script>

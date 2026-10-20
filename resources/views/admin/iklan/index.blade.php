@@ -3,15 +3,15 @@
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- HEADER TOP BAR -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <!-- Kiri: Judul + tombol pasang -->
             <div class="w-full sm:w-auto flex items-center justify-between sm:justify-start gap-4">
                 <div class="flex items-center gap-3">
                     <div>
-                        <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
-                            <i class="ph ph-megaphone text-[#00509d] text-lg sm:text-2xl"></i> Moderasi Iklan Beranda
+                        <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+                            <i class="ph ph-megaphone text-white/80 text-lg sm:text-2xl"></i> Moderasi Iklan Beranda
                         </h1>
-                        <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Review pengajuan banner iklan perusahaan, verifikasi kelayakan konten, dan kelola penayangan</p>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Review pengajuan banner iklan perusahaan, verifikasi kelayakan konten, dan kelola penayangan</p>
                     </div>
                 </div>
                 <!-- Tombol pasang iklan (mobile) -->
@@ -188,6 +188,7 @@
                 </div>
             </div>
         </div>
+        </div>
 
         @if ($search)
             <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 bg-blue-50/80 border border-blue-100 rounded-2xl text-xs text-[#00509d]">
@@ -234,7 +235,7 @@
                                         </div>
                                         <div class="min-w-0 flex-1">
                                             <p class="font-extrabold text-slate-900 truncate" title="{{ $item->judul_iklan }}">{{ $item->judul_iklan }}</p>
-                                             <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 font-medium truncate">
+                                            <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 font-medium truncate">
                                                 <i class="ph ph-buildings text-slate-400 shrink-0"></i>
                                                 <span class="truncate font-bold {{ $item->perusahaan ? 'text-slate-700' : 'text-[#00509d]' }}" title="{{ $item->perusahaan?->nama_perusahaan ?? 'Official AreaKerja' }}">
                                                     @if($item->perusahaan)
@@ -245,7 +246,7 @@
                                                         </span>
                                                     @endif
                                                 </span>
-                                             </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </td>
@@ -291,6 +292,7 @@
                                                 Aktif Beranda
                                             </p>
                                         @endif
+                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->total_views }} views • {{ $item->total_clicks }} klik</p>
                                     @elseif ($item->status === 'ditolak')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-extrabold rounded-full">
                                             <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
@@ -305,7 +307,7 @@
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-slate-100 text-slate-600 border border-slate-200 text-[10px] font-extrabold rounded-full">
                                             <span>Selesai</span>
                                         </span>
-                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->views }} views • {{ $item->clicks }} klik</p>
+                                        <p class="text-[10px] text-slate-400 mt-0.5 font-medium">{{ $item->total_views }} views • {{ $item->total_clicks }} klik</p>
                                     @endif
                                 </td>
 

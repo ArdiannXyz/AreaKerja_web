@@ -3,13 +3,13 @@
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
         {{-- Topbar Header --}}
         <!-- HEADER TOP BAR -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
-                        <i class="ph ph-lightbulb text-[#00509d] text-lg sm:text-2xl"></i> Tips Kerja
+                    <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-lightbulb text-white/80 text-lg sm:text-2xl"></i> Tips Kerja
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola artikel panduan karir, tips kerja, dan publikasi</p>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola artikel panduan karir, tips kerja, dan publikasi</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('admin.components.notif_button')

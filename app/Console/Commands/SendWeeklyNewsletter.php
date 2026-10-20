@@ -38,7 +38,7 @@ class SendWeeklyNewsletter extends Command
         $this->info("Mengambil {$limit} lowongan terbaru yang aktif...");
 
         // Ambil lowongan aktif, belum expired, dan perusahaan valid
-        $lowongans = LowonganPerusahaan::where('status', '!=', 'tutup')
+        $lowongans = LowonganPerusahaan::publik()->where('status', '!=', 'tutup')
             ->whereHas('perusahaan')
             ->where('expired_at', '>', now())
             ->with(['perusahaan'])

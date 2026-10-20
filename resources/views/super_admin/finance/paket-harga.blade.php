@@ -8,13 +8,13 @@
         }">
 
         {{-- Topbar Header --}}
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-xl font-bold text-slate-800 tracking-tight">
-                        Finance & Keuangan
+                    <h1 class="text-base sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-wallet text-white/80 text-lg sm:text-2xl"></i> Manajemen Keuangan
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola paket harga, riwayat transaksi, dan laporan pendapatan</p>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola paket harga, riwayat transaksi, dan laporan pendapatan</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')
@@ -84,8 +84,13 @@
                         <tbody class="divide-y divide-gray-100">
                             @forelse ($koin as $k)
                                 <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-5 py-3 text-gray-800 font-medium">{{ $k->nama }}</td>
-                                    <td class="px-5 py-3 text-right font-semibold text-[#00509d]">
+                                    <td class="px-5 py-3.5 text-gray-800">
+                                        <p class="font-semibold text-gray-800">{{ $k->nama }}</p>
+                                        @if(!empty($k->deskripsi))
+                                            <p class="text-[11px] text-gray-500 mt-0.5">{{ $k->deskripsi }}</p>
+                                        @endif
+                                    </td>
+                                    <td class="px-5 py-3.5 text-right font-bold text-[#00509d] whitespace-nowrap">
                                         {{ number_format($k->harga, 0, ',', '.') }} Koin
                                     </td>
                                 </tr>

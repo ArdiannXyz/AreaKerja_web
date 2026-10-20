@@ -1,18 +1,27 @@
 @extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 gap-4 sm:gap-0">
-            <h1 class="text-2xl font-medium break-words">
-                Data Panggilan
-            </h1>
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+        <!-- HEADER TOP BAR -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div>
+                    <h1 class="text-base sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-phone-call text-white/80 text-lg sm:text-2xl"></i> Data Panggilan
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola daftar panggilan kerja dan interview kandidat</p>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
+                    @include('super_admin.components.notif_button')
+                </div>
+            </div>
 
-            <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-3 w-full sm:w-auto">
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
                 {{-- Tombol Notifikasi --}}
                 @include('super_admin.components.notif_button')
                 {{-- User Badge Dropdown --}}
                 @include('super_admin.components.user_badge_dropdown')
             </div>
-        </div>
+        </header>
 
 
         <!-- Header -->

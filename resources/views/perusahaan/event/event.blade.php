@@ -16,7 +16,7 @@
                         Semua
                     </a>
                     <a href="{{ route('perusahaan.event.index', ['status' => 'buka']) }}"
-                        class="px-4 py-2 rounded-xl transition {{ ($status ?? '') === 'buka' ? 'bg-[#00509d] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
+                        class="px-4 py-2 rounded-xl trans   ition {{ ($status ?? '') === 'buka' ? 'bg-[#00509d] text-white shadow-xs' : 'text-slate-600 hover:bg-slate-100' }}">
                         Upcoming
                     </a>
                     <a href="{{ route('perusahaan.event.index', ['status' => 'tutup']) }}"
@@ -31,7 +31,7 @@
                 <div class="space-y-8">
                     @foreach ($events as $event)
                         @php
-                            $isEnded = ($event->status === 'tutup' || now()->toDateString() > $event->tgl_akhir);
+                            $isEnded = $event->is_ended;
                             $defaultImages = [
                                 'https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=1200&auto=format&fit=crop&q=80',
                                 'https://images.unsplash.com/photo-1511578314322-379afb476865?w=1200&auto=format&fit=crop&q=80',

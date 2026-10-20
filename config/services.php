@@ -43,16 +43,17 @@ return [
         'redirect' => env('FACEBOOK_REDIRECT_URI', 'http://127.0.0.1:8000/auth/facebook/callback'),
     ],
 
-    'github' => [
-        'client_id' => env('GITHUB_CLIENT_ID'),
-        'client_secret' => env('GITHUB_CLIENT_SECRET'),
-        'redirect' => env('GITHUB_REDIRECT_URI', 'http://localhost:8000/auth/github/callback'),
-    ],
-
     'linkedin-openid' => [
         'client_id' => env('LINKEDIN_CLIENT_ID'),
         'client_secret' => env('LINKEDIN_CLIENT_SECRET'),
         'redirect' => env('LINKEDIN_REDIRECT_URI', 'http://127.0.0.1:8000/auth/linkedin/callback'),
     ],
 
+    'xendit' => [
+        'secret_key'    => env('XENDIT_SECRET_KEY'),
+        'public_key'    => env('XENDIT_PUBLIC_KEY'),
+        'webhook_token' => env('XENDIT_WEBHOOK_TOKEN'),
+    ],
+
 ];
+

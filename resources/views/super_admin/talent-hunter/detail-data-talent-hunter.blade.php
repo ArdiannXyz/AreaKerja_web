@@ -1,18 +1,30 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <div class="w-full h-screen translate-x-4 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
-        <main class="flex-1 p-6 sm:ml-64 bg-white overflow-y-auto">
-            <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4 sm:gap-0">
-                <h1 class="text-2xl font-medium truncate max-w-full">Detail Talent Hunter</h1>
-
-                <div class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                    {{-- Tombol Notifikasi --}}
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+        <!-- Header Topbar -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('superadmin.talent-hunter') }}"
+                       class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                       title="Kembali ke Talent Hunter">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight leading-tight">Detail Talent Hunter</h1>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Talent Hunter / Detail</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')
-
-                    {{-- User Badge Dropdown --}}
-                    @include('super_admin.components.user_badge_dropdown')
                 </div>
             </div>
+
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
 
             <!-- Konten utama -->
@@ -47,8 +59,7 @@
                             <p>Posisi Yang Dibutuhkan: <span class="font-medium">{{ $talentHunter->posisi ?? '-' }}</span>
                             </p>
                             <p>Jenis Kelamin: <span class="font-medium">{{ $talentHunter->gender ?? '-' }}</span></p>
-                            <p>Kisaran Gaji: <span class="font-medium">{{ $talentHunter->gaji_awal ?? '-' }} -
-                                    {{ $talentHunter->gaji_akhir ?? '-' }}</span></p>
+                            <p>Gaji yang Ditawarkan: <span class="font-medium text-[#00509d]">{{ $talentHunter->gaji_tampil }}</span></p>
                             <p>Pengalaman Kerja: <span
                                     class="font-medium">{{ $talentHunter->pengalaman_kerja ?? '-' }}</span></p>
                             <p>Kontak Perusahaan: <span
@@ -77,7 +88,6 @@
             @include('super_admin.notif.modal_notif')
             @include('super_admin.notif.modal_semua')
         </main>
-    </div>
     <script>
         // Tandai dibaca
         async function markAsRead(url, el) {

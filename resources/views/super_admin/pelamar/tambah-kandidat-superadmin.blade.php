@@ -8,16 +8,16 @@
         @endphp
 
         {{-- TOP NAVIGATION & ADMIN BAR --}}
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="flex items-center gap-3">
                 <a href="{{ route('superadmin.pelamar') }}"
-                    class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 flex items-center justify-center text-slate-600 transition flex-shrink-0"
+                    class="w-8 h-8 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
                     title="Kembali ke Data Pelamar">
                     <i class="ph ph-arrow-left text-sm"></i>
                 </a>
                 <div>
-                    <p class="text-xs text-slate-400">Pelamar / <span class="text-slate-500 font-medium">Tambah Data</span></p>
-                    <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight leading-tight">
+                    <p class="text-xs text-blue-100">Pelamar / <span class="text-blue-100 font-medium">Tambah Data</span></p>
+                    <h1 class="text-lg sm:text-xl font-semibold text-white tracking-tight leading-tight">
                         @if ($kategori === 'non_kandidat')
                             Tambah Pelamar Baru
                         @elseif ($kategori === 'calon_kandidat')

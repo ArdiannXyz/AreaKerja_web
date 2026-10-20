@@ -9,9 +9,6 @@
     if ($role === 'admin') {
         $detail = $user->admin;
         $img = $detail?->img_profile;
-    } elseif ($role === 'finance') {
-        $detail = $user->finance;
-        $img = $detail?->img_profile;
     } elseif ($role === 'perusahaan') {
         $detail = $user->perusahaan;
         $img = $detail?->img_profile;
@@ -22,7 +19,6 @@
 
     $displayName = match($role) {
         'admin'      => $detail?->nama_lengkap ?? $user->nama_lengkap ?? $user->username,
-        'finance'    => $detail?->nama_lengkap ?? $user->nama_lengkap ?? $user->username,
         'perusahaan' => $detail?->nama_perusahaan ?? $user->nama_lengkap ?? $user->username,
         'pelamar'    => $detail?->nama_pelamar ?? $user->nama_lengkap ?? $user->username,
         default      => $user->nama_lengkap ?? $user->username,
@@ -35,12 +31,7 @@
             'icon' => 'ph-shield-check',
             'label' => 'Admin'
         ],
-        'finance' => [
-            'bg' => 'bg-emerald-50 text-emerald-700 border-emerald-200',
-            'hero' => 'bg-emerald-500/25 text-emerald-200 border-emerald-400/40',
-            'icon' => 'ph-wallet',
-            'label' => 'Finance'
-        ],
+
         'perusahaan' => [
             'bg' => 'bg-indigo-50 text-indigo-700 border-indigo-200',
             'hero' => 'bg-indigo-500/25 text-indigo-200 border-indigo-400/40',
@@ -65,19 +56,19 @@
 <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
     {{-- Top Navigation & Header Bar --}}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
         <div>
             {{-- Breadcrumbs --}}
-            <nav class="flex items-center gap-2 text-xs text-slate-400 mb-1.5">
-                <a href="{{ route('superadmin.add.user') }}" class="hover:text-[#00509d] transition flex items-center gap-1 font-medium">
+            <nav class="flex items-center gap-2 text-xs text-blue-200 mb-1.5">
+                <a href="{{ route('superadmin.add.user') }}" class="hover:text-white transition flex items-center gap-1 font-medium">
                     <i class="ph ph-users"></i> Kelola Akun
                 </a>
                 <i class="ph ph-caret-right text-[10px]"></i>
-                <span class="text-slate-600 font-semibold">Detail User</span>
+                <span class="text-white font-semibold">Detail User</span>
             </nav>
-            <h1 class="text-lg sm:text-xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+            <h1 class="text-lg sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
                 Detail Profil User
-                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border {{ $roleBadgeConfig['bg'] }}">
+                <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border {{ $roleBadgeConfig['hero'] }}">
                     <i class="ph {{ $roleBadgeConfig['icon'] }} mr-1"></i>{{ $roleBadgeConfig['label'] }}
                 </span>
             </h1>
@@ -86,23 +77,23 @@
         <div class="flex items-center gap-2.5 w-full sm:w-auto justify-end">
             <div class="flex items-center gap-2">
                 <a href="{{ route('superadmin.add.user') }}"
-                   class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl transition duration-150">
+                   class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-white/10 hover:bg-white/20 rounded-xl transition duration-150">
                     <i class="ph ph-arrow-left text-sm"></i>
                     <span>Kembali</span>
                 </a>
                 <a href="{{ route('superadmin.edit.user', $user->id) }}"
-                   class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-white bg-[#00509d] hover:bg-[#003f7a] rounded-xl shadow-sm hover:shadow transition duration-150">
+                   class="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-[#00509d] bg-white hover:bg-blue-50 rounded-xl shadow-sm hover:shadow transition duration-150">
                     <i class="ph ph-pencil-simple text-sm"></i>
                     <span>Edit Profil</span>
                 </a>
             </div>
 
-            <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+            <div class="flex items-center gap-2 pl-2 border-l border-white/20">
                 @include('super_admin.components.notif_button')
                 @include('super_admin.components.user_badge_dropdown')
             </div>
         </div>
-    </div>
+    </header>
 
     {{-- Main Profile Hero Banner --}}
     <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden mb-6">
@@ -315,8 +306,9 @@
                     <span class="text-xs font-semibold text-slate-800 text-right">{{ $displayName }}</span>
                 </div>
 
-                {{-- ==================== ROLE: ADMIN / FINANCE ==================== --}}
-                @if (in_array($role, ['admin', 'finance']))
+                {{-- ==================== ROLE: ADMIN ==================== --}}
+                @if ($role === 'admin')
+
                     @php
                         $provNama = $detail?->provinsi->nama ?? (is_object($detail?->provinsi ?? null) ? $detail->provinsi->nama ?? null : (is_string($detail?->provinsi ?? null) ? $detail->provinsi : null));
                         $kotaNama = $detail?->kota->nama ?? (is_object($detail?->kota ?? null) ? $detail->kota->nama ?? null : (is_string($detail?->kota ?? null) ? $detail->kota : null));

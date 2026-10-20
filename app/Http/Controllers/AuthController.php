@@ -43,7 +43,6 @@ class AuthController extends Controller
                 'admin'       => redirect()->route('admin.dashboard'),
                 'pelamar'     => redirect()->route('beranda'),
                 'perusahaan'  => redirect()->route('perusahaan.dashboard'),
-                'finance'     => redirect()->route('finance.dashboard'),
                 default       => back(),
             };
         }
@@ -62,13 +61,11 @@ class AuthController extends Controller
             if ($role === 'admin') {
                 return redirect()->route('admin.dashboard');
             }
-            if ($role === 'finance') {
-                return redirect()->route('finance.dashboard');
-            }
             if ($role === 'perusahaan') {
                 return redirect()->route('perusahaan.dashboard');
             }
         }
+
 
         // Ambil kategori dari query string
         $kategori = $request->query('kategori');
@@ -94,6 +91,7 @@ class AuthController extends Controller
 
         $Data = LowonganPerusahaan::with('perusahaan')
             ->whereHas('perusahaan')
+            ->publik()
             ->whereNotNull('published_at')
             ->where('status', '!=', 'tutup')
             ->where(function ($q) {
@@ -113,7 +111,8 @@ class AuthController extends Controller
                 END
             ")
             ->latest('published_at')
-            ->get();
+            ->paginate(12)
+            ->withQueryString();
 
         $jenisList = LowonganPerusahaan::query()
             ->whereNotNull('jenis')
@@ -132,6 +131,16 @@ class AuthController extends Controller
             "kategori"     => $kategori,
             "jenisList"    => $jenisList,
             "activeAds"    => $activeAds,
+            "posisi"       => null,
+            "lokasi"       => null,
+            "provinsi"     => null,
+            "kota"         => null,
+            "provinsis"    => \App\Services\WilayahService::getProvinces(),
+            "jenis"        => null,
+            "pengalaman"   => null,
+            "pendidikan"   => null,
+            "adaPencarian" => false,
+            "riwayat"      => session()->get('riwayat_full', []),
         ]);
     }
 
@@ -160,9 +169,8 @@ class AuthController extends Controller
                     return redirect()->route('superadmin.dashboard');
                 } elseif ($user->role == 'admin') {
                     return redirect()->route('admin.dashboard');
-                } elseif ($user->role == 'finance') {
-                    return redirect()->route('finance.dashboard');
                 } elseif ($user->role == 'perusahaan') {
+
                     if (!$request->session()->has('already_logged')) {
                         $request->session()->put('first_login', true);
                         $request->session()->put('already_logged', true);
@@ -230,7 +238,6 @@ class AuthController extends Controller
         $perusahaan = auth()->user()->perusahaan;
 
         $lowongans = LowonganPerusahaan::where('perusahaan_id', $perusahaan->id)
-            ->with('paket')
             ->where(function ($q) {
                 $q->whereNull('published_at')
                     ->orWhereDate('expired_at', '>=', now());
@@ -334,167 +341,9 @@ class AuthController extends Controller
         return redirect()->route('login');
     }
 
-    // FINANCE
-    public function beranda_finance()
-    {
-        $cash = CatatanCash::where('status', 'diterima')->orWhere('status', 'sukses')->get();
-        $totalOmset = $cash->sum('total');
-
-        $koin = CatatanKoin::all();
-        $totalTransaksiKoin = $koin->sum(fn($item) => abs($item->total));
-
-        $cashTerbaru = CatatanCash::orderBy('created_at', 'desc')->take(5)->get();
-        $koinTerbaru = CatatanKoin::orderBy('created_at', 'desc')->take(5)->get();
-
-        $notifikasiCash = CatatanCash::where('status', 'menunggu_verifikasi')->orWhere('status', 'pending')->get();
-        $notifCount = $notifikasiCash->count();
-
-        // Data 6 bulan terakhir untuk tren omset dan transaksi koin
-        $chartMonths = [];
-        $chartOmset = [];
-        $chartKoin = [];
-
-        for ($i = 5; $i >= 0; $i--) {
-            $date = Carbon::now()->subMonths($i);
-            $year = $date->year;
-            $month = $date->month;
-            $monthName = $date->translatedFormat('M Y');
-
-            $chartMonths[] = $monthName;
-
-            // Omset cash bulan ini (status diterima / sukses)
-            $omsetBulan = CatatanCash::whereIn('status', ['diterima', 'sukses'])
-                ->whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->sum('total');
-            $chartOmset[] = (int) $omsetBulan;
-
-            // Transaksi koin bulan ini
-            $koinBulan = CatatanKoin::whereYear('created_at', $year)
-                ->whereMonth('created_at', $month)
-                ->sum(DB::raw('ABS(total)'));
-            $chartKoin[] = (int) $koinBulan;
-        }
-
-        // Distribusi Metode Pembayaran / Kanal Transaksi
-        $allSuccessfulCash = CatatanCash::with('bank')
-            ->whereIn('status', ['diterima', 'sukses'])
-            ->get();
-
-        $groupedPayments = [];
-
-        foreach ($allSuccessfulCash as $pm) {
-            // Prioritas nama kanal: Bank tujuan penerima AreaKerja, fallback ke sumberDana
-            $rawLabel = $pm->bank?->nama_bank ?? ($pm->sumberDana ?? 'Transfer Bank');
-            $rawLabel = trim($rawLabel);
-
-            // Normalisasi nama kanal
-            $upper = strtoupper($rawLabel);
-            if ($upper === 'QRIS' || str_contains($upper, 'QRIS')) {
-                $label = 'QRIS';
-            } elseif ($upper === 'MANDIRI' || str_contains($upper, 'MANDIRI')) {
-                $label = 'Bank Mandiri';
-            } elseif ($upper === 'BCA' || str_contains($upper, 'BCA')) {
-                $label = 'Bank BCA';
-            } elseif ($upper === 'BNI' || str_contains($upper, 'BNI')) {
-                $label = 'Bank BNI';
-            } elseif ($upper === 'BRI' || str_contains($upper, 'BRI')) {
-                $label = 'Bank BRI';
-            } else {
-                $label = ucwords(strtolower($rawLabel));
-            }
-
-            if (!isset($groupedPayments[$label])) {
-                $groupedPayments[$label] = [
-                    'count' => 0,
-                    'total' => 0,
-                ];
-            }
-
-            $groupedPayments[$label]['count']++;
-            $groupedPayments[$label]['total'] += (int) ($pm->total ?? 0);
-        }
-
-        // Urutkan dari jumlah transaksi terbanyak
-        uasort($groupedPayments, fn($a, $b) => $b['count'] <=> $a['count']);
-
-        $paymentLabels = array_keys($groupedPayments);
-        $paymentCounts = array_column(array_values($groupedPayments), 'count');
-        $paymentTotals = array_column(array_values($groupedPayments), 'total');
-
-        if (empty($paymentLabels)) {
-            $paymentLabels = ['Belum ada transaksi'];
-            $paymentCounts = [0];
-            $paymentTotals = [0];
-        }
-
-        // Status counts
-        $countDiterima = CatatanCash::whereIn('status', ['diterima', 'sukses'])->count();
-        $countMenunggu = CatatanCash::where('status', 'menunggu_verifikasi')->count();
-        $countPending = CatatanCash::where('status', 'pending')->count();
-        $countDitolak = CatatanCash::where('status', 'ditolak')->count();
-        $totalNominalMenunggu = CatatanCash::where('status', 'menunggu_verifikasi')->sum('total');
-
-        return view('finance.dashboard', [
-            'totalOmset'           => $totalOmset,
-            'totalTransaksiKoin'   => $totalTransaksiKoin,
-            'cash'                 => $cash,
-            'koin'                 => $koin,
-            'cashTerbaru'          => $cashTerbaru,
-            'koinTerbaru'          => $koinTerbaru,
-            'notifikasiCash'       => $notifikasiCash,
-            'notifCount'           => $notifCount,
-            'chartMonths'          => $chartMonths,
-            'chartOmset'           => $chartOmset,
-            'chartKoin'            => $chartKoin,
-            'paymentLabels'        => $paymentLabels,
-            'paymentCounts'        => $paymentCounts,
-            'paymentTotals'        => $paymentTotals,
-            'countDiterima'        => $countDiterima,
-            'countMenunggu'        => $countMenunggu,
-            'countPending'         => $countPending,
-            'countDitolak'         => $countDitolak,
-            'totalNominalMenunggu' => $totalNominalMenunggu,
-        ]);
-    }
-
-    public function loginproses_finance(Request $request)
-    {
-        return $this->loginproses($request);
-    }
-
-    public function regis_proses_finance(Request $request)
-    {
-        $valid = $request->validate([
-            'username'     => 'required|unique:users,username',
-            'email'        => 'required|email|unique:users,email',
-            'password'     => 'required|min:8',
-            'nama_lengkap' => 'nullable|string',
-        ]);
-
-        User::create([
-            'username'     => $valid['username'],
-            'email'        => $valid['email'],
-            'nama_lengkap' => $valid['nama_lengkap'] ?? $valid['username'],
-            'password'     => Hash::make($request->password),
-            'role'         => 'finance',
-            'verified'     => 1,
-            'status'       => 0,
-        ]);
-
-        return response()->json(['success' => true]);
-    }
-
-    public function logout_finance(Request $request)
-    {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-        return redirect()->route('login');
-    }
-
     // ADMIN
     public function login_admin()
+
     {
         return view('admin.auth.login');
     }
@@ -661,13 +510,8 @@ class AuthController extends Controller
     }
 
     // Views placeholders for forgotten password
-    public function login_finance() { return view('finance.auth.login'); }
-    public function regis_finance() { return view('finance.auth.register'); }
-    public function verif_finance() { return view('finance.auth.verifikasi'); }
-    public function verifotp_finance() { return view('finance.auth.verif-codepw'); }
-    public function veriflupapw_finance() { return view('finance.auth.verif-lupa-sandi'); }
-
     public function verif_admin() { return view('admin.auth.verif'); }
+
     public function verifotp_admin() { return view('admin.auth.verif-otp'); }
     public function veriflupapw_admin() { return view('admin.auth.verif-lupapw'); }
 

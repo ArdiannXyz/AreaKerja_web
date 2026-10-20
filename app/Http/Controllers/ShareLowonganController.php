@@ -22,21 +22,34 @@ class ShareLowonganController extends Controller
             'lowongan'   => $jobSlug,
         ]);
 
-        $text = "Check out this job opportunity: {$lowongan->nama}\n{$url}";
+        $text = "Lowongan Kerja: {$lowongan->nama} di {$perusahaan->nama_perusahaan}\n{$url}";
 
         switch ($platform) {
             case 'whatsapp':
-                $shareUrl = "https://wa.me/?text=" . urlencode($text);
+                $shareUrl = "https://api.whatsapp.com/send?text=" . urlencode($text);
                 break;
 
             case 'email':
-                $subject = "Lowongan: {$lowongan->nama}";
+                $subject = "Lowongan: {$lowongan->nama} - {$perusahaan->nama_perusahaan}";
                 $shareUrl = "mailto:?subject=" . urlencode($subject) .
                     "&body=" . urlencode($text);
                 break;
 
             case 'linkedin':
                 $shareUrl = "https://www.linkedin.com/sharing/share-offsite/?url=" . urlencode($url);
+                break;
+
+            case 'telegram':
+                $shareUrl = "https://t.me/share/url?url=" . urlencode($url) . "&text=" . urlencode($text);
+                break;
+
+            case 'twitter':
+            case 'x':
+                $shareUrl = "https://twitter.com/intent/tweet?text=" . urlencode($text);
+                break;
+
+            case 'facebook':
+                $shareUrl = "https://www.facebook.com/sharer/sharer.php?u=" . urlencode($url);
                 break;
 
             default:

@@ -22,6 +22,7 @@
     <link href="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @include('layouts.sweetalert-theme')
     <script src="//unpkg.com/alpinejs" defer></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 
@@ -261,6 +262,49 @@
                 }
             } catch (error) {
                 console.error("markAsRead error:", error);
+            }
+        };
+
+        window.handleNotifClick = async function(bacaUrl, redirectUrl, el) {
+            try {
+                if (bacaUrl) {
+                    try {
+                        await fetch(bacaUrl, {
+                            method: "POST",
+                            headers: {
+                                "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+                                "Accept": "application/json"
+                            },
+                            keepalive: true
+                        });
+                    } catch (err) {
+                        console.error("baca notif error:", err);
+                    }
+                }
+
+                if (redirectUrl && redirectUrl !== '#' && redirectUrl !== '') {
+                    window.location.href = redirectUrl;
+                    return;
+                }
+
+                if (el) {
+                    el.classList.remove("bg-white", "font-medium", "text-gray-900");
+                    el.classList.add("bg-gray-50/80", "text-gray-600");
+                    const badges = document.querySelectorAll('#notif-badge, .notif-badge');
+                    badges.forEach(badge => {
+                        let count = parseInt(badge.textContent);
+                        if (count > 1) {
+                            badge.textContent = count - 1;
+                        } else {
+                            badge.remove();
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("handleNotifClick error:", error);
+                if (redirectUrl && redirectUrl !== '#' && redirectUrl !== '') {
+                    window.location.href = redirectUrl;
+                }
             }
         };
 
@@ -537,8 +581,8 @@
                     class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Kandidat
                 </a>
-                <a href="{{ route('paket.form') }}"
-                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('paket.form*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
+                <a href="{{ route('lowongan.create.form') }}"
+                    class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->is('lowongan/create*') || request()->is('lowongan/edit*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Pasang Lowongan
                 </a>
                 <a href="{{ route('perusahaan.event.index') }}"
@@ -648,6 +692,14 @@
                                 </li>
 
                                 <li>
+                                    <a href="{{ route('faq') }}"
+                                        class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <i class="ph ph-question mr-2 text-[#00509d] text-lg"></i>
+                                        FAQ
+                                    </a>
+                                </li>
+
+                                <li>
                                     <a href="{{ route('syarat.ketentuan') }}"
                                         class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
                                         <i class="ph ph-file-text mr-2 text-[#00509d] text-lg"></i>
@@ -697,8 +749,8 @@
                         class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.kandidat.ak*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Kandidat
                     </a>
-                    <a href="{{ route('paket.form') }}"
-                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('paket.form*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
+                    <a href="{{ route('lowongan.create.form') }}"
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->is('lowongan/create*') || request()->is('lowongan/edit*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Pasang Lowongan
                     </a>
                     <a href="{{ route('perusahaan.iklan.index') }}"
@@ -756,9 +808,7 @@
 
     <!-- ================= MODAL STEP 1 ================= -->
     @include('perusahaan.modal-topup.step1')
-    <!-- ================= MODAL STEP 2 ================= -->
-    @include('perusahaan.modal-topup.step2')
-    <!-- ================= MODAL STEP 3 ================= -->
+    <!-- ================= MODAL STEP 3 (KONFIRMASI LANGKAH 2) ================= -->
     @include('perusahaan.modal-topup.step3')
 
 
@@ -782,16 +832,20 @@
     {{-- TOP UP --}}
     <script>
         //redirect
-        document.getElementById('btnKonfirmasi').addEventListener('click', function() {
-            if (!selectedKoin || !selectedBank) {
+        document.getElementById('btnKonfirmasi')?.addEventListener('click', function() {
+            if (!selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Pilih Paket & Pembayaran',
-                    text: 'Silakan pilih paket dan metode pembayaran dulu.',
+                    title: 'Pilih Paket Koin',
+                    text: 'Silakan pilih paket koin terlebih dahulu.',
                     confirmButtonText: 'Mengerti'
                 });
                 return;
             }
+
+            const btn = document.getElementById('btnKonfirmasi');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph ph-circle-notch animate-spin text-base"></i> Memproses Tagihan...';
 
             fetch("{{ route('catatan_cash.store') }}", {
                     method: "POST",
@@ -801,8 +855,7 @@
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        harga_pembayaran_id: document.querySelector(".paketCoin:checked").value,
-                        daftar_bank_id: document.querySelector(".metodePembayaran:checked").value,
+                        harga_pembayaran_id: document.querySelector(".paketCoin:checked") ? document.querySelector(".paketCoin:checked").value : null,
                     })
                 })
                 .then(async res => {
@@ -929,20 +982,11 @@
 
         function goToStep(step) {
             // Validasi sebelum pindah step
-            if (step === 2 && !selectedKoin) {
+            if ((step === 2 || step === 3) && !selectedKoin) {
                 Swal.fire({
                     icon: 'warning',
                     title: 'Pilih Paket Koin',
                     text: 'Silakan pilih salah satu paket koin terlebih dahulu!',
-                    confirmButtonColor: '#00509d'
-                });
-                return;
-            }
-            if (step === 3 && !selectedBank) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Pilih Pembayaran',
-                    text: 'Silakan pilih metode pembayaran terlebih dahulu!',
                     confirmButtonColor: '#00509d'
                 });
                 return;
@@ -957,28 +1001,17 @@
 
             updateButtons();
 
-            // Step 2: update summary
-            if (step === 2) {
-                const summaryKoin = document.getElementById('step2KoinSummary');
-                const summaryHarga = document.getElementById('step2HargaSummary');
-                if (summaryKoin) summaryKoin.innerText = Number(selectedKoin).toLocaleString('id-ID');
-                if (summaryHarga) summaryHarga.innerText = 'Rp ' + Number(selectedHarga).toLocaleString('id-ID');
-            }
-
             // Step 3: update detail pembayaran
             if (step === 3) {
-                const biayaAdmin = 2000;
-                const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
+                const totalBayar = selectedHarga ?? 0;
 
                 const detailPengirim = document.getElementById('detailPengirim');
-                const detailBank = document.getElementById('detailBank');
-                const detailWaktu = document.getElementById('detailWaktu');
+                const detailKoinNama = document.getElementById('detailKoinNama');
                 const detailHarga = document.getElementById('detailHarga');
                 const detailTotal = document.getElementById('detailTotal');
 
                 if (detailPengirim) detailPengirim.innerText = "{{ Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username }}";
-                if (detailBank) detailBank.innerText = selectedBank ?? '-';
-                if (detailWaktu) detailWaktu.innerText = new Date().toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+                if (detailKoinNama) detailKoinNama.innerText = Number(selectedKoin).toLocaleString('id-ID') + ' Koin AreaKerja';
                 if (detailHarga) detailHarga.innerText = "Rp " + (selectedHarga ?? 0).toLocaleString('id-ID');
                 if (detailTotal) detailTotal.innerText = "Rp " + totalBayar.toLocaleString('id-ID');
             }
@@ -1061,6 +1094,14 @@
                     <i class="ph ph-megaphone text-2xl {{ request()->routeIs('perusahaan.iklan*') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
                 </div>
                 <span class="text-[10px] font-semibold {{ request()->routeIs('perusahaan.iklan*') ? 'text-[#00509d]' : 'text-slate-500' }}">Iklan</span>
+            </a>
+
+            {{-- Pasang Lowongan --}}
+            <a href="{{ route('lowongan.create.form') }}" class="flex flex-col items-center justify-center gap-0.5 w-full h-full">
+                <div class="flex items-center justify-center w-11 h-11 transition-all {{ request()->routeIs('lowongan.create.form') ? 'bg-[#c1dcfd] rounded-2xl' : '' }}">
+                    <i class="ph ph-plus-circle text-2xl {{ request()->routeIs('lowongan.create.form') ? 'text-[#00509d]' : 'text-slate-500' }}"></i>
+                </div>
+                <span class="text-[10px] font-semibold {{ request()->routeIs('lowongan.create.form') ? 'text-[#00509d]' : 'text-slate-500' }}">Pasang Lowongan</span>
             </a>
 
             {{-- Profil --}}

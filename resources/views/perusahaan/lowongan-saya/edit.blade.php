@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div>
                     <label class="block font-medium mb-1">Jenis Lowongan</label>
                     <select name="jenis"
@@ -58,11 +58,20 @@
                         <option value="" disabled {{ old('jenis', $data->jenis) == '' ? 'selected' : '' }}>
                             Pilih Jenis Lowongan
                         </option>
-                        <option value="fulltime" {{ old('jenis', $data->jenis) == 'fulltime' ? 'selected' : '' }}>
+                        <option value="Full Time" {{ in_array(old('jenis', $data->jenis), ['Full Time', 'fulltime', 'Fulltime']) ? 'selected' : '' }}>
                             Full Time
                         </option>
-                        <option value="middle" {{ old('jenis', $data->jenis) == 'middle' ? 'selected' : '' }}>
-                            Middle
+                        <option value="Magang" {{ in_array(old('jenis', $data->jenis), ['Magang', 'magang', 'Internship']) ? 'selected' : '' }}>
+                            Magang (Internship)
+                        </option>
+                        <option value="Freelance" {{ in_array(old('jenis', $data->jenis), ['Freelance', 'freelance']) ? 'selected' : '' }}>
+                            Freelance
+                        </option>
+                        <option value="Kontrak" {{ in_array(old('jenis', $data->jenis), ['Kontrak', 'kontrak', 'Contract']) ? 'selected' : '' }}>
+                            Kontrak
+                        </option>
+                        <option value="Part Time" {{ in_array(old('jenis', $data->jenis), ['Part Time', 'middle', 'Middletime']) ? 'selected' : '' }}>
+                            Part Time
                         </option>
                     </select>
                 </div>
@@ -70,7 +79,7 @@
                 <div>
                     <label class="block font-medium mb-1">Kategori</label>
                     <select name="kategori"
-                        class="form-select border rounded-md px-3 py-2 mt-1 outline-none focus:ring-1 focus:ring-[#00509d] w-50">
+                        class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
                         <option value=""> Pilih Kategori </option>
                         @foreach ($categories as $cat)
                             <option value="{{ $cat->nama }}"
@@ -80,6 +89,33 @@
                         @endforeach
                     </select>
                 </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                    <label class="block font-medium mb-1">Tingkat Pengalaman</label>
+                    <select name="pengalaman"
+                        class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
+                        <option value="">Semua Tingkat Pengalaman / Tanpa Pengalaman</option>
+                        <option value="Fresh Graduate" {{ old('pengalaman', $data->pengalaman) == 'Fresh Graduate' ? 'selected' : '' }}>Fresh Graduate / < 1 Tahun</option>
+                        <option value="1-3 Tahun" {{ old('pengalaman', $data->pengalaman) == '1-3 Tahun' ? 'selected' : '' }}>1 - 3 Tahun</option>
+                        <option value="3-5 Tahun" {{ old('pengalaman', $data->pengalaman) == '3-5 Tahun' ? 'selected' : '' }}>3 - 5 Tahun</option>
+                        <option value="> 5 Tahun" {{ old('pengalaman', $data->pengalaman) == '> 5 Tahun' ? 'selected' : '' }}>> 5 Tahun</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-medium mb-1">Minimal Pendidikan</label>
+                    <select name="pendidikan"
+                        class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
+                        <option value="">Semua Jenjang Pendidikan</option>
+                        <option value="SMA/SMK" {{ old('pendidikan', $data->pendidikan) == 'SMA/SMK' ? 'selected' : '' }}>SMA / SMK</option>
+                        <option value="D3" {{ old('pendidikan', $data->pendidikan) == 'D3' ? 'selected' : '' }}>D3 (Diploma)</option>
+                        <option value="S1" {{ old('pendidikan', $data->pendidikan) == 'S1' ? 'selected' : '' }}>S1 (Sarjana)</option>
+                        <option value="S2" {{ old('pendidikan', $data->pendidikan) == 'S2' ? 'selected' : '' }}>S2 (Magister)</option>
+                    </select>
+                </div>
+            </div>
 
 
                 <div class="col-span-2">
@@ -92,12 +128,22 @@
                             class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
                     </div>
                 </div>
-                {{-- <div>
-                    <label class="block font-medium mb-1">Periode</label>
-                    <select name="batas_lamaran" class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
-                        <option>Bulan</option>
-                    </select>
-                </div> --}}
+                <div class="col-span-2">
+                    <label class="block font-medium mb-1">Label Gaji</label>
+                    <input type="text" name="label_gaji" value="{{ $data->label_gaji }}"
+                        class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
+                </div>
+                @if ($isVip ?? false)
+                    <div class="col-span-2 pt-3 border-t border-slate-200 flex items-center gap-3">
+                        <input type="checkbox" name="gaji_hidden" id="gaji_hidden" value="1"
+                            {{ old('gaji_hidden', $data->gaji_hidden ?? false) ? 'checked' : '' }}
+                            class="w-4 h-4 rounded border-slate-300 text-[#00509d] focus:ring-[#00509d]">
+                        <label for="gaji_hidden" class="text-sm text-slate-600">
+                            <i class="ph ph-eye-slash text-[#00509d] mr-1"></i>
+                            Sembunyikan gaji dari calon kandidat (Fitur Eksklusif VIP)
+                        </label>
+                    </div>
+                @endif
             </div>
 
             <div class="grid grid-cols-2 gap-6">
@@ -143,6 +189,10 @@
 
                     <div>
                         <label class="block font-medium mb-1">Status Pendaftaran</label>
+                        @if (($data->status ?? '') === 'disembunyikan')
+                            <p class="w-full border-2 rounded-md px-3 py-2 bg-rose-50 text-rose-700 text-sm font-semibold">Ditinjau moderator — status tidak dapat diubah</p>
+                            <input type="hidden" name="status" value="disembunyikan">
+                        @else
                         <select name="status" class="w-full border-2 rounded-md px-3 py-2 focus:ring-[#00509d] focus:border-[#00509d]">
                             <option value="buka" {{ old('status', $data->status ?? 'buka') == 'buka' ? 'selected' : '' }}>
                                 Buka Pendaftaran (Aktif)
@@ -151,6 +201,7 @@
                                 Tutup Pendaftaran (Kuota Full)
                             </option>
                         </select>
+                        @endif
                     </div>
                 </div>
             </div>

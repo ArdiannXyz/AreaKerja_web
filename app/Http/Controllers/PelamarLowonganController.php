@@ -31,6 +31,13 @@ class PelamarLowonganController extends Controller
             ], 403);
         }
 
+        if ($lowongan->isDisembunyikan()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lowongan ini tidak lagi ditayangkan.',
+            ], 404);
+        }
+
         // ---------------------------------------------------------
         //  **CEK BATAS LAMARAN EXPIRED**
         // ---------------------------------------------------------
@@ -44,6 +51,18 @@ class PelamarLowonganController extends Controller
                     'message' => 'Lamaran sudah ditutup karena telah melewati batas waktu.'
                 ], 403);
             }
+        }
+        // ---------------------------------------------------------
+
+        // ---------------------------------------------------------
+        //  **CEK KUOTA PELAMAR HARIAN (NON-VIP MAKS 5/HARI)**
+        // ---------------------------------------------------------
+        if ($lowongan->isDailyLocked()) {
+            return response()->json([
+                'success'      => false,
+                'daily_locked' => true,
+                'message'      => 'Kuota pelamar hari ini untuk lowongan ini telah penuh (5/5). Lowongan terkunci untuk hari ini dan akan dibuka kembali besok.',
+            ], 429);
         }
         // ---------------------------------------------------------
 

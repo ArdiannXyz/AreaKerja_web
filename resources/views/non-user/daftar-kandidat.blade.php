@@ -1,11 +1,11 @@
 @extends('layouts.index')
 @section('content')
 
-    <div class="bg-white min-h-screen text-slate-800 pt-20 sm:pt-22 md:pt-24 pb-20">
+    <div class="bg-white min-h-screen text-slate-800 pt-20 pb-20">
 
         <!-- Hero Section (Full bleed edge-to-edge, no margin gap, no round) -->
         <section class="relative w-full overflow-hidden shadow-sm">
-            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_daftar_kandidat', 'images/ntap.png') }}"
+            <img src="{{ header_image('header_daftar_kandidat', 'images/ntap.png') }}"
                 alt="Header Image" class="w-full h-[360px] sm:h-[450px] md:h-[520px] object-cover">
 
             <div class="absolute inset-0 bg-black/40"></div>
@@ -132,17 +132,14 @@
             </div>
         </div>
 
-        <!-- ================= MODAL STEP 2 ================= -->
-        @include('kandidat.modal-topup.step2')
-
-        <!-- ================= MODAL STEP 3 ================= -->
+        <!-- ================= MODAL STEP 2 (KONFIRMASI DETAIL) ================= -->
         <div id="modalStep3"
             class="fixed inset-0 hidden bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
             <div class="bg-white w-full sm:max-w-lg rounded-2xl shadow-xl relative p-6 sm:p-8 max-h-[90vh] overflow-y-auto">
                 <button onclick="closeAllModal()"
                     class="absolute top-4 right-4 text-slate-400 hover:text-black text-xl">✕</button>
 
-                <h2 class="text-xl font-bold text-slate-800 mb-2">Detail Pembayaran</h2>
+                <h2 class="text-xl font-bold text-slate-800 mb-2">Konfirmasi Pendaftaran Kandidat</h2>
                 <div class="h-1 w-24 bg-[#00509d] mb-6 rounded-full"></div>
 
                 <div class="border border-slate-200 rounded-xl p-4 sm:p-6 space-y-3 text-sm">
@@ -151,45 +148,40 @@
                         <span id="detailDivisi" class="font-bold text-slate-800">-</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-500">Nama Pengirim</span>
+                        <span class="text-slate-500">Nama Pelamar</span>
                         <span id="detailPengirim" class="font-bold text-slate-800">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-slate-500">Nama Penerima</span>
-                        <span id="detailPenerima" class="font-bold text-slate-800">Area Kerja</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-500">Metode Pembayaran</span>
                         <span class="bg-[#00509d] text-white text-xs font-bold px-3 py-1 rounded-full"
-                            id="detailBank">-</span>
+                            id="detailBank">Xendit Payment Gateway</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-500">Tgl/Waktu</span>
-                        <span id="detailWaktu" class="text-slate-700">-</span>
+                        <span class="text-slate-500">Pilihan Saluran</span>
+                        <span class="text-slate-700 font-semibold text-right text-xs">QRIS, VA Bank (BCA, Mandiri, BRI, BNI), E-Wallet</span>
                     </div>
                     <div class="flex justify-between">
-                        <span class="text-slate-500">Jumlah Deposit</span>
-                        <span id="detailHarga" class="font-bold text-slate-800">-</span>
+                        <span class="text-slate-500">Biaya Pendaftaran</span>
+                        <span id="detailHarga" class="font-bold text-slate-800">Rp. 200.000</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="text-slate-500">Biaya Admin</span>
-                        <span id="detailAdmin" class="text-slate-700">Rp. 2.000</span>
+                        <span id="detailAdmin" class="text-emerald-600 font-semibold">Gratis</span>
                     </div>
                     <div class="border-t border-dashed my-3"></div>
                     <div class="flex justify-between font-bold text-base text-[#00509d]">
                         <span>Total Pembayaran</span>
-                        <span id="detailTotal">-</span>
+                        <span id="detailTotal">Rp. 200.000</span>
                     </div>
                 </div>
 
                 <form action="{{ route('kandidat.storePendaftaran') }}" method="post" class="mt-6">
                     @csrf
-                    <input type="hidden" name="daftar_bank_id" id="inputBank">
                     <input type="hidden" name="divisi" id="inputDivisi">
 
                     <button type="submit"
                         class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-bold rounded-xl shadow-md transition">
-                        Konfirmasi Pembayaran
+                        Lanjut ke Pembayaran
                     </button>
                 </form>
             </div>
@@ -204,7 +196,6 @@
 
         <script>
             let selectedDivisi = null;
-            let selectedBank = null;
 
             function closeAllModal() {
                 document.querySelectorAll('[id^="modalStep"]').forEach(m => {
@@ -260,52 +251,25 @@
                     });
                     return;
                 }
-                if (step === 3 && !selectedBank) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Oops...',
-                        text: 'Silakan pilih metode pembayaran terlebih dahulu!',
-                        confirmButtonColor: '#00509d'
-                    });
-                    return;
-                }
 
                 closeAllModal();
                 let modal = document.getElementById('modalStep' + step);
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
 
                 if (step === 3) {
-                    const biayaAdmin = 2000;
                     const deposit = 200000;
-                    const totalBayar = deposit + biayaAdmin;
-                    const namaPengirim = "{{ Auth::user()->pelamar->name_pelamar ?? Auth::user()->username ?? 'Guest' }}";
+                    const namaPengirim = "{{ Auth::user()->pelamar->name_pelamar ?? Auth::user()->username ?? 'Pelamar' }}";
 
                     document.getElementById('detailDivisi').innerText = selectedDivisi ?? '-';
                     document.getElementById('detailPengirim').innerText = namaPengirim;
-                    document.getElementById('detailBank').innerText = selectedBank ?? '-';
-                    document.getElementById('detailWaktu').innerText = new Date().toLocaleString('id-ID');
                     document.getElementById('detailHarga').innerText = "Rp. " + deposit.toLocaleString('id-ID');
-                    document.getElementById('detailAdmin').innerText = "Rp. " + biayaAdmin.toLocaleString('id-ID');
-                    document.getElementById('detailTotal').innerText = "Rp. " + totalBayar.toLocaleString('id-ID');
-
-                    document.getElementById('inputBank').value = selectedBankId;
+                    document.getElementById('detailTotal').innerText = "Rp. " + deposit.toLocaleString('id-ID');
                     document.getElementById('inputDivisi').value = selectedDivisi;
                 }
             }
-
-            document.addEventListener('DOMContentLoaded', () => {
-                document.querySelectorAll('.metodePembayaran').forEach(el => {
-                    el.addEventListener('change', function() {
-                        selectedBank = this.dataset.bank;
-                        document.getElementById('inputBank').value = this.value;
-                        document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                            w.classList.remove('ring-2', 'ring-[#00509d]');
-                        });
-                        this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
-                    });
-                });
-            });
 
             document.addEventListener('DOMContentLoaded', () => {
                 if (document.getElementById('divisiSelect')) {
@@ -334,7 +298,7 @@
 
                 selectedDivisi = selectedOptions.join(', ');
                 document.getElementById('inputDivisi').value = selectedOptions.join(', ');
-                goToStep(2);
+                goToStep(3);
             }
         </script>
 

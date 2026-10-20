@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Helpers\BrowserPath;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
+use App\Models\SiteSetting;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -61,13 +62,7 @@ class SuperAdminFinanceController extends Controller
             ]);
         }
 
-        $koinList = collect([
-            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
-            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
-            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
-            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
-            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
-        ]);
+        $koinList = SuperAdminController::getFinanceKoinList();
 
         $pembayaranList = collect([
             (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
@@ -182,7 +177,8 @@ class SuperAdminFinanceController extends Controller
             'tanggalCetak' => Carbon::now()->translatedFormat('F d, Y, H:i a'),
         ];
 
-        $html = View::make('finance.page-unduh-laporan-harian', $data)->render();
+        $html = View::make('super_admin.finance.page-unduh-laporan-harian', $data)->render();
+
         $htmlWithCss = '
         <!DOCTYPE html>
         <html lang="id">
@@ -220,13 +216,7 @@ class SuperAdminFinanceController extends Controller
      */
     public function edit_koin()
     {
-        $koin = collect([
-            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
-            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
-            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
-            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
-            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
-        ]);
+        $koin = SuperAdminController::getFinanceKoinList();
 
         return view('super_admin.finance.edit-koin', [
             'title' => 'Edit Harga Koin',
@@ -236,7 +226,46 @@ class SuperAdminFinanceController extends Controller
 
     public function update_koin(Request $request)
     {
-        return redirect()->route('superadmin.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');
+        if ($request->has('keys') && $request->has('hargas')) {
+            $keys = $request->input('keys');
+            $hargas = $request->input('hargas');
+
+            foreach ($keys as $index => $key) {
+                if (isset($hargas[$index])) {
+                    $val = (string) max(0, (int) $hargas[$index]);
+                    SiteSetting::set($key, $val);
+                    if ($key === 'harga_koin_berlangganan_12_bulan') {
+                        SiteSetting::set('harga_koin_berlangganan', $val);
+                    }
+                    if ($key === 'harga_koin_berlangganan') {
+                        SiteSetting::set('harga_koin_berlangganan_12_bulan', $val);
+                    }
+                }
+            }
+        } elseif ($request->has('harga') && $request->has('id')) {
+            $defaultKeys = [
+                1 => 'harga_koin_buka_cv',
+                2 => 'harga_koin_iklan_7_hari',
+                3 => 'harga_koin_iklan_14_hari',
+                4 => 'harga_koin_iklan_30_hari',
+                5 => 'harga_koin_boost_lowongan',
+                6 => 'harga_koin_berlangganan_1_bulan',
+                7 => 'harga_koin_berlangganan_3_bulan',
+                8 => 'harga_koin_berlangganan_6_bulan',
+                9 => 'harga_koin_berlangganan_12_bulan',
+            ];
+            foreach ($request->id as $index => $id) {
+                if (isset($defaultKeys[$id]) && isset($request->harga[$index])) {
+                    $val = (string) max(0, (int) $request->harga[$index]);
+                    SiteSetting::set($defaultKeys[$id], $val);
+                    if ($defaultKeys[$id] === 'harga_koin_berlangganan_12_bulan') {
+                        SiteSetting::set('harga_koin_berlangganan', $val);
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('superadmin.paket-harga')->with('success', 'Tarif harga koin berhasil diperbarui.');
     }
 
     /**

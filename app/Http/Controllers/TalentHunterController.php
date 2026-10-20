@@ -2,110 +2,128 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CatatanCash;
 use App\Models\DaftarBank;
 use App\Models\Perusahaan;
 use App\Models\TalentHunter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
 
 class TalentHunterController extends Controller
 {
-    // ambil harga koin
+    // ambil info harga / ketentuan minimal gaji
     public function getHarga()
     {
-        $harga = 500;
-        $perusahaan = Auth::user()->perusahaan;
-
         return response()->json([
-            'harga'           => $harga,
-            'koin_perusahaan' => $perusahaan->koin_perusahaan ?? 0,
+            'min_gaji'        => 3500000,
+            'format_min_gaji' => 'Rp 3.500.000',
         ]);
     }
 
-    // proses pembelian
+    // proses validasi awal
     public function beli()
     {
-        $user = Auth::user();
-        $perusahaan = $user->perusahaan;
-        $harga = 500;
-
-        if ($perusahaan->koin_perusahaan < $harga) {
-            return response()->json(['success' => false, 'message' => 'Koin tidak cukup. Silakan top up koin terlebih dahulu.']);
-        }
-
-        return response()->json(['success' => true, 'message' => 'Silakan isi form Talent Hunter.']);
+        return response()->json([
+            'success' => true,
+            'message' => 'Silakan lengkapi formulir Talent Hunter.'
+        ]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
-            'alamat'           => 'required',
-            'posisi'           => 'required',
-            'pengalaman_kerja' => 'required',
-            'gender'           => 'required',
-            'gaji_awal'        => 'required',
-            'gaji_akhir'       => 'required',
-            'deskripsi'        => 'nullable',
+        $validated = $request->validate([
+            'alamat'           => 'required|string|max:255',
+            'posisi'           => 'required|string|max:255',
+            'pengalaman_kerja' => 'required|string',
+            'gender'           => 'required|string',
+            'gaji_ditawarkan'  => 'required|numeric|min:3500000',
+            'deskripsi'        => 'nullable|string',
+            'daftar_bank_id'   => 'nullable|exists:daftar_bank,id',
+        ], [
+            'gaji_ditawarkan.required' => 'Gaji yang ditawarkan wajib diisi.',
+            'gaji_ditawarkan.numeric'  => 'Gaji yang ditawarkan harus berupa angka.',
+            'gaji_ditawarkan.min'      => 'Gaji yang ditawarkan minimal Rp 3.500.000.',
         ]);
 
         $user       = Auth::user();
         $perusahaan = $user->perusahaan;
-        $harga      = 500;
 
-        if ($perusahaan->koin_perusahaan < $harga) {
-            return response()->json(['success' => false, 'message' => 'Koin tidak cukup.']);
+        // Tentukan bank tujuan pembayaran
+        $bankId = $request->daftar_bank_id;
+        if (!$bankId) {
+            $bank = DaftarBank::first();
+            if (!$bank) {
+                $bank = DaftarBank::create([
+                    'nama_bank' => 'Xendit Payment',
+                    'no_rek'    => 'XENDIT',
+                    'owner'     => 'PT Area Kerja',
+                ]);
+            }
+            $bankId = $bank->id;
+        } else {
+            $bank = DaftarBank::find($bankId);
         }
 
+        // Simpan data Talent Hunter
+        $talentHunter = $perusahaan->talentHunters()->create([
+            'alamat'           => $validated['alamat'],
+            'posisi'           => $validated['posisi'],
+            'pengalaman_kerja' => $validated['pengalaman_kerja'],
+            'gender'           => $validated['gender'],
+            'gaji_ditawarkan'  => $validated['gaji_ditawarkan'],
+            'gaji_awal'        => $validated['gaji_ditawarkan'],
+            'gaji_akhir'       => $validated['gaji_ditawarkan'],
+            'deskripsi'        => $validated['deskripsi'] ?? null,
+        ]);
+
         $noReferensi = 'TH-' . strtoupper(uniqid());
+        $sumberDana  = ($bank && strtolower($bank->nama_bank) === 'qris') ? 'Qris' : 'Transfer Bank';
 
-        $talentHunter = DB::transaction(function () use ($user, $perusahaan, $harga, $request, $noReferensi) {
-            $perusahaan->decrement('koin_perusahaan', $harga);
+        // Buat data transaksi tagihan (CatatanCash) seperti flow pendaftaran kandidat pelamar
+        $transaksi = CatatanCash::create([
+            'user_id'        => $user->id,
+            'daftar_bank_id' => $bankId,
+            'no_referensi'   => $noReferensi,
+            'pesanan'        => 'Talent Hunter: ' . $talentHunter->posisi,
+            'dari'           => $perusahaan->nama_perusahaan ?? $user->username,
+            'sumberDana'     => $sumberDana,
+            'total'          => $talentHunter->gaji_ditawarkan,
+            'status'         => 'pending',
+            'expired_at'     => now()->addHours(24),
+        ]);
 
-            $talentHunter = $perusahaan->talentHunters()->create(
-                $request->only(['alamat', 'posisi', 'pengalaman_kerja', 'gender', 'gaji_awal', 'gaji_akhir', 'deskripsi'])
-            );
+        // Buat invoice Xendit
+        app(\App\Services\XenditService::class)->createInvoice(
+            $transaksi,
+            route('catatan_cash.show', $transaksi->id),
+            route('catatan_cash.show', $transaksi->id)
+        );
 
-            $user->catatanKoins()->create([
-                'no_referensi' => $noReferensi,
-                'pesanan'      => 'Pembelian Talent Hunter',
-                'dari'         => $perusahaan->nama_perusahaan,
-                'sumber_dana'  => 'Koin Perusahaan',
-                'total'        => '-' . $harga,
-            ]);
-
-            return $talentHunter;
-        });
-
-        $nomorAdmin = env('ADMIN_WHATSAPP', '6287874732189');
-        $pesan = "Halo Admin, saya sudah melakukan pembelian Talent Hunter.\n\n"
-            . "Posisi: {$talentHunter->posisi}\n"
-            . "No Referensi: {$noReferensi}\n"
-            . "Mohon tindak lanjutnya.";
-
-        $waUrl = 'https://wa.me/' . $nomorAdmin . '?text=' . urlencode($pesan);
+        $transaksi->refresh();
+        $nominalFormat = 'Rp ' . number_format($talentHunter->gaji_ditawarkan, 0, ',', '.');
+        $redirectUrl = route('catatan_cash.show', $transaksi->id);
 
         return response()->json([
             'success'      => true,
-            'message'      => 'Talent Hunter berhasil disimpan.',
-            'redirect_url' => $waUrl,
+            'message'      => 'Pengajuan Talent Hunter berhasil dibuat! Mengalihkan ke halaman pembayaran...',
+            'redirect_url' => $redirectUrl,
+            'checkout_url' => $transaksi->checkout_url,
+            'no_referensi' => $noReferensi,
+            'nominal'      => $nominalFormat,
+            'transaksi_id' => $transaksi->id,
         ]);
     }
+
 
     public function index()
     {
         $user = auth()->user();
         $perusahaan = Perusahaan::where('user_id', $user->id)->first();
-        $hargaPembayarans = collect([
-            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000, 'icon' => 'bitcoin.png'],
-            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000, 'icon' => 'bit2.png'],
-            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000, 'icon' => 'bit3.png'],
-        ]);
+        $daftarBank = DaftarBank::all();
 
         return view('perusahaan.talent-hunter.talent-hunter', [
-            'perusahaan'       => $perusahaan,
-            'hargaPembayarans' => $hargaPembayarans,
-            'daftarBank'       => DaftarBank::all(),
+            'perusahaan' => $perusahaan,
+            'daftarBank' => $daftarBank,
         ]);
     }
 
@@ -121,26 +139,35 @@ class TalentHunterController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $validated = $request->validate([
             'alamat'           => 'required|string',
             'posisi'           => 'required|string',
             'pengalaman_kerja' => 'nullable|string',
             'gender'           => 'nullable|string',
-            'gaji_awal'        => 'nullable|numeric',
-            'gaji_akhir'       => 'nullable|numeric',
+            'gaji_ditawarkan'  => 'nullable|numeric|min:3500000',
             'deskripsi'        => 'nullable|string',
+        ], [
+            'gaji_ditawarkan.min' => 'Gaji yang ditawarkan minimal Rp 3.500.000.',
         ]);
 
         $talentHunter = TalentHunter::findOrFail($id);
-        $talentHunter->update($request->only([
+        $data = $request->only([
             'alamat',
             'posisi',
             'pengalaman_kerja',
             'gender',
-            'gaji_awal',
-            'gaji_akhir'
-        ]));
+            'gaji_ditawarkan',
+            'deskripsi',
+        ]);
 
-        return redirect()->route('superadmin.talent-hunter.detail', $talentHunter->id)->with('success', 'Data Talent Hunter berhasil diperbarui!');
+        if (isset($data['gaji_ditawarkan'])) {
+            $data['gaji_awal'] = $data['gaji_ditawarkan'];
+            $data['gaji_akhir'] = $data['gaji_ditawarkan'];
+        }
+
+        $talentHunter->update($data);
+
+        return redirect()->route('superadmin.talent-hunter.detail', $talentHunter->id)
+            ->with('success', 'Data Talent Hunter berhasil diperbarui!');
     }
 }

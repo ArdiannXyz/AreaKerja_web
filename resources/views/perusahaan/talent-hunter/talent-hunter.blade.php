@@ -3,31 +3,30 @@
     <!-- Hero Section -->
     <div class="mt-16">
         <section class="relative">
-            <img src="{{ \App\Services\SiteSettingService::getHeaderUrl('header_talent_hunter', 'images/woi.jpg') }}"
+            <img src="{{ header_image('header_talent_hunter', 'images/woi.jpg') }}"
                 alt="Header Image" class="w-full h-[600px] object-cover">
             <div class="absolute inset-0 bg-black bg-opacity-40"></div>
-            <div class="absolute bottom-52 left-0 pl-6 text-left
-            md:pl-0 md:left-20 text-white">
+            <div class="absolute bottom-52 left-0 pl-6 text-left md:pl-0 md:left-20 text-white">
                 <h1 class="text-3xl md:text-4xl font-semibold mt-3 max-w-2xl">
                     Talent Hunter
                 </h1>
                 <p class="text-sm mt-4">Daftarkan perusahaan anda dan biar kami</p>
                 <p class="text-sm"> yang mencarikan kandidat yang cocok untuk anda</p><br>
-                <button id="btnDaftarTH">
-                    <span class="bg-[#00509d] hover:bg-[#003d7a] text-sm px-8 py-2 rounded-lg">Daftar</span>
+                <button type="button" id="btnDaftarTH" class="cursor-pointer inline-block focus:outline-none">
+                    <span class="bg-[#00509d] hover:bg-[#003d7a] text-sm px-8 py-2.5 rounded-lg font-semibold inline-block transition shadow-md hover:shadow-lg">Daftar</span>
                 </button>
             </div>
         </section>
     </div>
+
+    <!-- Langkah-langkah Section -->
     <section class="w-full text-white py-20 bg-[#00509d]">
         <div class="max-w-5xl mx-auto grid md:grid-cols-2 gap-8 items-center px-6">
-
             <div class="flex justify-center">
-                <img src="{{ asset('images/ntip.png') }}" alt="Talent Hunter" class="h-96 w-96 ">
+                <img src="{{ asset('images/ntip.png') }}" alt="Talent Hunter" class="h-96 w-96 object-contain">
             </div>
 
             <div>
-
                 <div>
                     <h2 class="text-2xl font-semibold mb-6 leading-snug">
                         Langkah - Langkah Daftar <br> Talent Hunter
@@ -54,9 +53,7 @@
 
                             <!-- Step 2 -->
                             <div class="mb-8">
-                                <p class="text-lg leading-relaxed">Mengisi formulir pendaftaran dan kirim formulir
-                                    pendaftaran
-                                </p>
+                                <p class="text-lg leading-relaxed">Mengisi formulir pendaftaran dan kirim formulir pendaftaran</p>
                             </div>
 
                             <!-- Step 3 -->
@@ -71,188 +68,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- Modal Konfirmasi Pembelian -->
-                <div id="modalBeli"
-                    class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 transition-all">
-                    <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-md border border-slate-100 text-center animate-fadeIn relative">
-                        <!-- Icon -->
-                        <div class="w-16 h-16 bg-blue-50 text-[#00509d] border-2 border-blue-100 flex items-center justify-center rounded-2xl mx-auto mb-4">
-                            <i class="ph ph-shopping-cart-simple text-3xl font-bold"></i>
-                        </div>
-
-                        <h2 class="text-xl font-extrabold text-slate-900 mb-1">Konfirmasi Pembelian</h2>
-                        <p class="text-xs text-slate-500 mb-6">Biaya layanan Talent Hunter:</p>
-
-                        <div class="bg-blue-50/50 border border-blue-100 rounded-2xl py-4 px-6 mb-6">
-                            <div class="text-3xl font-extrabold text-[#00509d]">
-                                <span id="hargaTH">500</span> <span class="text-base font-bold text-slate-500">Koin</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center gap-3">
-                            <button onclick="closeModal('modalBeli')"
-                                class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">
-                                Batal
-                            </button>
-                            <button id="btnConfirmBeli"
-                                class="w-1/2 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold rounded-xl text-sm shadow-sm transition">
-                                Beli Sekarang
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal Form Talent Hunter -->
-                <div id="modalFormTH"
-                    class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 transition-all">
-                    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] border border-slate-100 animate-fadeIn relative">
-
-                        <!-- Modal Header -->
-                        <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50 shrink-0">
-                            <div class="flex items-center gap-2.5">
-                                <div class="w-9 h-9 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center shrink-0">
-                                    <i class="ph ph-briefcase text-lg font-bold"></i>
-                                </div>
-                                <div>
-                                    <h2 class="text-base font-extrabold text-slate-900">Form Talent Hunter</h2>
-                                    <p class="text-[11px] text-slate-500">Lengkapi kriteria kandidat yang dicari perusahaan</p>
-                                </div>
-                            </div>
-                            <button onclick="closeModal('modalFormTH')"
-                                class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition">
-                                <i class="ph ph-x font-bold text-sm"></i>
-                            </button>
-                        </div>
-
-                        <!-- Modal Body (Scrollable with nice spacing) -->
-                        <div class="p-6 overflow-y-auto space-y-4">
-                            <form id="formTalentHunter" class="space-y-4">
-
-                                <!-- Alamat -->
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                        Alamat Penempatan / Kantor <span class="text-rose-500">*</span>
-                                    </label>
-                                    <input type="text" name="alamat" required
-                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
-                                        placeholder="Masukkan alamat atau kota penempatan">
-                                </div>
-
-                                <!-- Posisi -->
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                        Posisi yang Dibutuhkan <span class="text-rose-500">*</span>
-                                    </label>
-                                    <input type="text" name="posisi" required
-                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
-                                        placeholder="Contoh: HR Specialist, Fullstack Developer">
-                                </div>
-
-                                <!-- Pengalaman Kerja -->
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                        Pengalaman Kerja <span class="text-rose-500">*</span>
-                                    </label>
-                                    <input type="text" name="pengalaman_kerja" required
-                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
-                                        placeholder="Contoh: Minimal 1-2 tahun / Fresh Graduate">
-                                </div>
-
-                                <!-- Gender -->
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                        Kriteria Gender <span class="text-rose-500">*</span>
-                                    </label>
-                                    <select name="gender" required
-                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition cursor-pointer">
-                                        <option value="">Pilih Gender</option>
-                                        <option value="Semua Gender">Semua Gender</option>
-                                        <option value="Laki-laki">Laki-laki</option>
-                                        <option value="Perempuan">Perempuan</option>
-                                    </select>
-                                </div>
-
-                                <!-- Gaji -->
-                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                            Gaji Awal (Min) <span class="text-rose-500">*</span>
-                                        </label>
-                                        <input type="text" id="gaji_awal_display" required
-                                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
-                                            placeholder="Rp 4.000.000">
-                                        <input type="hidden" name="gaji_awal" id="gaji_awal">
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                            Gaji Akhir (Maks) <span class="text-rose-500">*</span>
-                                        </label>
-                                        <input type="text" id="gaji_akhir_display" required
-                                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
-                                            placeholder="Rp 8.000.000">
-                                        <input type="hidden" name="gaji_akhir" id="gaji_akhir">
-                                    </div>
-                                </div>
-
-                                <!-- Deskripsi -->
-                                <div>
-                                    <label class="block text-xs font-bold text-slate-700 mb-1.5">
-                                        Deskripsi & Kualifikasi Tambahan
-                                    </label>
-                                    <textarea name="deskripsi" rows="3"
-                                        class="w-full bg-slate-50/50 border border-slate-300 rounded-xl p-3.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition resize-none leading-relaxed"
-                                        placeholder="Tuliskan skill khusus atau deskripsi pekerjaan yang diinginkan..."></textarea>
-                                </div>
-
-                                <!-- Button -->
-                                <div class="pt-2">
-                                    <button type="submit"
-                                        class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
-                                        <span>Lanjutkan Pembelian</span>
-                                        <i class="ph ph-arrow-right font-bold text-base"></i>
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Modal Koin Tidak Cukup -->
-                <div id="modalKoinKurang" class="fixed inset-0 hidden items-center justify-center bg-slate-900/60 backdrop-blur-xs z-50 p-4">
-                    <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-md border border-slate-100 relative text-center animate-fadeIn">
-                        <button onclick="closeModal('modalKoinKurang')"
-                            class="absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center transition">
-                            <i class="ph ph-x font-bold"></i>
-                        </button>
-                        <div class="w-14 h-14 bg-rose-50 text-rose-600 border border-rose-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                            <i class="ph ph-warning-circle text-3xl font-bold"></i>
-                        </div>
-                        <h2 class="text-lg font-extrabold text-slate-900 mb-1.5">Koin Tidak Cukup</h2>
-                        <p class="text-xs text-slate-500 mb-5 leading-relaxed">
-                            Saldo koin perusahaan Anda saat ini belum mencukupi untuk menggunakan layanan Talent Hunter.
-                        </p>
-                        <!-- Koin Saya -->
-                        <div class="mb-6 bg-slate-50 border border-slate-200 rounded-2xl p-4">
-                            <div class="flex items-center justify-between">
-                                <div class="text-left">
-                                    <span class="text-[11px] font-bold text-slate-400 uppercase">Saldo Koin Anda</span>
-                                    <div class="flex items-center gap-2 mt-0.5">
-                                        <img src="/images/coin.png" alt="coin" class="w-5 h-5">
-                                        <p class="font-extrabold text-[#00509d] text-lg">
-                                            {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }}
-                                        </p>
-                                    </div>
-                                </div>
-                                <button onclick="closeModal('modalKoinKurang'); toggleModal()"
-                                    class="inline-flex items-center gap-1.5 px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow-xs">
-                                    <i class="ph ph-plus-circle font-bold"></i> Top Up Koin
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
+        </div>
     </section>
 
     <!-- Benefit Talent Hunter -->
@@ -331,7 +148,178 @@
             </div>
         </div>
     </section>
-    {{-- AUTO RUPIAH --}}
+
+    <!-- Modal Form Talent Hunter -->
+    <div id="modalFormTH"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden flex flex-col max-h-[90vh] border border-slate-100 animate-fadeIn relative text-left">
+
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between px-6 py-5 border-b border-slate-100 bg-slate-50/50 shrink-0">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-9 h-9 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center shrink-0">
+                        <i class="ph ph-briefcase text-lg font-bold"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-extrabold text-slate-900">Form Talent Hunter</h2>
+                        <p class="text-[11px] text-slate-500">Lengkapi kriteria kandidat yang dicari perusahaan</p>
+                    </div>
+                </div>
+                <button type="button" onclick="closeModal('modalFormTH')"
+                    class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-800 flex items-center justify-center transition cursor-pointer">
+                    <i class="ph ph-x font-bold text-sm"></i>
+                </button>
+            </div>
+
+            <!-- Modal Body (Scrollable with nice spacing) -->
+            <div class="p-6 overflow-y-auto space-y-4">
+                <form id="formTalentHunter" class="space-y-4">
+
+                    <!-- Alamat -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                            Alamat Penempatan / Kantor <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="alamat" required
+                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                            placeholder="Masukkan alamat atau kota penempatan">
+                    </div>
+
+                    <!-- Posisi -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                            Posisi yang Dibutuhkan <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="posisi" required
+                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                            placeholder="Contoh: HR Specialist, Fullstack Developer">
+                    </div>
+
+                    <!-- Pengalaman Kerja -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                            Pengalaman Kerja <span class="text-rose-500">*</span>
+                        </label>
+                        <input type="text" name="pengalaman_kerja" required
+                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                            placeholder="Contoh: Minimal 1-2 tahun / Fresh Graduate">
+                    </div>
+
+                    <!-- Gender -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                            Kriteria Gender <span class="text-rose-500">*</span>
+                        </label>
+                        <select name="gender" required
+                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition cursor-pointer">
+                            <option value="">Pilih Gender</option>
+                            <option value="Semua Gender">Semua Gender</option>
+                            <option value="Laki-laki">Laki-laki</option>
+                            <option value="Perempuan">Perempuan</option>
+                        </select>
+                    </div>
+
+                    <!-- Gaji Yang Ditawarkan -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1.5">
+                            <label class="block text-xs font-bold text-slate-700">
+                                Gaji yang Ditawarkan (1 Bulan) <span class="text-rose-500">*</span>
+                            </label>
+                            <span class="text-[11px] font-semibold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                                Min. Rp 3.500.000
+                            </span>
+                        </div>
+                        <div class="relative">
+                            <input type="text" id="gaji_ditawarkan_display" required
+                                class="w-full bg-slate-50/50 border border-slate-300 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition"
+                                placeholder="Rp 3.500.000">
+                            <input type="hidden" name="gaji_ditawarkan" id="gaji_ditawarkan">
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-1">
+                            *Nominal ini dibayarkan langsung ke AreaKerja untuk penempatan kandidat dan pembayaran gaji bulan pertama.
+                        </p>
+                    </div>
+
+                    <!-- Deskripsi -->
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1.5">
+                            Deskripsi & Kualifikasi Tambahan
+                        </label>
+                        <textarea name="deskripsi" rows="3"
+                            class="w-full bg-slate-50/50 border border-slate-300 rounded-xl p-3.5 text-sm font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#00509d]/20 focus:border-[#00509d] transition resize-none leading-relaxed"
+                            placeholder="Tuliskan skill khusus atau deskripsi pekerjaan yang diinginkan..."></textarea>
+                    </div>
+
+                    <!-- Button -->
+                    <div class="pt-2">
+                        <button type="submit"
+                            class="w-full py-3 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold text-sm rounded-xl shadow-sm transition flex items-center justify-center gap-2 cursor-pointer">
+                            <span>Lanjutkan Pembelian</span>
+                            <i class="ph ph-arrow-right font-bold text-base"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Konfirmasi Pembelian / Pengajuan Talent Hunter -->
+    <div id="modalBeli"
+        class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center z-50 p-4 transition-all">
+        <div class="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 w-full max-w-md border border-slate-100 text-center animate-fadeIn relative max-h-[90vh] overflow-y-auto">
+            <!-- Icon -->
+            <div class="w-16 h-16 bg-blue-50 text-[#00509d] border-2 border-blue-100 flex items-center justify-center rounded-2xl mx-auto mb-3">
+                <i class="ph ph-receipt text-3xl font-bold"></i>
+            </div>
+
+            <h2 class="text-xl font-extrabold text-slate-900 mb-1">Konfirmasi Pembayaran</h2>
+            <p class="text-xs text-slate-500 mb-4">Total biaya penempatan & gaji bulan pertama kandidat:</p>
+
+            <div class="bg-blue-50/60 border border-blue-100 rounded-2xl py-3.5 px-5 mb-4 text-center">
+                <span class="text-[11px] font-bold text-slate-500 uppercase tracking-wider block">Total Tagihan</span>
+                <div class="text-2xl sm:text-3xl font-extrabold text-[#00509d] mt-0.5" id="hargaTH">
+                    Rp 3.500.000
+                </div>
+                <p class="text-[11px] text-slate-400 mt-1">
+                    *Dibayarkan ke AreaKerja untuk penempatan kandidat & gaji 1 bulan
+                </p>
+            </div>
+
+            <!-- Ringkasan Metode Pembayaran Otomatis -->
+            <div class="text-left mb-5">
+                <div class="p-3.5 bg-slate-50 border border-slate-200 rounded-xl space-y-2 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Metode Pembayaran</span>
+                        <span class="bg-[#00509d] text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full">
+                            Xendit Payment Gateway
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Pilihan Saluran</span>
+                        <span class="text-slate-700 font-semibold text-right text-[11px]">QRIS, VA Bank (BCA, Mandiri, BRI, BNI), E-Wallet</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Biaya Admin</span>
+                        <span class="text-emerald-600 font-semibold">Gratis</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button type="button" onclick="closeModal('modalBeli'); openModal('modalFormTH')"
+                    class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition cursor-pointer">
+                    Kembali
+                </button>
+                <button type="button" id="btnConfirmBeli"
+                    class="w-1/2 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white font-extrabold rounded-xl text-sm shadow-sm transition flex items-center justify-center gap-1.5 cursor-pointer">
+                    <span>Lanjutkan Transaksi</span>
+                    <i class="ph ph-arrow-right font-bold text-base"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    {{-- SCRIPTS --}}
     <script>
         function formatRupiah(num) {
             return new Intl.NumberFormat('id-ID').format(num);
@@ -341,107 +329,16 @@
             const display = document.getElementById(displayId);
             const real = document.getElementById(realId);
 
-            display.addEventListener("input", function() {
-                let value = this.value.replace(/[^0-9]/g, "");
-                real.value = value;
-                this.value = value ? "Rp " + formatRupiah(value) : "";
-            });
+            if (display && real) {
+                display.addEventListener("input", function() {
+                    let value = this.value.replace(/[^0-9]/g, "");
+                    real.value = value;
+                    this.value = value ? "Rp " + formatRupiah(value) : "";
+                });
+            }
         }
 
-        handleRupiahInput("gaji_awal_display", "gaji_awal");
-        handleRupiahInput("gaji_akhir_display", "gaji_akhir");
-    </script>
-
-
-
-
-    <script>
-        let formDataTH = null; // GLOBAL (dipakai submit & beli)
-
-        // 1. Klik Daftar Talent Hunter -> buka form
-        document.getElementById('btnDaftarTH')?.addEventListener('click', function() {
-            openModal('modalFormTH');
-        });
-
-        // 2. Submit Form TH -> Validasi dan Tampilkan Konfirmasi Pembelian
-        document.getElementById('formTalentHunter')?.addEventListener('submit', function(e) {
-            e.preventDefault();
-
-            formDataTH = new FormData(this); // simpan data sementara
-
-            // ambil harga untuk ditampilkan
-            fetch('{{ route('talent-hunter.harga') }}')
-                .then(res => res.json())
-                .then(data => {
-                    document.getElementById('hargaTH').innerText = data.harga;
-
-                    closeModal('modalFormTH');
-                    openModal('modalBeli');
-                })
-                .catch(() => {
-                    closeModal('modalFormTH');
-                    openModal('modalBeli');
-                });
-        });
-
-        // 3. Klik KONFIRMASI BELI -> Simpan ke Database
-        document.getElementById('btnConfirmBeli')?.addEventListener('click', async function() {
-            if (!formDataTH) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Perhatian',
-                    text: 'Formulir belum diisi!'
-                });
-                return;
-            }
-
-            formDataTH.append('_token', '{{ csrf_token() }}');
-
-            try {
-                const res = await fetch('{{ route('talent-hunter.store') }}', {
-                    method: 'POST',
-                    body: formDataTH
-                });
-
-                const result = await res.json();
-
-                if (result.success) {
-                    closeModal('modalBeli');
-
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Pembelian Berhasil!',
-                        text: result.message,
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
-
-                    setTimeout(() => {
-                        window.location.href = result.redirect_url;
-                    }, 1500);
-
-                } else {
-                    closeModal('modalBeli');
-
-                    if (result.message && result.message.toLowerCase().includes('koin')) {
-                        openModal('modalKoinKurang');
-                    } else {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Gagal!',
-                            text: result.message
-                        });
-                    }
-                }
-            } catch (err) {
-                console.error(err);
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Kesalahan Sistem',
-                    text: 'Terjadi kesalahan saat memproses data. Silakan coba lagi.'
-                });
-            }
-        });
+        handleRupiahInput("gaji_ditawarkan_display", "gaji_ditawarkan");
 
         function openModal(id) {
             const el = document.getElementById(id);
@@ -458,176 +355,114 @@
                 el.classList.remove('flex');
             }
         }
-    </script>
 
+        const isVerified = @json(optional($perusahaan)->verification_status === 'approved');
 
-    {{-- TOP UP --}}
-    <script>
-        //redirect
-        document.getElementById('btnKonfirmasi').addEventListener('click', function() {
-            if (!selectedKoin || !selectedBank) {
+        let formDataTH = null;
+
+        // 1. Klik Daftar Talent Hunter -> Cek verifikasi dan buka modal form
+        document.getElementById('btnDaftarTH')?.addEventListener('click', function() {
+            if (!isVerified) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Pilih Paket & Pembayaran',
-                    text: 'Silakan pilih paket dan metode pembayaran dulu.',
-                    confirmButtonText: 'Mengerti'
+                    title: 'Perusahaan Belum Terverifikasi',
+                    text: 'Akun perusahaan Anda belum terverifikasi oleh admin. Harap tunggu verifikasi akun sebelum mengajukan Talent Hunter.',
+                    confirmButtonColor: '#00509d'
                 });
                 return;
             }
-
-            fetch("{{ route('catatan_cash.store') }}", {
-                    method: "POST",
-                    headers: {
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}",
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        harga_pembayaran_id: document.querySelector(".paketCoin:checked").value,
-                        daftar_bank_id: document.querySelector(".metodePembayaran:checked").value,
-                    })
-                })
-                .then(async res => {
-                    if (!res.ok) {
-                        let err = await res.text();
-                        throw new Error(err);
-                    }
-                    return res.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        window.location.href = data.redirect_url;
-                    }
-                })
-                .catch(err => {
-                    console.error("Error detail:", err.message);
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Gagal!',
-                        text: 'Gagal membuat transaksi: ' + err.message,
-                        confirmButtonText: 'Coba Lagi'
-                    });
-                });
+            openModal('modalFormTH');
         });
 
+        // 2. Submit Form TH -> Validasi minimal 3.5jt dan tampilkan modal konfirmasi
+        document.getElementById('formTalentHunter')?.addEventListener('submit', function(e) {
+            e.preventDefault();
 
-
-        let selectedKoin = null;
-        let selectedHarga = null;
-        let selectedBank = null;
-
-        function toggleModal() {
-            closeAllModal();
-            document.getElementById('modalStep1').classList.remove('hidden');
-            document.getElementById('modalStep1').classList.add('flex');
-            updateButtons();
-        }
-
-        function closeAllModal() {
-            document.querySelectorAll('[id^="modalStep"]').forEach(m => {
-                m.classList.add('hidden');
-                m.classList.remove('flex');
-            });
-        }
-
-        function goToStep(step) {
-            // âœ… Validasi sebelum pindah step
-            if (step === 2 && !selectedKoin) {
+            const gajiVal = parseInt(document.getElementById('gaji_ditawarkan').value || 0);
+            if (gajiVal < 3500000) {
                 Swal.fire({
                     icon: 'warning',
-                    title: 'Oops...',
-                    text: 'Silakan pilih paket koin terlebih dahulu!',
-                    confirmButtonColor: '#00509d' // warna tombol orange
-                });
-                return;
-            }
-            if (step === 3 && !selectedBank) {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Oops...',
-                    text: 'Silakan pilih metode pembayaran terlebih dahulu!',
+                    title: 'Gaji Tidak Memenuhi Syarat',
+                    text: 'Gaji yang ditawarkan minimal Rp 3.500.000 untuk layanan Talent Hunter.',
                     confirmButtonColor: '#00509d'
                 });
                 return;
             }
 
-            closeAllModal();
-            let modal = document.getElementById('modalStep' + step);
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
+            formDataTH = new FormData(this);
+            document.getElementById('hargaTH').innerText = 'Rp ' + formatRupiah(gajiVal);
 
-            updateButtons();
+            closeModal('modalFormTH');
+            openModal('modalBeli');
+        });
 
-            // Step 3: update detail pembayaran
-            if (step === 3) {
-                const biayaAdmin = 2000;
-                const totalBayar = (selectedHarga ?? 0) + biayaAdmin;
-
-                // ðŸ”‘ Buat No Transaksi random unik
-                const randomPart = Math.floor(Math.random() * 1000000);
-                const noTransaksi = "TRX" + Date.now() + randomPart;
-
-                document.getElementById('detailTransaksi').innerText = noTransaksi;
-                document.getElementById('detailPengirim').innerText = "Nama User";
-                document.getElementById('detailBank').innerText = selectedBank ?? '-';
-                document.getElementById('detailWaktu').innerText = new Date().toLocaleString('id-ID');
-                document.getElementById('detailHarga').innerText = "Rp. " + (selectedHarga ?? 0).toLocaleString('id-ID');
-                document.getElementById('detailTotal').innerText = "Rp. " + totalBayar.toLocaleString('id-ID');
-            }
-        }
-
-
-        // ðŸ”‘ Update status tombol (disable/enable)
-        function updateButtons() {
-            // Step 1: tombol konfirmasi paket
-            const btnStep1 = document.querySelector('#modalStep1 button');
-            if (btnStep1) {
-                btnStep1.disabled = !selectedKoin;
-                btnStep1.classList.toggle('opacity-50', !selectedKoin);
-                btnStep1.classList.toggle('cursor-not-allowed', !selectedKoin);
-            }
-
-            // Step 2: tombol selanjutnya metode pembayaran
-            const btnStep2 = document.querySelector('#modalStep2 button:last-child');
-            if (btnStep2) {
-                btnStep2.disabled = !selectedBank;
-                btnStep2.classList.toggle('opacity-50', !selectedBank);
-                btnStep2.classList.toggle('cursor-not-allowed', !selectedBank);
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            // Step 1: Pilih Paket Koin
-            document.querySelectorAll('.paketCoin').forEach(el => {
-                el.addEventListener('change', function() {
-                    selectedKoin = this.dataset.jumlah;
-                    selectedHarga = parseInt(this.dataset.harga);
-
-                    // Highlight kartu terpilih
-                    document.querySelectorAll('.paketCoinWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-[#00509d]');
-                    });
-                    this.closest('.paketCoinWrapper').classList.add('ring-2', 'ring-[#00509d]');
-
-                    updateButtons();
+        // 3. Klik KONFIRMASI -> Buat Transaksi CatatanCash & Arahkan ke Form Transaksi
+        document.getElementById('btnConfirmBeli')?.addEventListener('click', async function() {
+            if (!formDataTH) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Perhatian',
+                    text: 'Formulir belum diisi!',
+                    confirmButtonColor: '#00509d'
                 });
-            });
+                return;
+            }
 
-            // Step 2: Pilih Metode Pembayaran
-            document.querySelectorAll('.metodePembayaran').forEach(el => {
-                el.addEventListener('change', function() {
-                    selectedBank = this.dataset.bank;
+            const btn = this;
+            btn.disabled = true;
+            btn.classList.add('opacity-75', 'cursor-not-allowed');
 
-                    // Highlight bank terpilih
-                    document.querySelectorAll('.pembayaranWrapper').forEach(w => {
-                        w.classList.remove('ring-2', 'ring-[#00509d]');
-                    });
-                    this.closest('.pembayaranWrapper').classList.add('ring-2', 'ring-[#00509d]');
+            formDataTH.append('_token', '{{ csrf_token() }}');
 
-                    updateButtons();
+            try {
+                const res = await fetch('{{ route('talent-hunter.store') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json'
+                    },
+                    body: formDataTH
                 });
-            });
+
+                const result = await res.json();
+
+                if (result.success) {
+                    closeModal('modalBeli');
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Pengajuan Berhasil!',
+                        text: result.message,
+                        timer: 1500,
+                        showConfirmButton: false
+                    });
+
+                    setTimeout(() => {
+                        window.location.href = result.redirect_url;
+                    }, 1500);
+
+                } else {
+                    closeModal('modalBeli');
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Gagal!',
+                        text: result.message ?? 'Terjadi kesalahan saat memproses data.',
+                        confirmButtonColor: '#00509d'
+                    });
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-75', 'cursor-not-allowed');
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Kesalahan Sistem',
+                    text: 'Terjadi kesalahan saat memproses data. Silakan coba lagi.',
+                    confirmButtonColor: '#00509d'
+                });
+                btn.disabled = false;
+                btn.classList.remove('opacity-75', 'cursor-not-allowed');
+            }
         });
     </script>
     @include('layouts.footer')
 @endsection
-

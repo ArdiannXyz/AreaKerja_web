@@ -1,4 +1,4 @@
-﻿
+
     <div class="min-h-screen bg-gray-50 py-10">
         <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-md p-8">
             <!-- Header -->
@@ -19,9 +19,31 @@
 
                 <!-- Pendidikan -->
                 <div>
-                    <label class="block text-sm font-semibold text-gray-700 mb-1">Pendidikan</label>
-                    <input type="text" name="pendidikan" value="{{ old('pendidikan', $DT->pendidikan) }}"
-                        class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Pendidikan <span class="text-red-500">*</span></label>
+                    <select name="pendidikan" required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 text-sm bg-white text-gray-900 focus:ring-2 focus:ring-blue-600 focus:outline-none cursor-pointer">
+                        <option value="" disabled>Pilih Jenjang Pendidikan</option>
+                        @php
+                            $jenjangList = ['SD', 'SMP', 'SMA/SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3'];
+                            $valPendidikan = old('pendidikan', $DT->pendidikan ?? '');
+                        @endphp
+                        @foreach ($jenjangList as $item)
+                            @php
+                                $isSelected = false;
+                                if (strcasecmp($valPendidikan, $item) === 0) {
+                                    $isSelected = true;
+                                } elseif ($item === 'SMA/SMK' && in_array(strtoupper($valPendidikan), ['SMA', 'SMK', 'SMA/SMK', 'SMK/SMA', 'SMA / SMK'])) {
+                                    $isSelected = true;
+                                }
+                            @endphp
+                            <option value="{{ $item }}" {{ $isSelected ? 'selected' : '' }}>
+                                {{ $item === 'SMA/SMK' ? 'SMA / SMK' : $item }}
+                            </option>
+                        @endforeach
+                        @if ($valPendidikan && !in_array(strtoupper($valPendidikan), ['SD', 'SMP', 'SMA', 'SMK', 'SMA/SMK', 'SMK/SMA', 'SMA / SMK', 'D1', 'D2', 'D3', 'D4', 'S1', 'S2', 'S3']))
+                            <option value="{{ $valPendidikan }}" selected>{{ $valPendidikan }}</option>
+                        @endif
+                    </select>
                 </div>
 
                 <!-- Juruasan -->

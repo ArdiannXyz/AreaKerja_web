@@ -1,263 +1,272 @@
 @extends('layouts.index')
 @section('content')
-    <div class="max-w-4xl mx-auto w-full px-4 sm:px-6 md:px-14 py-12 bg-white rounded-xl shadow border mt-16">
-        <!-- Header -->
-        <h2 class="text-2xl font-medium mb-2">Detail Transaksi</h2>
-        <hr class="border-b border-gray-200 mb-10">
-
-        <!-- Grid 2 kolom -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
-            <!-- Kiri -->
-            <div class="text-sm">
-                <p class="font-medium text-gray-600">No. Referensi</p>
-                <p class="text-lg font-semibold text-gray-800 mb-6">{{ $transaksi->no_referensi }}</p>
-
-                <p class="font-medium text-gray-600 mb-2">Status Tagihan</p>
-                <span
-                    class="inline-block mb-2 px-8 py-2 rounded-full text-sm 
-                @if ($transaksi->status == 'pending') bg-blue-100 text-[#003d7a]
-                @elseif($transaksi->status == 'menunggu_verifikasi') bg-blue-100 text-blue-600
-                @elseif($transaksi->status == 'diterima') bg-green-100 text-green-600
-                @elseif($transaksi->status == 'expired') bg-gray-200 text-gray-600
-                @else bg-red-100 text-red-600 @endif">
-                    {{ $transaksi->status == 'pending' ? 'Menunggu Pembayaran' : ucfirst(str_replace('_', ' ', $transaksi->status)) }}
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 pt-28 pb-16">
+        <!-- Breadcrumb / Header -->
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div>
+                <a href="{{ route('pelamar.beranda') }}" class="text-xs text-slate-500 hover:text-[#00509d] inline-flex items-center gap-1 mb-2">
+                    <i class="ph ph-arrow-left"></i> Kembali ke Beranda
+                </a>
+                <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Pembayaran Pendaftaran Kandidat</h1>
+                <p class="text-xs text-slate-500 mt-0.5">Sistem Pembayaran Otomatis &bull; Powered by Xendit Payment Gateway</p>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="px-3 py-1 rounded-full text-xs font-bold
+                    @if ($transaksi->status == 'pending') bg-amber-100 text-amber-700 border border-amber-200
+                    @elseif($transaksi->status == 'diterima' || $transaksi->status == 'lunas') bg-emerald-100 text-emerald-700 border border-emerald-200
+                    @elseif($transaksi->status == 'expired') bg-slate-100 text-slate-600 border border-slate-200
+                    @else bg-rose-100 text-rose-700 border border-rose-200 @endif">
+                    @if ($transaksi->status == 'pending')
+                        <span class="inline-block w-2 h-2 rounded-full bg-amber-500 animate-pulse mr-1.5"></span>Menunggu Pembayaran
+                    @elseif ($transaksi->status == 'diterima' || $transaksi->status == 'lunas')
+                        <i class="ph ph-check-circle mr-1"></i>Lunas / Terverifikasi
+                    @elseif ($transaksi->status == 'expired')
+                        <i class="ph ph-clock mr-1"></i>Kedaluwarsa
+                    @else
+                        {{ ucfirst($transaksi->status) }}
+                    @endif
                 </span>
-
-                @if ($transaksi->status == 'pending')
-                    <div class="mb-6">
-                        <p class="inline text-gray-800 text-sm font-semibold">Batas Pembayaran :</p>
-                        <span id="countdown" class="inline text-[#003d7a] font-semibold"></span>
-                    </div>
-                @endif
-
-                <div class="mb-6">
-                    <p class="font-medium mb-1 text-gray-600">Waktu</p>
-                    <span class="text-gray-900 font-semibold">
-                        {{ $transaksi->created_at->translatedFormat('d F Y H:i') }}
-                    </span>
-                </div>
-
-                <div>
-                    <p class="font-medium text-gray-600 mb-1">Metode Pembayaran</p>
-                    <span class="text-gray-900 font-semibold">
-                        Transfer {{ $transaksi->bank->nama_bank }}
-                    </span>
-                </div>
-            </div>
-
-            <!-- Rekening Tujuan -->
-            <div class="border rounded-lg p-5 w-full text-left shadow-sm overflow-x-auto">
-                @if ($transaksi->sumberDana === 'Qris')
-                    <div class="flex flex-col items-center text-center">
-                        <p class="text-gray-500 text-sm mb-2">Bayar Melalui</p>
-                        <img src="{{ asset('images/qrrrr-removebg-preview.png') }}" alt="QRIS Logo"
-                            class="w-24 mb-3 max-w-full h-auto">
-                        <p class="text-lg font-semibold">QRIS</p>
-                        <p class="text-gray-600 text-sm mb-3">NMID : ID12233445566778</p>
-                        <img src="{{ asset('images/barcode.jpg') }}" alt="QRIS QR Code"
-                            class="w-40 h-40 max-w-full object-contain">
-                    </div>
-                @else
-                    <p class="text-gray-500 text-sm">Rekening Tujuan</p>
-                    <div class="flex justify-center items-center gap-3 overflow-x-auto">
-                        <img src="{{ asset($transaksi->bank->logo_image) }}" alt="Bank Logo"
-                            class="w-40 h-28 object-contain max-w-full">
-                    </div>
-                    <p class="font-semibold text-lg mt-2">{{ $transaksi->bank->nama_bank }}</p>
-                    <p class="text-gray-600 text-sm mt-1">a/n {{ $transaksi->bank->owner }}</p>
-                    <span class="copy-rek cursor-pointer text-gray-800 text-lg font-bold mt-1"
-                        data-rek="{{ $transaksi->bank->no_rek }}">
-                        {{ $transaksi->bank->no_rek }}
-                    </span>
-                @endif
             </div>
         </div>
 
-        <!-- Tabel Transaksi -->
-        <div class="overflow-x-auto mb-6">
-            <table class="w-full text-sm border border-gray-100 rounded-lg overflow-hidden">
-                <thead class="bg-gray-100">
-                    <tr>
-                        <th class="p-3 text-left font-semibold text-gray-500">Keterangan</th>
-                        <th class="p-3 text-left font-semibold text-gray-500">Jumlah</th>
-                        <th class="p-3 text-right font-semibold text-gray-500">Tagihan</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b-2 border-gray-200">
-                        <td class="p-3">{{ $transaksi->pesanan }}</td>
-                        <td class="p-3 text-left">1</td>
-                        <td class="p-3 text-right">Rp. {{ number_format($transaksi->total, 0, ',', '.') }}</td>
-                    </tr>
-                </tbody>
-                <tfoot class="text-sm">
-                    <tr>
-                        <td></td>
-                        <td class="p-3 text-left">Tagihan</td>
-                        <td class="p-3 text-right">Rp. {{ number_format($transaksi->total, 0, ',', '.') }}</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td class="p-3 text-left">Admin</td>
-                        <td class="p-3 text-right">Rp. 2.000</td>
-                    </tr>
-                    <tr class="font-medium">
-                        <td></td>
-                        <td class="p-3 text-left">Total</td>
-                        <td class="p-3 text-right">Rp. {{ number_format($transaksi->total + 2000, 0, ',', '.') }}</td>
-                    </tr>
-                    <tr class="font-semibold border-b-4 border-gray-200">
-                        <td></td>
-                        <td class="p-3 text-left">Total Tagihan</td>
-                        <td class="p-3 text-right">Rp. {{ number_format($transaksi->total + 2000, 0, ',', '.') }}</td>
-                    </tr>
-                </tfoot>
-            </table>
-        </div>
+        @if ($transaksi->status === 'diterima' || $transaksi->status === 'lunas')
+            <!-- SUCCESS STATE CARD -->
+            <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm p-8 text-center mb-8">
+                <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-xs">
+                    <i class="ph ph-check-circle text-5xl"></i>
+                </div>
+                <h2 class="text-2xl font-extrabold text-slate-800">Pembayaran Berhasil!</h2>
+                <p class="text-sm text-slate-600 mt-2 max-w-lg mx-auto">
+                    Selamat, pendaftaran Anda sebagai <strong>Kandidat AreaKerja</strong> telah berhasil dan terverifikasi secara otomatis oleh sistem. Status profil Anda kini aktif.
+                </p>
 
-        <!-- Upload Bukti -->
-        @if ($transaksi->status == 'pending' || $transaksi->status == 'ditolak')
-            <div class="mb-8 p-6 bg-slate-50 border border-slate-200 rounded-2xl">
-                <div class="flex items-center gap-2.5 mb-4">
-                    <i class="ph-fill ph-upload-simple text-xl text-[#00509d]"></i>
-                    <h3 class="text-base font-extrabold text-slate-900">Upload Bukti Pembayaran</h3>
+                <div class="inline-flex flex-wrap items-center justify-center gap-6 mt-6 py-3 px-6 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-600">
+                    <div>
+                        <span class="text-slate-400 block font-medium">No. Referensi:</span>
+                        <strong class="text-slate-800 font-bold text-sm">{{ $transaksi->no_referensi }}</strong>
+                    </div>
+                    <div class="border-l border-slate-200 pl-6">
+                        <span class="text-slate-400 block font-medium">Total Dibayar:</span>
+                        <strong class="text-emerald-600 font-extrabold text-sm">Rp. {{ number_format($transaksi->total, 0, ',', '.') }}</strong>
+                    </div>
+                    @if ($transaksi->paid_at)
+                        <div class="border-l border-slate-200 pl-6">
+                            <span class="text-slate-400 block font-medium">Waktu Lunas:</span>
+                            <strong class="text-slate-800 font-bold text-sm">{{ $transaksi->paid_at->translatedFormat('d F Y H:i') }} WIB</strong>
+                        </div>
+                    @endif
                 </div>
 
-                @if ($transaksi->status == 'ditolak')
-                    <div class="mb-4 p-3.5 bg-rose-50 border border-rose-200 rounded-xl flex items-center gap-2.5 text-rose-700 text-xs font-semibold">
-                        <i class="ph-fill ph-warning-circle text-lg shrink-0"></i>
-                        <span>Bukti transfer sebelumnya ditolak. Silakan unggah ulang foto/dokumen bukti pembayaran yang valid.</span>
-                    </div>
-                @endif
+                <div class="mt-8 flex justify-center gap-3">
+                    <a href="{{ route('pelamar.beranda') }}"
+                       class="px-6 py-3 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-xl shadow transition">
+                        Masuk ke Beranda Pelamar
+                    </a>
+                </div>
+            </div>
+        @else
+            <!-- PENDING PAYMENT CARD -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+                <!-- Kolom Kiri: Rincian Tagihan & Informasi Transaksi -->
+                <div class="lg:col-span-1 space-y-6">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+                        <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider mb-4 pb-3 border-b border-slate-100 flex items-center gap-2">
+                            <i class="ph ph-receipt text-base text-[#00509d]"></i> Rincian Tagihan
+                        </h3>
 
-                <form action="{{ route('kandidat.catatan_cash.upload_bukti', $transaksi->id) }}" method="POST"
-                    enctype="multipart/form-data" class="space-y-4">
-                    @csrf
+                        <div class="space-y-4 text-xs">
+                            <div>
+                                <p class="text-slate-400 font-medium">No. Referensi / Transaksi</p>
+                                <div class="flex items-center justify-between mt-1 p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                    <span class="font-mono font-bold text-slate-800 text-sm">{{ $transaksi->no_referensi }}</span>
+                                    <button type="button" onclick="navigator.clipboard.writeText('{{ $transaksi->no_referensi }}'); alert('No. Referensi berhasil disalin!');"
+                                            class="text-[#00509d] hover:underline text-[11px] font-semibold flex items-center gap-1">
+                                        <i class="ph ph-copy"></i> Salin
+                                    </button>
+                                </div>
+                            </div>
 
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                        <!-- Tombol Upload Custom -->
-                        <label for="bukti_kandidat"
-                            class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-xl cursor-pointer transition shadow-2xs shrink-0">
-                            <i class="ph ph-upload-simple text-base font-bold"></i>
-                            <span>Pilih File Bukti</span>
-                        </label>
+                            <div>
+                                <p class="text-slate-400 font-medium">Pesanan</p>
+                                <p class="font-bold text-slate-800 text-sm mt-0.5">{{ $transaksi->pesanan }}</p>
+                            </div>
 
-                        <!-- Input File Hidden -->
-                        <input type="file" id="bukti_kandidat" name="bukti" accept=".jpg,.jpeg,.png,.pdf,image/jpeg,image/png,image/jpg,application/pdf" required class="hidden">
+                            <div>
+                                <p class="text-slate-400 font-medium">Waktu Transaksi</p>
+                                <p class="font-semibold text-slate-700 mt-0.5">{{ $transaksi->created_at->translatedFormat('d F Y, H:i') }} WIB</p>
+                            </div>
 
-                        <div class="flex-1 min-w-0">
-                            <!-- Nama File -->
-                            <p id="kandidat-file-name" class="text-xs font-bold text-slate-700 truncate">
-                                Belum ada file yang dipilih
-                            </p>
-                            <!-- Format dan Ukuran File -->
-                            <p class="text-[11px] text-slate-500 mt-0.5">
-                                Format: JPG, JPEG, PNG, atau PDF (Maks. 5MB)
-                            </p>
+                            @if ($transaksi->status === 'pending' && $transaksi->expired_at)
+                                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl">
+                                    <p class="text-amber-800 font-medium text-[11px]">Batas Waktu Pembayaran:</p>
+                                    <p id="countdown" class="text-amber-600 font-extrabold text-sm mt-0.5"></p>
+                                </div>
+                            @endif
+
+                            <div class="pt-3 border-t border-slate-100">
+                                <div class="flex justify-between items-center text-slate-600 mb-1">
+                                    <span>Biaya Pendaftaran</span>
+                                    <span>Rp. {{ number_format($transaksi->total, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-600 mb-2">
+                                    <span>Biaya Layanan Gateway</span>
+                                    <span class="text-emerald-600 font-semibold">Gratis</span>
+                                </div>
+                                <div class="flex justify-between items-center text-slate-900 font-extrabold text-base pt-2 border-t border-dashed border-slate-200">
+                                    <span>Total Pembayaran</span>
+                                    <span class="text-[#00509d]">Rp. {{ number_format($transaksi->total, 0, ',', '.') }}</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
-                    @error('bukti')
-                        <p class="text-xs font-semibold text-rose-500 mt-1 flex items-center gap-1">
-                            <i class="ph ph-warning-circle font-bold"></i>
-                            <span>{{ $message }}</span>
-                        </p>
-                    @enderror
+                </div>
 
-                    <div class="pt-2">
-                        <button type="submit"
-                            class="inline-flex items-center gap-2 px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs rounded-xl shadow-xs transition">
-                            <i class="ph ph-check-circle font-bold text-base"></i>
-                            <span>{{ $transaksi->status == 'pending' ? 'Kirim Bukti Pembayaran' : 'Kirim Ulang Bukti Pembayaran' }}</span>
-                        </button>
+                <!-- Kolom Kanan: Tampilan Pembayaran Dalam Aplikasi (Embedded Payment Gateway) -->
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full">
+                        <!-- Header Card Pembayaran -->
+                        <div class="bg-gradient-to-r from-[#003d7a] to-[#00509d] text-white px-5 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-xl bg-white/10 flex items-center justify-center text-white text-xl">
+                                    <i class="ph ph-credit-card"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-sm font-bold text-white">Portal Pembayaran AreaKerja</h3>
+                                    <p class="text-[11px] text-blue-100">QRIS, Virtual Account (BCA, BRI, BNI, Mandiri), E-Wallet, & Kartu</p>
+                                </div>
+                            </div>
+
+                            @if ($transaksi->checkout_url)
+                                <a href="{{ $transaksi->checkout_url }}" target="_blank"
+                                   class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white/15 hover:bg-white/25 text-white text-xs font-bold rounded-lg transition self-start sm:self-auto"
+                                   title="Buka tampilan pembayaran di tab baru">
+                                    <i class="ph ph-arrow-square-out text-sm"></i>
+                                    <span>Buka Tab Baru</span>
+                                </a>
+                            @endif
+                        </div>
+
+                        <!-- Embedded Payment Window / Iframe -->
+                        @if ($transaksi->checkout_url)
+                            <div class="relative w-full flex-1 bg-slate-100" style="min-height: 680px;">
+                                <div id="iframe-loader-kandidat" class="absolute inset-0 flex flex-col items-center justify-center bg-white z-10">
+                                    <div class="w-10 h-10 border-4 border-blue-200 border-t-[#00509d] rounded-full animate-spin mb-3"></div>
+                                    <p class="text-xs font-semibold text-slate-600">Memuat antarmuka pembayaran aman Xendit...</p>
+                                    <p class="text-[10px] text-slate-400 mt-1">Harap tunggu beberapa detik</p>
+                                </div>
+
+                                <iframe id="xendit-kandidat-frame"
+                                        src="{{ $transaksi->checkout_url }}"
+                                        class="w-full h-full border-0"
+                                        style="min-height: 680px;"
+                                        allow="payment"
+                                        onload="document.getElementById('iframe-loader-kandidat').style.display='none';">
+                                </iframe>
+                            </div>
+                        @else
+                            <div class="p-12 text-center my-auto">
+                                <div class="w-16 h-16 rounded-full bg-blue-50 text-[#00509d] flex items-center justify-center mx-auto mb-4">
+                                    <i class="ph ph-credit-card text-3xl"></i>
+                                </div>
+                                <h4 class="text-base font-bold text-slate-800">Menyiapkan Invoice Pembayaran</h4>
+                                <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto mb-6">
+                                    Invoice pembayaran sedang disiapkan secara otomatis.
+                                </p>
+                            </div>
+                        @endif
+
+                        <!-- Footer Card: Polling Realtime Status -->
+                        <div class="px-5 py-3 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+                            <div class="flex items-center gap-2 text-slate-500 text-[11px]">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span>Menunggu pelunasan pembayaran secara real-time...</span>
+                            </div>
+                            <button type="button" onclick="checkKandidatPaymentStatus(true);"
+                                    class="text-[#00509d] hover:text-[#003d7a] font-bold text-xs inline-flex items-center gap-1">
+                                <i class="ph ph-arrows-clockwise"></i> Cek Status Sekarang
+                            </button>
+                        </div>
                     </div>
-                </form>
-
-                <script>
-                    document.getElementById('bukti_kandidat')?.addEventListener('change', function() {
-                        const fileNameEl = document.getElementById('kandidat-file-name');
-                        if (this.files && this.files.length > 0) {
-                            const file = this.files[0];
-                            const sizeKb = (file.size / 1024).toFixed(1);
-                            fileNameEl.textContent = file.name + ' (' + (sizeKb > 1024 ? (sizeKb / 1024).toFixed(2) + ' MB' : sizeKb + ' KB') + ')';
-                            fileNameEl.classList.add('text-[#00509d]');
-                        } else {
-                            fileNameEl.textContent = 'Belum ada file yang dipilih';
-                            fileNameEl.classList.remove('text-[#00509d]');
-                        }
-                    });
-                </script>
+                </div>
             </div>
         @endif
-
-        <!-- Petunjuk Pembayaran -->
-        <div class="w-full">
-            <h3 class="text-2xl font-medium mb-3">Petunjuk Pembayaran</h3>
-            <div
-                class="flex flex-col md:flex-row items-start md:items-center justify-between py-3 border-b-2 border-gray-300">
-                <span class="font-medium text-md">Transfer mBanking</span>
-            </div>
-            <div
-                class="flex flex-col md:flex-row items-start md:items-center justify-between py-3 border-b-2 border-gray-300">
-                <span class="font-medium text-md">Transfer iBanking</span>
-            </div>
-            <div
-                class="flex flex-col md:flex-row items-start md:items-center justify-between py-3 border-b-2 border-gray-300">
-                <span class="font-medium text-md">Transfer ATM</span>
-            </div>
-        </div>
     </div>
 
-
+    <!-- Script Polling Realtime & Countdown -->
     <script>
-        //SALIN NO REK
-        document.addEventListener("DOMContentLoaded", function() {
-            document.querySelectorAll(".copy-rek").forEach(function(el) {
-                el.addEventListener("click", function() {
-                    const noRek = this.getAttribute("data-rek");
+        // Frame-busting: Jika halaman ini dimuat di dalam iframe (misal redirect success Xendit), arahkan window utama
+        if (window.top !== window.self) {
+            window.top.location.href = window.location.href;
+        }
+        // 1. Countdown Batas Waktu Pembayaran
+        @if ($transaksi->status === 'pending' && $transaksi->expired_at)
+            const expireTimeKandidat = new Date("{{ $transaksi->expired_at }}").getTime();
+            const countdownElKandidat = document.getElementById("countdown");
 
-                    // Copy ke clipboard
-                    navigator.clipboard.writeText(noRek).then(() => {
-                        Swal.fire({
-                            icon: 'success',
-                            title: 'Berhasil Disalin!',
-                            text: 'Nomor rekening ' + noRek + ' telah disalin ke clipboard.',
-                            timer: 2000,
-                            showConfirmButton: false,
-                            toast: true,
-                            position: 'top-end'
-                        });
-                    }).catch(err => {
-                        console.error("Gagal menyalin: ", err);
-                    });
-                });
-            });
-        });
-        @if ($transaksi->status == 'pending' && $transaksi->expired_at)
-            let expireTime = new Date("{{ $transaksi->expired_at }}").getTime();
+            const timerKandidat = setInterval(function() {
+                const now = new Date().getTime();
+                const distance = expireTimeKandidat - now;
 
-            let timer = setInterval(function() {
-                let now = new Date().getTime();
-                let distance = expireTime - now;
+                if (distance <= 0) {
+                    clearInterval(timerKandidat);
+                    if (countdownElKandidat) {
+                        countdownElKandidat.innerHTML = "Waktu Pembayaran Habis (Expired)";
+                        countdownElKandidat.classList.remove("text-amber-600");
+                        countdownElKandidat.classList.add("text-rose-600");
+                    }
+                    setTimeout(() => location.reload(), 2000);
+                    return;
+                }
 
-                if (distance < 0) {
-                    clearInterval(timer);
-                    document.getElementById("countdown").innerHTML = "Expired";
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60)) / (1000 * 60));
+                const seconds = Math.floor((distance % 1000) / 1000);
 
-                    // optional: auto reload untuk ubah status
-                    location.reload();
-                } else {
-                    let hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-                    let seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-                    document.getElementById("countdown").innerHTML =
-                        hours + " Jam " + minutes + " Menit " + seconds + " Detik";
+                if (countdownElKandidat) {
+                    countdownElKandidat.innerHTML = `${hours} Jam ${minutes} Menit ${seconds} Detik`;
                 }
             }, 1000);
+        @endif
+
+        // 2. Real-time Status Polling (Otomatis deteksi bila user sudah membayar)
+        @if ($transaksi->status === 'pending')
+            function checkKandidatPaymentStatus(isManual = false) {
+                fetch("{{ route('kandidat.transaksi.status', $transaksi->id) }}")
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.is_paid) {
+                            clearInterval(pollingKandidat);
+                            if (window.Swal) {
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Pembayaran Diterima!',
+                                    text: 'Pembayaran pendaftaran kandidat berhasil diverifikasi.',
+                                    timer: 2000,
+                                    showConfirmButton: false
+                                }).then(() => {
+                                    window.location.reload();
+                                });
+                            } else {
+                                alert('Pembayaran pendaftaran kandidat berhasil diverifikasi!');
+                                window.location.reload();
+                            }
+                        } else if (data.is_expired) {
+                            clearInterval(pollingKandidat);
+                            window.location.reload();
+                        } else if (isManual) {
+                            alert('Status saat ini: Belum ada pembayaran terdeteksi. Silakan selesaikan pembayaran di jendela pembayaran.');
+                        }
+                    })
+                    .catch(err => {
+                        if (isManual) console.error("Error cek status:", err);
+                    });
+            }
+
+            // Polling otomatis setiap 4 detik
+            const pollingKandidat = setInterval(checkKandidatPaymentStatus, 4000);
         @endif
     </script>
 
     @include('layouts.footer')
 @endsection
-

@@ -3,13 +3,13 @@
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- HEADER TOP BAR -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight flex items-center gap-2">
-                        <i class="ph ph-crosshair text-[#00509d] text-lg sm:text-2xl"></i> Data Talent Hunter
+                    <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-crosshair text-white/80 text-lg sm:text-2xl"></i> Data Talent Hunter
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">Kelola data permintaan talent hunter perusahaan</p>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Kelola data permintaan talent hunter perusahaan</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('admin.components.notif_button')
@@ -68,12 +68,12 @@
                 }
             }" @click.outside="open = false">
 
-                <form x-ref="talentHunterForm" action="{{ route('admin.talent-hunter') }}" method="GET" autocomplete="off" class="flex items-center gap-2 w-full">
+                <form x-ref="talentHunterForm" action="{{ route('admin.talent-hunter') }}" method="GET" autocomplete="off" class="flex items-center w-full">
                     <div class="h-10 flex items-center w-full bg-white rounded-xl overflow-hidden border border-slate-200 focus-within:border-[#00509d] focus-within:ring-2 focus-within:ring-[#00509d]/20 transition shadow-xs">
                         <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-base leading-none"></i>
                         <input type="text" name="search" x-model="query"
                             @focus="open = true"
-                            @input="open = true"
+                            @input="open = true; filterTalentTable($event.target.value)"
                             autocomplete="new-password"
                             data-lpignore="true"
                             data-form-type="other"
@@ -82,17 +82,14 @@
                             style="border: none !important; outline: none !important; box-shadow: none !important;">
                         <template x-if="query.length > 0">
                             <a href="{{ route('admin.talent-hunter') }}"
-                               @click.prevent="query = ''; open = false; window.location.href = '{{ route('admin.talent-hunter') }}';"
+                               @click.prevent="query = ''; open = false; filterTalentTable(''); window.location.href = '{{ route('admin.talent-hunter') }}';"
                                class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2 flex-shrink-0 transition cursor-pointer"
                                title="Hapus pencarian">
                                 <i class="ph ph-x text-[10px] font-bold"></i>
                             </a>
                         </template>
+                        <button type="submit" class="hidden"></button>
                     </div>
-                    <button type="submit"
-                        class="bg-[#00509d] hover:bg-[#003d7a] text-white text-sm font-semibold px-4 h-10 rounded-xl transition shadow-xs flex-shrink-0 flex items-center gap-1.5">
-                        Cari
-                    </button>
                 </form>
 
                 <!-- Autocomplete Dropdown -->
@@ -148,7 +145,7 @@
 
                     <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
                         @forelse ($talentHunter as $th)
-                            <tr class="hover:bg-blue-50/40 transition">
+                            <tr class="talent-row hover:bg-blue-50/40 transition">
                                 <td class="px-5 py-3.5 text-center font-bold text-slate-500">{{ $th->id }}</td>
 
                                 <td class="px-5 py-3.5">
@@ -206,4 +203,15 @@
         </div>
 
     </main>
+
+    <script>
+        function filterTalentTable(val) {
+            const q = (val || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('tr.talent-row');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = (!q || text.includes(q)) ? '' : 'none';
+            });
+        }
+    </script>
 @endsection

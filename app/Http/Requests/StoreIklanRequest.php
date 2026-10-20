@@ -14,7 +14,7 @@ class StoreIklanRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'paket_id'      => 'required|in:1,2,3,4',
+            'paket_id'      => 'required|in:2,3,4',
             'judul_iklan'   => 'required|string|max:200',
             'gambar_banner' => 'required|image|mimes:jpeg,png,jpg,webp|max:3072',
             'url_tujuan'    => 'required|url|max:500',

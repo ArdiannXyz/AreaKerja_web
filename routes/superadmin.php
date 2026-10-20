@@ -2,11 +2,13 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\EmailSubController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
 use App\Http\Controllers\LowonganPerusahaanController;
 use App\Http\Controllers\ManajemenLowonganController;
+use App\Http\Controllers\ModerasiReportController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\PengalamanKerjaController;
 use App\Http\Controllers\PengalamanOrgController;
@@ -66,7 +68,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::post('/calon-kandidat/{id}/lulus', 'lulus')->name('superadmin.calon.lulus');
         Route::post('/calon-kandidat/{id}/gugur', 'gugur')->name('superadmin.calon.gugur');
 
-        // crud admin dan finance
+        // crud admin
         Route::get('/add/user', 'role')->name('superadmin.add.user');
         Route::get('/add/user/createForm', 'createForm')->name('superadmin.add.user.createForm');
         Route::post('/add/user/store', 'store')->name('superadmin.add.user.store');
@@ -90,7 +92,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::get('/paket/harga/edit/harga', 'edit_pembayaran')->name('superadmin.paket-harga.edit-pembayaran');
         Route::put('/update/harga/harga', 'update_pembayaran')->name('superadmin.paket-harga.update-pembayaran');
 
-        // Detail Laporan Finance
+        // Detail Laporan Keuangan
         Route::get('/laporan/detail/{tanggal}', 'detail_laporan')->name('superadmin.laporan.detail');
         Route::get('/laporan/{tanggal}/unduh', 'unduh_laporan_harian')->name('superadmin.laporan.unduh');
 
@@ -132,8 +134,8 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
 
     // ADMIN CONTROLLER
     Route::controller(AdminController::class)->group(function () {
-        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('superadmin.get.kota')->middleware('auth');
-        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('superadmin.get.kecamatan')->middleware('auth');
+        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('superadmin.get.kota');
+        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('superadmin.get.kecamatan');
     });
 
     // LOWONGAN CONTROLLER
@@ -201,6 +203,8 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
     Route::controller(SocialLinkController::class)->group(function () {
         Route::get('/social-links', 'index')->name('superadmin.social.index')->middleware('auth');
         Route::post('/social-links', 'update')->name('superadmin.social.update')->middleware('auth');
+        Route::post('/social-links/config', 'updateConfig')->name('superadmin.social.config')->middleware('auth');
+        Route::post('/social-links/reset', 'resetConfig')->name('superadmin.social.reset')->middleware('auth');
         Route::get('/header-image', 'headerImageIndex')->name('superadmin.header.image')->middleware('auth');
         Route::put('/header-image/{nama}', 'headerImageUpdate')->name('superadmin.header.update')->middleware('auth');
         Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('superadmin.header.destroy')->middleware('auth');
@@ -234,7 +238,22 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::put('/iklan/{id}', 'updateSuper')->name('superadmin.iklan.update');
         Route::post('/iklan/{id}/approve', 'approveSuper')->name('superadmin.iklan.approve');
         Route::post('/iklan/{id}/reject', 'rejectSuper')->name('superadmin.iklan.reject');
+        Route::post('/iklan/{id}/perpanjang', 'perpanjangSuper')->name('superadmin.iklan.perpanjang');
         Route::delete('/iklan/{id}', 'destroySuper')->name('superadmin.iklan.destroy');
+    });
+
+    Route::controller(ModerasiReportController::class)->group(function () {
+        Route::get('/reports', 'index')->name('superadmin.reports.index');
+        Route::get('/reports/{report}', 'show')->name('superadmin.reports.show');
+        Route::post('/reports/{report}/review', 'review')->name('superadmin.reports.review');
+    });
+
+    // LAYANAN BANTUAN & KELUHAN (SUPER ADMIN)
+    Route::controller(BantuanChatController::class)->group(function () {
+        Route::get('/bantuan', 'adminIndex')->name('superadmin.bantuan.index');
+        Route::get('/bantuan/{id}', 'adminShow')->name('superadmin.bantuan.show');
+        Route::post('/bantuan/{id}/reply', 'adminReply')->name('superadmin.bantuan.reply');
+        Route::post('/bantuan/{id}/status', 'adminToggleStatus')->name('superadmin.bantuan.status');
     });
 });
 

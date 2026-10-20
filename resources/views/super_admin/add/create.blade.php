@@ -3,18 +3,18 @@
 @section('sidebarsuperadmin')
     <main class="flex-1 p-6 sm:ml-64 bg-gray-50/50" x-data="{ openNotif: false, openAllNotif: false }">
         {{-- Topbar Header --}}
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <a href="{{ route('superadmin.add.user') }}"
-                        class="p-2 rounded-xl border border-gray-200 hover:bg-gray-100 text-gray-600 transition duration-150">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-                        </svg>
+                        class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                        title="Kembali ke Kelola Akun">
+                        <i class="ph ph-arrow-left text-base"></i>
                     </a>
                     <div>
-                        <h1 class="text-base sm:text-xl font-bold text-gray-800">Tambah Pengguna Baru</h1>
-                        <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Daftarkan akun baru untuk Admin, Finance, Perusahaan, atau Pelamar</p>
+                        <h1 class="text-base sm:text-xl font-bold text-white">Tambah Pengguna Baru</h1>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">Daftarkan akun baru untuk Admin, Perusahaan, atau Pelamar</p>
+
                     </div>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
@@ -114,7 +114,6 @@
                                 class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-[#00509d] focus:border-[#00509d] outline-none transition bg-white">
                                 <option value="">-- Pilih Peran Akun --</option>
                                 <option value="admin" {{ old('role') == 'admin' ? 'selected' : '' }}>Admin</option>
-                                <option value="finance" {{ old('role') == 'finance' ? 'selected' : '' }}>Finance</option>
                                 <option value="perusahaan" {{ old('role') == 'perusahaan' ? 'selected' : '' }}>Perusahaan</option>
                                 <option value="pelamar" {{ old('role') == 'pelamar' ? 'selected' : '' }}>Pelamar</option>
                             </select>
@@ -122,7 +121,8 @@
                     </div>
                 </div>
 
-                <!-- ================= SECTION ADMIN / FINANCE ================= -->
+                <!-- ================= SECTION ADMIN ================= -->
+
                 <div id="form-alamat" class="space-y-5 pt-4">
                     <h3 class="text-sm font-bold text-gray-800 uppercase tracking-wider mb-4 pb-2 border-b border-gray-100">
                         2. Biodata & Wilayah Penugasan

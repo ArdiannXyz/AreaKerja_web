@@ -78,11 +78,18 @@
                 </div>
             </div>
 
-            <!-- ================= ALERT SUCCESS ================= -->
+            <!-- ================= ALERT SUCCESS / ERROR ================= -->
             @if(session('success'))
                 <div class="bg-emerald-50 border border-emerald-200 text-emerald-800 rounded-2xl p-4 flex items-center gap-3 shadow-2xs">
                     <i class="ph-fill ph-check-circle text-2xl text-emerald-600 shrink-0"></i>
                     <p class="text-xs sm:text-sm font-bold">{{ session('success') }}</p>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-rose-50 border border-rose-200 text-rose-800 rounded-2xl p-4 flex items-center gap-3 shadow-2xs">
+                    <i class="ph-fill ph-warning-circle text-2xl text-rose-600 shrink-0"></i>
+                    <p class="text-xs sm:text-sm font-bold">{{ session('error') }}</p>
                 </div>
             @endif
 
@@ -222,11 +229,21 @@
 
                                     <!-- Aksi -->
                                     <td class="px-6 py-4 text-right">
-                                        <button onclick="showBannerModal('{{ $item->banner_url }}', '{{ addslashes($item->judul_iklan) }}')"
-                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-[#00509d] text-slate-600 hover:text-white rounded-xl text-xs font-bold transition shadow-2xs">
-                                            <i class="ph ph-eye text-sm"></i>
-                                            <span>Lihat</span>
-                                        </button>
+                                        <div class="flex items-center justify-end gap-2">
+                                            <button type="button" onclick="showBannerModal('{{ $item->banner_url }}', '{{ addslashes($item->judul_iklan) }}')"
+                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-100 hover:bg-[#00509d] text-slate-600 hover:text-white rounded-xl text-xs font-bold transition shadow-2xs">
+                                                <i class="ph ph-eye text-sm"></i>
+                                                <span>Lihat</span>
+                                            </button>
+                                            @if(in_array($item->status, ['aktif', 'selesai']))
+                                                <button type="button"
+                                                    onclick="openPerpanjangModal({{ $item->id }}, '{{ addslashes($item->judul_iklan) }}', '{{ $item->status }}', '{{ $item->tanggal_selesai ? $item->tanggal_selesai->translatedFormat('d M Y') : '-' }}', {{ $item->sisa_hari ?? 0 }})"
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-600 text-emerald-700 hover:text-white border border-emerald-200/80 rounded-xl text-xs font-bold transition shadow-2xs">
+                                                    <i class="ph-bold ph-clock-clockwise text-sm"></i>
+                                                    <span>Perpanjang</span>
+                                                </button>
+                                            @endif
+                                        </div>
                                     </td>
                                 </tr>
                             @empty
@@ -284,7 +301,194 @@
         </div>
     </div>
 
+    <!-- ================= MODAL PERPANJANG DURASI IKLAN ================= -->
+    <div id="perpanjangModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 transition-all" style="display: none;">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xl p-6 sm:p-7 relative border border-slate-100 overflow-hidden">
+            <button onclick="closePerpanjangModal()"
+                class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition">
+                <i class="ph ph-x font-bold"></i>
+            </button>
+
+            <div class="flex items-center gap-3 mb-5 pb-4 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="ph-fill ph-clock-clockwise"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Perpanjang Masa Tayang Iklan</h3>
+                    <p class="text-xs text-slate-400">Pilih paket durasi perpanjangan dengan koin perusahaan</p>
+                </div>
+            </div>
+
+            {{-- Ringkasan Iklan --}}
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 mb-5">
+                <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Iklan yang dipilih:</p>
+                <h4 id="perpanjangJudul" class="font-extrabold text-slate-900 text-sm mt-0.5 truncate"></h4>
+                <div class="flex items-center justify-between mt-2 pt-2 border-t border-slate-200/60 text-xs">
+                    <span class="text-slate-500">Masa Tayang Saat Ini:</span>
+                    <span id="perpanjangInfoMasa" class="font-bold text-slate-700"></span>
+                </div>
+            </div>
+
+            <form id="perpanjangForm" method="POST" action="">
+                @csrf
+                {{-- Opsi Paket --}}
+                <div class="space-y-2.5 mb-5">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">Pilih Paket Durasi:</label>
+
+                    @php
+                        $pakets = $paketList ?? \App\Http\Controllers\IklanPerusahaanController::getPaketList();
+                    @endphp
+
+                    @foreach($pakets as $pId => $pData)
+                        <label class="relative flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 hover:border-[#00509d] hover:bg-blue-50/20 cursor-pointer transition paket-option-label"
+                               onclick="selectPaket({{ $pData['koin'] }})">
+                            <div class="flex items-center gap-3">
+                                <input type="radio" name="paket_id" value="{{ $pId }}" {{ $loop->first ? 'checked' : '' }}
+                                    class="w-4 h-4 text-[#00509d] focus:ring-[#00509d] border-slate-300">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <p class="text-xs sm:text-sm font-extrabold text-slate-800">{{ $pData['nama'] }}</p>
+                                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-50 text-[#00509d] border border-blue-100">
+                                            +{{ $pData['durasi'] }} Hari
+                                        </span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-0.5">{{ $pData['deskripsi'] }}</p>
+                                </div>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="inline-flex items-center gap-1 text-xs sm:text-sm font-black text-[#00509d]">
+                                    <img src="{{ asset('images/coin.png') }}" alt="" class="w-3.5 h-3.5">
+                                    {{ number_format($pData['koin'], 0, ',', '.') }}
+                                </span>
+                            </div>
+                        </label>
+                    @endforeach
+                </div>
+
+                {{-- Status Saldo Koin --}}
+                <div class="p-3.5 rounded-2xl bg-blue-50/70 border border-blue-100 mb-6 space-y-1.5 text-xs">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-600 font-medium">Saldo Koin Anda:</span>
+                        <span class="font-extrabold text-slate-900 flex items-center gap-1">
+                            <img src="{{ asset('images/coin.png') }}" alt="" class="w-3.5 h-3.5">
+                            {{ number_format($perusahaan->koin_perusahaan, 0, ',', '.') }} Koin
+                        </span>
+                    </div>
+                    @php
+                        $firstPaket = collect($pakets)->first();
+                        $initialKoin = $firstPaket['koin'] ?? 300;
+                    @endphp
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-600 font-medium">Biaya Perpanjangan:</span>
+                        <span id="biayaKoinText" class="font-extrabold text-rose-600 flex items-center gap-1">
+                            - {{ number_format($initialKoin, 0, ',', '.') }} Koin
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between pt-1.5 border-t border-blue-200/60 font-bold">
+                        <span class="text-slate-700">Sisa Saldo Setelah Transaksi:</span>
+                        <span id="sisaKoinText" class="text-emerald-700"></span>
+                    </div>
+                </div>
+
+                {{-- Alert jika koin kurang --}}
+                <div id="koinKurangAlert" class="mb-5 p-3 bg-rose-50 rounded-xl border border-rose-200 text-xs text-rose-700 hidden">
+                    <div class="flex items-center gap-2 font-bold mb-1">
+                        <i class="ph ph-warning-circle text-base"></i>
+                        <span>Saldo Koin Tidak Cukup</span>
+                    </div>
+                    <p class="text-[11px] text-rose-600">
+                        Koin Anda tidak mencukupi untuk paket ini. Silakan top up koin terlebih dahulu.
+                    </p>
+                    <a href="{{ route('perusahaan.berlangganan') }}" class="inline-flex items-center gap-1 mt-2 text-xs font-bold text-[#00509d] hover:underline">
+                        <span>Top Up Koin Sekarang</span>
+                        <i class="ph ph-arrow-right"></i>
+                    </a>
+                </div>
+
+                {{-- Tombol Aksi --}}
+                <div class="flex items-center justify-end gap-3">
+                    <button type="button" onclick="closePerpanjangModal()"
+                        class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnSubmitPerpanjang"
+                        class="inline-flex items-center gap-2 px-6 py-2.5 bg-[#00509d] hover:bg-[#003d7a] disabled:bg-slate-300 disabled:cursor-not-allowed text-white font-extrabold text-xs rounded-xl transition shadow-sm active:scale-98">
+                        <i class="ph-bold ph-check text-sm"></i>
+                        <span>Konfirmasi Perpanjang</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
+        const userKoin = {{ $perusahaan->koin_perusahaan }};
+        let currentBiaya = {{ $initialKoin ?? 300 }};
+
+        function selectPaket(koin) {
+            currentBiaya = koin;
+            updateKoinCalc();
+        }
+
+        function updateKoinCalc() {
+            const biayaEl = document.getElementById('biayaKoinText');
+            const sisaEl = document.getElementById('sisaKoinText');
+            const alertEl = document.getElementById('koinKurangAlert');
+            const btnSubmit = document.getElementById('btnSubmitPerpanjang');
+
+            if (biayaEl) biayaEl.innerText = '- ' + new Intl.NumberFormat('id-ID').format(currentBiaya) + ' Koin';
+
+            const sisa = userKoin - currentBiaya;
+            if (sisaEl) {
+                if (sisa >= 0) {
+                    sisaEl.innerText = new Intl.NumberFormat('id-ID').format(sisa) + ' Koin';
+                    sisaEl.className = 'text-emerald-700 font-extrabold';
+                    if (alertEl) alertEl.classList.add('hidden');
+                    if (btnSubmit) {
+                        btnSubmit.disabled = false;
+                        btnSubmit.classList.remove('opacity-50', 'cursor-not-allowed');
+                    }
+                } else {
+                    sisaEl.innerText = 'Kurang ' + new Intl.NumberFormat('id-ID').format(Math.abs(sisa)) + ' Koin';
+                    sisaEl.className = 'text-rose-600 font-extrabold';
+                    if (alertEl) alertEl.classList.remove('hidden');
+                    if (btnSubmit) {
+                        btnSubmit.disabled = true;
+                        btnSubmit.classList.add('opacity-50', 'cursor-not-allowed');
+                    }
+                }
+            }
+        }
+
+        function openPerpanjangModal(id, judul, status, tglSelesai, sisaHari) {
+            document.getElementById('perpanjangJudul').innerText = judul;
+            const infoMasaEl = document.getElementById('perpanjangInfoMasa');
+            if (status === 'aktif') {
+                infoMasaEl.innerHTML = `<span class="text-emerald-600">Aktif s/d ${tglSelesai} (${sisaHari} hari lagi)</span>`;
+            } else {
+                infoMasaEl.innerHTML = `<span class="text-slate-400">Telah Berakhir (${tglSelesai})</span>`;
+            }
+
+            const form = document.getElementById('perpanjangForm');
+            form.action = "{{ url('perusahaan/iklan') }}/" + id + "/perpanjang";
+
+            // Reset first radio
+            const firstRadio = form.querySelector('input[name="paket_id"]');
+            if (firstRadio) {
+                firstRadio.checked = true;
+            }
+            currentBiaya = 150;
+            updateKoinCalc();
+
+            const m = document.getElementById('perpanjangModal');
+            if (m) m.style.display = 'flex';
+        }
+
+        function closePerpanjangModal() {
+            const m = document.getElementById('perpanjangModal');
+            if (m) m.style.display = 'none';
+        }
+
         function showBannerModal(url, title) {
             document.getElementById('modalBannerImg').src = url;
             document.getElementById('modalTitle').innerText = title;

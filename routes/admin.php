@@ -2,9 +2,13 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\IklanAdminController;
+use App\Http\Controllers\ModerasiReportController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\LowonganPerusahaanController;
+use App\Http\Controllers\SocialLinkController;
 use App\Http\Controllers\TipsKerjaController;
 use App\Http\Controllers\VerifikasiPerusahaanController;
 use Illuminate\Support\Facades\Route;
@@ -48,18 +52,12 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         // kandidat
         Route::get('/kandidat', 'halKandidat')->name('admin.kandidat');
         Route::get('/kandidat/{id}', 'detailKandidat')->name('admin.detail.kandidat');
-
-        // finance redirect
-        Route::get('/finance', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
-        })->name('admin.finance');
-        Route::get('/finance/tunai', function () {
-            return redirect()->route('admin.dashboard')->with('info', 'Menu keuangan saat ini dikelola terpusat oleh role Finance.');
-        })->name('admin.finance.cash');
+        Route::post('/kandidat/{id}/report', [ReportController::class, 'storeKandidatReport'])->name('admin.kandidat.report');
 
         // provinsi kota kecamatan
-        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('admin.get.kota')->middleware('auth');
-        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('admin.get.kecamatan')->middleware('auth');
+
+        Route::get('/get-kota/{provinsi_id}', 'getKota')->name('admin.get.kota');
+        Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('admin.get.kecamatan');
 
         // perusahaan admin
         Route::get('/perusahaan', 'halPerusahaan')->name('admin.perusahaan');
@@ -133,7 +131,33 @@ Route::prefix('admin')->middleware('auth', 'role:admin', 'CheckUserStatus')->gro
         Route::put('/iklan/{id}', 'update')->name('admin.iklan.update');
         Route::post('/iklan/{id}/approve', 'approve')->name('admin.iklan.approve');
         Route::post('/iklan/{id}/reject', 'reject')->name('admin.iklan.reject');
+        Route::post('/iklan/{id}/perpanjang', 'perpanjang')->name('admin.iklan.perpanjang');
         Route::delete('/iklan/{id}', 'destroy')->name('admin.iklan.destroy');
+    });
+
+    // LINK & HEADER (SOCIAL LINK) CONTROLLER
+    Route::controller(SocialLinkController::class)->group(function () {
+        Route::get('/social-links', 'indexAdmin')->name('admin.social.index');
+        Route::post('/social-links', 'update')->name('admin.social.update');
+        Route::post('/social-links/config', 'updateConfig')->name('admin.social.config');
+        Route::post('/social-links/reset', 'resetConfig')->name('admin.social.reset');
+        Route::get('/header-image', 'headerImageIndexAdmin')->name('admin.header.image');
+        Route::put('/header-image/{nama}', 'headerImageUpdate')->name('admin.header.update');
+        Route::delete('/header-image/{nama}', 'headerImageDestroy')->name('admin.header.destroy');
+    });
+
+    Route::controller(ModerasiReportController::class)->group(function () {
+        Route::get('/reports', 'index')->name('admin.reports.index');
+        Route::get('/reports/{report}', 'show')->name('admin.reports.show');
+        Route::post('/reports/{report}/review', 'review')->name('admin.reports.review');
+    });
+
+    // LAYANAN BANTUAN & KELUHAN
+    Route::controller(BantuanChatController::class)->group(function () {
+        Route::get('/bantuan', 'adminIndex')->name('admin.bantuan.index');
+        Route::get('/bantuan/{id}', 'adminShow')->name('admin.bantuan.show');
+        Route::post('/bantuan/{id}/reply', 'adminReply')->name('admin.bantuan.reply');
+        Route::post('/bantuan/{id}/status', 'adminToggleStatus')->name('admin.bantuan.status');
     });
 });
 

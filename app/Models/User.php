@@ -29,7 +29,6 @@ class User extends Authenticatable
         'fcm_token',
         'google_id',
         'facebook_id',
-        'github_id',
         'linkedin_id',
         'avatar_social',
     ];
@@ -50,12 +49,8 @@ class User extends Authenticatable
         return $this->hasOne(Admin::class, 'user_id', 'id');
     }
 
-    public function finance()
-    {
-        return $this->hasOne(Finance::class, 'user_id', 'id');
-    }
-
     public function pelamar()
+
     {
         return $this->hasOne(Pelamar::class, 'user_id', 'id');
     }
@@ -80,50 +75,23 @@ class User extends Authenticatable
         return $this->hasMany(Notifikasi::class, 'user_id', 'id');
     }
 
-    public function getFinanceAttribute()
+    public function reports()
     {
-        $financeRecord = null;
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('finances')) {
-                $financeRecord = \Illuminate\Support\Facades\DB::table('finances')->where('user_id', $this->id)->first();
-            }
-        } catch (\Throwable $e) {
-            Log::warning("Gagal memuat record finance untuk user {$this->id}: " . $e->getMessage());
-        }
+        return $this->hasMany(Report::class, 'reporter_user_id');
+    }
 
-        $provinsi_id   = $financeRecord->provinsi_id ?? null;
-        $kota_id       = $financeRecord->kota_id ?? null;
-        $kecamatan_id  = $financeRecord->kecamatan_id ?? null;
-        $desa          = $financeRecord->desa ?? null;
-        $kode_pos      = $financeRecord->kode_pos ?? null;
-        $detail_alamat = $financeRecord->detail_alamat ?? null;
-        $img_profile   = $financeRecord->img_profile ?? $this->avatar ?? null;
-        $nama_lengkap  = $financeRecord->nama_lengkap ?? $this->nama_lengkap ?? $this->username;
+    public function bantuanChat()
+    {
+        return $this->hasOne(BantuanChat::class, 'user_id', 'id');
+    }
 
-        $provinsi  = $provinsi_id ? WilayahService::findProvince($provinsi_id) : null;
-        $kota      = $kota_id ? WilayahService::findRegency($kota_id) : null;
-        $kecamatan = $kecamatan_id ? WilayahService::findDistrict($kecamatan_id) : null;
-
-        return (object)[
-            'id'            => $this->id,
-            'img_profile'   => $img_profile,
-            'nama'          => $nama_lengkap,
-            'nama_lengkap'  => $nama_lengkap,
-            'email'         => $this->email,
-            'telepon'       => $this->telepon ?? '',
-            'provinsi_id'   => $provinsi_id,
-            'kota_id'       => $kota_id,
-            'kecamatan_id'  => $kecamatan_id,
-            'provinsi'      => $provinsi,
-            'kota'          => $kota,
-            'kecamatan'     => $kecamatan,
-            'desa'          => $desa,
-            'kode_pos'      => $kode_pos,
-            'detail_alamat' => $detail_alamat,
-        ];
+    public function bantuanMessages()
+    {
+        return $this->hasMany(BantuanMessage::class, 'sender_id', 'id');
     }
 
     public function getAdminAttribute()
+
     {
         $adminRecord = null;
         try {

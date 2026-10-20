@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SiteSetting;
 use App\Services\SiteSettingService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class SocialLinkController extends Controller
 {
     /**
-     * Display social links and banner header management.
+     * Display social links and banner header management (Super Admin).
      */
     public function index()
     {
@@ -22,11 +24,33 @@ class SocialLinkController extends Controller
     }
 
     /**
-     * Alias for headerImageIndex to match named routes.
+     * Display social links and banner header management (Admin).
+     */
+    public function indexAdmin()
+    {
+        $socials = SiteSettingService::getSocials();
+        $headers = SiteSettingService::getHeaders();
+
+        return view('admin.social.banner', [
+            'socials' => $socials,
+            'headers' => $headers,
+        ]);
+    }
+
+    /**
+     * Alias for headerImageIndex to match named routes (Super Admin).
      */
     public function headerImageIndex()
     {
         return $this->index();
+    }
+
+    /**
+     * Alias for headerImageIndexAdmin to match named routes (Admin).
+     */
+    public function headerImageIndexAdmin()
+    {
+        return $this->indexAdmin();
     }
 
     /**
@@ -44,7 +68,51 @@ class SocialLinkController extends Controller
         $links = $request->input('links', []);
         SiteSettingService::updateSocials($links);
 
-        return back()->with('success', 'Berhasil memperbarui tautan media sosial.');
+        $socialMap = [
+            1 => 'social_facebook',
+            2 => 'social_youtube',
+            3 => 'social_instagram',
+            4 => 'social_linkedin',
+            5 => 'social_twitter',
+        ];
+
+        foreach ($links as $id => $link) {
+            if (isset($socialMap[$id])) {
+                SiteSetting::set($socialMap[$id], $link);
+            }
+        }
+
+        return back()->with('success', 'Tautan media sosial berhasil disimpan.');
+    }
+
+    /**
+     * Update full social config (nama + icon + link) — supports add/delete/reorder.
+     */
+    public function updateConfig(Request $request)
+    {
+        $request->validate([
+            'socials'          => 'required|array|min:1',
+            'socials.*.nama'   => 'required|string|max:50',
+            'socials.*.icon'   => 'required|string|max:100',
+            'socials.*.link'   => 'nullable|url|max:500',
+        ], [
+            'socials.*.nama.required' => 'Nama platform sosial media wajib diisi.',
+            'socials.*.icon.required' => 'Ikon platform wajib dipilih.',
+            'socials.*.link.url'      => 'Format URL tidak valid.',
+        ]);
+
+        SiteSettingService::updateSocialsConfig($request->input('socials', []));
+
+        return back()->with('success', 'Pengaturan sosial media berhasil disimpan.');
+    }
+
+    /**
+     * Reset social config back to defaults.
+     */
+    public function resetConfig(Request $request)
+    {
+        SiteSettingService::resetSocialsConfig();
+        return back()->with('success', 'Sosial media dikembalikan ke pengaturan bawaan.');
     }
 
     /**
@@ -61,10 +129,17 @@ class SocialLinkController extends Controller
             'image.max'      => 'Ukuran gambar maksimal adalah 5MB.',
         ]);
 
-        try {
-            SiteSettingService::updateHeader($nama, $request->file('image'));
+        $validNames = array_keys(SiteSettingService::getDefaultHeaders());
 
-            return back()->with('success', 'Banner Image Header berhasil diperbarui!');
+        if (!in_array($nama, $validNames)) {
+            return back()->withErrors(['error' => 'Jenis header tidak valid.']);
+        }
+
+        try {
+            $path = SiteSettingService::updateHeader($nama, $request->file('image'));
+            SiteSetting::set($nama, $path);
+
+            return back()->with('success', 'Banner image header berhasil diperbarui!');
         } catch (\Throwable $e) {
             return back()->with('error', 'Gagal mengunggah banner: ' . $e->getMessage());
         }
@@ -77,8 +152,9 @@ class SocialLinkController extends Controller
     {
         try {
             SiteSettingService::deleteHeader($nama);
+            SiteSetting::set($nama, null);
 
-            return back()->with('success', 'Banner Image Header berhasil dikembalikan ke default.');
+            return back()->with('success', 'Banner image header berhasil direset ke default.');
         } catch (\Throwable $e) {
             return back()->with('error', 'Gagal mereset banner: ' . $e->getMessage());
         }

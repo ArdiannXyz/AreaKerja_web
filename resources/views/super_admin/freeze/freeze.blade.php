@@ -3,11 +3,13 @@
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-xl font-semibold text-slate-800 tracking-tight">Akun Freeze</h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">
+                    <h1 class="text-base sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-snowflake text-white/80 text-lg sm:text-2xl"></i> Akun Freeze
+                    </h1>
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">
                         Kelola dan pantau status akun yang dibekukan atau dibanned
                     </p>
                 </div>
@@ -74,7 +76,7 @@
                             <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
                             <input type="text" name="search" x-model="query"
                                 @focus="open = true"
-                                @input="open = true"
+                                @input="open = true; filterFreezeTable($event.target.value)"
                                 autocomplete="off"
                                 placeholder="Cari username, role, wilayah..."
                                 class="flex-1 px-2.5 py-2 text-xs sm:text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
@@ -83,13 +85,12 @@
                             <!-- Clear Button -->
                             <template x-if="query.length > 0">
                                 <a href="{{ route('superadmin.freeze') }}"
-                                   @click.prevent="query = ''; open = false; window.location.href = '{{ route('superadmin.freeze') }}';"
+                                   @click.prevent="query = ''; open = false; filterFreezeTable(''); window.location.href = '{{ route('superadmin.freeze') }}';"
                                    class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
                                    title="Hapus pencarian">
                                     <i class="ph ph-x text-[10px] font-bold"></i>
                                 </a>
                             </template>
-
                             <button type="submit" class="hidden"></button>
                         </div>
                     </form>
@@ -158,9 +159,6 @@
                                 } elseif ($d->role == 'perusahaan') {
                                     $perusahaanObj = $d->perusahaan;
                                     $provinsi = is_object($perusahaanObj) ? ($perusahaanObj->provinsi ?? $perusahaanObj->kota ?? '-') : '-';
-                                } elseif ($d->role == 'finance') {
-                                    $finObj = $d->finance;
-                                    $provinsi = is_object($finObj) ? (is_object($finObj->provinsi ?? null) ? ($finObj->provinsi->nama ?? '-') : ($finObj->provinsi ?? '-')) : '-';
                                 } elseif ($d->role == 'admin') {
                                     $admObj = $d->admin;
                                     $provinsi = is_object($admObj) ? (is_object($admObj->provinsi ?? null) ? ($admObj->provinsi->nama ?? '-') : ($admObj->provinsi ?? '-')) : '-';
@@ -169,16 +167,15 @@
                                     $provinsi = is_object($saObj) ? (is_object($saObj->provinsi ?? null) ? ($saObj->provinsi->nama ?? '-') : ($saObj->provinsi ?? '-')) : '-';
                                 }
                             @endphp
-                            <tr class="hover:bg-slate-50/60 transition duration-150">
+                            <tr class="freeze-row hover:bg-slate-50/60 transition duration-150">
                                 <td class="px-3.5 py-3 text-center text-slate-400 text-xs font-medium">{{ $i + 1 }}</td>
                                 <td class="px-3.5 py-3 font-medium text-slate-800">{{ $d->username }}</td>
                                 <td class="px-3.5 py-3 text-slate-600 text-xs">{{ $d->email }}</td>
                                 <td class="px-3.5 py-3">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-lg text-xs font-semibold
                                         {{ in_array($d->role, ['superadmin', 'super_admin']) ? 'bg-purple-100 text-purple-700' : 
-                                           ($d->role === 'finance' ? 'bg-amber-100 text-amber-700' : 
-                                           ($d->role === 'perusahaan' ? 'bg-emerald-100 text-emerald-700' : 
-                                           ($d->role === 'pelamar' ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-700'))) }}">
+                                            ($d->role === 'perusahaan' ? 'bg-emerald-100 text-emerald-700' : 
+                                            ($d->role === 'pelamar' ? 'bg-sky-100 text-sky-700' : 'bg-slate-100 text-slate-700')) }}">
                                         {{ ucfirst($d->role) }}
                                     </span>
                                 </td>
@@ -228,4 +225,15 @@
         @include('super_admin.notif.modal_notif')
         @include('super_admin.notif.modal_semua')
     </main>
+
+    <script>
+        function filterFreezeTable(val) {
+            const q = (val || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('tr.freeze-row');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = (!q || text.includes(q)) ? '' : 'none';
+            });
+        }
+    </script>
 @endsection

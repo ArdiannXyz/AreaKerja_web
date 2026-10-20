@@ -29,8 +29,8 @@
         <div class="max-h-[240px] sm:max-h-[380px] overflow-y-auto divide-y divide-gray-100">
             @forelse($global_notifikasis as $notif)
                 <div data-id="{{ $notif->id }}"
-                    onclick="markAsRead('{{ route('notifikasi.baca', $notif->id) }}', this)"
-                    class="notif-item cursor-pointer flex items-start justify-between gap-2.5 p-3.5 hover:bg-blue-50/50 transition duration-150 {{ $notif->is_read ? 'bg-gray-50/80 text-gray-600' : 'bg-white font-medium text-gray-900' }}">
+                    onclick="handleNotifClick('{{ route('notifikasi.baca', $notif->id) }}', '{{ $notif->url ?? '' }}', this)"
+                    class="notif-item group cursor-pointer flex items-start justify-between gap-2.5 p-3.5 hover:bg-blue-50/50 transition duration-150 {{ $notif->is_read ? 'bg-gray-50/80 text-gray-600' : 'bg-white font-medium text-gray-900' }}">
 
                     <!-- Logo perusahaan -->
                     @if ($notif->perusahaan && $notif->perusahaan->img_profile)
@@ -43,10 +43,17 @@
                     <!-- Pesan -->
                     <div class="flex-1 min-w-0">
                         <p class="text-xs sm:text-[13px] break-words leading-relaxed text-gray-800">{!! $notif->pesan !!}</p>
-                        <p class="text-[11px] text-gray-400 mt-1 flex items-center gap-1">
-                            <i class="ph ph-clock text-[11px]"></i>
-                            {{ $notif->created_at->diffForHumans() }}
-                        </p>
+                        <div class="flex items-center justify-between gap-2 mt-1">
+                            <p class="text-[11px] text-gray-400 flex items-center gap-1">
+                                <i class="ph ph-clock text-[11px]"></i>
+                                {{ $notif->created_at->diffForHumans() }}
+                            </p>
+                            @if ($notif->url)
+                                <span class="text-[11px] text-[#00509d] font-semibold flex items-center gap-0.5 group-hover:underline">
+                                    Buka <i class="ph ph-arrow-right text-[10px]"></i>
+                                </span>
+                            @endif
+                        </div>
                     </div>
 
                     <!-- Tombol Hapus Cepat (Instant delete tanpa popup raksasa) -->

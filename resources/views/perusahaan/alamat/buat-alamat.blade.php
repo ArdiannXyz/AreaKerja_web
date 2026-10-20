@@ -1,8 +1,30 @@
-﻿@extends('layouts.index-perusahaan')
+@extends('layouts.index-perusahaan')
 @section('content')
     <div class="bg-white min-h-screen p-4 sm:p-10 mt-20">
         <h2 class="text-xl font-semibold text-gray-800">Alamat Perusahaan</h2>
         <hr class="border-t-2 border-[#00509d] mt-1 mb-6" />
+        <!-- Alerts -->
+        @if (session('success'))
+            <div class="p-3 my-4 bg-green-100 text-green-700 rounded-md text-sm">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="p-3 my-4 bg-red-100 text-red-700 rounded-md text-sm">
+                {{ session('error') }}
+            </div>
+        @endif
+
+        @if (isset($errors) && $errors->any())
+            <div class="p-3 my-4 bg-red-100 text-red-700 rounded-md text-sm">
+                <ul class="list-disc list-inside">
+                    @foreach ($errors->all() as $err)
+                        <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
 
         <form action="{{ route('alamat.store.perusahaan') }}" method="POST" class="px-0 sm:px-12 space-y-5 w-full max-w-4xl">
             @csrf
@@ -10,7 +32,7 @@
             <!-- Nama Alamat -->
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Nama Alamat</label>
-                <input type="text" name="label"
+                <input type="text" name="label" value="{{ old('label') }}"
                     class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
                     placeholder="Contoh: Kantor Pusat">
             </div>
@@ -18,55 +40,49 @@
             <!-- Kode Pos -->
             <div>
                 <label class="block text-sm font-medium text-gray-800 mb-1">Kode Pos</label>
-                <input type="text" name="kode_pos"
+                <input type="text" name="kode_pos" value="{{ old('kode_pos') }}"
                     class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
                     placeholder="Kode Pos">
             </div>
 
             <!-- Desa -->
             <div>
-                <label class="block text-sm font-medium text-gray-800 mb-1">Desa</label>
-                <input type="text" name="desa"
+                <label class="block text-sm font-medium text-gray-800 mb-1">Desa / Kelurahan</label>
+                <input type="text" name="desa" value="{{ old('desa') }}"
                     class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
                     placeholder="Nama Desa">
             </div>
 
             <!-- Provinsi -->
             <div>
-                <label class="block text-sm font-medium text-gray-800 mb-1">Provinsi</label>
-                <select name="provinsi_id" id="provinsi"
+                <label class="block text-sm font-medium text-gray-800 mb-1">Provinsi <span class="text-red-500">*</span></label>
+                <select name="provinsi" id="provinsi" required
                     class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Pilih Provinsi</option>
                     @foreach ($provinsis as $provinsi)
-                        <option value="{{ $provinsi->id }}">{{ $provinsi->nama }}</option>
+                        <option value="{{ $provinsi->nama }}" {{ old('provinsi') == $provinsi->nama ? 'selected' : '' }}>{{ $provinsi->nama }}</option>
                     @endforeach
                 </select>
             </div>
 
             <!-- Kota -->
             <div>
-                <label class="block text-sm font-medium text-gray-800 mb-1">Kota</label>
-                <select name="kota_id" id="kota"
+                <label class="block text-sm font-medium text-gray-800 mb-1">Kota / Kabupaten <span class="text-red-500">*</span></label>
+                <select name="kota" id="kota" required
                     class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]">
                     <option value="">Pilih Kota</option>
-                </select>
-            </div>
-
-            <!-- Kecamatan -->
-            <div>
-                <label class="block text-sm font-medium text-gray-800 mb-1">Kecamatan</label>
-                <select name="kecamatan_id" id="kecamatan"
-                    class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]">
-                    <option value="">Pilih Kecamatan</option>
+                    @if (old('kota'))
+                        <option value="{{ old('kota') }}" selected>{{ old('kota') }}</option>
+                    @endif
                 </select>
             </div>
 
             <!-- Detail -->
             <div>
-                <label class="block text-sm font-medium text-gray-800 mb-1">Detail Alamat</label>
-                <textarea name="detail" rows="4"
+                <label class="block text-sm font-medium text-gray-800 mb-1">Detail Alamat Lengkap <span class="text-red-500">*</span></label>
+                <textarea name="detail" rows="4" required
                     class="w-full border border-[#00509d] rounded-md px-4 py-3 focus:ring-1 focus:ring-[#00509d]"
-                    placeholder="Detail Alamat"></textarea>
+                    placeholder="Detail Alamat Lengkap">{{ old('detail') }}</textarea>
             </div>
 
             <!-- Tombol -->
@@ -83,41 +99,35 @@
         document.addEventListener('DOMContentLoaded', function() {
             const provinsiSelect = document.getElementById('provinsi');
             const kotaSelect = document.getElementById('kota');
-            const kecamatanSelect = document.getElementById('kecamatan');
 
-            provinsiSelect.addEventListener('change', function() {
-                const provinsiId = this.value;
+            function loadKota(provinsiId, selectedKota = null) {
+                if (!provinsiId) {
+                    kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
+                    return;
+                }
                 kotaSelect.innerHTML = '<option value="">Memuat...</option>';
-                kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-
-                console.time('loadKota'); // mulai ukur waktu
-                fetch(`/get-kota/${provinsiId}`)
+                fetch(`/get-kota/${encodeURIComponent(provinsiId)}`)
                     .then(res => res.json())
                     .then(data => {
-                        console.timeEnd('loadKota'); // tampilkan waktu di console
                         kotaSelect.innerHTML = '<option value="">Pilih Kota</option>';
                         data.forEach(kota => {
+                            const isSelected = selectedKota && selectedKota.toLowerCase() === kota.nama.toLowerCase();
                             kotaSelect.innerHTML +=
-                                `<option value="${kota.id}">${kota.nama}</option>`;
+                                `<option value="${kota.nama}" ${isSelected ? 'selected' : ''}>${kota.nama}</option>`;
                         });
+                    })
+                    .catch(() => {
+                        kotaSelect.innerHTML = '<option value="">Gagal memuat kota</option>';
                     });
+            }
+
+            provinsiSelect.addEventListener('change', function() {
+                loadKota(this.value);
             });
 
-
-            kotaSelect.addEventListener('change', function() {
-                const kotaId = this.value;
-                kecamatanSelect.innerHTML = '<option value="">Memuat...</option>';
-
-                fetch(`/get-kecamatan/${kotaId}`)
-                    .then(res => res.json())
-                    .then(data => {
-                        kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-                        data.forEach(kec => {
-                            kecamatanSelect.innerHTML +=
-                                `<option value="${kec.id}">${kec.nama}</option>`;
-                        });
-                    });
-            });
+            @if(old('provinsi'))
+                loadKota("{{ old('provinsi') }}", "{{ old('kota') }}");
+            @endif
         });
     </script>
 

@@ -38,7 +38,7 @@
                         @if (Auth::user()->perusahaan->img_profile)
                             <img src="{{ asset('storage/' . Auth::user()->perusahaan->img_profile) }}" alt="Logo" class="w-full h-full object-cover rounded-xl">
                         @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username) }}&background=f97316&color=fff&size=128" alt="Logo" class="w-full h-full object-cover rounded-xl">
+                            <img src="https://ui-avatars.com/api/?name={{ urlencode(Auth::user()->perusahaan->nama_perusahaan ?? Auth::user()->username) }}&background=00509d&color=fff&size=128" alt="Logo" class="w-full h-full object-cover rounded-xl">
                         @endif
                     </div>
                     <div>

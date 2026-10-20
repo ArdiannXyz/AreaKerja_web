@@ -4,12 +4,12 @@
     <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header Topbar -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 bg-[#00509d] text-white p-4 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div>
-                <h1 class="text-lg sm:text-xl font-semibold text-slate-800 tracking-tight">
-                    Pengaturan Akun
+                <h1 class="text-lg sm:text-xl font-semibold text-white tracking-tight flex items-center gap-2">
+                    <i class="ph ph-gear text-white/80 text-lg sm:text-2xl"></i> Pengaturan Akun
                 </h1>
-                <p class="text-xs text-slate-400 mt-0.5">Kelola keamanan kredensial dan kata sandi akun Super Admin</p>
+                <p class="text-xs text-blue-100 mt-0.5">Kelola keamanan kredensial dan kata sandi akun Super Admin</p>
             </div>
 
             <div class="flex items-center gap-3 w-full sm:w-auto justify-end">

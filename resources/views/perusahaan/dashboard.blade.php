@@ -207,15 +207,6 @@
                 <div class="divide-y divide-slate-100">
                     @foreach ($lowongans as $lowongan)
                         @if ($lowongan->published_at)
-                            @php
-                                $paket = strtolower($lowongan->paket->nama ?? '');
-                                $paketStyle = match ($paket) {
-                                    'gold'   => 'bg-yellow-50 text-yellow-700 border-yellow-300',
-                                    'silver' => 'bg-slate-50 text-slate-600 border-slate-300',
-                                    'bronze' => 'bg-amber-50 text-amber-700 border-amber-300',
-                                    default  => 'bg-slate-50 text-slate-500 border-slate-200',
-                                };
-                            @endphp
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-6 py-4 hover:bg-slate-50 transition">
                                 <div class="flex items-center gap-4">
                                     <img src="{{ asset('storage/' . $lowongan->perusahaan->img_profile) }}"
@@ -232,8 +223,8 @@
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-2 ml-15 sm:ml-0">
-                                    <span class="text-xs px-2.5 py-1 rounded-lg border font-medium {{ $paketStyle }}">
-                                        {{ ucfirst($lowongan->paket->nama ?? '-') }}
+                                    <span class="text-xs px-2.5 py-1 rounded-lg border font-medium bg-slate-100 text-slate-500 border-slate-200">
+                                        Lowongan
                                     </span>
                                     <a href="{{ route('perusahaan.pelamar', $lowongan->slug) }}"
                                         class="bg-[#00509d] hover:bg-[#003d7a] text-white text-xs px-4 py-2 rounded-xl font-semibold transition whitespace-nowrap">

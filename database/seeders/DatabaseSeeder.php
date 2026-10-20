@@ -7,11 +7,11 @@ use Illuminate\Database\Seeder;
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database with clean 12 tables data.
+     * Seed the application's database.
+     * Includes: SuperAdmin, Admin, Finance, Perusahaan, Pelamar, Kandidat, dan TipsKerja.
      */
     public function run(): void
     {
         $this->call(UserTestSeeder::class);
-        $this->call(EventDummySeeder::class);
     }
 }

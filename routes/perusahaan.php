@@ -7,6 +7,7 @@ use App\Http\Controllers\LowonganPerusahaanController;
 use App\Http\Controllers\PelamarController;
 use App\Http\Controllers\PembeliKandidatController;
 use App\Http\Controllers\PerusahaanController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\TalentHunterController;
 use Illuminate\Support\Facades\Route;
 
@@ -38,6 +39,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
 
         Route::get('/alamat', 'alamat_perusahaan')->name('alamat.perusahaan');
         Route::get('/form/alamat', 'form_alamat')->name('form.alamat.perusahaan');
+        Route::get('/create/alamat', 'form_alamat')->name('alamat.create.perusahaan');
         Route::post('/alamat-perusahaan/{id}/utama', 'setUtama')->name('alamat-perusahaan.setUtama');
         Route::post('/create/alamat', 'store_alamat')->name('alamat.store.perusahaan');
         Route::get('/edit/alamat/{id}', 'edit_alamat')->name('alamat.edit.perusahaan');
@@ -45,6 +47,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
         Route::delete('/delete/alamat/{id}', 'destroy_alamat')->name('alamat.destroy.perusahaan');
 
         Route::get('pelamar/{lowongan:slug}', 'pelamar')->name('perusahaan.pelamar');
+        Route::post('/pelamar/{pelamar}/report', [ReportController::class, 'storePelamar'])->name('perusahaan.pelamar.report');
         Route::get('/pengaturan', 'pengaturanForm')->name('perusahaan.pengaturan');
         Route::get('/kandidat/ak', 'kandidat_ak')->name('perusahaan.kandidat.ak');
         Route::get('/event', 'event')->name('perusahaan.event.index');
@@ -56,6 +59,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
             Route::get('/iklan', 'index')->name('perusahaan.iklan.index');
             Route::get('/iklan/pasang', 'create')->name('perusahaan.iklan.create');
             Route::post('/iklan/pasang', 'store')->name('perusahaan.iklan.store');
+            Route::post('/iklan/{id}/perpanjang', 'perpanjang')->name('perusahaan.iklan.perpanjang');
         });
 
         Route::get('/recruitment/kandidat-saya', 'kandidatSaya')->name('perusahaan.kandidat.saya');
@@ -81,13 +85,16 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
     Route::controller(CatatanCashController::class)->middleware('perusahaan.verified')->group(function () {
         Route::post('/topup/store', 'store')->name('catatan_cash.store');
         Route::get('/topup/{id}', 'show')->name('catatan_cash.show');
+        Route::get('/topup/{id}/bayar', 'payNow')->name('catatan_cash.pay_now');
+        Route::get('/topup/{id}/status', 'checkStatus')->name('catatan_cash.status');
+        Route::get('/transaksi/{id}', 'show')->name('perusahaan.transaksi');
         Route::post('/topup/{id}/upload-bukti', 'uploadBukti')->name('catatan_cash.upload_bukti');
     });
+
 
     // LOWONGAN CONTROLLER
     Route::controller(LowonganPerusahaanController::class)->group(function () {
         Route::get('/lowongan', 'index')->name('lowongan.saya.perusahaan');
-        Route::get('/paket/form', 'paketform')->name('paket.form');
     });
 
     // LOWONGAN CONTROLLER (VERIFIED ONLY)
@@ -98,7 +105,6 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
         Route::put('/update/lowongan/{lowongan:id}', 'update')->name('lowongan.update');
         Route::delete('/lowongan/{lowongan:id}', 'destroy')->name('lowongan.destroy');
         Route::put('/lowongan/{id}/toggle-status', 'toggleStatus')->name('lowongan.toggleStatus');
-        Route::post('/paket/beli', 'beliPaket')->name('paket.beli');
         Route::post('/lowongan/{lowongan}/publish', 'publish')->name('lowongan.publish');
         Route::post('/boost-lowongan', 'boost')->name('boost.lowongan');
     });
@@ -115,6 +121,7 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
     // PEMBELI KANDIDAT CONTROLLER (VERIFIED ONLY)
     Route::controller(PembeliKandidatController::class)->middleware('perusahaan.verified')->group(function () {
         Route::post('/kandidat/beli', 'beli')->name('kandidat.beli');
+        Route::post('/kandidat/{id}/beli-cv', 'beliCv')->name('perusahaan.kandidat.beli-cv');
     });
 
     // TALENT HUNTER CONTROLLER
@@ -132,8 +139,8 @@ Route::prefix('perusahaan')->middleware('auth', 'role:perusahaan', 'CheckUserSta
 
 // UMUM / AUTH PERUSAHAAN
 Route::controller(PerusahaanController::class)->group(function () {
-    Route::get('/get-kota/{provinsi_id}', 'getKota')->name('get.kota')->middleware('auth');
-    Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('get.kecamatan')->middleware('auth');
+    Route::get('/get-kota/{provinsi_id}', 'getKota')->name('get.kota');
+    Route::get('/get-kecamatan/{kota_id}', 'getKecamatan')->name('get.kecamatan');
 });
 
 Route::controller(AuthController::class)->middleware('auth')->group(function () {

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\SiteSetting;
 use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -121,6 +122,103 @@ class Perusahaan extends Model
     public function isApproved()
     {
         return $this->verification_status === 'approved';
+    }
+
+    public function isVip(): bool
+    {
+        return (int) $this->is_berlangganan === 1 
+            && !is_null($this->tanggal_expired) 
+            && \Carbon\Carbon::now()->lt($this->tanggal_expired);
+    }
+
+    /**
+     * Daftar opsi paket berlangganan VIP (1, 3, 6, 12 bulan)
+     */
+    public static function getPaketLanggananList(): array
+    {
+        return [
+            '1_bulan' => [
+                'id'           => '1_bulan',
+                'durasi_bulan' => 1,
+                'nama'         => '1 Bulan',
+                'judul'        => 'VIP 1 Bulan',
+                'badge'        => 'Starter VIP',
+                'badge_color'  => 'bg-slate-100 text-slate-700 border-slate-200',
+                'harga'        => (int) SiteSetting::get('harga_koin_berlangganan_1_bulan', 150),
+                'deskripsi'    => 'Uji coba penuh fitur VIP untuk kebutuhan rekrutmen cepat atau jangka pendek.',
+                'popular'      => false,
+            ],
+            '3_bulan' => [
+                'id'           => '3_bulan',
+                'durasi_bulan' => 3,
+                'nama'         => '3 Bulan',
+                'judul'        => 'VIP 3 Bulan',
+                'badge'        => 'Kuartalan',
+                'badge_color'  => 'bg-blue-50 text-[#00509d] border-blue-200',
+                'harga'        => (int) SiteSetting::get('harga_koin_berlangganan_3_bulan', 350),
+                'deskripsi'    => 'Pilihan ideal untuk siklus perekrutan kuartalan dengan tarif koin lebih hemat.',
+                'popular'      => false,
+            ],
+            '6_bulan' => [
+                'id'           => '6_bulan',
+                'durasi_bulan' => 6,
+                'nama'         => '6 Bulan',
+                'judul'        => 'VIP 6 Bulan',
+                'badge'        => 'Semi-Annual',
+                'badge_color'  => 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                'harga'        => (int) SiteSetting::get('harga_koin_berlangganan_6_bulan', 600),
+                'deskripsi'    => 'Solusi rekrutmen konsisten untuk perusahaan yang sedang aktif bertumbuh.',
+                'popular'      => false,
+            ],
+            '12_bulan' => [
+                'id'           => '12_bulan',
+                'durasi_bulan' => 12,
+                'nama'         => '12 Bulan (1 Tahun)',
+                'judul'        => 'VIP 12 Bulan (1 Tahun)',
+                'badge'        => 'Paling Hemat',
+                'badge_color'  => 'bg-amber-100 text-amber-800 border-amber-300',
+                'harga'        => (int) SiteSetting::get('harga_koin_berlangganan_12_bulan', SiteSetting::get('harga_koin_berlangganan', 1000)),
+                'deskripsi'    => 'Akses VIP tanpa batas selama setahun penuh dengan penghematan koin maksimal.',
+                'popular'      => true,
+            ],
+        ];
+    }
+
+    /**
+     * Dapatkan detail paket berlangganan berdasarkan key/durasi
+     */
+    public static function getPaketLangganan(?string $key = null): ?array
+    {
+        $list = self::getPaketLanggananList();
+        if (!$key) {
+            return $list['12_bulan'] ?? reset($list);
+        }
+
+        if (isset($list[$key])) {
+            return $list[$key];
+        }
+
+        if (isset($list[$key . '_bulan'])) {
+            return $list[$key . '_bulan'];
+        }
+
+        return null;
+    }
+
+    public function maxActiveLowongan(): int
+    {
+        return $this->isVip() ? 20 : 2;
+    }
+
+    public function activeLowonganCount(): int
+    {
+        return $this->pasanglowongan()
+            ->publik()
+            ->where('status', '!=', 'tutup')
+            ->where(function ($q) {
+                $q->whereNull('expired_at')->orWhere('expired_at', '>', now());
+            })
+            ->count();
     }
 
     public function getRouteKeyName()

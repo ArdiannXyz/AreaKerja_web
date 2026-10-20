@@ -1,17 +1,17 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
     <!-- Main Content -->
     <main class="flex-1 min-w-0 p-4 sm:p-6 sm:ml-64 bg-slate-50/70" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header Top Bar -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-xl font-bold text-slate-800 tracking-tight">
-                        Dashboard
+                    <h1 class="text-base sm:text-xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-squares-four text-white/80 text-lg sm:text-2xl"></i> Dashboard
                     </h1>
-                    <p class="text-[11px] sm:text-xs text-slate-400 mt-0.5">
-                        <span class="hidden sm:inline">Selamat datang kembali, </span><span class="text-[#00509d] font-semibold">{{ Auth::user()->username ?? 'Super Admin' }}</span> &mdash; {{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}
+                    <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">
+                        <span class="hidden sm:inline">Selamat datang kembali, </span><span class="text-white font-bold">{{ Auth::user()->username ?? 'Super Admin' }}</span> &mdash; {{ \Carbon\Carbon::now()->translatedFormat('d M Y') }}
                     </p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
@@ -54,7 +54,7 @@
                     <!-- CTA Buttons (Mobile App Style) -->
                     <div class="grid grid-cols-3 sm:flex sm:flex-wrap items-center gap-2 mt-4 sm:mt-5">
                         <a href="{{ route('superadmin.add.user') }}"
-                           class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 bg-white text-[#00509d] hover:bg-blue-50 font-bold text-[11px] sm:text-xs px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl transition duration-200 active:scale-95 text-center shadow-xs">
+                           class="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 bg-white/15 hover:bg-white/25 text-white font-medium text-[11px] sm:text-xs px-2.5 sm:px-4 py-2 sm:py-2.5 rounded-xl border border-white/20 transition duration-200 active:scale-95 text-center">
                             <i class="ph ph-user-plus text-base sm:text-sm"></i>
                             <span>Tambah Akun</span>
                         </a>

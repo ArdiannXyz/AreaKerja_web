@@ -2,11 +2,13 @@
 @section('sidebarsuperadmin')
     <main class="flex-1 p-6 sm:ml-64 bg-gray-50 overflow-y-auto" x-data="{ openNotif: false }">
         <!-- Topbar Header -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-100 shadow-sm">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-base sm:text-2xl font-bold text-gray-900 tracking-tight">Link & Image Header</h1>
-                    <p class="text-xs sm:text-sm text-gray-500 mt-1">Kelola tautan media sosial resmi dan banner header halaman publik AreaKerja</p>
+                    <h1 class="text-base sm:text-2xl font-bold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-link text-white/80 text-xl sm:text-2xl"></i> Link & Image Header
+                    </h1>
+                    <p class="text-xs sm:text-sm text-white/90 mt-1">Kelola tautan media sosial resmi dan banner header halaman publik AreaKerja</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')
@@ -50,79 +52,125 @@
         @endif
 
         <div class="space-y-8">
-            <!-- Card 1: Media Sosial -->
-            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div class="p-6 border-b border-gray-100 flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center shrink-0">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
-                        </svg>
+            <!-- Card 1: Kelola Media Sosial -->
+            <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden" id="social-card">
+                <div class="p-5 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:items-center gap-3">
+                    <div class="flex items-center gap-3 flex-1">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-[#00509d] flex items-center justify-center shrink-0">
+                            <i class="ph ph-share-network text-xl"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base sm:text-lg font-bold text-gray-900">Kelola Sosial Media Footer</h2>
+                            <p class="text-xs text-gray-500 mt-0.5">Tambah, ubah, hapus, dan atur ikon sosial media yang tampil di footer situs</p>
+                        </div>
                     </div>
-                    <div>
-                        <h2 class="text-lg font-bold text-gray-900">Tautan Media Sosial</h2>
-                        <p class="text-xs text-gray-500">Tautan akun resmi yang akan ditampilkan pada footer situs dan aplikasi AreaKerja</p>
+                    {{-- Preview footer --}}
+                    <div class="flex items-center gap-2 shrink-0">
+                        @foreach($socials as $s)
+                            @if(!empty($s->link) && $s->link !== '#')
+                                <span class="w-8 h-8 rounded-lg bg-[#00509d] text-white flex items-center justify-center text-sm" title="{{ $s->nama }}">
+                                    <i class="{{ $s->icon ?? 'ph-fill ph-globe' }}"></i>
+                                </span>
+                            @endif
+                        @endforeach
                     </div>
                 </div>
 
-                <form action="{{ route('superadmin.social.update') }}" method="post" class="p-6">
+                <form action="{{ route('superadmin.social.config') }}" method="POST" id="social-form" class="p-5 sm:p-6">
                     @csrf
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mb-6">
-                        @foreach ($socials as $s)
-                            @php
-                                $lowerName = strtolower($s->nama);
-                                $bgColor = 'bg-gray-100 text-gray-600';
-                                $borderColor = 'border-gray-200';
-                                
-                                if (str_contains($lowerName, 'facebook')) {
-                                    $bgColor = 'bg-blue-50 text-blue-600';
-                                    $iconSvg = '<path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>';
-                                } elseif (str_contains($lowerName, 'youtube')) {
-                                    $bgColor = 'bg-red-50 text-red-600';
-                                    $iconSvg = '<path d="M22.54 6.42a2.78 2.78 0 00-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 00-1.94 2A29 29 0 001 11.75a29 29 0 00.46 5.33A2.78 2.78 0 003.4 19.1c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 001.94-2 29 29 0 00.46-5.25 29 29 0 00-.46-5.43z"/><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" fill="currentColor"/>';
-                                } elseif (str_contains($lowerName, 'instagram')) {
-                                    $bgColor = 'bg-pink-50 text-pink-600';
-                                    $iconSvg = '<rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>';
-                                } elseif (str_contains($lowerName, 'linkedin')) {
-                                    $bgColor = 'bg-sky-50 text-sky-700';
-                                    $iconSvg = '<path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/>';
-                                } else {
-                                    $bgColor = 'bg-slate-100 text-slate-800';
-                                    $iconSvg = '<path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>';
-                                }
-                            @endphp
 
-                            <div>
-                                <label class="block text-xs font-semibold text-gray-700 uppercase tracking-wider mb-2 flex items-center gap-2">
-                                    <span class="w-6 h-6 rounded-lg {{ $bgColor }} flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                            {!! $iconSvg !!}
-                                        </svg>
-                                    </span>
-                                    <span>{{ $s->nama }}</span>
-                                </label>
-
-                                <div class="relative">
-                                    <input type="url" 
-                                        name="links[{{ $s->id }}]"
-                                        value="{{ old('links.' . $s->id, $s->link) }}"
-                                        placeholder="https://{{ $lowerName }}.com/areakerja"
-                                        class="w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition-all">
+                    <div id="social-rows" class="space-y-3 mb-5">
+                        @foreach($socials as $idx => $s)
+                            <div class="social-row flex flex-col sm:flex-row items-start sm:items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                {{-- Icon Picker --}}
+                                <div class="relative shrink-0">
+                                    <button type="button"
+                                        onclick="openIconPicker(this)"
+                                        class="icon-pick-btn w-10 h-10 rounded-lg bg-[#00509d] text-white flex items-center justify-center hover:bg-[#003d7a] transition shrink-0"
+                                        title="Klik untuk ganti ikon">
+                                        <i class="{{ $s->icon ?? 'ph-fill ph-globe' }} text-lg"></i>
+                                    </button>
+                                    <input type="hidden" name="socials[{{ $idx }}][icon]" value="{{ $s->icon ?? 'ph-fill ph-globe' }}" class="icon-input">
                                 </div>
+
+                                {{-- Platform Name --}}
+                                <input type="text"
+                                    name="socials[{{ $idx }}][nama]"
+                                    value="{{ old("socials.$idx.nama", $s->nama) }}"
+                                    placeholder="Nama Platform"
+                                    required
+                                    class="w-full sm:w-36 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition-all">
+
+                                {{-- URL --}}
+                                <input type="url"
+                                    name="socials[{{ $idx }}][link]"
+                                    value="{{ old("socials.$idx.link", $s->link) }}"
+                                    placeholder="https://..."
+                                    class="flex-1 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition-all">
+
+                                {{-- Delete Row --}}
+                                <button type="button"
+                                    onclick="removeRow(this)"
+                                    class="shrink-0 w-8 h-8 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition"
+                                    title="Hapus">
+                                    <i class="ph ph-trash text-sm"></i>
+                                </button>
                             </div>
                         @endforeach
                     </div>
 
-                    <div class="pt-4 border-t border-gray-100 flex justify-end">
-                        <button type="submit"
+                    {{-- Add Row --}}
+                    <button type="button" onclick="addRow()"
+                        class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-[#00509d] text-[#00509d] hover:bg-blue-50 text-sm font-medium transition mb-5">
+                        <i class="ph ph-plus-circle text-base"></i>
+                        Tambah Sosial Media
+                    </button>
+
+                    <div class="pt-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-3">
+                        {{-- Reset to default --}}
+                        <form action="{{ route('superadmin.social.reset') }}" method="POST" onsubmit="return confirm('Reset semua ke bawaan?')">
+                            @csrf
+                            <button type="submit"
+                                class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-gray-200 bg-white hover:bg-gray-50 text-gray-500 text-sm font-medium transition">
+                                <i class="ph ph-arrow-counter-clockwise text-base"></i>
+                                Reset ke Bawaan
+                            </button>
+                        </form>
+
+                        <button type="submit" form="social-form"
                             class="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-[#00509d] hover:bg-[#003d7a] text-white font-semibold text-sm transition-all duration-200 shadow-sm hover:shadow">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                            </svg>
-                            <span>Simpan Tautan</span>
+                            <i class="ph ph-floppy-disk text-base"></i>
+                            Simpan Perubahan
                         </button>
                     </div>
                 </form>
+            </div>
+
+            {{-- Icon Picker Modal --}}
+            <div id="icon-picker-modal"
+                class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm hidden"
+                onclick="closeIconPicker(event)">
+                <div class="bg-white rounded-2xl shadow-xl p-5 w-80 max-w-[95vw]" onclick="event.stopPropagation()">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-sm font-bold text-gray-800">Pilih Ikon Platform</h3>
+                        <button onclick="closeIconPicker()" class="text-gray-400 hover:text-gray-600 transition">
+                            <i class="ph ph-x text-lg"></i>
+                        </button>
+                    </div>
+                    <div class="grid grid-cols-5 gap-2">
+                        @foreach(\App\Services\SiteSettingService::getAvailableIcons() as $iconClass => $iconLabel)
+                            <button type="button"
+                                onclick="selectIcon('{{ $iconClass }}')"
+                                title="{{ $iconLabel }}"
+                                class="icon-option-btn flex flex-col items-center gap-1 p-2 rounded-xl border border-gray-100 hover:border-[#00509d] hover:bg-blue-50 transition group">
+                                <span class="w-8 h-8 rounded-lg bg-gray-100 group-hover:bg-[#00509d] group-hover:text-white text-gray-600 flex items-center justify-center text-lg transition">
+                                    <i class="{{ $iconClass }}"></i>
+                                </span>
+                                <span class="text-[10px] text-gray-500 text-center leading-tight">{{ $iconLabel }}</span>
+                            </button>
+                        @endforeach
+                    </div>
+                </div>
             </div>
 
             <!-- Card 2: Image Header -->
@@ -377,6 +425,88 @@
                     if (form) form.submit();
                 }
             }
+        }
+    </script>
+
+    {{-- Social Media Management JS --}}
+    <script>
+        // ── Icon Picker ──────────────────────────────────────────────────
+        let _activeIconBtn = null;
+
+        function openIconPicker(btn) {
+            _activeIconBtn = btn;
+            document.getElementById('icon-picker-modal').classList.remove('hidden');
+        }
+
+        function closeIconPicker(e) {
+            document.getElementById('icon-picker-modal').classList.add('hidden');
+        }
+
+        function selectIcon(iconClass) {
+            if (!_activeIconBtn) return;
+            // Update button icon
+            const icon = _activeIconBtn.querySelector('i');
+            if (icon) { icon.className = iconClass + ' text-lg'; }
+            // Update hidden input
+            const row = _activeIconBtn.closest('.social-row');
+            if (row) {
+                const inp = row.querySelector('.icon-input');
+                if (inp) inp.value = iconClass;
+            }
+            closeIconPicker();
+        }
+
+        // ── Dynamic Rows ─────────────────────────────────────────────────
+        function addRow() {
+            const container = document.getElementById('social-rows');
+            const idx = container.querySelectorAll('.social-row').length;
+            const html = `
+                <div class="social-row flex flex-col sm:flex-row items-start sm:items-center gap-2 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="relative shrink-0">
+                        <button type="button"
+                            onclick="openIconPicker(this)"
+                            class="icon-pick-btn w-10 h-10 rounded-lg bg-[#00509d] text-white flex items-center justify-center hover:bg-[#003d7a] transition shrink-0"
+                            title="Klik untuk ganti ikon">
+                            <i class="ph-fill ph-globe text-lg"></i>
+                        </button>
+                        <input type="hidden" name="socials[${idx}][icon]" value="ph-fill ph-globe" class="icon-input">
+                    </div>
+                    <input type="text"
+                        name="socials[${idx}][nama]"
+                        placeholder="Nama Platform"
+                        required
+                        class="w-full sm:w-36 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition-all">
+                    <input type="url"
+                        name="socials[${idx}][link]"
+                        placeholder="https://..."
+                        class="flex-1 px-3 py-2 text-sm bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#00509d] focus:border-transparent transition-all">
+                    <button type="button"
+                        onclick="removeRow(this)"
+                        class="shrink-0 w-8 h-8 rounded-lg border border-red-200 bg-red-50 hover:bg-red-100 text-red-500 flex items-center justify-center transition"
+                        title="Hapus">
+                        <i class="ph ph-trash text-sm"></i>
+                    </button>
+                </div>`;
+            container.insertAdjacentHTML('beforeend', html);
+            reindexRows();
+        }
+
+        function removeRow(btn) {
+            const row = btn.closest('.social-row');
+            if (document.querySelectorAll('.social-row').length <= 1) {
+                alert('Minimal harus ada 1 sosial media.');
+                return;
+            }
+            row.remove();
+            reindexRows();
+        }
+
+        function reindexRows() {
+            document.querySelectorAll('.social-row').forEach((row, i) => {
+                row.querySelectorAll('[name]').forEach(el => {
+                    el.name = el.name.replace(/socials\[\d+\]/, `socials[${i}]`);
+                });
+            });
         }
     </script>
 @endsection

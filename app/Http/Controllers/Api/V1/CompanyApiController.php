@@ -297,6 +297,13 @@ class CompanyApiController extends Controller
 
         $job = $perusahaan->pasanglowongan()->where('id', $id)->firstOrFail();
 
+        if ($job->isDisembunyikan()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Lowongan ini sedang ditinjau moderator dan tidak dapat diubah statusnya.',
+            ], 403);
+        }
+
         if ($job->expired_at && $job->expired_at->isPast()) {
             // Re-activate for 30 days
             $job->update([

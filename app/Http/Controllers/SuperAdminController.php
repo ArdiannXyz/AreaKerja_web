@@ -7,7 +7,6 @@ use App\Models\Admin;
 use App\Models\CatatanCash;
 use App\Models\CatatanKoin;
 use App\Models\Divisi;
-use App\Models\Finance;
 use App\Models\Kecamatan;
 use App\Models\Kota;
 use App\Models\LowonganPerusahaan;
@@ -17,6 +16,7 @@ use App\Models\PelamarLowongan;
 use App\Models\PembeliKandidat;
 use App\Models\Perusahaan;
 use App\Models\Provinsi;
+use App\Models\SiteSetting;
 use App\Models\SuperAdmin;
 use App\Models\TalentHunter;
 use App\Models\User;
@@ -305,20 +305,10 @@ class SuperAdminController extends Controller
                             ->orWhereHas('kota', function ($ktq) use ($search) {
                                 $ktq->where('nama', 'like', "%{$search}%");
                             });
-                    })
-                    // Finance (wilayah)
-                    ->orWhereHas('finance', function ($fq) use ($search) {
-                        $fq->where('detail_alamat', 'like', "%{$search}%")
-                            ->orWhere('desa', 'like', "%{$search}%")
-                            ->orWhereHas('provinsi', function ($fprq) use ($search) {
-                                $fprq->where('nama', 'like', "%{$search}%");
-                            })
-                            ->orWhereHas('kota', function ($fktq) use ($search) {
-                                $fktq->where('nama', 'like', "%{$search}%");
-                            });
                     });
 
                 // Status
+
                 if (stripos($search, 'aktif') !== false) {
                     $q->orWhere('status', 0);
                 }
@@ -935,7 +925,7 @@ class SuperAdminController extends Controller
     //  CRUD ROLE
     public function role()
     {
-        $usersAdminFinance = User::whereIn('role', ['admin', 'finance'])
+        $usersAdminFinance = User::where('role', 'admin')
             ->get();
 
         $usersPerusahaanPelamar = User::whereIn('role', ['perusahaan', 'pelamar'])
@@ -974,13 +964,13 @@ class SuperAdminController extends Controller
             $rules = [
                 'email'        => 'required|email|unique:users',
                 'username'     => 'required|unique:users',
-                'role'         => 'required|in:admin,finance,perusahaan,pelamar',
+                'role'         => 'required|in:admin,perusahaan,pelamar',
                 'password'     => 'required|min:3',
                 'img_profile'  => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             ];
 
-            // Tambahan rules untuk admin / finance
-            if (in_array($request->role, ['admin', 'finance'])) {
+            // Tambahan rules untuk admin
+            if ($request->role === 'admin') {
                 $rules['nama_lengkap'] = 'required';
                 $rules['provinsi_id']  = 'nullable|exists:provinsis,id';
                 $rules['kota_id']      = 'nullable|exists:kotas,id';
@@ -989,6 +979,7 @@ class SuperAdminController extends Controller
                 $rules['kode_pos']     = 'nullable|string';
                 $rules['detail_alamat'] = 'nullable|string';
             }
+
 
             // Tambahan rules untuk perusahaan
             if ($request->role === 'perusahaan') {
@@ -1080,20 +1071,8 @@ class SuperAdminController extends Controller
                     ]);
                     break;
 
-                case 'finance':
-                    Finance::create([
-                        'user_id'       => $user->id,
-                        'nama_lengkap'  => $request->nama_lengkap,
-                        'provinsi_id'   => $request->provinsi_id,
-                        'kota_id'       => $request->kota_id,
-                        'kecamatan_id'  => $request->kecamatan_id,
-                        'kode_pos'      => $request->kode_pos,
-                        'detail_alamat' => $request->detail_alamat,
-                        'img_profile'   => $imgPath,
-                    ]);
-                    break;
-
                 case 'perusahaan':
+
                     Perusahaan::create([
                         'user_id'             => $user->id,
                         'nama_perusahaan'     => $request->nama_perusahaan,
@@ -1171,9 +1150,6 @@ class SuperAdminController extends Controller
             'admin.provinsi',
             'admin.kota',
             'admin.kecamatan',
-            'finance.provinsi',
-            'finance.kota',
-            'finance.kecamatan'
         ])->findOrFail($id);
         $provinsis = Provinsi::all();
         return view('super_admin.add.edit-addprofile', [
@@ -1217,12 +1193,12 @@ class SuperAdminController extends Controller
                     'required',
                     Rule::unique('users', 'username')->ignore($user->id),
                 ],
-                'role'        => 'required|in:admin,finance,perusahaan,pelamar',
+                'role'        => 'required|in:admin,perusahaan,pelamar',
                 'img_profile' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
             ];
 
 
-            if (in_array($request->role, ['admin', 'finance'])) {
+            if ($request->role === 'admin') {
                 $rules['nama_lengkap'] = 'required';
                 $rules['provinsi_id']   = 'nullable|exists:provinsis,id';
                 $rules['kota_id']       = 'nullable|exists:kotas,id';
@@ -1231,6 +1207,7 @@ class SuperAdminController extends Controller
                 $rules['kode_pos']      = 'nullable|string';
                 $rules['detail_alamat'] = 'nullable|string';
             }
+
 
             // Validasi role perusahaan
             if ($request->role === 'perusahaan') {
@@ -1297,13 +1274,6 @@ class SuperAdminController extends Controller
                         $user->admin()?->delete();
                         break;
 
-                    case 'finance':
-                        if ($user->finance && $user->finance->img_profile) {
-                            Storage::delete('public/' . $user->finance->img_profile);
-                        }
-                        $user->finance()?->delete();
-                        break;
-
                     case 'perusahaan':
                         if ($user->perusahaan && $user->perusahaan->img_profile) {
                             Storage::delete('public/' . $user->perusahaan->img_profile);
@@ -1323,11 +1293,11 @@ class SuperAdminController extends Controller
             // Ambil foto lama
             $imgPath = match ($newRole) {
                 'admin' => $user->admin->img_profile ?? null,
-                'finance' => $user->finance->img_profile ?? null,
                 'perusahaan' => $user->perusahaan->img_profile ?? null,
                 'pelamar' => $user->pelamar->img_profile ?? null,
                 default => null
             };
+
 
             // Upload foto baru
             if ($request->hasFile('img_profile')) {
@@ -1437,8 +1407,6 @@ class SuperAdminController extends Controller
         // Hapus gambar profil sesuai role
         if ($user->role === 'admin' && $user->admin?->img_profile) {
             Storage::delete('public/' . $user->admin->img_profile);
-        } elseif ($user->role === 'finance' && $user->finance?->img_profile) {
-            Storage::delete('public/' . $user->finance->img_profile);
         } elseif ($user->role === 'perusahaan' && $user->perusahaan?->img_profile) {
             Storage::delete('public/' . $user->perusahaan->img_profile);
         } elseif ($user->role === 'pelamar' && $user->pelamar?->img_profile) {
@@ -1448,13 +1416,12 @@ class SuperAdminController extends Controller
         // Hapus data terkait sesuai role
         if ($user->role === 'admin') {
             \App\Models\Admin::where('user_id', $user->id)->delete();
-        } elseif ($user->role === 'finance') {
-            \App\Models\Finance::where('user_id', $user->id)->delete();
         } elseif ($user->role === 'perusahaan' && $user->perusahaan) {
             $user->perusahaan->delete();
         } elseif ($user->role === 'pelamar' && $user->pelamar) {
             $user->pelamar->delete();
         }
+
 
         // Terakhir, hapus user utamanya
         $user->delete();
@@ -1601,13 +1568,7 @@ class SuperAdminController extends Controller
             ]);
         }
 
-        $koinList = collect([
-            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
-            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
-            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
-            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
-            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
-        ]);
+        $koinList = self::getFinanceKoinList();
 
         $pembayaranList = collect([
             (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
@@ -1732,7 +1693,8 @@ class SuperAdminController extends Controller
         ];
 
         // Render view
-        $html = View::make('finance.page-unduh-laporan-harian', $data)->render();
+        $html = View::make('super_admin.finance.page-unduh-laporan-harian', $data)->render();
+
 
         // Tambahkan HTML wrapper + Tailwind
         $htmlWithCss = '
@@ -1775,15 +1737,78 @@ class SuperAdminController extends Controller
     }
 
     //HARGA KOIN
+    public static function getFinanceKoinList()
+    {
+        return collect([
+            (object)[
+                'id' => 1,
+                'key' => 'harga_koin_buka_cv',
+                'nama' => 'Buka CV Pelamar',
+                'deskripsi' => 'Tarif per berkas CV kandidat yang dibuka dan diunduh oleh perusahaan',
+                'harga' => (int) SiteSetting::get('harga_koin_buka_cv', 5),
+            ],
+            (object)[
+                'id' => 2,
+                'key' => 'harga_koin_iklan_7_hari',
+                'nama' => 'Moderasi Iklan (Paket 7 Hari)',
+                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 7 hari (Silver)',
+                'harga' => (int) SiteSetting::get('harga_koin_iklan_7_hari', 300),
+            ],
+            (object)[
+                'id' => 3,
+                'key' => 'harga_koin_iklan_14_hari',
+                'nama' => 'Moderasi Iklan (Paket 14 Hari)',
+                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 14 hari (Gold)',
+                'harga' => (int) SiteSetting::get('harga_koin_iklan_14_hari', 550),
+            ],
+            (object)[
+                'id' => 4,
+                'key' => 'harga_koin_iklan_30_hari',
+                'nama' => 'Moderasi Iklan (Paket 30 Hari)',
+                'deskripsi' => 'Penayangan banner iklan promosi di homepage selama 30 hari (Platinum)',
+                'harga' => (int) SiteSetting::get('harga_koin_iklan_30_hari', 1000),
+            ],
+            (object)[
+                'id' => 5,
+                'key' => 'harga_koin_boost_lowongan',
+                'nama' => 'Boost Lowongan',
+                'deskripsi' => 'Mempromosikan lowongan agar selalu tampil di urutan teratas pencarian',
+                'harga' => (int) SiteSetting::get('harga_koin_boost_lowongan', 300),
+            ],
+            (object)[
+                'id' => 6,
+                'key' => 'harga_koin_berlangganan_1_bulan',
+                'nama' => 'Berlangganan VIP (1 Bulan)',
+                'deskripsi' => 'Akses kuota 20 lowongan aktif, auto booster, dan pelamar unlimited (1 bulan)',
+                'harga' => (int) SiteSetting::get('harga_koin_berlangganan_1_bulan', 150),
+            ],
+            (object)[
+                'id' => 7,
+                'key' => 'harga_koin_berlangganan_3_bulan',
+                'nama' => 'Berlangganan VIP (3 Bulan)',
+                'deskripsi' => 'Akses kuota 20 lowongan aktif, auto booster, dan pelamar unlimited (3 bulan)',
+                'harga' => (int) SiteSetting::get('harga_koin_berlangganan_3_bulan', 350),
+            ],
+            (object)[
+                'id' => 8,
+                'key' => 'harga_koin_berlangganan_6_bulan',
+                'nama' => 'Berlangganan VIP (6 Bulan)',
+                'deskripsi' => 'Akses kuota 20 lowongan aktif, auto booster, dan pelamar unlimited (6 bulan)',
+                'harga' => (int) SiteSetting::get('harga_koin_berlangganan_6_bulan', 600),
+            ],
+            (object)[
+                'id' => 9,
+                'key' => 'harga_koin_berlangganan_12_bulan',
+                'nama' => 'Berlangganan VIP (12 Bulan / 1 Tahun)',
+                'deskripsi' => 'Akses kuota 20 lowongan aktif, auto booster, dan pelamar unlimited (12 bulan / 1 tahun)',
+                'harga' => (int) SiteSetting::get('harga_koin_berlangganan_12_bulan', SiteSetting::get('harga_koin_berlangganan', 1000)),
+            ],
+        ]);
+    }
+
     public function edit_koin()
     {
-        $koin = collect([
-            (object)['id' => 1, 'nama' => 'Pasang Lowongan Bronze', 'harga' => 100],
-            (object)['id' => 2, 'nama' => 'Pasang Lowongan Silver', 'harga' => 200],
-            (object)['id' => 3, 'nama' => 'Pasang Lowongan Gold', 'harga' => 300],
-            (object)['id' => 4, 'nama' => 'Boost Lowongan', 'harga' => 300],
-            (object)['id' => 5, 'nama' => 'Berlangganan', 'harga' => 1000],
-        ]);
+        $koin = self::getFinanceKoinList();
 
         return view('super_admin.finance.edit-koin', [
             'title' => 'Edit Harga Koin',
@@ -1793,7 +1818,46 @@ class SuperAdminController extends Controller
 
     public function update_koin(Request $request)
     {
-        return redirect()->route('superadmin.paket-harga')->with('success', 'Harga koin berhasil diperbarui.');
+        if ($request->has('keys') && $request->has('hargas')) {
+            $keys = $request->input('keys');
+            $hargas = $request->input('hargas');
+
+            foreach ($keys as $index => $key) {
+                if (isset($hargas[$index])) {
+                    $val = (string) max(0, (int) $hargas[$index]);
+                    SiteSetting::set($key, $val);
+                    if ($key === 'harga_koin_berlangganan_12_bulan') {
+                        SiteSetting::set('harga_koin_berlangganan', $val);
+                    }
+                    if ($key === 'harga_koin_berlangganan') {
+                        SiteSetting::set('harga_koin_berlangganan_12_bulan', $val);
+                    }
+                }
+            }
+        } elseif ($request->has('harga') && $request->has('id')) {
+            $defaultKeys = [
+                1 => 'harga_koin_buka_cv',
+                2 => 'harga_koin_iklan_7_hari',
+                3 => 'harga_koin_iklan_14_hari',
+                4 => 'harga_koin_iklan_30_hari',
+                5 => 'harga_koin_boost_lowongan',
+                6 => 'harga_koin_berlangganan_1_bulan',
+                7 => 'harga_koin_berlangganan_3_bulan',
+                8 => 'harga_koin_berlangganan_6_bulan',
+                9 => 'harga_koin_berlangganan_12_bulan',
+            ];
+            foreach ($request->id as $index => $id) {
+                if (isset($defaultKeys[$id]) && isset($request->harga[$index])) {
+                    $val = (string) max(0, (int) $request->harga[$index]);
+                    SiteSetting::set($defaultKeys[$id], $val);
+                    if ($defaultKeys[$id] === 'harga_koin_berlangganan_12_bulan') {
+                        SiteSetting::set('harga_koin_berlangganan', $val);
+                    }
+                }
+            }
+        }
+
+        return redirect()->route('superadmin.paket-harga')->with('success', 'Tarif harga koin berhasil diperbarui.');
     }
 
     //HARGA PEMBAYARAN

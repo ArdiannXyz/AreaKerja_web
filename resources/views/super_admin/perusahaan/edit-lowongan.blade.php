@@ -1,23 +1,32 @@
-﻿@extends('super_admin.sidebar.index')
+@extends('super_admin.sidebar.index')
 @section('sidebarsuperadmin')
-    <div class="p-2 sm:ml-64 bg-white font-sans overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
-        <!-- Konten utama -->
-        <main class="flex-1 p-4 sm:p-20 bg-white font-sans text-gray-900 break-words">
-            <!-- Header atas form -->
-            <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 space-y-2 sm:space-y-0">
-                <!-- Kiri: Judul -->
-                <h1 class="text-2xl font-semibold text-gray-700 break-words w-full sm:w-auto">Edit Lowongan</h1>
-
-                <!-- Kanan: Notifikasi + Profil -->
-                <div
-                    class="flex flex-col sm:flex-row items-start sm:items-center sm:space-x-2 space-y-2 sm:space-y-0 w-full sm:w-auto">
-                    <!-- Ikon Notifikasi -->
+    <main class="flex-1 p-4 sm:p-6 sm:ml-64 bg-slate-50/70 overflow-y-auto" x-data="{ openNotif: false, openAllNotif: false }">
+        <!-- HEADER TOP BAR -->
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-blue-800/30 shadow-sm">
+            <div class="w-full sm:w-auto flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <a href="{{ route('superadmin.lowongan.detail', ['perusahaan' => $lowongan->perusahaan->slug, 'lowongan' => $lowongan->id]) }}"
+                        class="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition flex-shrink-0"
+                        title="Kembali ke Detail Lowongan">
+                        <i class="ph ph-arrow-left text-base"></i>
+                    </a>
+                    <div>
+                        <h1 class="text-base sm:text-xl font-bold text-white tracking-tight">
+                            Edit Lowongan - {{ $lowongan->namaPekerjaan }}
+                        </h1>
+                        <p class="text-[11px] sm:text-xs text-blue-100 mt-0.5">{{ $lowongan->perusahaan->nama_perusahaan }}</p>
+                    </div>
+                </div>
+                <div class="sm:hidden flex items-center gap-2">
                     @include('super_admin.components.notif_button')
-
-                    {{-- User Badge Dropdown --}}
-                    @include('super_admin.components.user_badge_dropdown')
                 </div>
             </div>
+
+            <div class="hidden sm:flex items-center gap-3 w-full sm:w-auto justify-end">
+                @include('super_admin.components.notif_button')
+                @include('super_admin.components.user_badge_dropdown')
+            </div>
+        </header>
 
 
 
@@ -217,7 +226,6 @@
             @include('super_admin.notif.modal_notif')
             @include('super_admin.notif.modal_semua')
         </main>
-    </div>
 
     <script>
         // Tandai dibaca

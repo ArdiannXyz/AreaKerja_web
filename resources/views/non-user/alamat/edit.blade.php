@@ -146,7 +146,7 @@
                             icon: 'warning',
                             title: 'Peringatan Alamat',
                             text: 'Harap pilih Provinsi terlebih dahulu!',
-                            confirmButtonColor: '#f97316'
+                            confirmButtonColor: '#00509d'
                         }).then(() => {
                             provinsiSelect.focus();
                         });
@@ -161,7 +161,7 @@
                             icon: 'warning',
                             title: 'Peringatan Alamat',
                             text: 'Harap pilih Kota / Kabupaten terlebih dahulu!',
-                            confirmButtonColor: '#f97316'
+                            confirmButtonColor: '#00509d'
                         }).then(() => {
                             if (!provinsiSelect.value) {
                                 provinsiSelect.focus();

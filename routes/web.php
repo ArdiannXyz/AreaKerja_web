@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BantuanChatController;
 use App\Http\Controllers\CVController;
 use App\Http\Controllers\EmailSubController;
 use App\Http\Controllers\EmailVerificationController;
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 // TRACKING KLIK IKLAN HOMEPAGE
 Route::get('/iklan/{id}/click', [IklanPerusahaanController::class, 'handleClick'])->name('iklan.click');
 
-// OAUTH SOCIAL AUTHENTICATION (Google, Facebook, GitHub)
+// OAUTH SOCIAL AUTHENTICATION (Google, Facebook)
 Route::controller(SocialAuthController::class)->group(function () {
     Route::get('/auth/{provider}/redirect', 'redirect')->name('social.redirect');
     Route::get('/auth/{provider}/callback', 'callback')->name('social.callback');
@@ -66,7 +67,7 @@ Route::get('/', [AuthController::class, 'beranda']);
 // LOGIN & LOGOUT AUTH
 Route::controller(AuthController::class)->middleware('guest')->group(function () {
     Route::get('/login', 'login_non_user')->name('login');
-    Route::post('/loginproses', 'loginproses')->name('loginproses')->middleware('throttle:60,1');
+    Route::post('/loginproses', 'loginproses')->name('loginproses')->middleware('throttle:50,1');
 });
 
 Route::controller(AuthController::class)->group(function () {
@@ -119,6 +120,15 @@ Route::get('/syarat-dan-ketentuan', function () {
     return view('layouts.syarat-dan-ketentuan');
 })->name('syarat.ketentuan');
 
+Route::get('/faq', [PelamarController::class, 'bantuan'])->name('faq');
+Route::get('/faq/{slug}', [PelamarController::class, 'faqDetail'])->name('faq.detail');
+
+// BANTUAN & LIVE CHAT DENGAN ADMIN (PERSISTEN)
+Route::controller(BantuanChatController::class)->middleware('auth')->group(function () {
+    Route::get('/bantuan/chat', 'userIndex')->name('bantuan.chat');
+    Route::post('/bantuan/chat/send', 'userSend')->name('bantuan.chat.send');
+});
+
 // EMAIL SUBSCRIBER
 Route::controller(EmailSubController::class)->group(function () {
     Route::post('/email-subscribe', 'index')->name('subscribe.email');
@@ -130,6 +140,7 @@ Route::controller(EmailSubController::class)->group(function () {
 Route::controller(PelamarController::class)->middleware('CheckUserStatus')->group(function () {
     Route::get('/pelamar/home', 'index')->name('beranda');
     Route::get('/pelamar/beranda', 'index')->name('pelamar.beranda');
+    Route::get('/pelamar/dashboard', 'index')->name('pelamar.dashboard');
     Route::get('/pelamar/detail-lowongan/{perusahaan}/{lowongan}', 'detail_lowongan_non_user')->name('detail.lowongan.non.user');
     Route::get('/pelamar/daftar-kandidat', 'daftar_kandidat')->name('pelamar.daftar-kandidat');
     Route::get('/lowongan-tersimpan', 'lowongansimpanform')->name('lowongan.tersimpan');
@@ -145,13 +156,16 @@ Route::controller(EventController::class)->group(function () {
     Route::post('/event/{id}/daftar', 'daftarEvent')->name('pelamar.event.daftar');
 });
 
+// XENDIT PAYMENT GATEWAY CALLBACK WEBHOOK
+Route::post('/payment/xendit/callback', [\App\Http\Controllers\Payment\XenditCallbackController::class, 'handle'])->name('xendit.callback');
+
 /*
 |--------------------------------------------------------------------------
 | Modular Role Routes
 |--------------------------------------------------------------------------
 */
 require __DIR__ . '/pelamar.php';
-require __DIR__ . '/finance.php';
 require __DIR__ . '/admin.php';
 require __DIR__ . '/superadmin.php';
 require __DIR__ . '/perusahaan.php';
+

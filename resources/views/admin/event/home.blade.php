@@ -3,13 +3,13 @@
     <main class="flex-1 min-w-0 max-w-full p-4 sm:p-6 sm:ml-64 bg-slate-50/70 min-h-screen" x-data="{ openNotif: false, openAllNotif: false }">
 
         <!-- Header Topbar -->
-        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
+        <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-6 bg-[#00509d] text-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-xs">
             <div class="w-full sm:w-auto flex items-center justify-between">
                 <div>
-                    <h1 class="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
-                        <i class="ph ph-calendar-blank text-[#00509d] text-xl sm:text-2xl"></i> Event
+                    <h1 class="text-lg sm:text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                        <i class="ph ph-calendar-blank text-white/80 text-xl sm:text-2xl"></i> Event
                     </h1>
-                    <p class="text-[11px] sm:text-xs font-semibold text-slate-500 mt-0.5 sm:mt-1">Kelola semua event dan webinar yang ada di platform AreaKerja</p>
+                    <p class="text-[11px] sm:text-xs font-semibold text-blue-100 mt-0.5 sm:mt-1">Kelola semua event dan webinar yang ada di platform AreaKerja</p>
                 </div>
                 <div class="sm:hidden flex items-center gap-2">
                     @include('admin.components.notif_button')
@@ -56,14 +56,14 @@
                             <i class="ph ph-magnifying-glass text-slate-400 ml-3.5 flex-shrink-0 text-sm"></i>
                             <input type="text" name="q" x-model="query"
                                 @focus="open = true"
-                                @input="open = true"
+                                @input="open = true; filterEventTable($event.target.value)"
                                 autocomplete="off"
                                 placeholder="Cari event..."
                                 class="flex-1 h-full px-2.5 text-sm bg-transparent border-0 border-none outline-none ring-0 focus:ring-0 focus:outline-none focus:border-transparent text-slate-700 placeholder-slate-400 min-w-0"
                                 style="border: none !important; outline: none !important; box-shadow: none !important;">
                             <template x-if="query.length > 0">
                                 <a href="{{ route('admin.eventform') }}"
-                                   @click.prevent="query = ''; open = false; window.location.href = '{{ route('admin.eventform') }}';"
+                                   @click.prevent="query = ''; open = false; filterEventTable(''); window.location.href = '{{ route('admin.eventform') }}';"
                                    class="w-5 h-5 rounded-full bg-slate-200 hover:bg-rose-100 text-slate-400 hover:text-rose-600 flex items-center justify-center mr-2.5 flex-shrink-0 transition cursor-pointer"
                                    title="Hapus pencarian">
                                     <i class="ph ph-x text-[10px] font-bold"></i>
@@ -131,7 +131,7 @@
                     </thead>
                     <tbody class="divide-y divide-slate-100">
                         @forelse ($events as $event)
-                            <tr class="hover:bg-blue-50/40 transition duration-150">
+                            <tr class="event-row hover:bg-blue-50/40 transition duration-150">
 
                                 <td class="px-5 py-3.5 text-center">
                                     @if ($event->status == 'buka')
@@ -271,6 +271,15 @@
 
         function closeStatusModal() {
             document.getElementById('statusModal').classList.add('hidden');
+        }
+
+        function filterEventTable(val) {
+            const q = (val || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('tr.event-row');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = (!q || text.includes(q)) ? '' : 'none';
+            });
         }
     </script>
 

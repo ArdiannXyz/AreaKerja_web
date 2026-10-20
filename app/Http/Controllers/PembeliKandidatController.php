@@ -7,7 +7,9 @@ use App\Models\LowonganPerusahaan;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Models\PelamarLowongan;
+use App\Models\PembelianCv;
 use App\Models\Perusahaan;
+use App\Models\SiteSetting;
 use App\Services\CoinTransactionService;
 use App\Services\NotificationService;
 use App\Http\Requests\BeliKandidatRequest;
@@ -18,6 +20,87 @@ use Illuminate\Support\Str;
 
 class PembeliKandidatController extends Controller
 {
+    public function beliCv(Request $request, $id)
+    {
+        $user = auth()->user();
+        $perusahaan = $user->perusahaan;
+
+        if (!$perusahaan) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Perusahaan tidak ditemukan'
+            ], 403);
+        }
+
+        $pelamar = Pelamar::findOrFail($id);
+
+        // Cek apakah CV pelamar ini sudah pernah dibeli oleh perusahaan ini
+        $alreadyBought = PembelianCv::where('perusahaan_id', $perusahaan->id)
+            ->where('pelamar_id', $pelamar->id)
+            ->exists();
+
+        if ($alreadyBought) {
+            return response()->json([
+                'status'       => 'success',
+                'message'      => 'CV sudah pernah dibuka.',
+                'download_url' => route('cv.download', $pelamar->id),
+                'sisa_koin'    => $perusahaan->koin_perusahaan,
+            ]);
+        }
+
+        $hargaCv = (int) SiteSetting::get('harga_koin_buka_cv', 5);
+
+        if ($perusahaan->koin_perusahaan < $hargaCv) {
+            return response()->json([
+                'status'    => 'error',
+                'type'      => 'coin_insufficient',
+                'message'   => "Koin perusahaan tidak mencukupi untuk membuka CV (Minimal {$hargaCv} koin). Silakan top up koin terlebih dahulu.",
+                'sisa_koin' => $perusahaan->koin_perusahaan,
+            ], 400);
+        }
+
+        try {
+            DB::transaction(function () use ($perusahaan, $pelamar, $hargaCv) {
+                // 1. Potong 5 koin secara atomik
+                $coinService = app(CoinTransactionService::class);
+                $coinService->deduct(
+                    $perusahaan,
+                    $hargaCv,
+                    'Buka CV Kandidat: ' . $pelamar->nama_pelamar,
+                    'Saldo Koin Perusahaan',
+                    'CV-' . strtoupper(Str::random(8)),
+                    $perusahaan->nama_perusahaan
+                );
+
+                // 2. Simpan catatan pembelian CV
+                PembelianCv::create([
+                    'perusahaan_id' => $perusahaan->id,
+                    'pelamar_id'    => $pelamar->id,
+                    'koin'          => $hargaCv,
+                ]);
+            });
+
+            $perusahaan->refresh();
+
+            return response()->json([
+                'status'       => 'success',
+                'message'      => 'CV ' . $pelamar->nama_pelamar . " berhasil dibuka seharga {$hargaCv} koin!",
+                'download_url' => route('cv.download', $pelamar->id),
+                'sisa_koin'    => $perusahaan->koin_perusahaan,
+            ]);
+        } catch (\Throwable $e) {
+            Log::error("Gagal melakukan pembelian CV: " . $e->getMessage(), [
+                'perusahaan_id' => $perusahaan->id,
+                'pelamar_id'    => $pelamar->id,
+            ]);
+
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Terjadi kesalahan sistem saat membuka CV: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
     public function beli(BeliKandidatRequest $request)
     {
 
@@ -39,6 +122,33 @@ class PembeliKandidatController extends Controller
                 'status'  => 'error',
                 'message' => 'Lowongan tidak ditemukan'
             ], 403);
+        }
+
+        // 1. Cek apakah CV kandidat sudah dibuka / diunduh terlebih dahulu
+        $hasBoughtCv = PembelianCv::where('perusahaan_id', $perusahaan->id)
+            ->where('pelamar_id', $pelamar->id)
+            ->exists();
+
+        if (!$hasBoughtCv) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Anda harus mengunduh CV kandidat terlebih dahulu sebelum dapat merekrutnya.'
+            ], 422);
+        }
+
+        // 2. Cek apakah kandidat sudah pernah direkrut sebelumnya oleh perusahaan ini
+        $alreadyRecruited = PelamarLowongan::where('pelamar_id', $pelamar->id)
+            ->whereHas('lowongan_perusahaan', function ($q) use ($perusahaan) {
+                $q->where('perusahaan_id', $perusahaan->id);
+            })
+            ->whereIn('status', ['pending', 'diterima'])
+            ->exists();
+
+        if ($alreadyRecruited) {
+            return response()->json([
+                'status'  => 'error',
+                'message' => 'Kandidat ini sudah pernah Anda rekrut.'
+            ], 422);
         }
 
         $harga = 100; // 100 koin per pembelian kandidat
@@ -64,7 +174,7 @@ class PembeliKandidatController extends Controller
                 );
 
                 // 2. Hubungkan pelamar ke lowongan
-                PelamarLowongan::updateOrCreate(
+                $pelamarLowongan = PelamarLowongan::updateOrCreate(
                     [
                         'pelamar_id'  => $pelamar->id,
                         'lowongan_id' => $lowongan->id,
@@ -80,7 +190,11 @@ class PembeliKandidatController extends Controller
                         $pelamar->user_id,
                         'Penawaran Rekrutmen Baru',
                         $perusahaan->nama_perusahaan . ' telah merekrut Anda untuk lowongan ' . $lowongan->nama,
-                        ['perusahaan_id' => $perusahaan->id]
+                        [
+                            'perusahaan_id'       => $perusahaan->id,
+                            'lowongan_id'         => $lowongan->id,
+                            'pelamar_lowongan_id' => $pelamarLowongan->id,
+                        ]
                     );
                 }
             });
@@ -139,19 +253,29 @@ class PembeliKandidatController extends Controller
         $user = auth()->user();
         $pelamar = $user?->pelamar;
 
-        $perusahaanModel = Perusahaan::where('slug', $perusahaan)->orWhere('id', $perusahaan)->first();
-        $lowonganModel = LowonganPerusahaan::where(function ($q) use ($lowongan) {
-            $q->where('slug', $lowongan);
-            if (is_numeric($lowongan)) {
-                $q->orWhere('id', (int) $lowongan);
+        $perusahaanModel = $perusahaan instanceof Perusahaan
+            ? $perusahaan
+            : Perusahaan::where('slug', $perusahaan)->orWhere('id', $perusahaan)->first();
+
+        if ($lowongan instanceof LowonganPerusahaan) {
+            $lowonganModel = $lowongan;
+            if (!$lowonganModel->relationLoaded('perusahaan')) {
+                $lowonganModel->load('perusahaan');
             }
-        });
+        } else {
+            $lowonganQuery = LowonganPerusahaan::where(function ($q) use ($lowongan) {
+                $q->where('slug', $lowongan);
+                if (is_numeric($lowongan)) {
+                    $q->orWhere('id', (int) $lowongan);
+                }
+            });
 
-        if ($perusahaanModel) {
-            $lowonganModel->where('perusahaan_id', $perusahaanModel->id);
+            if ($perusahaanModel) {
+                $lowonganQuery->where('perusahaan_id', $perusahaanModel->id);
+            }
+
+            $lowonganModel = $lowonganQuery->with('perusahaan')->first();
         }
-
-        $lowonganModel = $lowonganModel->with('perusahaan')->first();
 
         if (!$lowonganModel) {
             abort(404, 'Lowongan tidak ditemukan.');
@@ -266,7 +390,10 @@ class PembeliKandidatController extends Controller
                                 $perusahaan->user_id,
                                 'Penawaran Rekrutmen Ditolak',
                                 "Kandidat {$namaPelamar} menolak tawaran Anda.{$alasanTxt} Saldo +100 koin telah dikembalikan ke akun Anda.",
-                                ['perusahaan_id' => $perusahaan->id]
+                                [
+                                    'perusahaan_id' => $perusahaan->id,
+                                    'lowongan_id'   => $tawaran->lowongan_id ?? null,
+                                ]
                             );
                         }
                     }

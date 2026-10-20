@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\AlamatPelamar;
 use App\Models\DaftarBank;
+use App\Models\Iklan;
 use App\Models\LowonganPerusahaan;
 use App\Models\PaketLowongan;
 use App\Models\Pelamar;
@@ -110,24 +111,7 @@ class UserTestSeeder extends Seeder
             );
 
             // =====================================================
-            // 3. FINANCE (1 User)
-            // =====================================================
-            User::updateOrCreate(
-                ['email' => 'finance@gmail.com'],
-                [
-                    'username'           => 'finance',
-                    'nama_lengkap'       => 'Finance Manager',
-                    'telepon'            => '081122334477',
-                    'password'           => Hash::make('123'),
-                    'role'               => 'finance',
-                    'verified'           => 1,
-                    'status'             => 0,
-                    'alasan_freeze_akun' => null,
-                ]
-            );
-
-            // =====================================================
-            // 4. PERUSAHAAN (6 Companies)
+            // 3. PERUSAHAAN (6 Companies)
             // =====================================================
             $perusahaansData = [
                 [
@@ -137,6 +121,16 @@ class UserTestSeeder extends Seeder
                     'jenis'    => 'Teknologi Informasi',
                     'kota'     => 'Surabaya',
                     'provinsi' => 'Jawa Timur',
+                    'iklan'    => [
+                        'judul_iklan'    => 'Bergabung Bersama Tim Engineering Masa Depan',
+                        'gambar_banner'  => 'images/banner_iklan_1.jpg',
+                        'url_tujuan'     => 'https://areakerja.com',
+                        'paket_nama'     => 'Header Utama',
+                        'durasi_hari'    => 30,
+                        'koin_terpotong' => 150,
+                        'posisi'         => 'header',
+                        'status'         => 'aktif',
+                    ],
                     'lowongans' => [
                         [
                             'nama' => 'Backend Developer',
@@ -154,6 +148,22 @@ class UserTestSeeder extends Seeder
                             'kategori' => 'IT & Software',
                             'paket' => $silver,
                         ],
+                        [
+                            'nama' => 'Mobile Developer (Flutter)',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '6000000',
+                            'gaji_akhir' => '11000000',
+                            'kategori' => 'IT & Software',
+                            'paket' => $gold,
+                        ],
+                        [
+                            'nama' => 'Quality Assurance (QA) Engineer',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '4500000',
+                            'gaji_akhir' => '7000000',
+                            'kategori' => 'IT & Software',
+                            'paket' => $bronze,
+                        ],
                     ]
                 ],
                 [
@@ -163,6 +173,16 @@ class UserTestSeeder extends Seeder
                     'jenis'    => 'Digital Marketing & Agency',
                     'kota'     => 'Jakarta Selatan',
                     'provinsi' => 'DKI Jakarta',
+                    'iklan'    => [
+                        'judul_iklan'    => 'Solusi Digital Marketing Terdepan di Indonesia',
+                        'gambar_banner'  => 'images/banner_iklan_2.jpg',
+                        'url_tujuan'     => 'https://areakerja.com',
+                        'paket_nama'     => 'Sidebar',
+                        'durasi_hari'    => 14,
+                        'koin_terpotong' => 80,
+                        'posisi'         => 'sidebar',
+                        'status'         => 'aktif',
+                    ],
                     'lowongans' => [
                         [
                             'nama' => 'Digital Marketing Specialist',
@@ -180,6 +200,22 @@ class UserTestSeeder extends Seeder
                             'kategori' => 'Media & Komunikasi',
                             'paket' => $bronze,
                         ],
+                        [
+                            'nama' => 'Social Media Manager',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '4000000',
+                            'gaji_akhir' => '6500000',
+                            'kategori' => 'Marketing',
+                            'paket' => $silver,
+                        ],
+                        [
+                            'nama' => 'SEO Specialist',
+                            'jenis' => 'Part Time',
+                            'gaji_awal' => '3000000',
+                            'gaji_akhir' => '5000000',
+                            'kategori' => 'Marketing',
+                            'paket' => $bronze,
+                        ],
                     ]
                 ],
                 [
@@ -189,6 +225,16 @@ class UserTestSeeder extends Seeder
                     'jenis'    => 'Desain & Desain Grafis',
                     'kota'     => 'Bandung',
                     'provinsi' => 'Jawa Barat',
+                    'iklan'    => [
+                        'judul_iklan'    => 'Kembangkan Karir Kreatifmu Bersama Inovasi Karya',
+                        'gambar_banner'  => 'images/banner_iklan_3.jpg',
+                        'url_tujuan'     => 'https://areakerja.com',
+                        'paket_nama'     => 'Banner Footer',
+                        'durasi_hari'    => 30,
+                        'koin_terpotong' => 100,
+                        'posisi'         => 'footer',
+                        'status'         => 'aktif',
+                    ],
                     'lowongans' => [
                         [
                             'nama' => 'UI/UX Designer Senior',
@@ -197,6 +243,22 @@ class UserTestSeeder extends Seeder
                             'gaji_akhir' => '11000000',
                             'kategori' => 'Desain & Kreatif',
                             'paket' => $silver,
+                        ],
+                        [
+                            'nama' => 'Graphic Designer & Animator',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '4000000',
+                            'gaji_akhir' => '7000000',
+                            'kategori' => 'Desain & Kreatif',
+                            'paket' => $silver,
+                        ],
+                        [
+                            'nama' => 'Video Editor Specialist',
+                            'jenis' => 'Freelance',
+                            'gaji_awal' => '3500000',
+                            'gaji_akhir' => '6000000',
+                            'kategori' => 'Media & Komunikasi',
+                            'paket' => $bronze,
                         ],
                     ]
                 ],
@@ -207,6 +269,16 @@ class UserTestSeeder extends Seeder
                     'jenis'    => 'Keuangan & Perbankan',
                     'kota'     => 'Semarang',
                     'provinsi' => 'Jawa Tengah',
+                    'iklan'    => [
+                        'judul_iklan'    => 'Karir Finansial & Perbankan Terpercaya',
+                        'gambar_banner'  => 'images/banner_iklan_4.jpg',
+                        'url_tujuan'     => 'https://areakerja.com',
+                        'paket_nama'     => 'Header Utama',
+                        'durasi_hari'    => 20,
+                        'koin_terpotong' => 120,
+                        'posisi'         => 'header',
+                        'status'         => 'aktif',
+                    ],
                     'lowongans' => [
                         [
                             'nama' => 'Staff Akuntansi & Finance',
@@ -215,6 +287,22 @@ class UserTestSeeder extends Seeder
                             'gaji_akhir' => '6500000',
                             'kategori' => 'Keuangan',
                             'paket' => $bronze,
+                        ],
+                        [
+                            'nama' => 'Internal Audit Officer',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '5000000',
+                            'gaji_akhir' => '8500000',
+                            'kategori' => 'Keuangan',
+                            'paket' => $gold,
+                        ],
+                        [
+                            'nama' => 'Tax Consultant / Staff Pajak',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '4500000',
+                            'gaji_akhir' => '7500000',
+                            'kategori' => 'Keuangan',
+                            'paket' => $silver,
                         ],
                     ]
                 ],
@@ -225,6 +313,16 @@ class UserTestSeeder extends Seeder
                     'jenis'    => 'Cloud Infrastructure & DevOps',
                     'kota'     => 'Yogyakarta',
                     'provinsi' => 'DI Yogyakarta',
+                    'iklan'    => [
+                        'judul_iklan'    => 'Migrasi & Cloud Solution untuk Enterprise',
+                        'gambar_banner'  => 'images/banner_iklan_5.jpg',
+                        'url_tujuan'     => 'https://areakerja.com',
+                        'paket_nama'     => 'Sidebar',
+                        'durasi_hari'    => 30,
+                        'koin_terpotong' => 150,
+                        'posisi'         => 'sidebar',
+                        'status'         => 'aktif',
+                    ],
                     'lowongans' => [
                         [
                             'nama' => 'DevOps Engineer',
@@ -233,6 +331,22 @@ class UserTestSeeder extends Seeder
                             'gaji_akhir' => '13000000',
                             'kategori' => 'IT & Software',
                             'paket' => $gold,
+                        ],
+                        [
+                            'nama' => 'Cloud Solutions Architect',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '9000000',
+                            'gaji_akhir' => '16000000',
+                            'kategori' => 'IT & Software',
+                            'paket' => $gold,
+                        ],
+                        [
+                            'nama' => 'Cyber Security Analyst',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '6500000',
+                            'gaji_akhir' => '12000000',
+                            'kategori' => 'IT & Software',
+                            'paket' => $silver,
                         ],
                     ]
                 ],
@@ -243,6 +357,16 @@ class UserTestSeeder extends Seeder
                     'jenis'    => 'Manufaktur & Logistik',
                     'kota'     => 'Sidoarjo',
                     'provinsi' => 'Jawa Timur',
+                    'iklan'    => [
+                        'judul_iklan'    => 'Layanan Distribusi & Logistik Skala Nasional',
+                        'gambar_banner'  => 'images/banner_iklan_6.jpg',
+                        'url_tujuan'     => 'https://areakerja.com',
+                        'paket_nama'     => 'Header Utama',
+                        'durasi_hari'    => 15,
+                        'koin_terpotong' => 100,
+                        'posisi'         => 'header',
+                        'status'         => 'aktif',
+                    ],
                     'lowongans' => [
                         [
                             'nama' => 'Supervisor Logistik',
@@ -251,6 +375,22 @@ class UserTestSeeder extends Seeder
                             'gaji_akhir' => '8500000',
                             'kategori' => 'Logistik & Gudang',
                             'paket' => $silver,
+                        ],
+                        [
+                            'nama' => 'Staff Supply Chain & Gudang',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '3800000',
+                            'gaji_akhir' => '5500000',
+                            'kategori' => 'Logistik & Gudang',
+                            'paket' => $bronze,
+                        ],
+                        [
+                            'nama' => 'Admin Operasional Gudang',
+                            'jenis' => 'Full Time',
+                            'gaji_awal' => '3500000',
+                            'gaji_akhir' => '4800000',
+                            'kategori' => 'Administrasi',
+                            'paket' => $bronze,
                         ],
                     ]
                 ],
@@ -295,6 +435,30 @@ class UserTestSeeder extends Seeder
                     ]
                 );
 
+                // Tambahkan Iklan Perusahaan
+                if (isset($pData['iklan'])) {
+                    Iklan::updateOrCreate(
+                        [
+                            'perusahaan_id' => $pModel->id,
+                            'judul_iklan'   => $pData['iklan']['judul_iklan'],
+                        ],
+                        [
+                            'user_id'         => $uPerusahaan->id,
+                            'gambar_banner'   => $pData['iklan']['gambar_banner'],
+                            'url_tujuan'      => $pData['iklan']['url_tujuan'],
+                            'paket_nama'      => $pData['iklan']['paket_nama'],
+                            'durasi_hari'     => $pData['iklan']['durasi_hari'],
+                            'koin_terpotong'  => $pData['iklan']['koin_terpotong'],
+                            'posisi'          => $pData['iklan']['posisi'],
+                            'status'          => $pData['iklan']['status'],
+                            'tanggal_mulai'   => now(),
+                            'tanggal_selesai' => now()->addDays($pData['iklan']['durasi_hari']),
+                            'total_views'     => rand(100, 1500),
+                            'total_clicks'    => rand(10, 250),
+                        ]
+                    );
+                }
+
                 foreach ($pData['lowongans'] as $lData) {
                     LowonganPerusahaan::updateOrCreate(
                         ['slug' => Str::slug($lData['nama'] . '-' . $pModel->id)],
@@ -313,13 +477,13 @@ class UserTestSeeder extends Seeder
                             'syarat_pekerjaan' => 'Minimal D3/S1 bidang relevan, pengalaman minimal 1 tahun.',
                             'tanggung_jawab'   => 'Menjalankan tugas operasional dan pengembangan tim sesuai divisi.',
                             'benefit'          => 'BPJS Kesehatan & Ketenagakerjaan, Bonus Kinerja, THR',
-                            'paket_id'         => $lData['paket']->id,
                             'published_at'     => now(),
-                            'expired_at'       => now()->addDays($lData['paket']->batas_listing),
+                            'expired_at'       => now()->addDays(30),
                         ]
                     );
                 }
             }
+
 
             // =====================================================
             // 5. PELAMAR REGULER (6 Applicants)

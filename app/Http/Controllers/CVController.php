@@ -43,6 +43,26 @@ class CVController extends Controller
     // Download CV sebagai PDF
     public function downloadCv(Pelamar $pelamar)
     {
+        if (auth()->check() && auth()->user()->role === 'perusahaan') {
+            $perusahaan = auth()->user()->perusahaan;
+            if ($perusahaan) {
+                $hasBoughtCv = \App\Models\PembelianCv::where('perusahaan_id', $perusahaan->id)
+                    ->where('pelamar_id', $pelamar->id)
+                    ->exists();
+                $hasRecruited = \App\Models\PelamarLowongan::where('pelamar_id', $pelamar->id)
+                    ->whereHas('lowongan_perusahaan', function ($q) use ($perusahaan) {
+                        $q->where('perusahaan_id', $perusahaan->id);
+                    })
+                    ->exists();
+
+                if (!$hasBoughtCv && !$hasRecruited) {
+                    $hargaCv = (int) \App\Models\SiteSetting::get('harga_koin_buka_cv', 5);
+                    return redirect()->route('perusahaan.kandidat.ak')
+                        ->with('error', "Silakan buka CV kandidat terlebih dahulu seharga {$hargaCv} koin.");
+                }
+            }
+        }
+
         $logoPath = public_path('images/logoarea.png');
         $logoBase64 = 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath));
 

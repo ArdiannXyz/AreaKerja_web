@@ -18,9 +18,11 @@ class EventController extends Controller
     // ==========================================
     public function publicEventList(Request $request)
     {
+        Event::autoCloseExpired();
 
         $search = $request->query('q');
         $status = $request->query('status');
+        $today = now()->toDateString();
 
         $events = Event::with('kegiatan')
             ->when($search, function ($q) use ($search) {
@@ -30,23 +32,32 @@ class EventController extends Controller
                         ->orWhere('content', 'like', "%{$search}%");
                 });
             })
-            ->when($status, function ($q) use ($status) {
-                $q->where('status', $status);
-            }, function ($q) {
+            ->when($status === 'buka', function ($q) {
+                $q->upcoming();
+            })
+            ->when($status === 'tutup', function ($q) {
+                $q->ended();
+            })
+            ->when(empty($status), function ($q) {
                 $q->where('status', '!=', 'draft');
             })
-            ->orderBy('tgl_mulai', 'asc')
-            ->paginate(9);
+            ->when($status === 'tutup', function ($q) {
+                $q->orderBy('tgl_mulai', 'desc');
+            }, function ($q) use ($today) {
+                $q->orderByRaw("CASE WHEN status = 'tutup' OR (tgl_akhir IS NOT NULL AND tgl_akhir < ?) THEN 1 ELSE 0 END ASC", [$today])
+                  ->orderBy('tgl_mulai', 'asc');
+            })
+            ->paginate(9)
+            ->withQueryString();
 
         return view('non-user.event.index', compact('events', 'search', 'status'));
     }
 
     public function publicEventShow($id)
     {
-
         $event = Event::with('kegiatan')->findOrFail($id);
         $otherEvents = Event::where('id', '!=', $id)
-            ->where('status', 'buka')
+            ->upcoming()
             ->latest('tgl_mulai')
             ->take(3)
             ->get();
@@ -141,6 +152,8 @@ class EventController extends Controller
 
     public function index(Request $request)
     {
+        Event::autoCloseExpired();
+
         $query = Event::with('kegiatan')->latest();
 
         if ($request->filled('q')) {
@@ -180,7 +193,22 @@ class EventController extends Controller
             $validated['image'] = $request->file('image')->store('events', 'public');
         }
 
-        Event::create($validated);
+        $kegiatanWaktu = $request->input('kegiatan_waktu', []);
+        $kegiatanNama = $request->input('kegiatan_nama', []);
+        unset($validated['kegiatan_waktu'], $validated['kegiatan_nama']);
+
+        $event = Event::create($validated);
+
+        if (!empty($kegiatanWaktu) && is_array($kegiatanWaktu)) {
+            foreach ($kegiatanWaktu as $i => $waktu) {
+                if (!empty($waktu) && !empty($kegiatanNama[$i])) {
+                    $event->kegiatan()->create([
+                        'waktu' => $waktu,
+                        'kegiatan' => $kegiatanNama[$i],
+                    ]);
+                }
+            }
+        }
 
         $route = $this->isSuperAdmin($request) ? 'superadmin.eventform' : 'admin.eventform';
         return redirect()->route($route)->with('success', 'Event berhasil disimpan.');
