@@ -6,6 +6,7 @@ use App\Models\AlamatPelamar;
 use App\Models\Notifikasi;
 use App\Models\Pelamar;
 use App\Services\NotificationService;
+use App\Services\WilayahService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -165,53 +166,9 @@ class ProfileController extends Controller
         $user = auth()->user();
         $pelamar = Pelamar::where('user_id', $user->id)->first();
 
-        $provinsis = collect();
-        if (file_exists(database_path('data/provinces.json'))) {
-            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/provinces.json')));
-            $json = json_decode(trim($content), true) ?? [];
-            $provinsis = collect($json)->map(function ($item) {
-                return (object)[
-                    'id'   => (string)$item['id'],
-                    'nama' => ucwords(strtolower($item['name'])),
-                ];
-            })->sortBy('nama')->values();
-        }
-
-        $allKotas = collect();
-        if (file_exists(database_path('data/regencies.json'))) {
-            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/regencies.json')));
-            $json = json_decode(trim($content), true) ?? [];
-            $allKotas = collect($json)->map(function ($item) {
-                return [
-                    'id'          => (string)$item['id'],
-                    'provinsi_id' => (string)$item['province_id'],
-                    'nama'        => ucwords(strtolower($item['name'])),
-                ];
-            })->sortBy('nama')->values();
-        }
-
-        $allKecamatans = collect();
-        if (file_exists(database_path('data/districts.json'))) {
-            $content = preg_replace('/^\xEF\xBB\xBF/', '', file_get_contents(database_path('data/districts.json')));
-            $content = trim($content);
-            if (function_exists('mb_convert_encoding')) {
-                $content = mb_convert_encoding($content, 'UTF-8', 'UTF-8');
-            }
-            $json = json_decode($content, true) ?? [];
-            $allKecamatans = collect($json)->map(function ($item) {
-                return [
-                    'id'      => (string)$item['id'],
-                    'kota_id' => (string)$item['regency_id'],
-                    'nama'    => ucwords(strtolower($item['name'])),
-                ];
-            })->sortBy('nama')->values();
-        }
-
         return view('non-user.alamat.create-alamat', [
-            'pelamar'       => $pelamar,
-            'provinsis'     => $provinsis,
-            'allKotas'      => $allKotas,
-            'allKecamatans' => $allKecamatans,
+            'pelamar'   => $pelamar,
+            'provinsis' => WilayahService::getProvinces(),
         ]);
     }
 
