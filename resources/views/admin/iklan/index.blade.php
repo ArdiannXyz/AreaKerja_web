@@ -188,7 +188,6 @@
                 </div>
             </div>
         </div>
-        </div>
 
         @if ($search)
             <div class="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-3.5 bg-blue-50/80 border border-blue-100 rounded-2xl text-xs text-[#00509d]">
@@ -206,26 +205,25 @@
         @endif
 
         <!-- TABEL MODERASI IKLAN -->
-        <!-- TABEL MODERASI IKLAN (TABLE FIXED 100% - PASTI PAS DI LAYAR) -->
         <div class="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-xs overflow-hidden">
-            <div class="w-full overflow-hidden">
-                <table class="w-full table-fixed text-left text-xs text-slate-600">
+            <div class="overflow-x-auto">
+                <table class="w-full min-w-[850px] text-left text-xs text-slate-600 border-collapse">
                     <thead class="bg-slate-50 text-[11px] font-extrabold uppercase tracking-wider text-slate-400 border-b border-slate-100">
                         <tr>
-                            <th class="w-[42%] px-4 py-3.5">Iklan & Perusahaan</th>
-                            <th class="w-[18%] px-3 py-3.5">Paket & Durasi</th>
-                            <th class="w-[20%] px-3 py-3.5">Status & Periode</th>
-                            <th class="w-[20%] px-4 py-3.5 text-right">Aksi Moderasi</th>
+                            <th class="px-5 py-4 min-w-[280px]">Iklan & Perusahaan</th>
+                            <th class="px-4 py-4 min-w-[150px]">Paket & Durasi</th>
+                            <th class="px-4 py-4 min-w-[170px]">Status & Periode</th>
+                            <th class="px-5 py-4 text-right min-w-[180px]">Aksi Moderasi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100 font-semibold">
                         @forelse ($iklans as $item)
                             <tr class="hover:bg-slate-50/70 transition">
                                 <!-- Iklan & Perusahaan -->
-                                <td class="px-4 py-3.5">
-                                    <div class="flex items-center gap-3 min-w-0">
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3">
                                         <!-- Thumbnail Banner (Dapat diklik preview) -->
-                                        <div class="relative w-14 h-9 sm:w-16 sm:h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 cursor-pointer group/img shadow-2xs"
+                                        <div class="relative w-16 h-10 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0 cursor-pointer group/img shadow-2xs"
                                             onclick="openPreviewModal('{{ $item->banner_url }}', '{{ addslashes($item->judul_iklan) }}', '{{ addslashes($item->url_tujuan) }}')"
                                             title="Klik untuk melihat banner dan link tujuan">
                                             <img src="{{ $item->banner_url }}" alt="Banner" class="w-full h-full object-cover group-hover/img:scale-105 transition duration-200">
@@ -233,8 +231,8 @@
                                                 <i class="ph ph-magnifying-glass-plus text-xs"></i>
                                             </div>
                                         </div>
-                                        <div class="min-w-0 flex-1">
-                                            <p class="font-extrabold text-slate-900 truncate" title="{{ $item->judul_iklan }}">{{ $item->judul_iklan }}</p>
+                                        <div class="min-w-0 max-w-xs sm:max-w-sm">
+                                            <p class="font-extrabold text-slate-900 truncate text-sm" title="{{ $item->judul_iklan }}">{{ $item->judul_iklan }}</p>
                                             <div class="flex items-center gap-1.5 text-xs text-slate-500 mt-0.5 font-medium truncate">
                                                 <i class="ph ph-buildings text-slate-400 shrink-0"></i>
                                                 <span class="truncate font-bold {{ $item->perusahaan ? 'text-slate-700' : 'text-[#00509d]' }}" title="{{ $item->perusahaan?->nama_perusahaan ?? 'Official AreaKerja' }}">
@@ -252,7 +250,7 @@
                                 </td>
 
                                 <!-- Paket & Durasi -->
-                                <td class="px-3 py-3.5 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap">
                                     <p class="font-extrabold text-slate-800 text-xs">{{ $item->paket_nama ?? 'Paket Iklan' }}</p>
                                     <div class="flex items-center gap-1 mt-0.5 text-[11px] font-bold">
                                         @if($item->durasi_hari > 0)
@@ -271,7 +269,7 @@
                                 </td>
 
                                 <!-- Status & Periode -->
-                                <td class="px-3 py-3.5 whitespace-nowrap">
+                                <td class="px-4 py-4 whitespace-nowrap">
                                     @if ($item->status === 'menunggu')
                                         <span class="inline-flex items-center gap-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-extrabold rounded-full">
                                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
@@ -299,7 +297,7 @@
                                             <span>Ditolak</span>
                                         </span>
                                         @if($item->alasan_penolakan)
-                                            <p class="text-[10px] text-rose-600 font-medium mt-0.5 truncate" title="{{ $item->alasan_penolakan }}">
+                                            <p class="text-[10px] text-rose-600 font-medium mt-0.5 max-w-[200px] truncate" title="{{ $item->alasan_penolakan }}">
                                                 "{{ $item->alasan_penolakan }}"
                                             </p>
                                         @endif
@@ -312,7 +310,7 @@
                                 </td>
 
                                 <!-- Aksi Moderasi -->
-                                <td class="px-4 py-3.5 text-right whitespace-nowrap">
+                                <td class="px-5 py-4 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end gap-1.5">
                                         <!-- Tombol Preview -->
                                         <button type="button" onclick="openPreviewModal('{{ $item->banner_url }}', '{{ addslashes($item->judul_iklan) }}', '{{ addslashes($item->url_tujuan) }}')"

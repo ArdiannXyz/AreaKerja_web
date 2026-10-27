@@ -380,15 +380,6 @@
                             Bantuan
                         </a>
                     </div>
-                    <div class="font-bold mb-4 ml-3 mt-5">Manajemen Lowongan</div>
-                    <div
-                        class="{{ request()->is('super_admin/manajemen/lowongan*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
-                        <a href="{{ route('superadmin.manajemen.lowongan.gold') }}"
-                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-1 transition duration-300">
-                            <i class="ph ph-wrench text-2xl"></i>
-                            Setting Lowongan
-                        </a>
-                    </div>
                     <div class="font-bold mb-4 ml-3 mt-5">Manajemen Akun</div>
                     <div
                         class="{{ request()->is('super_admin/add/user*') || request()->is('super_admin/edit/user*') || request()->is('super_admin/detail/user*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
@@ -554,12 +545,6 @@
                 <div>
                     <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">Fitur & Konten</p>
                     <div class="grid grid-cols-4 gap-2 text-center">
-                        <a href="{{ route('superadmin.manajemen.lowongan.gold') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/manajemen/lowongan*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
-                            <div class="w-11 h-11 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-xl shadow-xs">
-                                <i class="ph ph-wrench"></i>
-                            </div>
-                            <span class="text-[11px] leading-tight">Lowongan</span>
-                        </a>
                         <a href="{{ route('superadmin.freeze') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/freeze*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
                             <div class="w-11 h-11 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-xl shadow-xs">
                                 <i class="ph ph-snowflake"></i>

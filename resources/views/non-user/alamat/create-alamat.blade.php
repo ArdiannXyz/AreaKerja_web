@@ -120,6 +120,63 @@
             const kotaSelect = document.getElementById('kotaSelect');
             const kecamatanSelect = document.getElementById('kecamatanSelect');
 
+            function loadKota(provinsiId, selectedKota = null) {
+                if (!provinsiId) {
+                    kotaSelect.innerHTML = '<option value="">Pilih Kota / Kabupaten</option>';
+                    kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                    return;
+                }
+                kotaSelect.innerHTML = '<option value="">Memuat...</option>';
+                kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+
+                fetch(`/get-kota/${encodeURIComponent(provinsiId)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        kotaSelect.innerHTML = '<option value="">Pilih Kota / Kabupaten</option>';
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(kota => {
+                                const isSelected = selectedKota && selectedKota.toLowerCase() === kota.nama.toLowerCase();
+                                kotaSelect.innerHTML +=
+                                    `<option value="${kota.nama}" ${isSelected ? 'selected' : ''}>${kota.nama}</option>`;
+                            });
+                            if (selectedKota) {
+                                loadKecamatan(selectedKota, "{{ old('kecamatan') }}");
+                            }
+                        } else {
+                            kotaSelect.innerHTML = '<option value="">Kota tidak ditemukan</option>';
+                        }
+                    })
+                    .catch(() => {
+                        kotaSelect.innerHTML = '<option value="">Gagal memuat kota</option>';
+                    });
+            }
+
+            function loadKecamatan(kotaId, selectedKecamatan = null) {
+                if (!kotaId) {
+                    kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                    return;
+                }
+                kecamatanSelect.innerHTML = '<option value="">Memuat...</option>';
+
+                fetch(`/get-kecamatan/${encodeURIComponent(kotaId)}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
+                        if (Array.isArray(data) && data.length > 0) {
+                            data.forEach(kec => {
+                                const isSelected = selectedKecamatan && selectedKecamatan.toLowerCase() === kec.nama.toLowerCase();
+                                kecamatanSelect.innerHTML +=
+                                    `<option value="${kec.nama}" ${isSelected ? 'selected' : ''}>${kec.nama}</option>`;
+                            });
+                        } else {
+                            kecamatanSelect.innerHTML = '<option value="">Kecamatan tidak ditemukan</option>';
+                        }
+                    })
+                    .catch(() => {
+                        kecamatanSelect.innerHTML = '<option value="">Gagal memuat kecamatan</option>';
+                    });
+            }
+
             if (kotaSelect) {
                 kotaSelect.addEventListener('focus', function() {
                     if (!provinsiSelect.value) {
@@ -143,7 +200,7 @@
                             title: 'Peringatan Alamat',
                             text: 'Harap pilih Kota/Kabupaten terlebih dahulu!',
                             confirmButtonColor: '#00509d'
-                        })}).then(() => {
+                        }).then(() => {
                             if (!provinsiSelect.value) {
                                 provinsiSelect.focus();
                             } else {
@@ -156,124 +213,19 @@
 
             if (provinsiSelect) {
                 provinsiSelect.addEventListener('change', function() {
-                    const selectedOpt = this.options[this.selectedIndex];
-                    const provId = selectedOpt ? selectedOpt.getAttribute('data-id') : null;
-                    const provName = this.value;
-
-                    kotaSelect.innerHTML = '<option value="">Pilih Kota / Kabupaten</option>';
-                    kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-
-                    if (!provName && !provId) return;
-
-                    // 1. Instant local filter (0ms)
-                    let matched = [];
-                    if (Array.isArray(LOCAL_KOTAS) && LOCAL_KOTAS.length > 0) {
-                        matched = LOCAL_KOTAS.filter(k => {
-                            return (provId && String(k.provinsi_id) === String(provId)) ||
-                                   (provName && k.nama.toLowerCase().includes(provName.toLowerCase()));
-                        });
-                    }
-
-                    if (matched.length > 0) {
-                        matched.forEach(k => {
-                            const opt = document.createElement('option');
-                            opt.value = k.nama;
-                            opt.setAttribute('data-id', k.id);
-                            opt.textContent = k.nama;
-                            kotaSelect.appendChild(opt);
-                        });
-                        return;
-                    }
-
-                    // 2. Fallback fetch API
-                    kotaSelect.innerHTML = '<option value="">Memuat Kota / Kabupaten...</option>';
-                    const target = provId || provName;
-
-                    fetch(`/get-kota/${encodeURIComponent(target)}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            kotaSelect.innerHTML = '<option value="">Pilih Kota / Kabupaten</option>';
-                            if (Array.isArray(data) && data.length > 0) {
-                                data.forEach(k => {
-                                    const opt = document.createElement('option');
-                                    opt.value = k.nama;
-                                    opt.setAttribute('data-id', k.id);
-                                    opt.textContent = k.nama;
-                                    kotaSelect.appendChild(opt);
-                                });
-                            } else {
-                                kotaSelect.innerHTML = '<option value="">Kota tidak ditemukan</option>';
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            kotaSelect.innerHTML = '<option value="">Pilih Kota / Kabupaten</option>';
-                        });
+                    loadKota(this.value);
                 });
             }
 
             if (kotaSelect) {
                 kotaSelect.addEventListener('change', function() {
-                    const selectedOpt = this.options[this.selectedIndex];
-                    const kotaId = selectedOpt ? selectedOpt.getAttribute('data-id') : null;
-                    const kotaName = this.value;
-
-                    kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-
-                    if (!kotaName && !kotaId) return;
-
-                    // 1. Instant local filter (0ms)
-                    let matched = [];
-                    if (Array.isArray(LOCAL_KECAMATANS) && LOCAL_KECAMATANS.length > 0) {
-                        matched = LOCAL_KECAMATANS.filter(k => {
-                            return (kotaId && String(k.kota_id) === String(kotaId)) ||
-                                   (kotaName && k.nama.toLowerCase().includes(kotaName.toLowerCase()));
-                        });
-                    }
-
-                    if (matched.length > 0) {
-                        matched.forEach(k => {
-                            const opt = document.createElement('option');
-                            opt.value = k.nama;
-                            opt.setAttribute('data-id', k.id);
-                            opt.textContent = k.nama;
-                            kecamatanSelect.appendChild(opt);
-                        });
-                        return;
-                    }
-
-                    // 2. Fallback fetch API
-                    kecamatanSelect.innerHTML = '<option value="">Memuat Kecamatan...</option>';
-                    const target = kotaId || kotaName;
-
-                    fetch(`/get-kecamatan/${encodeURIComponent(target)}`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if ((!Array.isArray(data) || data.length === 0) && kotaName && target !== kotaName) {
-                                return fetch(`/get-kecamatan/${encodeURIComponent(kotaName)}`).then(r => r.json());
-                            }
-                            return data;
-                        })
-                        .then(data => {
-                            kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-                            if (Array.isArray(data) && data.length > 0) {
-                                data.forEach(k => {
-                                    const opt = document.createElement('option');
-                                    opt.value = k.nama;
-                                    opt.setAttribute('data-id', k.id);
-                                    opt.textContent = k.nama;
-                                    kecamatanSelect.appendChild(opt);
-                                });
-                            } else {
-                                kecamatanSelect.innerHTML = '<option value="">Kecamatan tidak ditemukan</option>';
-                            }
-                        })
-                        .catch(err => {
-                            console.error(err);
-                            kecamatanSelect.innerHTML = '<option value="">Pilih Kecamatan</option>';
-                        });
+                    loadKecamatan(this.value);
                 });
             }
+
+            @if(old('provinsi'))
+                loadKota("{{ old('provinsi') }}", "{{ old('kota') }}");
+            @endif
 
             // ===============================
             // STATUS PELAMAR (Trigger Modal 1)
