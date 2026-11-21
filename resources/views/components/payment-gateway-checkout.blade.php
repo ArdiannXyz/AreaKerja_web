@@ -111,6 +111,7 @@
             {{-- Tab Navigasi Segmented Control (Hanya tampil di viewMode select) --}}
             <template x-if="viewMode === 'select'">
                 <div class="mt-4 p-1 bg-slate-100/90 rounded-2xl flex items-center text-xs font-bold text-slate-600 gap-1">
+                    @if($isXenditEnabled)
                     <button type="button" @click="activeTab = 'qris'"
                             :class="activeTab === 'qris' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
                             class="flex-1 py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-150">
@@ -124,14 +125,22 @@
                         <i class="ph ph-credit-card text-base text-blue-600"></i>
                         <span>Virtual Account</span>
                     </button>
-
-                    @if($isManualEnabled)
+                    @else
                     <button type="button" @click="activeTab = 'manual'"
                             :class="activeTab === 'manual' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
                             class="flex-1 py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-150">
-                        <i class="ph ph-bank text-base text-amber-600"></i>
-                        <span>Manual</span>
+                        <i class="ph ph-bank text-base text-blue-600"></i>
+                        <span>Transfer Rekening Bank</span>
                     </button>
+
+                    @if($manualQrUrl)
+                    <button type="button" @click="activeTab = 'manual_qris'"
+                            :class="activeTab === 'manual_qris' ? 'bg-white text-slate-900 shadow-xs' : 'text-slate-600 hover:text-slate-900'"
+                            class="flex-1 py-2 px-2 rounded-xl flex items-center justify-center gap-1.5 transition-all duration-150">
+                        <i class="ph ph-qr-code text-base text-emerald-600"></i>
+                        <span>QRIS Pemilik</span>
+                    </button>
+                    @endif
                     @endif
                 </div>
             </template>
@@ -501,7 +510,7 @@
 function paymentCheckout(config) {
     return {
         viewMode: 'select', // 'select' | 'qris' | 'va_detail'
-        activeTab: 'qris',   // 'qris' | 'va' | 'manual'
+        activeTab: '{{ $isXenditEnabled ? 'qris' : 'manual' }}',
         vaTitle: '',
         vaNumber: '',
         secondsLeft: config.remainingSeconds || 900,

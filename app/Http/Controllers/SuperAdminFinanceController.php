@@ -296,7 +296,7 @@ class SuperAdminFinanceController extends Controller
     }
 
     /**
-     * Update Pengaturan Payment Gateway & Transfer Manual
+     * Update Pengaturan Payment Gateway & Transfer Manual (Mutually Exclusive)
      */
     public function updatePaymentSettings(Request $request)
     {
@@ -320,14 +320,20 @@ class SuperAdminFinanceController extends Controller
             }
         }
 
+        $activeMode = $request->input('active_payment_mode');
+        if (! $activeMode) {
+            $activeMode = $request->has('payment_xendit_enabled') ? 'xendit' : 'manual';
+        }
+
         \App\Services\PaymentSettingService::updateSettings([
-            'payment_xendit_enabled' => $request->has('payment_xendit_enabled'),
-            'payment_manual_enabled' => $request->has('payment_manual_enabled'),
+            'active_payment_mode' => $activeMode,
+            'payment_xendit_enabled' => ($activeMode === 'xendit'),
+            'payment_manual_enabled' => ($activeMode === 'manual'),
             'payment_manual_instructions' => $request->input('payment_manual_instructions', ''),
             'payment_manual_banks' => count($banks) > 0 ? $banks : null,
         ], $request->file('payment_manual_qr_image'));
 
         return redirect()->route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran'])
-            ->with('success', 'Pengaturan gateway & pembayaran berhasil diperbarui.');
+            ->with('success', 'Pengaturan metode pembayaran berhasil disimpan. Metode aktif: '.($activeMode === 'xendit' ? 'Xendit Gateway' : 'Transfer Manual & QRIS Statis'));
     }
 }

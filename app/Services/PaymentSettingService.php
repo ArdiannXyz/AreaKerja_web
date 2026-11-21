@@ -58,16 +58,22 @@ class PaymentSettingService
 
     public static function isXenditEnabled(): bool
     {
-        $val = SiteSetting::get(self::KEY_XENDIT_ENABLED, '1');
+        $val = SiteSetting::get(self::KEY_XENDIT_ENABLED, '0');
 
         return in_array($val, ['1', 'true', 'on', true], true);
     }
 
+    /**
+     * Metode pembayaran bersifat mutually exclusive (hanya salah satu yang aktif).
+     * Jika Xendit aktif, maka Manual nonaktif. Jika Xendit nonaktif, maka Manual aktif.
+     */
     public static function isManualEnabled(): bool
     {
-        $val = SiteSetting::get(self::KEY_MANUAL_ENABLED, '1');
+        if (self::isXenditEnabled()) {
+            return false;
+        }
 
-        return in_array($val, ['1', 'true', 'on', true], true);
+        return true;
     }
 
     public static function getManualBanks(): array
@@ -99,16 +105,27 @@ class PaymentSettingService
     }
 
     /**
-     * Update konfigurasi pembayaran dari Superadmin.
+     * Update konfigurasi pembayaran dari Superadmin (Mutually Exclusive).
      */
     public static function updateSettings(array $data, ?UploadedFile $qrImageFile = null): void
     {
-        if (isset($data['payment_xendit_enabled'])) {
-            SiteSetting::set(self::KEY_XENDIT_ENABLED, $data['payment_xendit_enabled'] ? '1' : '0');
+        $mode = $data['active_payment_mode'] ?? null;
+        if (! $mode) {
+            if (! empty($data['payment_xendit_enabled']) && empty($data['payment_manual_enabled'])) {
+                $mode = 'xendit';
+            } elseif (! empty($data['payment_manual_enabled']) && empty($data['payment_xendit_enabled'])) {
+                $mode = 'manual';
+            } else {
+                $mode = ! empty($data['payment_xendit_enabled']) ? 'xendit' : 'manual';
+            }
         }
 
-        if (isset($data['payment_manual_enabled'])) {
-            SiteSetting::set(self::KEY_MANUAL_ENABLED, $data['payment_manual_enabled'] ? '1' : '0');
+        if ($mode === 'xendit') {
+            SiteSetting::set(self::KEY_XENDIT_ENABLED, '1');
+            SiteSetting::set(self::KEY_MANUAL_ENABLED, '0');
+        } else {
+            SiteSetting::set(self::KEY_XENDIT_ENABLED, '0');
+            SiteSetting::set(self::KEY_MANUAL_ENABLED, '1');
         }
 
         if (isset($data['payment_manual_instructions'])) {
