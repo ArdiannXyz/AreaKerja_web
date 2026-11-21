@@ -1577,16 +1577,21 @@ class SuperAdminController extends Controller
         ]);
 
         return view('super_admin.finance.paket-harga', [
-            'title'        => 'Paket Harga',
-            'koin'         => $koinList,
-            'pembayaran'   => $pembayaranList,
-            'cashTerbaru'  => $cashTerbaru,
-            'koinTerbaru'  => $koinTerbaru,
-            'cash'         => $cash,
-            'koin1'        => $koin1,
-            'laporan'      => $laporan,
-            'bulan'        => $bulan,
-            'tahun'        => $tahun,
+            'title'                      => 'Paket Harga',
+            'koin'                       => $koinList,
+            'pembayaran'                 => $pembayaranList,
+            'cashTerbaru'                => $cashTerbaru,
+            'koinTerbaru'                => $koinTerbaru,
+            'cash'                       => $cash,
+            'koin1'                      => $koin1,
+            'laporan'                    => $laporan,
+            'bulan'                      => $bulan,
+            'tahun'                      => $tahun,
+            'paymentXenditEnabled'       => \App\Services\PaymentSettingService::isXenditEnabled(),
+            'paymentManualEnabled'       => \App\Services\PaymentSettingService::isManualEnabled(),
+            'paymentManualQrImage'       => \App\Services\PaymentSettingService::getManualQrImageUrl(),
+            'paymentManualBanks'         => \App\Services\PaymentSettingService::getManualBanks(),
+            'paymentManualInstructions'  => \App\Services\PaymentSettingService::getManualInstructions(),
         ]);
     }
 
@@ -1878,6 +1883,42 @@ class SuperAdminController extends Controller
     public function update_pembayaran(Request $request)
     {
         return redirect()->route('superadmin.paket-harga')->with('success', 'Harga pembayaran berhasil diperbarui.');
+    }
+
+    /**
+     * Update Pengaturan Payment Gateway & Transfer Manual
+     */
+    public function updatePaymentSettings(Request $request)
+    {
+        $request->validate([
+            'payment_manual_qr_image' => 'nullable|image|max:2048',
+            'bank_names'              => 'nullable|array',
+            'account_numbers'         => 'nullable|array',
+            'account_holders'         => 'nullable|array',
+        ]);
+
+        $banks = [];
+        if ($request->has('bank_names') && is_array($request->bank_names)) {
+            foreach ($request->bank_names as $i => $name) {
+                if (!empty($name)) {
+                    $banks[] = [
+                        'bank_name'      => trim($name),
+                        'account_number' => trim($request->account_numbers[$i] ?? ''),
+                        'account_holder' => trim($request->account_holders[$i] ?? ''),
+                    ];
+                }
+            }
+        }
+
+        \App\Services\PaymentSettingService::updateSettings([
+            'payment_xendit_enabled'      => $request->has('payment_xendit_enabled'),
+            'payment_manual_enabled'      => $request->has('payment_manual_enabled'),
+            'payment_manual_instructions' => $request->input('payment_manual_instructions', ''),
+            'payment_manual_banks'        => count($banks) > 0 ? $banks : null,
+        ], $request->file('payment_manual_qr_image'));
+
+        return redirect()->route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran'])
+            ->with('success', 'Pengaturan gateway & pembayaran berhasil diperbarui.');
     }
 
     public function panggilan(Request $request)

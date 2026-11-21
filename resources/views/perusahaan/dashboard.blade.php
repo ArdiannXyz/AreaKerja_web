@@ -28,6 +28,37 @@
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
 
+        {{-- ===== BANNER PENGINGAT TAGIHAN PENDING ===== --}}
+        @if(($pendingBillsCount ?? 0) > 0 && ($activePendingBill ?? null))
+            <div class="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-white shadow-lg flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-amber-400/40">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-xs flex items-center justify-center shrink-0 text-white text-2xl shadow-xs">
+                        <i class="ph ph-warning-circle font-bold"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-[10px] font-black uppercase tracking-wider bg-white/25 px-2 py-0.5 rounded-md text-white">Perhatian</span>
+                            <h3 class="text-sm sm:text-base font-extrabold text-white">Anda Memiliki {{ $pendingBillsCount }} Tagihan Belum Dibayar!</h3>
+                        </div>
+                        <p class="text-xs text-amber-100 mt-0.5">
+                            Tagihan <strong>{{ $activePendingBill->pesanan }}</strong> sebesar <strong class="text-white font-black">Rp {{ number_format($activePendingBill->total, 0, ',', '.') }}</strong> menunggu penyelesaian pembayaran.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 self-end sm:self-center shrink-0">
+                    <a href="{{ route('tenant.bills.index') }}"
+                       class="px-4 py-2 bg-white/20 hover:bg-white/30 text-white text-xs font-bold rounded-xl transition">
+                        Semua Tagihan
+                    </a>
+                    <a href="{{ route('catatan_cash.show', $activePendingBill->id) }}"
+                       class="inline-flex items-center gap-1.5 px-5 py-2 bg-white text-orange-600 hover:bg-amber-50 text-xs font-black rounded-xl shadow-md transition">
+                        <span>Bayar Sekarang</span>
+                        <i class="ph ph-arrow-right font-bold"></i>
+                    </a>
+                </div>
+            </div>
+        @endif
+
         {{-- ===== KPI STAT CARDS ===== --}}
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
 

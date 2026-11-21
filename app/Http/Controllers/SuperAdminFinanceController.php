@@ -55,32 +55,37 @@ class SuperAdminFinanceController extends Controller
 
         foreach ($tanggalUnik as $tgl) {
             $laporan->push([
-                'tanggal'     => Carbon::parse($tgl)->translatedFormat('d F Y'),
-                'pendapatan'  => $cash1->firstWhere('tanggal', $tgl)->pendapatan ?? 0,
-                'koin'        => $koin->firstWhere('tanggal', $tgl)->total_koin ?? 0,
-                'catatan'     => 'Catatan_Transaksi_' . Carbon::parse($tgl)->translatedFormat('F'),
+                'tanggal' => Carbon::parse($tgl)->translatedFormat('d F Y'),
+                'pendapatan' => $cash1->firstWhere('tanggal', $tgl)->pendapatan ?? 0,
+                'koin' => $koin->firstWhere('tanggal', $tgl)->total_koin ?? 0,
+                'catatan' => 'Catatan_Transaksi_'.Carbon::parse($tgl)->translatedFormat('F'),
             ]);
         }
 
         $koinList = SuperAdminController::getFinanceKoinList();
 
         $pembayaranList = collect([
-            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
-            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
-            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
+            (object) ['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
+            (object) ['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
+            (object) ['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
         ]);
 
         return view('super_admin.finance.paket-harga', [
-            'title'        => 'Paket Harga',
-            'koin'         => $koinList,
-            'pembayaran'   => $pembayaranList,
-            'cashTerbaru'  => $cashTerbaru,
-            'koinTerbaru'  => $koinTerbaru,
-            'cash'         => $cash,
-            'koin1'        => $koin1,
-            'laporan'      => $laporan,
-            'bulan'        => $bulan,
-            'tahun'        => $tahun,
+            'title' => 'Paket Harga',
+            'koin' => $koinList,
+            'pembayaran' => $pembayaranList,
+            'cashTerbaru' => $cashTerbaru,
+            'koinTerbaru' => $koinTerbaru,
+            'cash' => $cash,
+            'koin1' => $koin1,
+            'laporan' => $laporan,
+            'bulan' => $bulan,
+            'tahun' => $tahun,
+            'paymentXenditEnabled' => \App\Services\PaymentSettingService::isXenditEnabled(),
+            'paymentManualEnabled' => \App\Services\PaymentSettingService::isManualEnabled(),
+            'paymentManualQrImage' => \App\Services\PaymentSettingService::getManualQrImageUrl(),
+            'paymentManualBanks' => \App\Services\PaymentSettingService::getManualBanks(),
+            'paymentManualInstructions' => \App\Services\PaymentSettingService::getManualInstructions(),
         ]);
     }
 
@@ -121,9 +126,9 @@ class SuperAdminFinanceController extends Controller
         $semuaTransaksi = $cashs->merge($koins)->sortByDesc('created_at');
 
         return view('super_admin.finance.detail-laporan', [
-            'tanggal'        => Carbon::parse($tanggal)->translatedFormat('d F Y'),
-            'totalCash'      => $cashs->sum('total'),
-            'totalKoin'      => $koins->sum('total_koin'),
+            'tanggal' => Carbon::parse($tanggal)->translatedFormat('d F Y'),
+            'totalCash' => $cashs->sum('total'),
+            'totalKoin' => $koins->sum('total_koin'),
             'semuaTransaksi' => $semuaTransaksi,
         ]);
     }
@@ -141,24 +146,24 @@ class SuperAdminFinanceController extends Controller
         $transaksi = collect();
 
         foreach ($cashs as $c) {
-            $transaksi->push((object)[
+            $transaksi->push((object) [
                 'no_referensi' => $c->no_referensi ?? '-',
-                'dari'         => $c->dari ?? '-',
-                'pesanan'      => $c->pesanan ?? '-',
-                'sumber_dana'  => $c->sumberDana ?? 'BCA',
-                'nominal'      => $c->total,
-                'koin'         => '-',
+                'dari' => $c->dari ?? '-',
+                'pesanan' => $c->pesanan ?? '-',
+                'sumber_dana' => $c->sumberDana ?? 'BCA',
+                'nominal' => $c->total,
+                'koin' => '-',
             ]);
         }
 
         foreach ($koins as $k) {
-            $transaksi->push((object)[
+            $transaksi->push((object) [
                 'no_referensi' => $k->no_referensi ?? '-',
-                'dari'         => $k->dari ?? '-',
-                'pesanan'      => $k->pesanan ?? '-',
-                'sumber_dana'  => $k->sumber_dana ?? 'Koin',
-                'nominal'      => '-',
-                'koin'         => $k->total,
+                'dari' => $k->dari ?? '-',
+                'pesanan' => $k->pesanan ?? '-',
+                'sumber_dana' => $k->sumber_dana ?? 'Koin',
+                'nominal' => '-',
+                'koin' => $k->total,
             ]);
         }
 
@@ -166,14 +171,14 @@ class SuperAdminFinanceController extends Controller
         $totalKoin = $koins->sum('total');
 
         $logoPath = public_path('images/logoarea.png');
-        $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath)) : '';
+        $logoBase64 = file_exists($logoPath) ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath)) : '';
 
         $data = [
-            'tanggal'      => Carbon::parse($tanggal)->translatedFormat('d F Y'),
-            'transaksi'    => $transaksi,
-            'totalTunai'   => $totalTunai,
-            'totalKoin'    => $totalKoin,
-            'logoBase64'   => $logoBase64,
+            'tanggal' => Carbon::parse($tanggal)->translatedFormat('d F Y'),
+            'transaksi' => $transaksi,
+            'totalTunai' => $totalTunai,
+            'totalKoin' => $totalKoin,
+            'logoBase64' => $logoBase64,
             'tanggalCetak' => Carbon::now()->translatedFormat('F d, Y, H:i a'),
         ];
 
@@ -188,13 +193,13 @@ class SuperAdminFinanceController extends Controller
             <script src="https://cdn.tailwindcss.com"></script>
             <style>body { font-family: "Inter", sans-serif; }</style>
         </head>
-        <body class="text-[12px] text-black font-sans mx-8 my-6">' . $html . '</body>
+        <body class="text-[12px] text-black font-sans mx-8 my-6">'.$html.'</body>
         </html>';
 
         $browserPath = BrowserPath::detect();
-        if (!$browserPath) {
+        if (! $browserPath) {
             return response()->json([
-                'error' => 'Browser Chrome/Edge tidak ditemukan. Pastikan sudah terinstall.'
+                'error' => 'Browser Chrome/Edge tidak ditemukan. Pastikan sudah terinstall.',
             ], 500);
         }
 
@@ -208,7 +213,7 @@ class SuperAdminFinanceController extends Controller
 
         return response($pdf)
             ->header('Content-Type', 'application/pdf')
-            ->header('Content-Disposition', 'attachment; filename="Laporan_Transaksi_Harian_' . $tanggal . '.pdf"');
+            ->header('Content-Disposition', 'attachment; filename="Laporan_Transaksi_Harian_'.$tanggal.'.pdf"');
     }
 
     /**
@@ -220,7 +225,7 @@ class SuperAdminFinanceController extends Controller
 
         return view('super_admin.finance.edit-koin', [
             'title' => 'Edit Harga Koin',
-            'koin'  => $koin,
+            'koin' => $koin,
         ]);
     }
 
@@ -274,13 +279,13 @@ class SuperAdminFinanceController extends Controller
     public function edit_pembayaran()
     {
         $pembayaran = collect([
-            (object)['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
-            (object)['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
-            (object)['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
+            (object) ['id' => 1, 'nama' => 'Top Up 10 Koin Area Kerja', 'jumlah_koin' => 10, 'harga' => 10000],
+            (object) ['id' => 2, 'nama' => 'Top Up 100 Koin Area Kerja', 'jumlah_koin' => 100, 'harga' => 100000],
+            (object) ['id' => 3, 'nama' => 'Top Up 1000 Koin Area Kerja', 'jumlah_koin' => 1000, 'harga' => 500000],
         ]);
 
         return view('super_admin.finance.edit-harga', [
-            'title'      => 'Edit Harga Pembayaran',
+            'title' => 'Edit Harga Pembayaran',
             'pembayaran' => $pembayaran,
         ]);
     }
@@ -289,5 +294,40 @@ class SuperAdminFinanceController extends Controller
     {
         return redirect()->route('superadmin.paket-harga')->with('success', 'Harga pembayaran berhasil diperbarui.');
     }
-}
 
+    /**
+     * Update Pengaturan Payment Gateway & Transfer Manual
+     */
+    public function updatePaymentSettings(Request $request)
+    {
+        $request->validate([
+            'payment_manual_qr_image' => 'nullable|image|max:2048',
+            'bank_names' => 'nullable|array',
+            'account_numbers' => 'nullable|array',
+            'account_holders' => 'nullable|array',
+        ]);
+
+        $banks = [];
+        if ($request->has('bank_names') && is_array($request->bank_names)) {
+            foreach ($request->bank_names as $i => $name) {
+                if (! empty($name)) {
+                    $banks[] = [
+                        'bank_name' => trim($name),
+                        'account_number' => trim($request->account_numbers[$i] ?? ''),
+                        'account_holder' => trim($request->account_holders[$i] ?? ''),
+                    ];
+                }
+            }
+        }
+
+        \App\Services\PaymentSettingService::updateSettings([
+            'payment_xendit_enabled' => $request->has('payment_xendit_enabled'),
+            'payment_manual_enabled' => $request->has('payment_manual_enabled'),
+            'payment_manual_instructions' => $request->input('payment_manual_instructions', ''),
+            'payment_manual_banks' => count($banks) > 0 ? $banks : null,
+        ], $request->file('payment_manual_qr_image'));
+
+        return redirect()->route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran'])
+            ->with('success', 'Pengaturan gateway & pembayaran berhasil diperbarui.');
+    }
+}

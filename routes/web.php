@@ -159,6 +159,17 @@ Route::controller(EventController::class)->group(function () {
 // XENDIT PAYMENT GATEWAY CALLBACK WEBHOOK
 Route::post('/payment/xendit/callback', [\App\Http\Controllers\Payment\XenditCallbackController::class, 'handle'])->name('xendit.callback');
 
+// IN-APP PAYMENT CHECKOUT, STATUS POLLING, & PUSAT TAGIHAN
+Route::controller(\App\Http\Controllers\CatatanCashController::class)->group(function () {
+    Route::get('/payments/status/{reference_id}', 'statusByReference')->name('payments.status');
+    Route::middleware('auth')->group(function () {
+        Route::get('/tagihan', 'billsIndex')->name('tenant.bills.index');
+        Route::get('/tagihan/index', 'billsIndex')->name('tagihan.index');
+        Route::post('/tagihan/{id}/cancel', 'cancelBill')->name('tenant.bills.cancel');
+        Route::post('/tagihan/{id}/batal', 'cancelBill');
+    });
+});
+
 /*
 |--------------------------------------------------------------------------
 | Modular Role Routes

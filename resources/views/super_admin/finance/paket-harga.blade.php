@@ -48,6 +48,11 @@
                     class="px-5 py-2 text-sm rounded-lg transition-all duration-200">
                     Laporan Keuangan
                 </button>
+                <button type="button" @click="currentTab = 'pengaturan_pembayaran'"
+                    :class="currentTab === 'pengaturan_pembayaran' ? 'bg-[#00509d] text-white shadow-sm font-semibold' : 'text-gray-600 hover:text-gray-900 font-medium'"
+                    class="px-5 py-2 text-sm rounded-lg transition-all duration-200">
+                    Pengaturan Pembayaran
+                </button>
             </div>
         </div>
 
@@ -453,6 +458,136 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        {{-- ================= TAB 4: PENGATURAN PEMBAYARAN ================= --}}
+        <div x-show="currentTab === 'pengaturan_pembayaran'" x-cloak
+             x-transition:enter="transition ease-out duration-150"
+             x-transition:enter-start="opacity-0 translate-y-1"
+             x-transition:enter-end="opacity-100 translate-y-0"
+             class="space-y-6">
+
+            <form action="{{ route('superadmin.paket-harga.update-payment-settings') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
+                @csrf
+                @method('PUT')
+
+                {{-- Status Gateway & Saluran Pembayaran --}}
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-6">
+                    <div class="pb-4 border-b border-gray-100 flex items-center justify-between">
+                        <div>
+                            <h2 class="text-base font-bold text-gray-800">Status Saluran Pembayaran</h2>
+                            <p class="text-xs text-gray-500">Aktifkan atau nonaktifkan gateway otomatis dan metode transfer manual</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {{-- Xendit Gateway Toggle --}}
+                        <div class="p-4 rounded-xl border border-gray-200 bg-gray-50/50 flex items-center justify-between">
+                            <div class="space-y-1 pr-4">
+                                <span class="font-bold text-sm text-gray-800 flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full {{ $paymentXenditEnabled ? 'bg-emerald-500' : 'bg-gray-400' }}"></span>
+                                    Payment Gateway Otomatis (Xendit)
+                                </span>
+                                <p class="text-xs text-gray-500">QRIS dinamis, Virtual Account otomatis, dan E-Wallet realtime</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="payment_xendit_enabled" value="1" {{ $paymentXenditEnabled ? 'checked' : '' }} class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00509d]"></div>
+                            </label>
+                        </div>
+
+                        {{-- Transfer Manual Toggle --}}
+                        <div class="p-4 rounded-xl border border-gray-200 bg-gray-50/50 flex items-center justify-between">
+                            <div class="space-y-1 pr-4">
+                                <span class="font-bold text-sm text-gray-800 flex items-center gap-1.5">
+                                    <span class="w-2.5 h-2.5 rounded-full {{ $paymentManualEnabled ? 'bg-emerald-500' : 'bg-gray-400' }}"></span>
+                                    Transfer Manual & Konfirmasi Struk
+                                </span>
+                                <p class="text-xs text-gray-500">Transfer manual rekening bank resmi pemilik AreaKerja</p>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" name="payment_manual_enabled" value="1" {{ $paymentManualEnabled ? 'checked' : '' }} class="sr-only peer">
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#00509d]"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- QRIS Statis Pemilik --}}
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+                    <div class="pb-3 border-b border-gray-100">
+                        <h2 class="text-base font-bold text-gray-800">QRIS Statis Manual Pemilik</h2>
+                        <p class="text-xs text-gray-500">Unggah gambar QRIS statis pemilik untuk pembayaran manual saat gateway otomatis nonaktif</p>
+                    </div>
+
+                    <div class="flex flex-col sm:flex-row items-center gap-5">
+                        @if($paymentManualQrImage)
+                            <div class="w-32 h-32 rounded-2xl border border-gray-200 overflow-hidden bg-white p-2 shrink-0 shadow-xs">
+                                <img src="{{ $paymentManualQrImage }}" alt="QRIS Statis Pemilik" class="w-full h-full object-contain">
+                            </div>
+                        @endif
+                        <div class="flex-1 w-full">
+                            <input type="file" name="payment_manual_qr_image" accept="image/*"
+                                   class="block w-full text-xs text-gray-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#00509d] file:text-white hover:file:bg-[#003d7a] file:cursor-pointer border border-gray-200 rounded-xl p-1 bg-gray-50/50">
+                            <p class="text-[11px] text-gray-400 mt-1">Format: JPG, PNG, atau SVG (Maks. 2MB)</p>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Rekening Bank Manual --}}
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+                    <div class="pb-3 border-b border-gray-100">
+                        <h2 class="text-base font-bold text-gray-800">Daftar Rekening Bank Transfer Manual</h2>
+                        <p class="text-xs text-gray-500">Konfigurasi nomor rekening resmi yang ditampilkan ke pengguna</p>
+                    </div>
+
+                    <div class="space-y-3">
+                        @foreach($paymentManualBanks as $idx => $bank)
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 bg-gray-50/70 rounded-xl border border-gray-200">
+                                <div>
+                                    <label class="text-[11px] font-bold text-gray-600 block mb-1">Nama Bank</label>
+                                    <input type="text" name="bank_names[]" value="{{ $bank['bank_name'] ?? '' }}"
+                                           placeholder="Contoh: BCA / Mandiri"
+                                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 font-semibold">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-bold text-gray-600 block mb-1">Nomor Rekening</label>
+                                    <input type="text" name="account_numbers[]" value="{{ $bank['account_number'] ?? '' }}"
+                                           placeholder="Contoh: 8040192837"
+                                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500 font-mono">
+                                </div>
+                                <div>
+                                    <label class="text-[11px] font-bold text-gray-600 block mb-1">Atas Nama (a/n)</label>
+                                    <input type="text" name="account_holders[]" value="{{ $bank['account_holder'] ?? '' }}"
+                                           placeholder="Contoh: PT AREA KERJA INDONESIA"
+                                           class="w-full px-3 py-2 text-xs border border-gray-300 rounded-lg focus:ring-1 focus:ring-blue-500">
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                {{-- Panduan Instruksi Transfer --}}
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 space-y-4">
+                    <div class="pb-3 border-b border-gray-100">
+                        <h2 class="text-base font-bold text-gray-800">Panduan Instruksi Transfer & Konfirmasi</h2>
+                        <p class="text-xs text-gray-500">Petunjuk pembayaran yang ditampilkan pada tab transfer manual checkout</p>
+                    </div>
+
+                    <div>
+                        <textarea name="payment_manual_instructions" rows="4"
+                                  class="w-full p-3 text-xs border border-gray-300 rounded-xl focus:ring-1 focus:ring-blue-500 leading-relaxed font-sans">{{ $paymentManualInstructions }}</textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-end">
+                    <button type="submit"
+                            class="px-6 py-2.5 bg-[#00509d] hover:bg-[#003d7a] text-white text-xs font-bold rounded-xl shadow-xs transition flex items-center gap-2">
+                        <i class="ph ph-floppy-disk text-base"></i>
+                        <span>Simpan Pengaturan Pembayaran</span>
+                    </button>
+                </div>
+            </form>
         </div>
 
         @include('super_admin.notif.modal_notif')

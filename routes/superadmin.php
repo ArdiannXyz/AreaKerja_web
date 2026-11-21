@@ -91,6 +91,7 @@ Route::prefix('super_admin')->middleware('auth', 'role:super_admin', 'CheckUserS
         Route::put('/update/harga/koin', 'update_koin')->name('superadmin.paket-harga.update-koin');
         Route::get('/paket/harga/edit/harga', 'edit_pembayaran')->name('superadmin.paket-harga.edit-pembayaran');
         Route::put('/update/harga/harga', 'update_pembayaran')->name('superadmin.paket-harga.update-pembayaran');
+        Route::put('/paket/harga/update-payment-settings', 'updatePaymentSettings')->name('superadmin.paket-harga.update-payment-settings');
 
         // Detail Laporan Keuangan
         Route::get('/laporan/detail/{tanggal}', 'detail_laporan')->name('superadmin.laporan.detail');

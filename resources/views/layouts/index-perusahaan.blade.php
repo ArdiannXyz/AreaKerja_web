@@ -589,6 +589,15 @@
                     class="hover:text-blue-200 transition-colors whitespace-nowrap {{ request()->routeIs('perusahaan.event.index*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
                     Event
                 </a>
+                <a href="{{ route('tenant.bills.index') }}"
+                    class="relative hover:text-blue-200 transition-colors whitespace-nowrap flex items-center gap-1 {{ request()->routeIs('tenant.bills.*') || request()->routeIs('tagihan.*') ? 'font-bold underline underline-offset-8 decoration-2 decoration-white' : '' }}">
+                    <span>Tagihan</span>
+                    @if (($pendingBillsCount ?? 0) > 0)
+                        <span class="inline-flex items-center justify-center bg-rose-500 text-white text-[10px] font-black w-4 h-4 rounded-full animate-pulse">
+                            {{ $pendingBillsCount }}
+                        </span>
+                    @endif
+                </a>
             </nav>
 
             <!-- Aksi (Kanan) -->
@@ -676,6 +685,21 @@
                                 </li>
 
                                 <li>
+                                    <a href="{{ route('tenant.bills.index') }}"
+                                        class="flex items-center justify-between px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                        <div class="flex items-center">
+                                            <i class="ph ph-receipt mr-2 text-[#00509d] text-lg"></i>
+                                            Riwayat Tagihan
+                                        </div>
+                                        @if(($pendingBillsCount ?? 0) > 0)
+                                            <span class="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                                {{ $pendingBillsCount }}
+                                            </span>
+                                        @endif
+                                    </a>
+                                </li>
+
+                                <li>
                                     <a href="{{ route('perusahaan.kandidat.saya') }}"
                                         class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
                                         <i class="ph ph-users mr-2 text-[#00509d] text-lg"></i>
@@ -760,6 +784,15 @@
                     <a href="{{ route('perusahaan.event.index') }}"
                         class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium {{ request()->routeIs('perusahaan.event.index*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
                         Event
+                    </a>
+                    <a href="{{ route('tenant.bills.index') }}"
+                        class="px-6 py-3 text-slate-700 hover:bg-blue-50 hover:text-[#003d7a] transition duration-300 font-medium flex items-center justify-between {{ request()->routeIs('tenant.bills.*') ? 'bg-blue-50 text-[#00509d] font-bold' : '' }}">
+                        <span>Tagihan</span>
+                        @if(($pendingBillsCount ?? 0) > 0)
+                            <span class="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                {{ $pendingBillsCount }}
+                            </span>
+                        @endif
                     </a>
 
                     @guest
