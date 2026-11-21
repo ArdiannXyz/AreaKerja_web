@@ -65,6 +65,8 @@ class CustomPaymentGatewayCheckoutTest extends TestCase
 
     public function test_user_can_access_bills_page_and_see_pending_transactions(): void
     {
+        PaymentSettingService::updateSettings(['active_payment_mode' => 'xendit']);
+
         $trx = CatatanCash::create([
             'user_id' => $this->user->id,
             'no_referensi' => 'AK-PENDING-999',
@@ -87,6 +89,8 @@ class CustomPaymentGatewayCheckoutTest extends TestCase
 
     public function test_pay_now_opens_checkout_page_with_valid_qris_svg_and_channels(): void
     {
+        PaymentSettingService::updateSettings(['active_payment_mode' => 'xendit']);
+
         $trx = CatatanCash::create([
             'user_id' => $this->user->id,
             'no_referensi' => 'AK-CHECKOUT-888',
@@ -120,6 +124,8 @@ class CustomPaymentGatewayCheckoutTest extends TestCase
 
     public function test_user_can_cancel_pending_transaction(): void
     {
+        PaymentSettingService::updateSettings(['active_payment_mode' => 'xendit']);
+
         $trx = CatatanCash::create([
             'user_id' => $this->user->id,
             'no_referensi' => 'AK-CANCEL-777',
@@ -138,6 +144,8 @@ class CustomPaymentGatewayCheckoutTest extends TestCase
 
     public function test_realtime_status_polling_endpoint(): void
     {
+        PaymentSettingService::updateSettings(['active_payment_mode' => 'xendit']);
+
         $trx = CatatanCash::create([
             'user_id' => $this->user->id,
             'no_referensi' => 'AK-POLL-666',
@@ -191,26 +199,41 @@ class CustomPaymentGatewayCheckoutTest extends TestCase
             'email' => 'superadmin_test@areakerja.com',
         ]);
 
-        $payload = [
-            'payment_xendit_enabled' => '1',
-            'payment_manual_enabled' => '1',
+        // 1. Pilih mode Transfer Manual & QRIS Statis
+        $payloadManual = [
+            'active_payment_mode' => 'manual',
             'payment_manual_instructions' => 'Instruksi transfer baru untuk testing.',
             'bank_names' => ['BCA', 'Mandiri'],
             'account_numbers' => ['111222333', '444555666'],
             'account_holders' => ['PT AREA KERJA', 'PT AREA KERJA'],
         ];
 
-        $response = $this->actingAs($adminUser)
-            ->put(route('superadmin.paket-harga.update-payment-settings'), $payload);
+        $responseManual = $this->actingAs($adminUser)
+            ->put(route('superadmin.paket-harga.update-payment-settings'), $payloadManual);
 
-        $response->assertRedirect(route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran']));
+        $responseManual->assertRedirect(route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran']));
 
-        $this->assertTrue(PaymentSettingService::isXenditEnabled());
+        // Verifikasi mutually exclusive: Manual TRUE, Xendit FALSE
         $this->assertTrue(PaymentSettingService::isManualEnabled());
+        $this->assertFalse(PaymentSettingService::isXenditEnabled());
         $this->assertEquals('Instruksi transfer baru untuk testing.', PaymentSettingService::getManualInstructions());
         $banks = PaymentSettingService::getManualBanks();
         $this->assertCount(2, $banks);
         $this->assertEquals('BCA', $banks[0]['bank_name']);
+
+        // 2. Beralih ke mode Xendit Gateway
+        $payloadXendit = [
+            'active_payment_mode' => 'xendit',
+        ];
+
+        $responseXendit = $this->actingAs($adminUser)
+            ->put(route('superadmin.paket-harga.update-payment-settings'), $payloadXendit);
+
+        $responseXendit->assertRedirect(route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran']));
+
+        // Verifikasi mutually exclusive: Xendit TRUE, Manual FALSE
+        $this->assertTrue(PaymentSettingService::isXenditEnabled());
+        $this->assertFalse(PaymentSettingService::isManualEnabled());
     }
 
     public function test_candidate_registration_checkout_renders_custom_payment_gateway_checkout(): void
@@ -229,6 +252,8 @@ class CustomPaymentGatewayCheckoutTest extends TestCase
             'nama_pelamar' => 'Testing Pelamar',
             'telepon_pelamar' => '081234567890',
         ]);
+
+        PaymentSettingService::updateSettings(['active_payment_mode' => 'xendit']);
 
         $trx = CatatanCash::create([
             'user_id' => $pelamarUser->id,

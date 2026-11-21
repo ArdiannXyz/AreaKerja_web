@@ -18,7 +18,8 @@ class SiteSetting extends Model
     public static function get(string $key, ?string $default = null): ?string
     {
         $setting = static::where('key', $key)->first();
-        return ($setting && !empty($setting->value)) ? $setting->value : $default;
+
+        return ($setting && $setting->value !== null && $setting->value !== '') ? $setting->value : $default;
     }
 
     /**
@@ -36,9 +37,9 @@ class SiteSetting extends Model
     {
         $path = static::get($key);
         if ($path && Storage::disk('public')->exists($path)) {
-            return asset('storage/' . $path);
+            return asset('storage/'.$path);
         }
+
         return asset($defaultPath);
     }
 }
-
