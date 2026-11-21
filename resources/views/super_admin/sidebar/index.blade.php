@@ -314,6 +314,14 @@
                         </a>
                     </div>
                     <div
+                        class="{{ request()->is('super_admin/paket/harga*') && request('tab') === 'pengaturan_pembayaran' ? 'bg-white text-[#00509d]' : '' }} rounded-md">
+                        <a href="{{ route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran']) }}"
+                            class="flex font-semibold items-center mb-1 gap-2 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
+                            <i class="ph ph-gear text-[18px]"></i>
+                            Pengaturan Pembayaran
+                        </a>
+                    </div>
+                    <div
                         class="{{ request()->is('super_admin/freeze*') || request()->is('super_admin/detail/freeze*') ? 'bg-white text-[#00509d]' : '' }} rounded-md">
                         <a href="{{ route('superadmin.freeze') }}"
                             class="flex font-semibold items-center mb-1 gap-3 hover:bg-white hover:text-[#00509d] rounded-md px-3 py-2 transition duration-300">
@@ -532,11 +540,17 @@
                             </div>
                             <span class="text-[11px] leading-tight">Perusahaan</span>
                         </a>
-                        <a href="{{ route('superadmin.paket-harga') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/paket/harga*') ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                        <a href="{{ route('superadmin.paket-harga') }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request()->is('super_admin/paket/harga*') && request('tab') !== 'pengaturan_pembayaran' ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
                             <div class="w-11 h-11 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl shadow-xs">
                                 <i class="ph ph-wallet"></i>
                             </div>
                             <span class="text-[11px] leading-tight">Keuangan</span>
+                        </a>
+                        <a href="{{ route('superadmin.paket-harga', ['tab' => 'pengaturan_pembayaran']) }}" class="flex flex-col items-center gap-1.5 p-2 rounded-xl hover:bg-blue-50 transition active:scale-95 {{ request('tab') === 'pengaturan_pembayaran' ? 'bg-blue-50 text-[#00509d] font-bold' : 'text-slate-700' }}">
+                            <div class="w-11 h-11 rounded-xl bg-blue-100 text-[#00509d] flex items-center justify-center text-xl shadow-xs">
+                                <i class="ph ph-gear"></i>
+                            </div>
+                            <span class="text-[11px] leading-tight">Setting Bayar</span>
                         </a>
                     </div>
                 </div>
