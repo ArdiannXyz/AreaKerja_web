@@ -818,10 +818,17 @@
                                     </li>
 
                                     <li>
-                                        <a href="{{ route('transaksi.pendaftaran') }}"
-                                            class="flex items-center px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
-                                            <i class="ph ph-receipt mr-2 text-[#00509d] text-lg"></i>
-                                            Transaksi
+                                        <a href="{{ route('tenant.bills.index') }}"
+                                            class="flex items-center justify-between px-4 py-2.5 text-gray-700 hover:bg-blue-50 hover:text-[#00509d] transition">
+                                            <div class="flex items-center">
+                                                <i class="ph ph-receipt mr-2 text-[#00509d] text-lg"></i>
+                                                Riwayat Tagihan
+                                            </div>
+                                            @if(($pendingBillsCount ?? 0) > 0)
+                                                <span class="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+                                                    {{ $pendingBillsCount }}
+                                                </span>
+                                            @endif
                                         </a>
                                     </li>
 

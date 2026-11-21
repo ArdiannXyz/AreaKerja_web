@@ -29,9 +29,8 @@ class CatatanCash extends Model
 
     protected $casts = [
         'expired_at' => 'datetime',
-        'paid_at'    => 'datetime',
+        'paid_at' => 'datetime',
     ];
-
 
     public function user()
     {
@@ -57,10 +56,10 @@ class CatatanCash extends Model
             }
         }
 
-        return (object)[
-            'id'          => 1,
-            'nama'        => $this->pesanan ?? ($isTopUp ? 'Top Up Koin Area Kerja' : 'Pembayaran'),
-            'harga'       => $this->total ?? 100000,
+        return (object) [
+            'id' => 1,
+            'nama' => $this->pesanan ?? ($isTopUp ? 'Top Up Koin Area Kerja' : 'Pembayaran'),
+            'harga' => $this->total ?? 100000,
             'jumlah_koin' => $jumlahKoin,
         ];
     }
@@ -77,5 +76,42 @@ class CatatanCash extends Model
     public function getPerusahaanAttribute()
     {
         return $this->user?->perusahaan;
+    }
+
+    public function getQrisPayloadAttribute(): string
+    {
+        return \App\Services\QrisService::buildPayload(
+            merchantName: 'AREA KERJA INDONESIA',
+            city: 'YOGYAKARTA',
+            postalCode: '55281',
+            nmid: 'ID1020038920192',
+            amount: (float) ($this->total ?? 0),
+            referenceNo: (string) ($this->no_referensi ?? ('AK-'.$this->id))
+        );
+    }
+
+    public function getQrisSvgAttribute(): string
+    {
+        return \App\Services\QrisService::renderSvg($this->qris_payload);
+    }
+
+    public function isPaid(): bool
+    {
+        return in_array(strtolower($this->status ?? ''), ['diterima', 'lunas', 'selesai', 'paid', 'settled'], true);
+    }
+
+    public function isPending(): bool
+    {
+        return in_array(strtolower($this->status ?? ''), ['pending', 'menunggu_verifikasi'], true);
+    }
+
+    public function isCancelled(): bool
+    {
+        return in_array(strtolower($this->status ?? ''), ['cancelled', 'dibatalkan', 'batal', 'failed'], true);
+    }
+
+    public function isExpired(): bool
+    {
+        return strtolower($this->status ?? '') === 'expired' || ($this->expired_at && $this->expired_at->isPast());
     }
 }

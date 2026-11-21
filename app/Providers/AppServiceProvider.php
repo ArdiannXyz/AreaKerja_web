@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\CatatanCash;
 use App\Models\DaftarBank;
 use App\Models\Notifikasi;
 use App\Models\Report;
@@ -50,6 +51,30 @@ class AppServiceProvider extends ServiceProvider
                 'global_notifikasis'       => $notifikasis,
                 'global_notifikasi_unread' => $jumlahBelumDibaca,
             ]);
+        });
+
+        // Share pending bills count & active pending bill ke semua view
+        View::composer('*', function ($view) {
+            if (Auth::check()) {
+                $userId = Auth::id();
+                $pendingBillsCount = CatatanCash::where('user_id', $userId)
+                    ->where('status', 'pending')
+                    ->count();
+                $activePendingBill = CatatanCash::where('user_id', $userId)
+                    ->where('status', 'pending')
+                    ->latest()
+                    ->first();
+
+                $view->with([
+                    'pendingBillsCount'  => $pendingBillsCount,
+                    'activePendingBill'  => $activePendingBill,
+                ]);
+            } else {
+                $view->with([
+                    'pendingBillsCount'  => 0,
+                    'activePendingBill'  => null,
+                ]);
+            }
         });
 
         // Social links collection from SiteSettingService
