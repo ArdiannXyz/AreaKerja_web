@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Models\Notifikasi;
-use Carbon\Carbon;
 use Illuminate\Console\Command;
 
 class HapusNotifikasiKadaluarsa extends Command
@@ -13,36 +12,41 @@ class HapusNotifikasiKadaluarsa extends Command
      *
      * @var string
      */
-    protected $signature = 'notifikasi:hapus-expired';
+    protected $signature = 'notifikasi:hapus-expired {--months= : Batas usia notifikasi dalam bulan untuk dihapus (default: 3 bulan)}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Hapus notifikasi yang sudah lebih dari 10 hari atau lewat expired_at';
+    protected $description = 'Hapus notifikasi yang lewat expired_at dan notifikasi lama yang sudah melewati batas bulan (default: 3 bulan)';
 
     /**
      * Execute the console command.
      */
     public function handle()
     {
-        /** 
-         * Hapus semua data notifikasi yang sudah lebih dari 10 hari atau lewat expired_at tapi tidak lewat kolom expired_at
-         */
+        $monthsOption = $this->option('months');
+        $months = $monthsOption !== null ? (int) $monthsOption : (int) config('app.notification_retention_months', 3);
+        if ($months <= 0) {
+            $months = 3;
+        }
 
-        // $limitTanggal = now()->subDays(7);
+        $limitTanggal = now()->subMonths($months);
 
-        // $jumlah = Notifikasi::where('created_at', '<', $limitTanggal)
-        //     ->forceDelete(); // kalau soft delete ON
+        // 1. Hapus notifikasi yang sudah melewati tanggal expired_at
+        $deletedExpired = Notifikasi::whereNotNull('expired_at')
+            ->where('expired_at', '<', now())
+            ->delete();
 
-        // $this->info("$jumlah notifikasi lama terhapus.");
+        // 2. Hapus notifikasi lama yang sudah melewati batas retensi bulan (1 atau 3 bulan)
+        $deletedOld = Notifikasi::where('created_at', '<', $limitTanggal)
+            ->delete();
 
+        $total = $deletedExpired + $deletedOld;
 
-        $jumlah = Notifikasi::whereNotNull('expired_at') // hanya yang punya expired
-            ->where('expired_at', '<', now())            // expired_at sudah lewat
-            ->delete();                                  // hapus permanen atau soft delete
+        $this->info("Pembersihan notifikasi selesai: {$deletedExpired} lewat expired_at, {$deletedOld} berusia > {$months} bulan. Total: {$total} notifikasi dihapus.");
 
-        $this->info("$jumlah notifikasi expired terhapus.");
+        return Command::SUCCESS;
     }
 }

@@ -6,6 +6,8 @@ return [
 
     'cron_token' => env('CRON_TOKEN'),
 
+    'notification_retention_months' => (int) env('NOTIFICATION_RETENTION_MONTHS', 3),
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
