@@ -1,0 +1,23 @@
+# ==============================================================================
+# LARAVEL CRONJOB CONFIGURATION - AREA KERJA (VPS)
+# ==============================================================================
+# Panduan pemasangan pada server Linux / Ubuntu VPS:
+# 1. Buka terminal server VPS via SSH
+# 2. Ketik perintah: crontab -e
+# 3. Tempelkan baris di bawah ini ke baris paling akhir
+# 4. Ganti '/var/www/areakerja' dengan absolute path folder proyek Anda di VPS
+# ==============================================================================
+
+* * * * * cd /var/www/areakerja && php artisan schedule:run >> /dev/null 2>&1
+
+# ==============================================================================
+# KETERANGAN TUGAS YANG DIJALANKAN OTOMATIS OLEH CRONJOB INI:
+# - Pembersihan notifikasi expired & usia > 3 bulan : Setiap hari jam 02:00 WIB
+# - Reset status lowongan expired                  : Setiap hari jam 00:00 WIB
+# - Hapus pelamar lowongan expired                 : Setiap hari jam 00:00 WIB
+# - Update status lamaran expired                  : Setiap hari jam 00:00 WIB
+# - Cek masa aktif langganan perusahaan            : Setiap hari jam 00:00 WIB
+# - Notifikasi lowongan akan expired               : Setiap jam (hourly)
+# - Cek transaksi pending expired                  : Setiap jam (hourly)
+# - Newsletter mingguan ke subscriber              : Setiap Senin jam 08:00 WIB
+# ==============================================================================
