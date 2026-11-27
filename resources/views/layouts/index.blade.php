@@ -11,7 +11,9 @@
 
 
     
-    <title>areakerja.com</title>
+    <title>@yield('title', 'AreaKerja.com - Portal Lowongan Kerja Terpercaya di Indonesia')</title>
+    <meta name="description" content="@yield('meta_description', 'Temukan ribuan lowongan kerja terbaru dari perusahaan terverifikasi di Indonesia hanya di AreaKerja.com.')">
+    <link rel="canonical" href="@yield('canonical', url()->current())">
     <link rel="stylesheet" href="https://unpkg.com/intro.js/minified/introjs.min.css">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     <!-- TinyMCE Content Styles -->
@@ -581,6 +583,7 @@
             flex-direction: column;
         }
     </style>
+    @stack('head')
 </head>
 
 
