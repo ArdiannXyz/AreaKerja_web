@@ -1,22 +1,44 @@
 @extends('layouts.index')
-@section('content')
+
+@php
+    $seoTitle = ($data->nama ?? 'Detail Lowongan')
+        . ($data->perusahaan?->nama_perusahaan ? ' - ' . $data->perusahaan->nama_perusahaan : '')
+        . ' | AreaKerja.com';
+    $seoDescription = \Illuminate\Support\Str::limit(
+        trim(preg_replace('/\s+/', ' ', strip_tags((string) ($data->deskripsi ?? $data->nama ?? '')))),
+        155
+    );
+    $seoCanonical = route('detail.lowongan.non.user', [
+        'perusahaan' => $data->perusahaan->slug ?? 'perusahaan',
+        'lowongan' => $data->slug ?? $data->id,
+    ]);
+    $seoImage = ! empty($data->perusahaan?->img_profile)
+        ? asset('storage/' . $data->perusahaan->img_profile)
+        : asset($data->gambar ?? 'images/logo_area_kerja_favicon.png');
+@endphp
+
+@section('title', $seoTitle)
+@section('meta_description', $seoDescription)
+@section('canonical', $seoCanonical)
+
+@push('head')
     <meta property="og:title" content="{{ $data->nama }}">
     <meta property="og:site_name" content="Area Kerja">
-    <meta property="og:description" content="{{ strip_tags(Str::limit($data->deskripsi, 150)) }}">
-    <meta property="og:url"
-        content="{{ route('detail.lowongan.non.user', [
-            'perusahaan' => $data->perusahaan->slug ?? 'perusahaan',
-            'lowongan' => $data->slug ?? $data->id,
-        ]) }}">
-
+    <meta property="og:description" content="{{ $seoDescription }}">
+    <meta property="og:url" content="{{ $seoCanonical }}">
     <meta property="og:type" content="article">
-    <meta property="og:image" content="{{ asset($data->gambar ?? 'default.jpg') }}">
+    <meta property="og:image" content="{{ $seoImage }}">
     <meta property="og:image:alt" content="{{ $data->nama }}">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ $data->nama }}">
-    <meta name="twitter:description" content="{{ strip_tags(Str::limit($data->deskripsi, 150)) }}">
-    <meta name="twitter:image" content="{{ asset($data->gambar ?? 'default.jpg') }}">
+    <meta name="twitter:description" content="{{ $seoDescription }}">
+    <meta name="twitter:image" content="{{ $seoImage }}">
+
+    @include('non-user.partials.job-posting-jsonld', ['lowongan' => $data])
+@endpush
+
+@section('content')
 
     <div class="bg-slate-50/50 min-h-screen text-slate-800 pt-28 pb-20" x-data="{
         showConfirm: false,

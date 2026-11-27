@@ -17,6 +17,7 @@ class Kernel extends ConsoleKernel
         \App\Console\Commands\NotifyExpiredLowongans::class,
         \App\Console\Commands\SendWeeklyNewsletter::class,
         \App\Console\Commands\HapusNotifikasiKadaluarsa::class,
+        \App\Console\Commands\GenerateSitemap::class,
     ];
 
     protected function schedule(Schedule $schedule): void
@@ -88,6 +89,12 @@ class Kernel extends ConsoleKernel
         // 11. Hapus notifikasi lewat expired_at dan notifikasi lama > 3 bulan (Setiap hari jam 02:00 WIB)
         $schedule->command('notifikasi:hapus-expired')
             ->dailyAt('02:00')
+            ->withoutOverlapping()
+            ->runInBackground();
+
+        // 12. Generate sitemap.xml harian (Setiap hari jam 03:00 WIB)
+        $schedule->command('sitemap:generate')
+            ->dailyAt('03:00')
             ->withoutOverlapping()
             ->runInBackground();
     }

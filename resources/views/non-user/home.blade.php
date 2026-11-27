@@ -1,4 +1,9 @@
 @extends('layouts.index')
+
+@section('title', request()->routeIs('lowongan.search') ? 'Cari Lowongan Kerja Terbaru | AreaKerja.com' : 'AreaKerja.com - Temukan Karir Impian Anda di Indonesia')
+@section('meta_description', 'Cari dan lamar ribuan lowongan kerja terbaru dari perusahaan terverifikasi di Indonesia melalui AreaKerja.com.')
+@section('canonical', request()->routeIs('lowongan.search') ? route('lowongan.search') : url('/'))
+
 @section('content')
 
     <div class="bg-white min-h-screen text-slate-800">
